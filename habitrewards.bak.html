@@ -1,0 +1,2816 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitRewards</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1f2937">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.5;
+            padding-bottom: 80px;
+        }
+
+        body.dark-mode {
+            background-color: #1f2937;
+            color: #f3f4f6;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #0284c7;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        body.dark-mode header {
+            background-color: #0f172a;
+            border-bottom-color: #38bdf8;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #0284c7;
+            margin-bottom: 10px;
+        }
+
+        body.dark-mode h1 {
+            color: #38bdf8;
+        }
+
+        .greeting {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .quote-container {
+            background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%);
+            border-left: 5px solid #0284c7;
+            padding: 24px;
+            margin: 20px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-style: italic;
+            line-height: 1.6;
+            color: #111827;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .quote-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.25);
+        }
+
+        body.dark-mode .quote-container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-left-color: #38bdf8;
+            color: #f3f4f6;
+        }
+
+        .quote-author {
+            font-size: 16px;
+            font-style: normal;
+            margin-top: 10px;
+            color: #6b7280;
+        }
+
+        body.dark-mode .quote-author {
+            color: #9ca3af;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 12px 20px;
+            background: transparent;
+            border-bottom: none;
+        }
+
+        body.dark-mode .controls {
+            background: transparent;
+            border-bottom: none;
+        }
+
+        .view-tabs {
+            display: none;
+        }
+
+        button {
+            font-size: 20px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            background-color: #dbeafe;
+            color: #111827;
+        }
+
+        button:hover {
+            background-color: #bfdbfe;
+            transform: scale(1.05);
+        }
+
+        button.active {
+            background-color: #0284c7;
+            color: #ffffff;
+        }
+
+        body.dark-mode button {
+            background-color: #374151;
+            color: #f3f4f6;
+        }
+
+        body.dark-mode button:hover {
+            background-color: #4b5563;
+        }
+
+        body.dark-mode button.active {
+            background-color: #38bdf8;
+            color: #0f172a;
+        }
+
+        .theme-toggle {
+            background-color: #0284c7;
+            color: #ffffff;
+            padding: 10px 16px;
+        }
+
+        body.dark-mode .theme-toggle {
+            background-color: #38bdf8;
+            color: #0f172a;
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .task-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.2);
+        }
+
+        body.dark-mode .task-item {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .task-value {
+            font-size: 18px;
+            color: #059669;
+        }
+
+        body.dark-mode .task-value {
+            color: #10b981;
+        }
+
+        .task-streak {
+            font-size: 16px;
+            color: #d97706;
+            margin-top: 5px;
+        }
+
+        body.dark-mode .task-streak {
+            color: #fbbf24;
+        }
+
+        .task-button {
+            font-size: 18px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .task-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .task-button:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .task-button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .task-button.completed {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+            color: white;
+        }
+
+        .checkbox-large {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border: 2px solid #0284c7;
+            border-radius: 6px;
+            background-color: #f9fafb;
+            color: #111827;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        body.dark-mode textarea,
+        body.dark-mode input[type="text"] {
+            background-color: #111827;
+            color: #f3f4f6;
+            border-color: #38bdf8;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #059669;
+        }
+
+        .survey-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #0284c7;
+            margin-bottom: 20px;
+        }
+
+        body.dark-mode .survey-container {
+            background-color: #111827;
+            border-color: #38bdf8;
+        }
+
+        .survey-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .rating-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .rating-btn {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            padding: 0;
+            background-color: #dbeafe;
+            color: #111827;
+        }
+
+        .rating-btn.selected {
+            background-color: #0284c7;
+            color: white;
+        }
+
+        body.dark-mode .rating-btn.selected {
+            background-color: #38bdf8;
+            color: #0f172a;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border: 2px solid #0284c7;
+            border-radius: 6px;
+            background-color: #f9fafb;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        body.dark-mode select {
+            background-color: #111827;
+            color: #f3f4f6;
+            border-color: #38bdf8;
+        }
+
+        .jar-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .jar-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.2);
+        }
+
+        body.dark-mode .jar-item {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
+        }
+
+        .jar-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .jar-balance {
+            font-size: 28px;
+            color: #059669;
+            font-weight: 600;
+        }
+
+        body.dark-mode .jar-balance {
+            color: #10b981;
+        }
+
+        .approvals-batch {
+            background-color: #ffffff;
+            border: 2px solid #0284c7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        body.dark-mode .approvals-batch {
+            background-color: #111827;
+            border-color: #38bdf8;
+        }
+
+        .approval-item {
+            background-color: #f3f4f6;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode .approval-item {
+            background-color: #0f172a;
+        }
+
+        .slider-container {
+            flex: 1;
+            margin-right: 15px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #374151;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            border: none;
+        }
+
+        .bonus-section {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border: 3px solid #d8b4fe;
+            padding: 24px;
+            margin: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .bonus-section {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-color: #d8b4fe;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .bonus-section::before {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.15;
+            right: -30px;
+            top: -30px;
+            animation: rotate 3s linear infinite;
+        }
+
+        .bonus-section::after {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.15;
+            left: -30px;
+            bottom: -30px;
+            animation: rotate 3s linear infinite reverse;
+        }
+
+        .bonus-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #ffffff;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .bonus-title {
+            color: #ffffff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid #0284c7;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #111827;
+            border-color: #38bdf8;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #0284c7;
+        }
+
+        body.dark-mode .modal-close {
+            color: #38bdf8;
+        }
+
+        .ledger-entry {
+            background-color: #f9fafb;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #059669;
+            border-radius: 4px;
+            font-size: 18px;
+        }
+
+        body.dark-mode .ledger-entry {
+            background-color: #111827;
+            border-left-color: #10b981;
+        }
+
+        .ledger-amount {
+            color: #059669;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        body.dark-mode .ledger-amount {
+            color: #10b981;
+        }
+
+        .survey-response {
+            background-color: #f9fafb;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #0284c7;
+            border-radius: 4px;
+        }
+
+        body.dark-mode .survey-response {
+            background-color: #111827;
+            border-left-color: #38bdf8;
+        }
+
+        .response-date {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        body.dark-mode .response-date {
+            color: #9ca3af;
+        }
+
+        .response-rating {
+            font-size: 22px;
+            color: #d97706;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        body.dark-mode .response-rating {
+            color: #fbbf24;
+        }
+
+        .response-text {
+            font-size: 18px;
+            margin-top: 8px;
+            color: #4b5563;
+        }
+
+        body.dark-mode .response-text {
+            color: #d1d5db;
+        }
+
+        .no-data {
+            text-align: center;
+            font-size: 20px;
+            color: #6b7280;
+            padding: 40px 20px;
+        }
+
+        body.dark-mode .no-data {
+            color: #9ca3af;
+        }
+
+        @media (max-width: 600px) {
+            html {
+                font-size: 14px;
+            }
+
+            button {
+                font-size: 18px;
+                padding: 10px 16px;
+            }
+
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .task-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+</parameter>
+
+        /* ========== GAMIFICATION & ANIMATIONS ========== */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(2, 132, 199, 0);
+            }
+        }
+
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes streak-glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+            }
+        }
+
+        @keyframes flip-card {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+
+        /* ========== ENHANCED CARDS & CONTAINERS ========== */
+        .premium-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        body.dark-mode .premium-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .premium-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.25);
+        }
+
+        /* ========== STREAK STYLING ========== */
+        .streak-display {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        body.dark-mode .streak-display {
+            background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
+            color: #fef3c7;
+        }
+
+        .streak-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse-ring 2s infinite;
+        }
+
+        .streak-number {
+            font-size: 48px;
+            font-weight: 800;
+            animation: streak-glow 2s infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .streak-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== BALANCE DISPLAY ========== */
+        .balance-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out 0.1s both;
+        }
+
+        body.dark-mode .balance-card {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .balance-card::after {
+            content: '💰';
+            position: absolute;
+            font-size: 80px;
+            opacity: 0.1;
+            right: -20px;
+            top: -10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .balance-label {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 44px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== ENHANCED TASK BUTTONS ========== */
+        .task-button-enhanced {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-width: 120px;
+        }
+
+        .task-button-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .task-button-enhanced:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .task-button-enhanced:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .task-button-enhanced:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .task-button-enhanced.completed {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        /* ========== ACHIEVEMENT UNLOCK ========== */
+        .achievement-unlock {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border: 3px solid #d8b4fe;
+            padding: 24px;
+            margin: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .achievement-unlock {
+            background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+            border-color: #a78bfa;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .achievement-unlock::before {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.2;
+            right: -30px;
+            top: -30px;
+            animation: rotate 3s linear infinite;
+        }
+
+        .achievement-unlock::after {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.2;
+            left: -30px;
+            bottom: -30px;
+            animation: rotate 3s linear infinite reverse;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes popAndFade {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(300px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes badgePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes trophyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .badge-earned {
+            display: inline-block;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin: 8px 4px;
+            font-weight: 700;
+            font-size: 16px;
+            animation: badgePulse 0.6s ease-out;
+            border: 2px solid #fcd34d;
+            color: #78350f;
+        }
+
+        .streak-milestone {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border: 3px solid #d8b4fe;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .milestone-icon {
+            font-size: 60px;
+            animation: trophyBounce 1s ease-in-out infinite;
+            margin-bottom: 12px;
+        }
+
+        .milestone-text {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .achievement-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievement-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-bottom: 16px;
+        }
+
+        /* ========== BONUS TASKS CAROUSEL ========== */
+        .bonus-carousel {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 16px 20px;
+            margin: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .bonus-carousel::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .bonus-carousel::-webkit-scrollbar-track {
+            background: rgba(2, 132, 199, 0.1);
+            border-radius: 10px;
+        }
+
+        .bonus-carousel::-webkit-scrollbar-thumb {
+            background: #0284c7;
+            border-radius: 10px;
+        }
+
+        body.dark-mode .bonus-carousel::-webkit-scrollbar-track {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        body.dark-mode .bonus-carousel::-webkit-scrollbar-thumb {
+            background: #38bdf8;
+        }
+
+        .bonus-card-item {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+            padding: 16px;
+            border-radius: 12px;
+            min-width: 200px;
+            white-space: nowrap;
+            text-align: center;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            flex-shrink: 0;
+            border: 2px solid #fcd34d;
+        }
+
+        body.dark-mode .bonus-card-item {
+            background: linear-gradient(135deg, #92400e 0%, #78350f 100%);
+            color: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .bonus-card-item:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+        }
+
+        /* ========== PROGRESS INDICATORS ========== */
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+
+        /* ========== JAR CARDS WITH PROGRESS ========== */
+        .jar-card-enhanced {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        body.dark-mode .jar-card-enhanced {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+        }
+
+        .jar-card-enhanced:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.25);
+        }
+
+        .jar-progress-bar {
+            width: 100%;
+            height: 24px;
+            background: rgba(2, 132, 199, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 12px;
+            border: 2px solid rgba(2, 132, 199, 0.2);
+        }
+
+        .jar-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            position: relative;
+        }
+
+        .jar-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* ========== SURVEY CARDS ========== */
+        .survey-card-enhanced {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        body.dark-mode .survey-card-enhanced {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+        }
+
+        .rating-button-enhanced {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            border: 3px solid #dbeafe;
+            background-color: #e0f2fe;
+            color: #111827;
+            font-size: 28px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px 4px;
+        }
+
+        body.dark-mode .rating-button-enhanced {
+            background-color: #0c4a6e;
+            border-color: #38bdf8;
+            color: #f1f5f9;
+        }
+
+        .rating-button-enhanced:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .rating-button-enhanced.selected {
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            border-color: #0284c7;
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+        }
+
+        /* ========== MODAL ENHANCEMENTS ========== */
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid #0284c7;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #111827;
+            border-color: #38bdf8;
+        }
+
+        /* ========== HEADER ENHANCEMENTS ========== */
+        header {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            box-shadow: 0 4px 20px rgba(2, 132, 199, 0.15);
+        }
+
+        body.dark-mode header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.2);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #0284c7 0%, #0891b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.dark-mode h1 {
+            background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .greeting {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 10px;
+            color: #0284c7;
+            animation: slideInUp 0.6s ease-out 0.2s both;
+        }
+
+        body.dark-mode .greeting {
+            color: #38bdf8;
+        }
+</parameter>
+
+        /* ========== RESPONSIVE ADJUSTMENTS ========== */
+        @media (max-width: 600px) {
+            .streak-number {
+                font-size: 36px;
+            }
+
+            .balance-amount {
+                font-size: 32px;
+            }
+
+            .bonus-card-item {
+                min-width: 150px;
+                padding: 12px;
+            }
+
+            .rating-button-enhanced {
+                width: 48px;
+                height: 48px;
+                font-size: 22px;
+            }
+        }
+    </style>
+
+        .read-aloud-btn:hover {
+            background-color: #d97706;
+        }
+
+        /* ========== GAMIFICATION & ANIMATIONS ========== */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(2, 132, 199, 0);
+            }
+        }
+
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes streak-glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+            }
+        }
+
+        @keyframes flip-card {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+
+        /* ========== ENHANCED CARDS & CONTAINERS ========== */
+        .premium-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        body.dark-mode .premium-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .premium-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.25);
+        }
+
+        /* ========== STREAK STYLING ========== */
+        .streak-display {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        body.dark-mode .streak-display {
+            background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
+            color: #fef3c7;
+        }
+
+        .streak-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse-ring 2s infinite;
+        }
+
+        .streak-number {
+            font-size: 48px;
+            font-weight: 800;
+            animation: streak-glow 2s infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .streak-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== BALANCE DISPLAY ========== */
+        .balance-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out 0.1s both;
+        }
+
+        body.dark-mode .balance-card {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .balance-card::after {
+            content: '💰';
+            position: absolute;
+            font-size: 80px;
+            opacity: 0.1;
+            right: -20px;
+            top: -10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .balance-label {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 44px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== ENHANCED TASK BUTTONS ========== */
+        .task-button-enhanced {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-width: 120px;
+        }
+
+        .task-button-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .task-button-enhanced:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .task-button-enhanced:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .task-button-enhanced:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .task-button-enhanced.completed {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        /* ========== ACHIEVEMENT UNLOCK ========== */
+        .achievement-unlock {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border: 3px solid #d8b4fe;
+            padding: 24px;
+            margin: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .achievement-unlock {
+            background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+            border-color: #a78bfa;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .achievement-unlock::before {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.2;
+            right: -30px;
+            top: -30px;
+            animation: rotate 3s linear infinite;
+        }
+
+        .achievement-unlock::after {
+            content: '✨';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.2;
+            left: -30px;
+            bottom: -30px;
+            animation: rotate 3s linear infinite reverse;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .achievement-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .achievement-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-bottom: 16px;
+        }
+
+        /* ========== BONUS TASKS CAROUSEL ========== */
+        .bonus-carousel {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 16px 20px;
+            margin: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .bonus-carousel::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .bonus-carousel::-webkit-scrollbar-track {
+            background: rgba(2, 132, 199, 0.1);
+            border-radius: 10px;
+        }
+
+        .bonus-carousel::-webkit-scrollbar-thumb {
+            background: #0284c7;
+            border-radius: 10px;
+        }
+
+        body.dark-mode .bonus-carousel::-webkit-scrollbar-track {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        body.dark-mode .bonus-carousel::-webkit-scrollbar-thumb {
+            background: #38bdf8;
+        }
+
+        .bonus-card-item {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+            padding: 16px;
+            border-radius: 12px;
+            min-width: 200px;
+            white-space: nowrap;
+            text-align: center;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            flex-shrink: 0;
+            border: 2px solid #fcd34d;
+        }
+
+        body.dark-mode .bonus-card-item {
+            background: linear-gradient(135deg, #92400e 0%, #78350f 100%);
+            color: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .bonus-card-item:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+        }
+
+        /* ========== PROGRESS INDICATORS ========== */
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+
+        /* ========== JAR CARDS WITH PROGRESS ========== */
+        .jar-card-enhanced {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        body.dark-mode .jar-card-enhanced {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+        }
+
+        .jar-card-enhanced:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.25);
+        }
+
+        .jar-progress-bar {
+            width: 100%;
+            height: 24px;
+            background: rgba(2, 132, 199, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 12px;
+            border: 2px solid rgba(2, 132, 199, 0.2);
+        }
+
+        .jar-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            position: relative;
+        }
+
+        .jar-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* ========== SURVEY CARDS ========== */
+        .survey-card-enhanced {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 2px solid #0284c7;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        body.dark-mode .survey-card-enhanced {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-color: #38bdf8;
+        }
+
+        .rating-button-enhanced {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            border: 3px solid #dbeafe;
+            background-color: #e0f2fe;
+            color: #111827;
+            font-size: 28px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px 4px;
+        }
+
+        body.dark-mode .rating-button-enhanced {
+            background-color: #0c4a6e;
+            border-color: #38bdf8;
+            color: #f1f5f9;
+        }
+
+        .rating-button-enhanced:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .rating-button-enhanced.selected {
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            border-color: #0284c7;
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+        }
+
+        /* ========== MODAL ENHANCEMENTS ========== */
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid #0284c7;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #111827;
+            border-color: #38bdf8;
+        }
+
+        /* ========== HEADER ENHANCEMENTS ========== */
+        header {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            box-shadow: 0 4px 20px rgba(2, 132, 199, 0.15);
+        }
+
+        body.dark-mode header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.2);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #0284c7 0%, #0891b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.dark-mode h1 {
+            background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .greeting {
+            background: linear-gradient(135deg, #0284c7 0%, #0891b2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInUp 0.6s ease-out 0.2s both;
+        }
+
+        /* ========== RESPONSIVE ADJUSTMENTS ========== */
+        @media (max-width: 600px) {
+            .streak-number {
+                font-size: 36px;
+            }
+
+            .balance-amount {
+                font-size: 32px;
+            }
+
+            .bonus-card-item {
+                min-width: 150px;
+                padding: 12px;
+            }
+
+            .rating-button-enhanced {
+                width: 48px;
+                height: 48px;
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+            <div style="font-size: 48px;">🎯</div>
+            <h1 style="margin: 0; font-size: 42px;">HabitRewards</h1>
+            <div style="font-size: 48px;">💰</div>
+        </div>
+        <div class="greeting" id="greeting" style="display: block; margin-top: 10px; font-size: 24px; font-weight: 600;"></div>
+        <div style="font-size: 16px; color: #6b7280; margin-top: 8px;" id="dateDisplay"></div>
+    </header>
+
+    <div class="controls">
+    </div>
+
+    <div class="content">
+        <!-- DOER VIEW -->
+        <div id="doer" class="view active">
+            <div class="quote-container" id="quoteDisplay">
+                <div id="quote-text"></div>
+                <div class="quote-author" id="quote-author"></div>
+            </div>
+</parameter>
+
+            <div class="streak-display">
+                <div class="streak-label">🔥 Current Streak</div>
+                <div class="streak-number" id="streakCounter">0</div>
+                <div class="streak-label">days</div>
+            </div>
+
+            <div class="balance-card">
+                <div class="balance-label">💸 Today's Balance</div>
+                <div class="balance-amount" id="todayBalance">$0.00</div>
+                <button onclick="openModal('redeemModal')" style="width: 100%; margin-top: 16px; background-color: rgba(255, 255, 255, 0.2); color: white; padding: 12px 20px; border: 2px solid white; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                    🎁 Redeem Rewards
+                </button>
+            </div>
+
+            <div id="bonusSection"></div>
+
+            <div style="background-color: transparent; padding: 15px; border-radius: 8px; margin: 20px; border: 2px solid #6b7280; text-align: center;">
+                <p style="font-size: 18px; font-weight: 500; margin-bottom: 10px; color: #6b7280;">Need a break today?</p>
+                <button onclick="skipRewardsDay()" style="width: 100%; background-color: #6b7280; color: white; font-size: 16px; padding: 12px;">
+                    📅 Skip Rewards Today
+                </button>
+            </div>
+</parameter>
+
+            <h2 style="font-size: 28px; margin: 20px; text-align: center; background: linear-gradient(135deg, #0284c7 0%, #0891b2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🎯 Daily Tasks</h2>
+            <div id="tasksContainer" style="animation: slideInUp 0.5s ease-out;"></div>
+
+            <h2 style="font-size: 28px; margin: 20px; text-align: center; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">✨ Weekly Bonus Tasks</h2>
+            <div id="bonusTasksContainer" style="animation: slideInUp 0.5s ease-out;"></div>
+</parameter>
+
+            <button onclick="openModal('proposeModal')" style="width: 100%; background-color: #8b5cf6; color: white; margin-top: 20px; padding: 16px; font-size: 22px;">
+                + Propose a New Task
+            </button>
+
+            <div id="surveySection"></div>
+        </div>
+
+        <!-- MANAGER VIEW -->
+        <div id="manager" class="view">
+            <div class="balance-card">
+                <div class="balance-label">💸 Total Earned Today</div>
+                <div class="balance-amount" id="managerTodayTotal">$0.00</div>
+            </div>
+
+            <div class="balance-card" style="animation-delay: 0.1s;">
+                <div class="balance-label">🏦 Total Balance (All Jars)</div>
+                <div class="balance-amount" id="managerTotalBalance">$0.00</div>
+            </div>
+
+            <h2 style="font-size: 28px; margin: 20px; color: #38bdf8;">Pending Approvals</h2>
+            <div id="approvalsContainer"></div>
+
+            <h2 style="font-size: 28px; margin: 20px; color: #38bdf8;">Savings Jars</h2>
+            <div id="jarsContainer"></div>
+
+            <h2 style="font-size: 28px; margin: 20px; color: #38bdf8;">Survey Responses</h2>
+            <button onclick="exportSurveys()" style="width: 90%; margin: 20px auto; display: block; background-color: #10b981; padding: 14px; font-size: 18px;">
+                📊 Export Surveys (CSV)
+            </button>
+            <div id="surveysContainer"></div>
+
+            <button onclick="openModal('payoutModal')" style="width: 90%; margin: 20px auto; display: block; background-color: #f59e0b; padding: 14px; font-size: 18px;">
+                💰 Trigger Payout
+            </button>
+        </div>
+    </div>
+
+    <!-- PROPOSE TASK MODAL -->
+    <div id="proposeModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('proposeModal')">&times;</span>
+            <h2 style="font-size: 28px; margin-bottom: 20px;">Propose a New Task</h2>
+            <input type="text" id="newTaskName" placeholder="Task name (e.g., Read a book)" style="font-size: 20px;">
+            <input type="number" id="newTaskValue" placeholder="Value ($)" step="0.25" min="0" style="font-size: 20px;">
+            <select id="newTaskRecurring" style="font-size: 20px;">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="oneoff">One-off</option>
+            </select>
+            <button onclick="proposeTask()" style="width: 100%; background-color: #10b981; font-size: 20px;">Submit Proposal</button>
+        </div>
+    </div>
+
+    <!-- TASK DETAIL MODAL (Photo + Notes) -->
+    <div id="taskDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('taskDetailModal')">&times;</span>
+            <h2 id="taskDetailTitle" style="font-size: 28px; margin-bottom: 20px;"></h2>
+            <div style="margin-bottom: 15px;">
+                <p style="font-size: 20px; margin-bottom: 10px;">📸 Optional Photo (Preview):</p>
+                <input type="file" id="taskPhoto" accept="image/*" onchange="previewPhoto()" style="font-size: 18px; padding: 10px;">
+                <div id="photoPreview" style="margin-top: 10px;"></div>
+            </div>
+            <p style="font-size: 20px; margin-bottom: 10px;">📝 Optional Notes:</p>
+            <textarea id="taskNotes" placeholder="Add a note about this task..." style="height: 100px; font-size: 18px;"></textarea>
+            <button onclick="completeTask()" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 20px; margin-bottom: 10px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; transition: all 0.3s ease;">✓ Mark Done</button>
+            <button onclick="closeModal('taskDetailModal')" style="width: 100%; background-color: #6b7280; font-size: 20px;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- REDEEM REWARDS MODAL -->
+    <div id="redeemModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('redeemModal')">&times;</span>
+            <h2 style="font-size: 28px; margin-bottom: 20px;">🎁 Redeem Your Rewards</h2>
+            <p style="font-size: 18px; margin-bottom: 20px; color: #9ca3af;">Select a reward option:</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="redeemReward('treat', 5)" style="width: 100%; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #78350f; font-size: 18px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; transition: all 0.3s ease;">
+                    🍦 Treat Yourself - $5
+                </button>
+                <button onclick="redeemReward('fun', 10)" style="width: 100%; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; font-size: 18px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; transition: all 0.3s ease;">
+                    🎬 Fun Activity - $10
+                </button>
+                <button onclick="redeemReward('save', 0)" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 18px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; transition: all 0.3s ease;">
+                    🏦 Save for Later
+                </button>
+            </div>
+            <button onclick="closeModal('redeemModal')" style="width: 100%; background-color: #6b7280; color: white; font-size: 18px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; margin-top: 15px;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- PAYOUT MODAL -->
+    <div id="payoutModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('payoutModal')">&times;</span>
+            <h2 style="font-size: 28px; margin-bottom: 20px;">Trigger Payout</h2>
+            <p style="font-size: 20px; margin-bottom: 15px;">Select a jar to payout:</p>
+            <select id="payoutJar" style="font-size: 20px;">
+                <option value="">-- Select Jar --</option>
+                <option value="Treats Jar">Treats Jar</option>
+                <option value="Fun Jar">Fun Jar</option>
+                <option value="General">General</option>
+            </select>
+            <div id="payoutInfo" style="margin-top: 15px; font-size: 18px; background-color: #0f172a; padding: 15px; border-radius: 6px;"></div>
+            <button onclick="triggerPayout()" style="width: 100%; background-color: #f59e0b; font-size: 20px; margin-top: 15px;">Confirm Payout (Mock)</button>
+            <p style="font-size: 14px; color: #9ca3af; margin-top: 15px;">Note: This is a mock. In production, this connects to PayPal Payouts API.</p>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA STRUCTURE ==========
+        const DAILY_TASKS = [
+            { id: 1, name: "Clean up kitchen table", value: 1.00 },
+            { id: 2, name: "Go for a walk", value: 1.50 },
+            { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+            { id: 4, name: "Do Duolingo", value: 0.75 },
+            { id: 5, name: "Do crossword puzzle", value: 1.00 }
+        ];
+
+        const WEEKLY_BONUS_TASKS_FIXED = [
+            { id: 101, name: "Play tennis / pickleball (3x this week)", value: 2.50, counter: true },
+            { id: 102, name: "Do something nice for your wife", value: 2.00 }
+        ];
+
+        const WEEKLY_BONUS_TASKS_ROTATING = [
+            { id: 103, name: "Sell your coins or vinyls", value: 2.00 },
+            { id: 104, name: "Take your wife out to lunch or dinner", value: 3.00 },
+            { id: 105, name: "Try a new restaurant", value: 2.00 },
+            { id: 106, name: "Get rid of 3 items from office", value: 1.50 },
+            { id: 107, name: "Ask your tennis friends out to lunch", value: 1.50 },
+            { id: 108, name: "Explore for fun activities", value: 1.00 }
+        ];
+
+        function getWeeklyBonusTasks() {
+            // Get week number to ensure same task for all days in that week
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const diff = now - startOfYear;
+            const oneWeek = 1000 * 60 * 60 * 24 * 7;
+            const weekNumber = Math.floor(diff / oneWeek);
+            
+            // Get a rotating task based on week number
+            const rotatingTask = WEEKLY_BONUS_TASKS_ROTATING[weekNumber % WEEKLY_BONUS_TASKS_ROTATING.length];
+            
+            return [...WEEKLY_BONUS_TASKS_FIXED, rotatingTask];
+        }
+
+        const WEEKLY_TASKS = {
+            0: [ // Sunday
+                { id: 1, name: "Clean up kitchen table", value: 1.00 },
+                { id: 2, name: "Go for a walk", value: 1.50 },
+                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+                { id: 4, name: "Do Duolingo", value: 0.75 },
+                { id: 5, name: "Do crossword puzzle", value: 1.00 }
+            ],
+            1: [ // Monday
+                { id: 1, name: "Clean up kitchen table", value: 1.00 },
+                { id: 2, name: "Go for a walk", value: 1.50 },
+                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+                { id: 4, name: "Do Duolingo", value: 0.75 },
+                { id: 5, name: "Do crossword puzzle", value: 1.00 }
+            ],
+            2: [ // Tuesday
+                { id: 1, name: "Clean up kitchen table", value: 1.00 },
+                { id: 2, name: "Go for a walk", value: 1.50 },
+                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+                { id: 4, name: "Do Duolingo", value: 0.75 },
+                { id: 5, name: "Do crossword puzzle", value: 1.00 }
+            ],
+            3: [ // Wednesday
+                { id: 1, name: "Clean up kitchen table", value: 1.00 },
+                { id: 2, name: "Go for a walk", value: 1.50 },
+                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+                { id: 4, name: "Do Duolingo", value: 0.75 },
+                { id: 5, name: "Do crossword puzzle", value: 1.00 }
+            ],
+            4: [ // Thursday
+                { id: 1, name: "Clean up kitchen table", value: 1.00 },
+                { id: 2, name: "Go for a walk", value: 1.50 },
+                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+                { id: 4, name: "Do Duolingo", value: 0.75 },
+                { id: 5, name: "Do crossword puzzle", value: 1.00 }
+            ],
+            5: [ // Friday
+                { id: 1, name: "Clean up kitchen table", value: 1.00 },
+                { id: 2, name: "Go for a walk", value: 1.50 },
+                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+                { id: 4, name: "Do Duolingo", value: 0.75 },
+                { id: 5, name: "Do crossword puzzle", value: 1.00 }
+            ],
+            6: [ // Saturday
+                { id: 1, name: "Clean up kitchen table", value: 1.00 },
+                { id: 2, name: "Go for a walk", value: 1.50 },
+                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
+                { id: 4, name: "Do Duolingo", value: 0.75 },
+                { id: 5, name: "Do crossword puzzle", value: 1.00 }
+            ]
+        };
+</parameter>
+
+        const DEFAULT_TASKS = [
+            { id: 1, name: "Go for a walk", value: 1.00, completed: false },
+            { id: 2, name: "Do daily stretches", value: 0.50, completed: false },
+            { id: 3, name: "Do Duolingo", value: 0.50, completed: false },
+            { id: 4, name: "Check aisle", value: 0.75, completed: false },
+            { id: 5, name: "Bookmark a show", value: 0.25, completed: false },
+            { id: 6, name: "Clean up newspapers", value: 1.00, completed: false },
+            { id: 7, name: "Play tennis/pickleball", value: 2.00, completed: false },
+            { id: 8, name: "Do a crossword puzzle", value: 0.75, completed: false }
+        ];
+
+        const BONUS_TASKS = [
+            { id: 101, name: "Microwave a healthy snack", value: 0.50, recurring: "daily" },
+            { id: 102, name: "Toss 1 office item", value: 1.00, recurring: "daily" }
+        ];
+
+        const QUOTES = [
+            { text: "Success is the product of daily habits—not once-in-a-lifetime transformations.", author: "James Clear" },
+            { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+            { text: "Small progress is still progress.", author: "Unknown" },
+            { text: "You don't have to see the whole staircase, just take the first step.", author: "Martin Luther King Jr." },
+            { text: "A journey of a thousand miles begins with a single step.", author: "Lao Tzu" },
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            { text: "Motivation is what gets you started. Habit is what keeps you going.", author: "Jim Ryun" },
+            { text: "Take care of your body. It's the only place you have to live.", author: "Jim Rohn" },
+            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+            { text: "Every accomplishment starts with the decision to try.", author: "Unknown" },
+            { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
+            { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+            { text: "Health is a state of complete physical, mental and social well-being.", author: "World Health Organization" },
+            { text: "An apple a day keeps the doctor away.", author: "Proverb" },
+            { text: "Take time to do what makes your soul happy.", author: "Unknown" },
+            { text: "Your body keeps score of every choice you make.", author: "Unknown" },
+            { text: "The greatest wealth is health.", author: "Virgil" },
+            { text: "To keep the body in good health is a duty—otherwise we shall not be able to keep our mind strong and clear.", author: "Buddha" },
+            { text: "Fitness is not about being better than someone else; it's about being better than you used to be.", author: "Unknown" }
+        ];
+
+        const DEFAULT_JARS = [
+            { name: "Treats Jar", balance: 0, threshold: 10 },
+            { name: "Fun Jar", balance: 0, threshold: 20 },
+            { name: "General", balance: 0, threshold: null }
+        ];
+
+        // ========== STATE MANAGEMENT ==========
+        let appState = {
+            tasks: [],
+            jars: [],
+            ledger: [],
+            surveys: [],
+            streak: 0,
+            lastCompletionDate: null,
+            currentTask: null,
+            themeMode: localStorage.getItem('themeMode') || 'light',
+            rewardsSkipped: false,
+            skipDate: null
+        };
+
+        // ========== INITIALIZATION ==========
+        function initApp() {
+            loadState();
+            // Default to light mode on first load (older users prefer light)
+            if (!localStorage.getItem('themeMode')) {
+                appState.themeMode = 'light';
+                localStorage.setItem('themeMode', 'light');
+            }
+            applyTheme();
+            setGreeting();
+            renderDoerView();
+            renderManagerView();
+            loadRandomQuote();
+            setupReminder();
+            checkDailyReset();
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('habitpay-state');
+            if (saved) {
+                appState = JSON.parse(saved);
+            } else {
+                appState.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+                appState.jars = JSON.parse(JSON.stringify(DEFAULT_JARS));
+                saveState();
+            }
+            // Load today's tasks from weekly catalog
+            const today = new Date().getDay();
+            const todaysTasks = WEEKLY_TASKS[today];
+            appState.tasks = todaysTasks.map(t => ({ ...t, completed: false }));
+        }
+
+        function saveState() {
+            localStorage.setItem('habitpay-state', JSON.stringify(appState));
+        }
+
+        function checkDailyReset() {
+            const lastReset = localStorage.getItem('lastReset');
+            const today = new Date().toDateString();
+            if (lastReset !== today) {
+                const dayOfWeek = new Date().getDay();
+                const todaysTasks = WEEKLY_TASKS[dayOfWeek];
+                appState.tasks = todaysTasks.map(t => ({ ...t, completed: false }));
+                appState.rewardsSkipped = false;
+                appState.skipDate = null;
+                saveState();
+                localStorage.setItem('lastReset', today);
+            }
+        }
+
+        // ========== THEME MANAGEMENT ==========
+        function toggleTheme() {
+            appState.themeMode = appState.themeMode === 'light' ? 'dark' : 'light';
+            localStorage.setItem('themeMode', appState.themeMode);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            if (appState.themeMode === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.theme-toggle').textContent = '☀️ Light';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('.theme-toggle').textContent = '🌙 Dark';
+            }
+        }
+
+        // ========== GREETING & QUOTES ==========
+        function setGreeting() {
+            const now = new Date();
+            const hours = now.getHours();
+            const greeting = hours < 12 ? "🌅 Good Morning, Stu!" : hours < 18 ? "☀️ Good Afternoon, Stu!" : "🌙 Good Evening, Stu!";
+            document.getElementById('greeting').textContent = greeting;
+            
+            // Display date
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const day = dayNames[now.getDay()];
+            const month = monthNames[now.getMonth()];
+            const date = now.getDate();
+            const year = now.getFullYear();
+            document.getElementById('dateDisplay').textContent = `${day}, ${month} ${date}, ${year}`;
+        }
+
+        function loadRandomQuote() {
+            const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+            document.getElementById('quote-text').textContent = `"${quote.text}"`;
+            document.getElementById('quote-author').textContent = `— ${quote.author}`;
+        }
+</parameter>
+
+        // ========== DOER VIEW ==========
+        function renderDoerView() {
+            updateStreakCounter();
+            updateTodayBalance();
+            renderTasks();
+            renderBonusTasks();
+            renderSurvey();
+            checkBonusUnlock();
+        }
+
+        function renderBonusTasks() {
+            const container = document.getElementById('todayBonusTasksContainer');
+            const todayBonusTasks = getWeeklyBonusTasks();
+            
+            container.innerHTML = '';
+            
+            if (appState.rewardsSkipped) {
+                return;
+            }
+            
+            if (todayBonusTasks.length === 0) {
+                container.innerHTML = '<div class="no-data">No bonus tasks today</div>';
+                return;
+            }
+            
+            todayBonusTasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task-item';
+                
+                let taskHTML = `
+                    <div class="task-info">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-value">+$${task.value.toFixed(2)}</div>
+                    </div>
+                `;
+                
+                if (task.counter) {
+                    const taskData = appState.tasks.find(t => t.id === task.id) || { count: 0, completed: false };
+                    taskHTML += `
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button class="task-button" onclick="incrementTaskCount(${task.id})" style="padding: 12px 16px;">
+                                + Add
+                            </button>
+                            <div style="font-size: 20px; font-weight: 600; min-width: 40px; text-align: center; color: #0284c7;">
+                                ${taskData.count || 0}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const taskData = appState.tasks.find(t => t.id === task.id) || { completed: false };
+                    taskHTML += `
+                        <button class="task-button ${taskData.completed ? 'completed' : ''}" onclick="openTaskDetail(${task.id})">
+                            ${taskData.completed ? '✓ Done' : 'Mark Done'}
+                        </button>
+                    `;
+                }
+                
+                taskDiv.innerHTML = taskHTML;
+                container.appendChild(taskDiv);
+            });
+        }
+
+        function incrementTaskCount(taskId) {
+            let task = appState.tasks.find(t => t.id === taskId);
+            if (!task) {
+                task = { id: taskId, name: '', value: 0, count: 0, completed: false };
+                appState.tasks.push(task);
+            }
+            task.count = (task.count || 0) + 1;
+            
+            // Log the count increase
+            const bonusTask = WEEKLY_BONUS_TASKS[new Date().getDay()]?.find(t => t.id === taskId);
+            if (bonusTask) {
+                appState.ledger.push({
+                    date: new Date().toLocaleString(),
+                    task: `${bonusTask.name} (count: ${task.count})`,
+                    value: bonusTask.value,
+                    notes: ''
+                });
+            }
+            
+            saveState();
+            renderDoerView();
+            renderManagerView();
+        }
+
+        function updateStreakCounter() {
+            const today = new Date().toDateString();
+            const allCompleted = appState.tasks.filter(t => t.recurring === 'daily' && t.id < 100).every(t => t.completed);
+            if (allCompleted && appState.lastCompletionDate !== today) {
+                appState.streak++;
+                appState.lastCompletionDate = today;
+                saveState();
+                checkStreakMilestone();
+            }
+            document.getElementById('streakCounter').textContent = `${appState.streak} days`;
+        }
+
+        function checkStreakMilestone() {
+            const milestones = [7, 14, 30, 60, 100];
+            if (milestones.includes(appState.streak)) {
+                showStreakMilestone(appState.streak);
+            }
+        }
+
+        function showStreakMilestone(days) {
+            const icons = { 7: '🔥', 14: '💪', 30: '⭐', 60: '👑', 100: '🏆' };
+            const messages = { 
+                7: 'Week Warrior', 
+                14: 'Fortnight Fighter', 
+                30: 'Monthly Master', 
+                60: 'Two-Month Champion', 
+                100: 'Century Champion' 
+            };
+            
+            const milestoneDiv = document.createElement('div');
+            milestoneDiv.className = 'streak-milestone';
+            milestoneDiv.style.position = 'fixed';
+            milestoneDiv.style.top = '50%';
+            milestoneDiv.style.left = '50%';
+            milestoneDiv.style.transform = 'translate(-50%, -50%)';
+            milestoneDiv.style.zIndex = '9998';
+            milestoneDiv.style.maxWidth = '400px';
+            milestoneDiv.innerHTML = `
+                <div class="milestone-icon">${icons[days]}</div>
+                <div class="milestone-text">${messages[days]}</div>
+                <div style="font-size: 18px; opacity: 0.95;">🎉 ${days} Day Streak! 🎉</div>
+            `;
+            document.body.appendChild(milestoneDiv);
+            setTimeout(() => milestoneDiv.remove(), 4000);
+        }
+
+        function updateTodayBalance() {
+            if (appState.rewardsSkipped) {
+                document.getElementById('todayBalance').textContent = `$0.00`;
+                return;
+            }
+            const todayCompleted = appState.tasks.filter(t => t.completed).reduce((sum, t) => sum + t.value, 0);
+            document.getElementById('todayBalance').textContent = `$${todayCompleted.toFixed(2)}`;
+        }
+
+        function renderTasks() {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+            
+            if (appState.rewardsSkipped) {
+                container.innerHTML = '<div style="text-align: center; background-color: #f59e0b; color: white; padding: 20px; border-radius: 8px; margin: 20px; font-size: 20px; font-weight: 600;">⏸️ Rewards skipped today. No points will be earned.</div>';
+                return;
+            }
+            
+            appState.tasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task-item';
+                taskDiv.innerHTML = `
+                    <div class="task-info">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-value">+$${task.value.toFixed(2)}</div>
+                    </div>
+                    <button class="task-button ${task.completed ? 'completed' : ''}" onclick="openTaskDetail(${task.id})" ${appState.rewardsSkipped ? 'disabled' : ''}>
+                        ${task.completed ? '✓ Done' : 'Mark Done'}
+                    </button>
+                `;
+                container.appendChild(taskDiv);
+            });
+        }
+
+        function skipRewardsDay() {
+            if (confirm('Are you sure you want to skip rewards today? No points will be earned.')) {
+                appState.rewardsSkipped = true;
+                appState.skipDate = new Date().toDateString();
+                saveState();
+                renderDoerView();
+            }
+        }
+
+        function openTaskDetail(taskId) {
+            appState.currentTask = appState.tasks.find(t => t.id === taskId);
+            document.getElementById('taskDetailTitle').textContent = appState.currentTask.name;
+            document.getElementById('taskPhoto').value = '';
+            document.getElementById('taskNotes').value = '';
+            document.getElementById('photoPreview').innerHTML = '';
+            openModal('taskDetailModal');
+        }
+
+        function previewPhoto() {
+            const file = document.getElementById('taskPhoto').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" style="max-width: 100%; border-radius: 6px; margin-top: 10px;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function completeTask() {
+            if (appState.currentTask && !appState.rewardsSkipped) {
+                appState.currentTask.completed = true;
+                appState.ledger.push({
+                    date: new Date().toLocaleString(),
+                    task: appState.currentTask.name,
+                    value: appState.currentTask.value,
+                    notes: document.getElementById('taskNotes').value
+                });
+                saveState();
+                
+                // Trigger completion animation
+                showCompletionAnimation();
+                
+                renderDoerView();
+                renderManagerView();
+                closeModal('taskDetailModal');
+            }
+        }
+
+        function showCompletionAnimation() {
+            const animDiv = document.createElement('div');
+            animDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 80px;
+                z-index: 9999;
+                pointer-events: none;
+                animation: popAndFade 0.8s ease-out;
+            `;
+            animDiv.textContent = '✅';
+            document.body.appendChild(animDiv);
+            setTimeout(() => animDiv.remove(), 800);
+        }
+
+        @keyframes popAndFade {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        function checkBonusUnlock() {
+            const bonusSection = document.getElementById('bonusSection');
+            
+            if (appState.rewardsSkipped) {
+                bonusSection.innerHTML = '';
+                return;
+            }
+            
+            const allCompleted = appState.tasks.every(t => t.completed);
+            
+            if (allCompleted && !appState.tasks.some(t => t.id > 100)) {
+                bonusSection.innerHTML = `
+                    <div class="achievement-unlock">
+                        <div class="achievement-title">🏆 Achievement Unlocked!</div>
+                        <div class="achievement-subtitle">Perfect Day Bonus</div>
+                        <p style="font-size: 20px; margin-bottom: 20px;">You completed all tasks today! Pick your bonus reward:</p>
+                        <div style="margin-top: 15px;">
+                            ${BONUS_TASKS.map(bonus => `
+                                <button onclick="addBonusTask(${bonus.id}, '${bonus.name}', ${bonus.value})" 
+                                    style="width: 100%; margin-bottom: 10px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 18px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; transition: all 0.3s ease;">
+                                    ✨ ${bonus.name} (+$${bonus.value.toFixed(2)})
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                bonusSection.innerHTML = '';
+            }
+        }
+
+        function addBonusTask(id, name, value) {
+            appState.tasks.push({ id, name, value, recurring: 'daily', completed: false });
+            
+            // Show earned badge
+            const badgeDiv = document.createElement('div');
+            badgeDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                animation: slideInRight 0.5s ease-out;
+            `;
+            badgeDiv.className = 'badge-earned';
+            badgeDiv.textContent = `🎁 Bonus Added: ${name}`;
+            document.body.appendChild(badgeDiv);
+            setTimeout(() => badgeDiv.remove(), 3000);
+            
+            saveState();
+            renderDoerView();
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        function renderSurvey() {
+            const container = document.getElementById('surveySection');
+            const today = new Date().toDateString();
+            const todaySurvey = appState.surveys.find(s => s.date.includes(today));
+            
+            if (todaySurvey) {
+                container.innerHTML = `<div style="text-align: center; color: #10b981; font-size: 20px; margin-top: 20px; padding: 15px; background-color: #111827; border-radius: 6px;">✓ Survey completed today! Earned +$0.10</div>`;
+            } else {
+                const dayOfWeek = new Date().getDay();
+                const isWeekly = dayOfWeek === 0;
+                
+                container.innerHTML = `
+                    <div class="survey-container">
+                        <div class="survey-title">📝 How satisfied are you with HabitRewards today?</div>
+                        <div class="rating-options">
+                            ${[1, 2, 3, 4, 5].map(i => `
+                                <button class="rating-btn" onclick="selectRating(${i})" data-rating="${i}">
+                                    ${i}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <p style="font-size: 18px; margin-bottom: 10px;">Favorite task today:</p>
+                        <select id="favTask" style="font-size: 18px;">
+                            <option value="">-- Select --</option>
+                            ${appState.tasks.filter(t => t.id < 100).map(t => `<option value="${t.name}">${t.name}</option>`).join('')}
+                        </select>
+                        <p style="font-size: 18px; margin-top: 15px; margin-bottom: 10px;">Least favorite task today:</p>
+                        <select id="leastTask" style="font-size: 18px;">
+                            <option value="">-- Select --</option>
+                            ${appState.tasks.filter(t => t.id < 100).map(t => `<option value="${t.name}">${t.name}</option>`).join('')}
+                        </select>
+                        ${isWeekly ? `
+                            <p style="font-size: 18px; margin-top: 15px; margin-bottom: 10px;">What could improve your experience?</p>
+                            <textarea id="improvementText" placeholder="Your feedback..." style="height: 80px; font-size: 18px;"></textarea>
+                        ` : ''}
+                        <button onclick="submitSurvey(${isWeekly})" style="width: 100%; background-color: #10b981; font-size: 20px; margin-top: 15px;">Submit Survey</button>
+                        <button onclick="skipSurvey()" style="width: 100%; background-color: #6b7280; font-size: 20px; margin-top: 10px;">Skip</button>
+                    </div>
+                `;
+            }
+        }
+
+        let selectedRating = 0;
+        function selectRating(rating) {
+            selectedRating = rating;
+            document.querySelectorAll('.rating-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`[data-rating="${rating}"]`).classList.add('selected');
+        }
+
+        function submitSurvey(isWeekly) {
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+            const survey = {
+                date: new Date().toLocaleString(),
+                rating: selectedRating,
+                favorite: document.getElementById('favTask').value,
+                leastFavorite: document.getElementById('leastTask').value,
+                improvement: isWeekly ? document.getElementById('improvementText').value : ''
+            };
+            appState.surveys.push(survey);
+            const reward = isWeekly ? 0.25 : 0.10;
+            appState.ledger.push({
+                date: new Date().toLocaleString(),
+                task: `Survey (${isWeekly ? 'Weekly' : 'Daily'})`,
+                value: reward,
+                notes: ''
+            });
+            appState.jars[2].balance += reward;
+            selectedRating = 0;
+            saveState();
+            renderDoerView();
+            renderManagerView();
+        }
+
+        function skipSurvey() {
+            renderDoerView();
+        }
+
+        function proposeTask() {
+            const name = document.getElementById('newTaskName').value.trim();
+            const value = parseFloat(document.getElementById('newTaskValue').value);
+            const recurring = document.getElementById('newTaskRecurring').value;
+            
+            if (!name || isNaN(value) || value < 0) {
+                alert('Please fill in all fields correctly');
+                return;
+            }
+            
+            const newId = Math.max(...appState.tasks.map(t => t.id)) + 1;
+            appState.tasks.push({ id: newId, name, value, recurring, completed: false });
+            saveState();
+            
+            document.getElementById('newTaskName').value = '';
+            document.getElementById('newTaskValue').value = '';
+            closeModal('proposeModal');
+            renderDoerView();
+            renderManagerView();
+        }
+
+        // ========== MANAGER VIEW ==========
+        function renderManagerView() {
+            updateManagerTotals();
+            renderApprovals();
+            renderJars();
+            renderSurveyResponses();
+        }
+
+        function updateManagerTotals() {
+            const todayEntries = appState.ledger.filter(entry => entry.date.includes(new Date().toDateString()));
+            const todayTotal = todayEntries.reduce((sum, e) => sum + e.value, 0);
+            document.getElementById('managerTodayTotal').textContent = `$${todayTotal.toFixed(2)}`;
+            
+            const totalBalance = appState.jars.reduce((sum, j) => sum + j.balance, 0);
+            document.getElementById('managerTotalBalance').textContent = `$${totalBalance.toFixed(2)}`;
+        }
+
+        function renderApprovals() {
+            const container = document.getElementById('approvalsContainer');
+            const todayEntries = appState.ledger.filter(entry => entry.date.includes(new Date().toDateString()));
+            
+            if (todayEntries.length === 0) {
+                container.innerHTML = '<div class="no-data">No pending approvals today</div>';
+                return;
+            }
+            
+            container.innerHTML = '<div class="approvals-batch"><div style="font-size: 20px; margin-bottom: 20px; color: #38bdf8;">All tasks auto-approved. Adjust percentages if needed:</div>' +
+                todayEntries.map((entry, idx) => `
+                    <div class="approval-item">
+                        <div>
+                            <div style="font-size: 20px; font-weight: 600;">${entry.task}</div>
+                            <div style="font-size: 16px; color: #9ca3af;">$${entry.value.toFixed(2)}</div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="100" value="100" onchange="updateEntryApproval(${idx}, this.value)">
+                            <div style="text-align: center; color: #fbbf24; font-size: 14px;" id="approval-${idx}">100%</div>
+                        </div>
+                    </div>
+                `).join('') + '</div>';
+        }
+
+        function updateEntryApproval(idx, percentage) {
+            const entry = appState.ledger.find((e, i) => i === idx);
+            const originalValue = entry.value;
+            entry.value = (originalValue * percentage) / 100;
+            document.getElementById(`approval-${idx}`).textContent = `${percentage}%`;
+            saveState();
+            updateManagerTotals();
+        }
+
+        function renderJars() {
+            const container = document.getElementById('jarsContainer');
+            container.innerHTML = appState.jars.map(jar => `
+                <div class="jar-item">
+                    <div class="jar-name">${jar.name}</div>
+                    <div class="jar-balance">$${jar.balance.toFixed(2)}</div>
+                    ${jar.threshold ? `<div style="font-size: 16px; color: #9ca3af;">Threshold: $${jar.threshold}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderSurveyResponses() {
+            const container = document.getElementById('surveysContainer');
+            if (appState.surveys.length === 0) {
+                container.innerHTML = '<div class="no-data">No surveys yet</div>';
+                return;
+            }
+            container.innerHTML = appState.surveys.map((survey, idx) => `
+                <div class="survey-response">
+                    <div class="response-date">${survey.date}</div>
+                    <div class="response-rating">Rating: ${survey.rating}/5 ⭐</div>
+                    <div class="response-text"><strong>Favorite:</strong> ${survey.favorite || '(not selected)'}</div>
+                    <div class="response-text"><strong>Least Favorite:</strong> ${survey.leastFavorite || '(not selected)'}</div>
+                    ${survey.improvement ? `<div class="response-text"><strong>Feedback:</strong> ${survey.improvement}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function exportSurveys() {
+            if (appState.surveys.length === 0) {
+                alert('No surveys to export');
+                return;
+            }
+            
+            let csv = 'Date,Rating,Favorite Task,Least Favorite,Feedback\n';
+            appState.surveys.forEach(s => {
+                csv += `"${s.date}",${s.rating},"${s.favorite}","${s.leastFavorite}","${s.improvement}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'habitrewards-surveys.csv';
+            a.click();
+        }
+
+        function triggerPayout() {
+            const jar = document.getElementById('payoutJar').value;
+            if (!jar) {
+                alert('Please select a jar');
+                return;
+            }
+            alert(`Mock payout triggered for ${jar}. In production, this connects to PayPal Payouts API.`);
+            closeModal('payoutModal');
+        }
+
+        function redeemReward(type, amount) {
+            let message = '';
+            let emoji = '';
+            
+            if (type === 'treat') {
+                message = '🍦 Treat redeemed! Enjoy your reward!';
+                emoji = '🍦';
+            } else if (type === 'fun') {
+                message = '🎬 Fun activity reward claimed! Have an amazing time!';
+                emoji = '🎬';
+            } else if (type === 'save') {
+                message = '🏦 Wise choice! Your rewards are saved.';
+                emoji = '🏦';
+            }
+            
+            // Show celebration animation
+            const celebDiv = document.createElement('div');
+            celebDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 80px;
+                z-index: 9999;
+                pointer-events: none;
+                animation: popAndFade 1.2s ease-out;
+            `;
+            celebDiv.textContent = emoji;
+            document.body.appendChild(celebDiv);
+            
+            alert(message);
+            closeModal('redeemModal');
+        }
+
+        // ========== UTILITIES ==========
+        function switchView(view) {
+            // Removed view switching - now separate logins only
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        }
+
+        function setupReminder() {
+            const hours = 9;
+            const minutes = 0;
+            const now = new Date();
+            let nextRun = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
+            if (now > nextRun) {
+                nextRun.setDate(nextRun.getDate() + 1);
+            }
+            const timeUntil = nextRun - now;
+            setTimeout(() => {
+                alert('🌅 Good morning Stu! Time to check your daily habits on HabitRewards!');
+                setupReminder();
+            }, timeUntil);
+        }
+
+        // ========== ON LOAD ==========
+        window.addEventListener('load', initApp);
+        window.addEventListener('beforeunload', saveState);
+    </script>
+</body>
+</html>
