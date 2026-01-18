@@ -228,6 +228,7 @@
     <div class="container">
         
         <div style="text-align: center; margin-bottom: 20px;">
+            <h2 id="greeting" style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: var(--text);"></h2>
             <div class="streak-badge">
                 <span id="streakDays">0</span> Day Streak 🔥
             </div>
@@ -237,12 +238,11 @@
         <div class="balance-hero">
             <div class="hero-emoji hero-1">💰</div>
             <div class="hero-emoji hero-2">💸</div>
-            <div class="balance-title">Today's Balance</div>
-            <div class="balance-amount" id="todayBalance">$0.00</div>
+            <div class="balance-title">Today's Points</div>
+            <div class="balance-amount" id="todayBalance">0 pts</div>
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="openRedeem()" style="flex: 1; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); color: white; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer;">🎁 Redeem</button>
-                <button onclick="openCashOut()" style="flex: 1; background: white; color: var(--primary); border: none; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">🏦 Cash Out</button>
+                <button onclick="openRedeem()" style="flex: 1; background: white; color: var(--primary); border: none; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">🎁 Redeem / Cash Out</button>
             </div>
         </div>
 
@@ -253,10 +253,11 @@
         
         <button class="btn btn-ghost" onclick="openPropose()" style="margin-top: 20px;">+ Propose New Task</button>
 
-        <div id="bonusSection" style="display: none; margin-top: 40px;">
+        <div id="bonusSection" style="margin-top: 40px;">
+            <div class="section-title">Weekly Tasks</div>
             <div class="card" style="background: linear-gradient(135deg, #a855f7, #ec4899); border: none; color: white; text-align: center;">
-                <h2 style="font-size: 24px; margin-bottom: 10px;">🎉 Perfect Day!</h2>
-                <p>You smashed all your goals! Pick a bonus:</p>
+                <h2 style="font-size: 24px; margin-bottom: 10px;">🏆 Weekly Challenges</h2>
+                <p>Complete these recurring tasks + this week's bonus!</p>
                 <div id="bonusOptions" style="margin-top: 20px; display: grid; gap: 10px;"></div>
             </div>
         </div>
@@ -296,27 +297,27 @@
         </div>
     </div>
 
-    <!-- CASH OUT MODAL -->
-    <div id="cashOutModal" class="modal">
-        <div class="modal-box" style="text-align: center;">
-            <span class="close-modal" onclick="closeModal('cashOutModal')">&times;</span>
-            <div style="font-size: 50px; margin-bottom: 10px;">🏦</div>
-            <h2 style="margin-bottom: 10px;">Cash Out</h2>
-            <p style="margin-bottom: 20px; color: var(--text-light);">Move your balance to your savings or get paid.</p>
-            <div style="font-size: 32px; font-weight: 800; color: var(--primary); margin-bottom: 20px;" id="cashOutAmount">$0.00</div>
-            <button class="btn btn-primary" style="background: var(--text); margin-bottom: 10px;" onclick="processCashOut('Save')">🐷 Save in Jar</button>
-            <button class="btn btn-success" onclick="processCashOut('Pay')">💸 Pay Me Now</button>
-        </div>
-    </div>
-
     <!-- REDEEM MODAL -->
     <div id="redeemModal" class="modal">
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal('redeemModal')">&times;</span>
-            <h2>Rewards</h2>
-            <div style="display: grid; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-accent" onclick="redeem('Ice Cream', 5)">🍦 Ice Cream ($5.00)</button>
-                <button class="btn btn-purple" onclick="redeem('Movie Night', 10)">🎬 Movie Night ($10.00)</button>
+            <h2 style="margin-bottom: 20px;">Redeem / Cash Out</h2>
+            
+            <div style="background: var(--bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                 <p style="margin-bottom: 5px; font-weight: 700;">Current Balance</p>
+                 <div style="font-size: 24px; color: var(--success); font-weight: 800;" id="redeemModalBalance">0 pts</div>
+                 <div style="font-size: 14px; opacity: 0.7;" id="redeemModalDollars">$0.00</div>
+                 
+                 <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-primary" style="flex: 1; background: var(--text); font-size: 14px;" onclick="processCashOut('Save')">🐷 Save in Jar</button>
+                    <button class="btn btn-success" style="flex: 1; font-size: 14px;" onclick="processCashOut('Pay')">💸 Payout</button>
+                 </div>
+            </div>
+
+            <h3 style="font-size: 16px; margin-bottom: 10px; opacity: 0.7;">Redeem for Goodies</h3>
+            <div style="display: grid; gap: 10px;">
+                <button class="btn btn-accent" onclick="redeem('Ice Cream', 5000)">🍦 Ice Cream (5,000 pts)</button>
+                <button class="btn btn-purple" onclick="redeem('Movie Night', 10000)">🎬 Movie Night (10,000 pts)</button>
                 <button class="btn btn-ghost" onclick="redeem('Custom', 0)">✨ Custom Reward</button>
             </div>
         </div>
@@ -335,21 +336,72 @@
 
     <script>
         // ========== CONFIG & STATE ==========
-        const WEEKLY_TASKS = {
-            default: [
-                { id: 1, name: "Clean up kitchen table", value: 1.00 },
-                { id: 2, name: "Go for a walk", value: 1.50 },
-                { id: 3, name: "Play tennis / pickleball", value: 2.50 },
-                { id: 4, name: "Do Duolingo", value: 0.75 },
-                { id: 5, name: "Do crossword puzzle", value: 1.00 },
-                { id: 6, name: "Charge devices overnight (phone, watch, Airpods, hearing aids)", value: 0.50 }
-            ]
-        };
-
-        const BONUS_OPTIONS = [
-             { id: 101, name: "Microwave a healthy snack", value: 0.50 },
-             { id: 102, name: "Toss 1 office item", value: 1.00 }
+        // Points system: 100 points = $0.10 | Daily max: 10,000 points ($10) - weekly tasks exempt
+        const DAILY_TASKS = [
+            { id: 1, name: "🧹 Clean up kitchen table", value: 50 },
+            { id: 2, name: "🚶 Go for a walk", value: 150 },
+            { id: 3, name: "🎾 Play tennis / pickleball", value: 50 },
+            { id: 4, name: "🦉 Do Duolingo", value: 75 },
+            { id: 5, name: "📝 Do crossword puzzle", value: 100 },
+            { id: 6, name: "🔋 Charge devices overnight (phone, watch, Airpods, hearing aids)", value: 20 },
+            { id: 7, name: "📬 Check and sort the mail", value: 20 }
         ];
+
+        const DAILY_MAX_POINTS = 10000; // $10 daily cap for daily tasks
+
+        // Permanent weekly bonus tasks (always shown) - exempt from daily cap
+        const PERMANENT_WEEKLY_BONUSES = [
+            { id: 101, name: "🎾 Play tennis / pickleball 3x this week", value: 100, isCounter: true, target: 3, counterId: 'tennis_weekly', isWeekly: true },
+            { id: 102, name: "📦 Get rid of 3 items from office", value: 300, isWeekly: true },
+            { id: 103, name: "🗑️ Take out the trash", value: 50, isWeekly: true },
+            { id: 104, name: "🚗 Clean out the car", value: 200, isWeekly: true },
+            { id: 105, name: "💊 Take vitamins every day this week", value: 150, isWeekly: true }
+        ];
+
+        // Rotating weekly bonus tasks (1 selected per week) - exempt from daily cap
+        const ROTATING_WEEKLY_BONUSES = [
+            { id: 201, name: "💿 Sell your coins or vinyls", value: 1000, isWeekly: true },
+            { id: 202, name: "📺 Find a new show or movie to watch on Netflix", value: 400, isWeekly: true },
+            { id: 203, name: "📺 Find a new show or movie to watch on Amazon Video", value: 400, isWeekly: true },
+            { id: 204, name: "📺 Find a new show or movie to watch on Apple TV", value: 400, isWeekly: true },
+            { id: 205, name: "🍿 Use the microwave", value: 100, isWeekly: true },
+            { id: 206, name: "🛒 Check aisle for grocery deals", value: 150, isWeekly: true },
+            { id: 207, name: "💑 Take your wife out to lunch or dinner", value: 1500, isWeekly: true },
+            { id: 208, name: "🍽️ Try a new restaurant", value: 1000, isWeekly: true },
+            { id: 209, name: "💌 Tell one of your kids you are thinking of them", value: 600, isWeekly: true },
+            { id: 210, name: "❤️ Do something nice for your wife", value: 1000, isWeekly: true },
+            { id: 211, name: "🛍️ Buy a new item from the grocery store", value: 150, isWeekly: true },
+            { id: 212, name: "🍔 Ask your tennis friends out to lunch", value: 1000, isWeekly: true },
+            { id: 213, name: "👕 Donate 5 items of clothing that you no longer wear", value: 500, isWeekly: true },
+            { id: 214, name: "👟 Donate a pair of sneakers", value: 500, isWeekly: true },
+            { id: 215, name: "🗑️ Throw away 5 items you no longer need", value: 150, isWeekly: true },
+            { id: 216, name: "🤖 Use ChatGPT to solve a problem (chat.openai.com)", value: 500, isWeekly: true },
+            { id: 217, name: "🛏️ Make the bed every day this week", value: 300, isWeekly: true },
+            { id: 218, name: "🧽 Clean a bathroom", value: 300, isWeekly: true },
+            { id: 219, name: "📞 Call a friend or family member", value: 800, isWeekly: true }
+        ];
+
+        // Get the current week number of the year
+        function getWeekNumber() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 1);
+            const diff = now - start;
+            const oneWeek = 604800000; // milliseconds in a week
+            return Math.floor(diff / oneWeek);
+        }
+
+        // Get the rotating bonus for this week
+        function getRotatingBonusForWeek() {
+            const weekNum = getWeekNumber();
+            const index = weekNum % ROTATING_WEEKLY_BONUSES.length;
+            return ROTATING_WEEKLY_BONUSES[index];
+        }
+
+        // Get all weekly bonus options (permanent + this week's rotating)
+        function getWeeklyBonuses() {
+            const rotating = getRotatingBonusForWeek();
+            return [...PERMANENT_WEEKLY_BONUSES, rotating];
+        }
 
         let state = {
             tasks: [],
@@ -366,6 +418,7 @@
             loadState();
             applyTheme();
             checkNewDay();
+            updateGreeting();
             render();
         }
 
@@ -374,8 +427,19 @@
             if (saved) {
                 state = JSON.parse(saved);
             } else {
-                state.tasks = JSON.parse(JSON.stringify(WEEKLY_TASKS.default));
+                state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
             }
+            // Load weekly counters
+            const weekNum = getWeekNumber();
+            const savedWeek = localStorage.getItem('hr_week');
+            if (savedWeek !== String(weekNum)) {
+                // New week - reset weekly counters
+                state.weeklyCounters = {};
+                state.weeklyBonusesCompleted = [];
+                localStorage.setItem('hr_week', String(weekNum));
+            }
+            if (!state.weeklyCounters) state.weeklyCounters = {};
+            if (!state.weeklyBonusesCompleted) state.weeklyBonusesCompleted = [];
         }
 
         function saveState() {
@@ -386,15 +450,28 @@
             const today = new Date().toDateString();
             const lastDate = localStorage.getItem('hr_date');
             if (lastDate !== today) {
-                state.tasks = JSON.parse(JSON.stringify(WEEKLY_TASKS.default));
+                state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
                 localStorage.setItem('hr_date', today);
                 saveState();
             }
         }
 
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting;
+            if (hour < 12) {
+                greeting = "Good Morning, Stu! ☀️";
+            } else if (hour < 17) {
+                greeting = "Good Afternoon, Stu! 🌤️";
+            } else {
+                greeting = "Good Evening, Stu! 🌙";
+            }
+            document.getElementById('greeting').textContent = greeting;
+        }
+
         // ========== RENDER ==========
         function render() {
-            document.getElementById('todayBalance').textContent = `$${state.balance.toFixed(2)}`;
+            document.getElementById('todayBalance').textContent = `${Math.floor(state.balance)} pts`;
             document.getElementById('streakDays').textContent = state.streak;
             
             // Date
@@ -414,7 +491,7 @@
                 div.innerHTML = `
                     <div class="task-content">
                         <div class="task-name" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.name}</div>
-                        <div class="task-reward">+$${task.value.toFixed(2)}</div>
+                        <div class="task-reward">+${task.value} pts</div>
                     </div>
                     <button class="task-check ${task.completed ? 'completed' : ''}" onclick="onTaskClick(${task.id})">
                         ${task.completed ? '✓' : ''}
@@ -423,24 +500,37 @@
                 container.appendChild(div);
             });
 
-            // Bonus unlock
+            // Weekly bonuses - always visible
             const bonusSection = document.getElementById('bonusSection');
-            if (allDone && state.tasks.length > 0) {
-                bonusSection.style.display = 'block';
-                const bonusContainer = document.getElementById('bonusOptions');
-                if (bonusContainer.children.length === 0) {
-                   BONUS_OPTIONS.forEach(b => {
-                       const btn = document.createElement('button');
-                       btn.className = 'btn btn-purple';
-                       btn.style.marginTop = '10px';
-                       btn.textContent = `✨ ${b.name} (+$${b.value})`;
-                       btn.onclick = () => addBonus(b);
-                       bonusContainer.appendChild(btn);
-                   });
+            bonusSection.style.display = 'block';
+            const bonusContainer = document.getElementById('bonusOptions');
+            bonusContainer.innerHTML = ''; // Clear and rebuild
+            
+            const weeklyBonuses = getWeeklyBonuses();
+            weeklyBonuses.forEach(b => {
+                const isCompleted = state.weeklyBonusesCompleted.includes(b.id);
+                const btn = document.createElement('button');
+                btn.className = 'btn ' + (isCompleted ? 'btn-ghost' : 'btn-purple');
+                btn.style.marginTop = '10px';
+                
+                if (b.isCounter) {
+                    const count = state.weeklyCounters[b.counterId] || 0;
+                    const completed = count >= b.target;
+                    btn.textContent = `${completed ? '✅' : '🎾'} ${b.name} (${count}/${b.target}) ${completed ? '' : '+' + b.value + ' pts'}`;
+                    btn.className = 'btn ' + (completed ? 'btn-ghost' : 'btn-accent');
+                    btn.disabled = completed;
+                    if (!completed) {
+                        btn.onclick = () => incrementCounter(b);
+                    }
+                } else {
+                    btn.textContent = `${isCompleted ? '✅' : '✨'} ${b.name} ${isCompleted ? '(Done!)' : '(+' + b.value + ' pts)'}`;
+                    btn.disabled = isCompleted;
+                    if (!isCompleted) {
+                        btn.onclick = () => completeWeeklyBonus(b);
+                    }
                 }
-            } else {
-                bonusSection.style.display = 'none';
-            }
+                bonusContainer.appendChild(btn);
+            });
 
             // Survey unlock (if at least one task done)
             const tasksDone = state.tasks.filter(t => t.completed).length;
@@ -496,6 +586,32 @@
             }
         }
 
+        function completeWeeklyBonus(bonus) {
+            if (!state.weeklyBonusesCompleted.includes(bonus.id)) {
+                state.weeklyBonusesCompleted.push(bonus.id);
+                state.balance += bonus.value;
+                saveState();
+                render();
+                triggerConfetti();
+            }
+        }
+
+        function incrementCounter(bonus) {
+            if (!state.weeklyCounters[bonus.counterId]) {
+                state.weeklyCounters[bonus.counterId] = 0;
+            }
+            state.weeklyCounters[bonus.counterId]++;
+            
+            // Check if target reached
+            if (state.weeklyCounters[bonus.counterId] >= bonus.target) {
+                state.balance += bonus.value;
+                triggerConfetti();
+            }
+            
+            saveState();
+            render();
+        }
+
         function checkStreak() {
             const today = new Date().toDateString();
             if (state.lastStreakDate !== today) {
@@ -515,16 +631,22 @@
 
         // ========== MONEY ==========
         function openRedeem() {
+            const pts = Math.floor(state.balance);
+            const dollars = (pts / 1000).toFixed(2);
+            document.getElementById('redeemModalBalance').textContent = `${pts} pts`;
+            document.getElementById('redeemModalDollars').textContent = `$${dollars}`;
             openModal('redeemModal');
         }
 
         function redeem(item, cost) {
             if (state.balance >= cost) {
                 if (cost > 0) {
-                    if(confirm(`Spend $${cost} for ${item}?`)) {
+                    const dollars = (cost / 1000).toFixed(2);
+                    if(confirm(`Spend ${cost.toLocaleString()} pts ($${dollars}) for ${item}?`)) {
                         state.balance -= cost;
                         saveState();
                         render();
+                        triggerConfetti();
                         alert(`Redeemed ${item}!`);
                     }
                 } else {
@@ -532,25 +654,23 @@
                 }
                 closeModal('redeemModal');
             } else {
-                alert("Not enough balance!");
+                alert("Not enough points!");
             }
-        }
-
-        function openCashOut() {
-            document.getElementById('cashOutAmount').textContent = `$${state.balance.toFixed(2)}`;
-            openModal('cashOutModal');
         }
 
         function processCashOut(type) {
             if (state.balance <= 0) {
-                alert("Nothing to cash out!");
+                alert("Nothing to withdraw!");
                 return;
             }
-            alert(`Success! $${state.balance.toFixed(2)} has been ${type === 'Save' ? 'moved to your Savings Jar' : 'sent to you'}.`);
+            const pts = Math.floor(state.balance);
+            const dollars = (pts / 1000).toFixed(2);
+            alert(`Success! ${pts} pts ($${dollars}) has been ${type === 'Save' ? 'moved to your Savings Jar' : 'sent to you'}.`);
             state.balance = 0;
             saveState();
             render();
-            closeModal('cashOutModal');
+            triggerConfetti();
+            closeModal('redeemModal');
         }
 
         // ========== SURVEY ==========
@@ -563,8 +683,8 @@
 
         function submitSurvey() {
              if (!currentRating) { alert('Please tap a rating emoji!'); return; }
-             state.balance += 0.10;
-             alert('Thanks for the feedback! +$0.10');
+             state.balance += 10;  // 10 pts = $0.01
+             alert('Thanks for the feedback! +10 pts');
              document.getElementById('surveySection').style.display = 'none'; // Hide after submit
              saveState();
              render();
