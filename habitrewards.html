@@ -250,8 +250,23 @@
         <div id="tasksContainer">
             <!-- Tasks injected here -->
         </div>
+
+        <!-- Daily Bonus Task -->
+        <div id="dailyBonusSection" style="margin-top: 25px;">
+            <div class="card" style="background: linear-gradient(135deg, #f59e0b, #f97316); border: none; color: white; padding: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 12px; text-transform: uppercase; opacity: 0.9; font-weight: 700;">⭐ Today's Bonus</div>
+                        <div id="dailyBonusName" style="font-size: 18px; font-weight: 800; margin-top: 5px;">Loading...</div>
+                        <div id="dailyBonusReward" style="font-size: 14px; opacity: 0.9; margin-top: 3px;">+100 pts</div>
+                    </div>
+                    <button id="dailyBonusBtn" onclick="completeDailyBonus()" style="width: 52px; height: 52px; border-radius: 16px; background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.2s;">
+                    </button>
+                </div>
+            </div>
+        </div>
         
-        <button class="btn btn-ghost" onclick="openPropose()" style="margin-top: 20px;">+ Propose New Task</button>
+        <button class="btn btn-ghost" onclick="openPropose()" style="margin-top: 20px;">+ Suggest a Task</button>
 
         <div id="bonusSection" style="margin-top: 40px;">
             <div class="section-title">Weekly Tasks</div>
@@ -301,19 +316,18 @@
     <div id="cashOutModal" class="modal">
         <div class="modal-box" style="text-align: center;">
             <span class="close-modal" onclick="closeModal('cashOutModal')">&times;</span>
-            <div style="font-size: 50px; margin-bottom: 10px;">🏦</div>
-            <h2 style="margin-bottom: 20px;">Cash Out</h2>
+            <div style="font-size: 50px; margin-bottom: 10px;">💸</div>
+            <h2 style="margin-bottom: 10px;">Request Payout</h2>
+            <p style="color: var(--text-light); margin-bottom: 20px;">Request your earnings via Zelle!</p>
             
             <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
                  <p style="margin-bottom: 5px; font-weight: 700;">Your Balance</p>
-                 <div style="font-size: 32px; color: var(--success); font-weight: 800;" id="cashOutBalance">0 pts</div>
-                 <div style="font-size: 16px; opacity: 0.7;" id="cashOutDollars">$0.00</div>
+                 <div style="font-size: 32px; color: var(--primary); font-weight: 800;" id="cashOutBalance">0 pts</div>
+                 <div style="font-size: 18px; color: var(--primary); font-weight: 700;" id="cashOutDollars">$0.00</div>
             </div>
             
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" style="flex: 1; background: var(--text);" onclick="processCashOut('Save')'">🐷 Save in Jar</button>
-                <button class="btn btn-success" style="flex: 1;" onclick="processCashOut('Pay')">💸 Get Paid</button>
-            </div>
+            <button class="btn btn-success" onclick="requestPayout()">💸 Request Payout</button>
+            <p style="margin-top: 15px; font-size: 13px; color: var(--text-light);">You'll receive payment via Zelle shortly after requesting.</p>
         </div>
     </div>
 
@@ -339,12 +353,19 @@
             { id: 4, name: "📝 Do crossword puzzle", value: 50 }
         ];
 
+        // Daily bonus tasks (1 rotates each day) - fun extras!
+        const DAILY_BONUSES = [
+            { id: 101, name: "📸 Take a photo of something interesting", value: 100 },
+            { id: 102, name: "🧹 Organize one drawer or shelf", value: 100 },
+            { id: 103, name: "🌳 Spend 10 minutes outside", value: 100 },
+            { id: 104, name: "🎵 Listen to a new song", value: 100 },
+            { id: 105, name: "📞 Call or text a friend", value: 100 }
+        ];
+
         // BACKLOG - Tasks to potentially add later:
-        // { id: 101, name: "🧹 Clean up kitchen table", value: 50 },
-        // { id: 102, name: "🔋 Charge devices overnight (phone, watch, Airpods, hearing aids)", value: 20 },
-        // { id: 103, name: "📬 Check and sort the mail", value: 20 },
-        // { id: 104, name: "🗑️ Take out the trash", value: 50, isWeekly: true },
-        // { id: 105, name: "💊 Take vitamins every day this week", value: 150, isWeekly: true },
+        // { id: 201, name: "🧹 Clean up kitchen table", value: 50 },
+        // { id: 202, name: "🔋 Charge devices overnight", value: 20 },
+        // { id: 203, name: "📬 Check and sort the mail", value: 20 },
 
         const DAILY_MAX_POINTS = 10000; // $10 daily cap for daily tasks
 
@@ -376,6 +397,15 @@
         // { id: 403, name: "🛏️ Make the bed every day this week", value: 300, isWeekly: true },
         // { id: 404, name: "🧽 Clean a bathroom", value: 300, isWeekly: true },
 
+        // Get the current day number of the year
+        function getDayNumber() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const oneDay = 86400000; // milliseconds in a day
+            return Math.floor(diff / oneDay);
+        }
+
         // Get the current week number of the year
         function getWeekNumber() {
             const now = new Date();
@@ -383,6 +413,13 @@
             const diff = now - start;
             const oneWeek = 604800000; // milliseconds in a week
             return Math.floor(diff / oneWeek);
+        }
+
+        // Get today's daily bonus task
+        function getDailyBonus() {
+            const dayNum = getDayNumber();
+            const index = dayNum % DAILY_BONUSES.length;
+            return DAILY_BONUSES[index];
         }
 
         // Get this week's bonus task
@@ -429,6 +466,7 @@
             }
             if (!state.weeklyCounters) state.weeklyCounters = {};
             if (!state.weeklyBonusesCompleted) state.weeklyBonusesCompleted = [];
+            if (state.dailyBonusCompleted === undefined) state.dailyBonusCompleted = null;
         }
 
         function saveState() {
@@ -521,6 +559,24 @@
                 bonusContainer.appendChild(btn);
             });
 
+            // Daily bonus task
+            const dailyBonus = getDailyBonus();
+            const dailyBonusCompleted = state.dailyBonusCompleted === getDayNumber();
+            document.getElementById('dailyBonusName').textContent = dailyBonus.name;
+            document.getElementById('dailyBonusReward').textContent = `+${dailyBonus.value} pts`;
+            const dailyBtn = document.getElementById('dailyBonusBtn');
+            if (dailyBonusCompleted) {
+                dailyBtn.innerHTML = '✓';
+                dailyBtn.style.background = 'rgba(255,255,255,0.9)';
+                dailyBtn.style.color = '#f97316';
+                dailyBtn.disabled = true;
+            } else {
+                dailyBtn.innerHTML = '';
+                dailyBtn.style.background = 'rgba(255,255,255,0.3)';
+                dailyBtn.style.color = 'white';
+                dailyBtn.disabled = false;
+            }
+
             // Survey unlock (if at least one task done)
             const tasksDone = state.tasks.filter(t => t.completed).length;
             document.getElementById('surveySection').style.display = tasksDone > 0 ? 'block' : 'none';
@@ -561,6 +617,19 @@
                 saveState();
                 render();
                 closeModal('taskModal');
+                triggerConfetti();
+            }
+        }
+
+        function completeDailyBonus() {
+            const dayNum = getDayNumber();
+            if (state.dailyBonusCompleted !== dayNum) {
+                const bonus = getDailyBonus();
+                state.dailyBonusCompleted = dayNum;
+                state.balance += bonus.value;
+                checkStreak();
+                saveState();
+                render();
                 triggerConfetti();
             }
         }
@@ -631,14 +700,14 @@
             openModal('cashOutModal');
         }
 
-        function processCashOut(type) {
+        function requestPayout() {
             if (state.balance <= 0) {
                 alert("Nothing to withdraw!");
                 return;
             }
             const pts = Math.floor(state.balance);
             const dollars = (pts / 1000).toFixed(2);
-            alert(`Success! ${pts} pts ($${dollars}) has been ${type === 'Save' ? 'moved to your Savings Jar' : 'sent to you'}.`);
+            alert(`Payout requested! 🎉\n\n${pts} pts ($${dollars}) will be sent to you via Zelle shortly.`);
             state.balance = 0;
             saveState();
             render();
