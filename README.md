@@ -14,7 +14,7 @@ This guide explains how HabitRewards works so you can effectively manage and mot
 
 **100 points = $1.00**
 
-Points are earned by completing tasks and bonuses. Payouts are sent via Zelle at the end of each month.
+Points are earned by completing tasks and bonuses. User can request payout anytime via Zelle.
 
 ---
 
@@ -175,14 +175,15 @@ Unlock badges at milestones:
 
 Accessed via gear icon in top right:
 - View current balance with $ conversion
-- Request early payout
+- Cash out anytime via Zelle
 - Suggest new tasks
+- Share progress
 
 ---
 
 ## Tips for Managers
 
-1. **Be consistent with payouts** - Send Zelle at month end as promised
+1. **Be responsive with payouts** - Send Zelle when requested
 2. **Celebrate level-ups** - Acknowledge when Stu reaches a new level
 3. **Watch for streaks** - Celebrate 7-day, 14-day, 30-day milestones
 4. **Review task suggestions** - Stu can propose new tasks via settings

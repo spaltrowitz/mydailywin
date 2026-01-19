@@ -327,7 +327,7 @@
             
             <!-- Payout Info -->
             <div style="margin-top: 14px; font-size: 12px; opacity: 0.75; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 12px;">
-                💸 Zelle payout at month end
+                💸 Cash out anytime via Zelle
             </div>
         </div>
 
@@ -473,8 +473,8 @@
                 <div style="font-size: 18px; color: var(--text-light); margin-top: 5px;" id="settingsDollars">= $0.00</div>
             </div>
             
-            <button class="btn btn-success" onclick="requestPayout()" style="margin-bottom: 12px;">💸 Request Early Payout</button>
-            <p style="text-align: center; font-size: 12px; color: var(--text-light); margin-bottom: 20px;">Payouts normally sent via Zelle at month end</p>
+            <button class="btn btn-success" onclick="requestPayout()" style="margin-bottom: 12px;">💸 Cash Out via Zelle</button>
+            <p style="text-align: center; font-size: 12px; color: var(--text-light); margin-bottom: 20px;">Request payout anytime you're ready!</p>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
@@ -1865,7 +1865,7 @@
             }
             const pts = Math.floor(state.balance);
             const dollars = (pts / 100).toFixed(2);
-            alert(`Payout requested! 🎉\n\n${pts} pts = $${dollars}\n\nYou'll receive payment via Zelle at the start of next month.`);
+            alert(`Cash out requested! 🎉\n\n${pts} pts = $${dollars}\n\nYou'll receive payment via Zelle soon!`);
             closeModal('settingsModal');
         }
 
@@ -1891,12 +1891,11 @@
 
         function shareProgress() {
             const tasksCompleted = state.tasks.filter(t => t.completed).length;
-            const totalTasks = state.tasks.length;
             const streak = state.streak;
             const pts = Math.floor(state.balance);
             
             const shareText = `🏆 HabitRewards Update!\n\n` +
-                `✅ ${tasksCompleted}/${totalTasks} tasks completed today\n` +
+                `✅ ${tasksCompleted} tasks completed today\n` +
                 `🔥 ${streak} day streak\n` +
                 `💰 ${pts} pts earned\n\n` +
                 `Build better habits at habitrewards-131.web.app`;
