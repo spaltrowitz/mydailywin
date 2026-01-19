@@ -85,8 +85,8 @@
         }
         .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
         }
         .feature-card {
             background: white;
@@ -116,14 +116,14 @@
             background: white;
         }
         .steps {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
         }
         .step {
             text-align: center;
-            max-width: 200px;
         }
         .step-number {
             width: 60px;
@@ -236,6 +236,9 @@
             .hero p { font-size: 16px; }
             .btn { display: block; margin: 10px auto; }
             .btn-outline { margin-left: 0; }
+            .steps { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .why-tiles { grid-template-columns: repeat(2, 1fr) !important; }
+            .features { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -257,30 +260,30 @@
     <div id="why" class="container" style="text-align: center;">
         <h2 class="section-title">💜 Why HabitRewards?</h2>
         <p style="max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-light); line-height: 1.8;">
-            We all have things we want to do more of—take walks, learn something new, stay in touch with friends. But life gets busy and habits slip.
+            You know what's good for you—staying active, keeping your mind sharp, connecting with people who matter. The hard part is making it a daily habit.
         </p>
         <p style="max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-light); line-height: 1.8;">
-            <strong>HabitRewards</strong> turns everyday activities into a fun game with points, streaks, and rewards. It's the motivation boost that makes good habits stick.
+            <strong>HabitRewards</strong> makes it fun. Track your activities, build streaks, earn points, and watch your progress grow. It's like having a personal coach that celebrates every win.
         </p>
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px;">
-            <div style="background: white; padding: 20px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; min-width: 180px;">
+        <div class="why-tiles" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 30px; max-width: 850px; margin-left: auto; margin-right: auto;">
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
                 <div style="font-size: 36px; margin-bottom: 8px;">🚶</div>
                 <div style="font-weight: 700;">Stay Active</div>
-                <div style="font-size: 13px; color: var(--text-light);">Walks, stretching, sports</div>
+                <div style="font-size: 13px; color: var(--text-light);">Walks, sports, exercise</div>
             </div>
-            <div style="background: white; padding: 20px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; min-width: 180px;">
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
                 <div style="font-size: 36px; margin-bottom: 8px;">🧠</div>
                 <div style="font-weight: 700;">Stay Sharp</div>
                 <div style="font-size: 13px; color: var(--text-light);">Puzzles, games, learning</div>
             </div>
-            <div style="background: white; padding: 20px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; min-width: 180px;">
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
                 <div style="font-size: 36px; margin-bottom: 8px;">💬</div>
                 <div style="font-weight: 700;">Stay Connected</div>
                 <div style="font-size: 13px; color: var(--text-light);">Friends, family, community</div>
             </div>
-            <div style="background: white; padding: 20px 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; min-width: 180px;">
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
                 <div style="font-size: 36px; margin-bottom: 8px;">🎯</div>
-                <div style="font-weight: 700;">Feel Accomplished</div>
+                <div style="font-weight: 700;">Stay Motivated</div>
                 <div style="font-size: 13px; color: var(--text-light);">Streaks, levels, rewards</div>
             </div>
         </div>
@@ -316,8 +319,8 @@
             </div>
             <div class="feature-card">
                 <div class="feature-icon">💜</div>
-                <h3>Forgiving by Design</h3>
-                <p>Missed a day? A quick call to family can restore your streak. We encourage connection, not perfection.</p>
+                <h3>Life Happens</h3>
+                <p>Missed a day? No problem. A quick call to someone you love can get your streak back on track.</p>
             </div>
         </div>
     </div>
