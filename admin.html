@@ -69,6 +69,12 @@
         .top-bar-links a:hover {
             background: rgba(255,255,255,0.35);
         }
+        .user-name {
+            /* Prevent extra spacing around dynamic name */
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -84,10 +90,10 @@
         .card h2 {
             font-size: 20px;
             margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
             color: var(--primary-dark);
+        }
+        .card h2 .user-name {
+            display: inline;
         }
         .card h3 {
             font-size: 16px;
@@ -314,9 +320,6 @@
             font-weight: 700;
             margin-bottom: 8px;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         .faq-a {
             font-size: 14px;
@@ -668,12 +671,14 @@
                     <div class="faq-q">💵 How do payouts work?</div>
                     <div class="faq-a">
                         <ul style="margin: 0 0 0 20px;">
-                            <li>Points accumulate as tasks are completed</li>
-                            <li><span class="user-name">User</span> can redeem anytime via <strong>Settings → Redeem Points</strong></li>
-                            <li>You'll receive a notification when they request a payout</li>
-                            <li>Send payment via Zelle, then record it in <strong>Payments tab</strong></li>
+                            <li>Points accumulate as tasks are completed (100 pts = $1.00)</li>
+                            <li><span class="user-name">User</span> requests a payout via the <strong>Cash Out</strong> button</li>
+                            <li>Request appears in your <strong>Payments tab</strong> with a notification</li>
+                            <li>Transfer funds to HabitRewards → Payment sent via Zelle</li>
+                            <li>Click <strong>"Mark as Sent"</strong> when complete</li>
+                            <li><span class="user-name">User</span> gets a celebration notification in their app!</li>
                         </ul>
-                        <p style="margin-top: 8px; color: var(--primary);">💡 Tip: No monthly deadline — they cash out when they're ready!</p>
+                        <p style="margin-top: 8px; color: var(--primary);">💡 Tip: No monthly deadline — they cash out when they're ready! Payments show as "from HabitRewards" via Zelle.</p>
                     </div>
                 </div>
 
@@ -829,6 +834,19 @@
         </div>
     </div>
 
+    <!-- No Permission Overlay (shown when user is logged in but not an admin) -->
+    <div id="noPermissionOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 420px;">
+            <div style="font-size: 48px; margin-bottom: 15px;">🔒</div>
+            <h2 style="margin-bottom: 10px;">Admin Access Only</h2>
+            <p style="color: #777; margin-bottom: 8px;">This dashboard is for <span id="profileOwnerName" style="font-weight: 600;">this profile</span>'s admins.</p>
+            <p style="color: #777; margin-bottom: 20px; font-size: 14px;">If you think you should have access, ask the profile owner to add your email as an admin.</p>
+            <a id="goToAppLink" href="app.html" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 30px; background: #58cc02; color: white; border-radius: 12px; font-weight: 600; margin-bottom: 12px;">📱 Go to User App Instead</a>
+            <br>
+            <a href="home.html" style="color: #58cc02; font-size: 14px;">← Back to Homepage</a>
+        </div>
+    </div>
+
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
@@ -856,64 +874,104 @@
         // Check auth state
         auth.onAuthStateChanged(async user => {
             if (user) {
-                // User is signed in - hide overlay and continue
-                document.getElementById('authOverlay').style.display = 'none';
-                
-                // Auto-link this profile to the user's account
                 const profileParam = new URLSearchParams(window.location.search).get('profile');
-                if (profileParam) {
-                    const profileName = profileParam === 'stu' ? 'Stu' : profileParam;
+                const profileName = profileParam === 'stu' ? 'Stu' : profileParam;
+                const userEmail = user.email?.toLowerCase();
+                
+                // Check if user is authorized to access this admin dashboard
+                let isAuthorized = false;
+                
+                try {
+                    // Check Firestore for admin status
+                    const profileRef = db.collection('profiles').doc(profileParam);
+                    const profileDoc = await profileRef.get();
+                    
+                    // Check if user is the profile owner
+                    if (profileDoc.exists && profileDoc.data().ownerEmail === userEmail) {
+                        isAuthorized = true;
+                    }
+                    
+                    // Check if user is in the admins subcollection
+                    if (!isAuthorized) {
+                        const adminDoc = await profileRef.collection('admins').doc(userEmail).get();
+                        if (adminDoc.exists) {
+                            isAuthorized = true;
+                            
+                            // Mark as accepted if not already
+                            if (!adminDoc.data().acceptedAt) {
+                                const displayName = user.displayName || null;
+                                const firstName = displayName ? displayName.split(' ')[0] : null;
+                                
+                                await profileRef.collection('admins').doc(userEmail).update({
+                                    acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                    name: displayName,
+                                    firstName: firstName
+                                });
+                                
+                                await profileRef.collection('notifications').add({
+                                    type: 'invite_accepted',
+                                    email: userEmail,
+                                    name: firstName || userEmail.split('@')[0],
+                                    displayName: displayName,
+                                    acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                    read: false
+                                });
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log('Firestore check failed, using localStorage fallback:', error.message);
+                    
+                    // Fallback: Check localStorage for admin status
+                    const adminsKey = profileParam === 'stu' ? 'hr_additional_admins' : 'hr_additional_admins_' + profileParam;
+                    const admins = JSON.parse(localStorage.getItem(adminsKey) || '[]');
+                    const existingAdmin = admins.find(a => a.email?.toLowerCase() === userEmail);
+                    
+                    if (existingAdmin) {
+                        isAuthorized = true;
+                        if (!existingAdmin.acceptedAt) {
+                            existingAdmin.acceptedAt = new Date().toISOString();
+                            existingAdmin.name = user.displayName;
+                            localStorage.setItem(adminsKey, JSON.stringify(admins));
+                        }
+                    }
+                    
+                    // Also check if they created this profile (localStorage only)
+                    const profileData = localStorage.getItem('hr_profile_' + profileParam);
+                    if (profileData) {
+                        const profile = JSON.parse(profileData);
+                        if (profile.creatorEmail === userEmail || profile.ownerEmail === userEmail) {
+                            isAuthorized = true;
+                        }
+                    }
+                    
+                    // For legacy 'stu' profile, allow anyone who was previously using it
+                    if (profileParam === 'stu') {
+                        const stuState = localStorage.getItem('hr_state');
+                        if (stuState) {
+                            isAuthorized = true; // Legacy compatibility
+                        }
+                    }
+                }
+                
+                if (isAuthorized) {
+                    // User is authorized - hide overlay and continue
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('noPermissionOverlay').style.display = 'none';
+                    
+                    // Auto-link this profile to the user's account
                     const userProfilesKey = 'hr_user_profiles_' + user.uid;
                     let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
                     if (!userProfiles.find(p => p.id === profileParam)) {
                         userProfiles.push({ id: profileParam, name: profileName });
                         localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
                     }
-                    
-                    // Check if this user is an admin in Firestore and mark as accepted
-                    const userEmail = user.email?.toLowerCase();
-                    const displayName = user.displayName || null;
-                    const firstName = displayName ? displayName.split(' ')[0] : null;
-                    
-                    try {
-                        const profileRef = db.collection('profiles').doc(profileParam);
-                        const adminsRef = profileRef.collection('admins').doc(userEmail);
-                        const adminDoc = await adminsRef.get();
-                        
-                        if (adminDoc.exists && !adminDoc.data().acceptedAt) {
-                            // Mark as accepted in Firestore
-                            await adminsRef.update({
-                                acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                name: displayName,
-                                firstName: firstName
-                            });
-                            
-                            // Create notification in Firestore for the profile owner
-                            await profileRef.collection('notifications').add({
-                                type: 'invite_accepted',
-                                email: userEmail,
-                                name: firstName || userEmail.split('@')[0],
-                                displayName: displayName,
-                                acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                read: false
-                            });
-                            
-                            console.log('✅ Admin marked as accepted in Firestore:', userEmail);
-                        }
-                    } catch (error) {
-                        console.log('Firestore not available, using localStorage fallback:', error.message);
-                        
-                        // Fallback to localStorage
-                        const adminsKey = profileParam === 'stu' ? 'hr_additional_admins' : 'hr_additional_admins_' + profileParam;
-                        const admins = JSON.parse(localStorage.getItem(adminsKey) || '[]');
-                        const existingAdmin = admins.find(a => a.email.toLowerCase() === userEmail);
-                        if (existingAdmin && !existingAdmin.acceptedAt) {
-                            existingAdmin.acceptedAt = new Date().toISOString();
-                            existingAdmin.name = displayName;
-                            existingAdmin.firstName = firstName;
-                            localStorage.setItem(adminsKey, JSON.stringify(admins));
-                        }
-                    }
+                } else {
+                    // User is logged in but NOT an admin - show no permission overlay
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('noPermissionOverlay').style.display = 'flex';
+                    document.getElementById('profileOwnerName').textContent = profileName;
+                    document.getElementById('goToAppLink').href = 'app.html?profile=' + profileParam;
                 }
             } else {
                 // Not signed in - store the profile we're trying to access, then show overlay
@@ -963,9 +1021,9 @@
             }
         }
 
-        // Replace all user name placeholders with actual name
+        // Replace all user name placeholders with actual name (trimmed)
         document.querySelectorAll('.user-name').forEach(el => {
-            el.textContent = PROFILE_NAME;
+            el.textContent = PROFILE_NAME.trim();
         });
 
         // ========== TAB FUNCTIONALITY ==========
@@ -1375,10 +1433,6 @@
                 });
             } catch (err) {
                 console.error('Error saving user notification:', err);
-            }
-        }
-                console.error('Error approving payout:', err);
-                showToast('❌ Error processing payment');
             }
         }
         

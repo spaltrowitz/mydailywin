@@ -244,6 +244,155 @@
         .nav-links a:hover {
             color: white;
         }
+        /* Hamburger Menu */
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .hamburger:hover {
+            transform: scale(1.05);
+        }
+        .hamburger span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .slide-menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            max-width: 85vw;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 80px 25px 25px;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            transition: left 0.3s ease;
+            overflow-y: auto;
+        }
+        .slide-menu.active {
+            left: 0;
+        }
+        .menu-section {
+            margin-bottom: 25px;
+        }
+        .menu-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+        .menu-link:hover {
+            background: var(--bg);
+        }
+        .menu-link.primary {
+            background: var(--primary);
+            color: white;
+        }
+        .menu-link.primary:hover {
+            background: var(--primary-dark);
+        }
+        .menu-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 20px 0;
+        }
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: transform 0.2s;
+        }
+        .profile-card:hover {
+            transform: translateX(5px);
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .profile-name {
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .profile-role {
+            font-size: 12px;
+            color: var(--text-light);
+        }
         @media (max-width: 600px) {
             .hero h1 { font-size: 32px; }
             .hero p { font-size: 16px; }
@@ -278,6 +427,41 @@
     </style>
 </head>
 <body>
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+
+    <!-- Slide-out Menu -->
+    <div class="slide-menu">
+        <div id="profilesSection" class="menu-section" style="display: none;">
+            <div class="menu-section-title">Your Profiles</div>
+            <div id="profilesList"></div>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-section-title">Get Started</div>
+            <a href="get-started.html" class="menu-link primary">🚀 Create New Profile</a>
+            <a href="login.html" class="menu-link">🔐 Sign In</a>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <div class="menu-section">
+            <div class="menu-section-title">Learn More</div>
+            <a href="#why" class="menu-link" onclick="toggleMenu()">💜 Why HabitRewards</a>
+            <a href="#features" class="menu-link" onclick="toggleMenu()">✨ Features</a>
+            <a href="#how-it-works" class="menu-link" onclick="toggleMenu()">📋 How It Works</a>
+            <a href="#faq" class="menu-link" onclick="toggleMenu()">❓ FAQ</a>
+            <a href="admin-guide.html" class="menu-link">👥 Admin Guide</a>
+        </div>
+    </div>
+
     <div class="hero">
         <div class="hero-logo">🏆</div>
         <h1>HabitRewards</h1>
@@ -495,5 +679,71 @@
         <p>HabitRewards &copy; 2026 • <a href="get-started.html">Get Started</a> • <a href="#how-it-works">How It Works</a> • <a href="#faq">FAQ</a> • <a href="admin-guide.html">Admin Guide</a></p>
         <p style="margin-top: 10px;">Built with 💜 to make good habits stick.</p>
     </footer>
+
+    <script>
+        // Hamburger menu toggle
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.querySelector('.menu-overlay').classList.toggle('active');
+            document.querySelector('.slide-menu').classList.toggle('active');
+        }
+
+        // Load user profiles from localStorage
+        function loadProfiles() {
+            const profilesList = document.getElementById('profilesList');
+            const profilesSection = document.getElementById('profilesSection');
+            let profiles = [];
+
+            // Check for legacy Stu profile
+            const stuState = localStorage.getItem('hr_state');
+            if (stuState) {
+                profiles.push({ id: 'stu', name: 'Stu', isLegacy: true });
+            }
+
+            // Check for other profiles
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('hr_profile_') && !key.includes('admins') && !key.includes('invites')) {
+                    try {
+                        const profileId = key.replace('hr_profile_', '');
+                        const data = JSON.parse(localStorage.getItem(key));
+                        if (data.name && !profiles.find(p => p.id === profileId)) {
+                            profiles.push({ id: profileId, name: data.name });
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            if (profiles.length === 0) {
+                profilesSection.style.display = 'none';
+                return;
+            }
+
+            profilesSection.style.display = 'block';
+            profilesList.innerHTML = profiles.map(p => `
+                <a href="app.html?profile=${p.id}" class="profile-card">
+                    <div class="profile-avatar">${p.name.charAt(0).toUpperCase()}</div>
+                    <div class="profile-info">
+                        <div class="profile-name">${p.name}</div>
+                        <div class="profile-role">Open App</div>
+                    </div>
+                    <span style="color: var(--primary);">→</span>
+                </a>
+                <a href="admin.html?profile=${p.id}" class="menu-link" style="margin-left: 52px; padding: 8px 15px; font-size: 13px;">
+                    ⚙️ Admin Dashboard
+                </a>
+            `).join('');
+        }
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.querySelector('.slide-menu').classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+
+        // Load profiles on page load
+        loadProfiles();
+    </script>
 </body>
 </html>
