@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #58cc02; /* Duolingo Green */
+            --primary: #58cc02; /* Success Green */
             --primary-shade: #46a302;
             --secondary: #2b70c9; /* Blue */
             --secondary-shade: #184a8c;
@@ -176,7 +176,7 @@
         .task-name { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
         .task-reward { 
             display: inline-block; font-weight: 800; font-size: 14px; 
-            color: var(--primary); bg: rgba(88, 204, 2, 0.1); 
+            color: var(--primary); 
             padding: 4px 10px; border-radius: 12px; background: rgba(88,204,2,0.1); 
         }
 
@@ -282,14 +282,44 @@
             filter: grayscale(0%);
             transform: scale(1.1);
         }
+        /* Help button for tech tasks */
+        .task-help-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .task-help-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        body.dark-mode .task-help-btn {
+            background: #1e293b;
+            border-color: var(--primary);
+        }
+        body.dark-mode .task-help-btn:hover {
+            background: var(--primary);
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand">
+        <a href="home.html?v=2" class="brand" style="text-decoration: none;">
             <span>🏆</span> HabitRewards
-        </div>
+        </a>
         <div style="display: flex; align-items: center; gap: 10px;">
             <button class="theme-btn" onclick="openModal('settingsModal')" title="Settings">⚙️</button>
             <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
@@ -384,6 +414,7 @@
         <div id="dailyBonusSection" style="margin-top: 25px;">
             <div class="section-title" style="color: #f97316;">⭐ Today's Bonus</div>
             <div class="task-row" style="background: linear-gradient(135deg, #f97316, #fb923c); border: none; color: white; box-shadow: 0 4px 0 #ea580c;">
+                <span id="dailyBonusHelpBtn"></span>
                 <div class="task-content">
                     <div id="dailyBonusName" class="task-name" style="color: white;">Loading...</div>
                     <div id="dailyBonusReward" style="display: inline-block; font-weight: 800; font-size: 14px; color: #f97316; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9);">+50 pts</div>
@@ -431,6 +462,16 @@
             <button class="btn btn-success" onclick="confirmTask()" style="margin-top: 10px;">✓ Complete Task</button>
         </div>
     </div>
+
+    <!-- TASK HELP MODAL -->
+    <div id="taskHelpModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('taskHelpModal')">&times;</span>
+            <h2 id="helpModalTitle" style="margin-bottom: 15px; font-size: 22px;">📱 How to Get Started</h2>
+            <div id="helpModalContent" style="text-align: left; line-height: 1.8;"></div>
+            <button class="btn btn-primary" onclick="closeModal('taskHelpModal')" style="margin-top: 20px;">Got it!</button>
+        </div>
+    </div>
     
     <!-- TENNIS MODAL -->
     <div id="tennisModal" class="modal">
@@ -474,6 +515,13 @@
                 <div style="font-size: 32px; color: var(--primary); font-weight: 800;" id="settingsBalance">0 pts</div>
                 <div style="font-size: 18px; color: var(--text-light); margin-top: 5px;" id="settingsDollars">= $0.00</div>
             </div>
+            
+            <!-- Admin Mode -->
+            <h3 style="margin-bottom: 10px;">🔧 Admin Mode</h3>
+            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Customize tasks, record payments, view reports</p>
+            <a href="admin.html?profile=stu" class="btn" style="display: inline-block; text-decoration: none; text-align: center;">⚙️ Open Admin Mode</a>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
             <!-- Suggest Task -->
             <h3 style="margin-bottom: 10px;">💡 Suggest a Task</h3>
@@ -571,14 +619,247 @@
     </div>
 
     <script>
+        // ========== PROFILE & LOW-TECH MODE ==========
+        // Load user's profile to check tech comfort level
+        const PROFILE_ID = new URLSearchParams(window.location.search).get('profile') || localStorage.getItem('hr_current_profile');
+        let USER_PROFILE = null;
+        let LOW_TECH_MODE = false;
+        let IS_STU_PROFILE = false;
+        
+        if (PROFILE_ID) {
+            const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
+            if (profileData) {
+                USER_PROFILE = JSON.parse(profileData);
+                // Enable low-tech mode if user is "learning" with technology
+                LOW_TECH_MODE = USER_PROFILE.phoneComfort === 'learning';
+                // Check if this is Stu's profile (for Stu-specific tasks)
+                IS_STU_PROFILE = USER_PROFILE.name && USER_PROFILE.name.toLowerCase() === 'stu';
+            }
+        }
+        
+        // Helper to filter out tech-dependent tasks for low-tech users
+        function filterForTechComfort(tasks) {
+            if (!LOW_TECH_MODE) return tasks;
+            return tasks.filter(t => !t.requiresTech);
+        }
+        
+        // Helper to filter out profile-specific tasks
+        function filterForProfile(tasks) {
+            return tasks.filter(t => {
+                // Stu-only tasks should only show for Stu
+                if (t.stuOnly && !IS_STU_PROFILE) return false;
+                // Tasks excluded from Stu should not show for Stu
+                if (t.excludeFromStu && IS_STU_PROFILE) return false;
+                return true;
+            });
+        }
+
+        // ========== TASK HELP INSTRUCTIONS ==========
+        // Instructions for tech-dependent tasks (shown via ? icon until first completion)
+        const TASK_HELP = {
+            // Daily tasks
+            3: { // Duolingo
+                title: "🦉 Duolingo Setup",
+                content: `
+                    <p><strong>What is it?</strong> A free app to learn languages in short, fun lessons.</p>
+                    <p><strong>How to get started:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Open the <strong>App Store</strong> (iPhone) or <strong>Play Store</strong> (Android)</li>
+                        <li>Search for <strong>"Duolingo"</strong></li>
+                        <li>Tap <strong>Download/Install</strong> (it's free!)</li>
+                        <li>Open the app and create an account</li>
+                        <li>Pick a language you'd like to learn</li>
+                        <li>Complete one lesson (takes about 5 minutes)</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with Spanish or French - they're popular and well-made!</p>
+                `
+            },
+            5: { // Wordle
+                title: "🟩 Wordle Setup",
+                content: `
+                    <p><strong>What is it?</strong> A daily word puzzle where you guess a 5-letter word in 6 tries.</p>
+                    <p><strong>How to play:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Go to <strong>nytimes.com/games/wordle</strong> in your web browser</li>
+                        <li>Or download the <strong>NY Times Games</strong> app</li>
+                        <li>Guess any 5-letter word to start</li>
+                        <li>Green = right letter, right spot</li>
+                        <li>Yellow = right letter, wrong spot</li>
+                        <li>Gray = letter not in word</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with words that have common letters like "CRANE" or "STARE"</p>
+                `
+            },
+            // Daily bonuses
+            123: { // NYT Connections
+                title: "🔗 Connections Setup",
+                content: `
+                    <p><strong>What is it?</strong> A daily puzzle where you group 16 words into 4 categories.</p>
+                    <p><strong>How to play:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Go to <strong>nytimes.com/games/connections</strong></li>
+                        <li>Or open the <strong>NY Times Games</strong> app</li>
+                        <li>Look at the 16 words and find groups of 4 that share something in common</li>
+                        <li>Tap 4 words, then hit Submit</li>
+                        <li>You get 4 mistakes before the game ends</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with the most obvious group first!</p>
+                `
+            },
+            120: { // Clear emails
+                title: "📧 Email Cleanup",
+                content: `
+                    <p><strong>Goal:</strong> Delete or archive old emails to keep your inbox tidy.</p>
+                    <p><strong>How to do it:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Open your email app (Gmail, Mail, etc.)</li>
+                        <li>Look for emails you don't need anymore</li>
+                        <li>Swipe left to delete, or tap and hit the trash icon</li>
+                        <li>Try deleting at least 5-10 old emails</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with promotional emails or old newsletters!</p>
+                `
+            },
+            117: { // Podcast
+                title: "🎧 Podcasts Setup",
+                content: `
+                    <p><strong>What is it?</strong> Free audio shows you can listen to on any topic.</p>
+                    <p><strong>How to listen:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Open the <strong>Podcasts</strong> app (built into iPhone) or download <strong>Spotify</strong></li>
+                        <li>Search for a topic you like (news, sports, history, comedy)</li>
+                        <li>Tap a show, then tap an episode to play</li>
+                        <li>Use headphones or play through your phone speaker</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Popular picks: "The Daily" (news), "SmartLess" (comedy), "Radiolab" (science)</p>
+                `
+            },
+            118: { // Streaming
+                title: "📺 Streaming Setup",
+                content: `
+                    <p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p>
+                    <p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p>
+                    <p><strong>How to watch:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Check if you already have a subscription (ask family!)</li>
+                        <li>Download the app from the App Store</li>
+                        <li>Log in with your account</li>
+                        <li>Browse and tap something to watch!</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try documentaries or classic movies to start!</p>
+                `
+            },
+            119: { // Delete app
+                title: "📱 Delete Unused Apps",
+                content: `
+                    <p><strong>Goal:</strong> Remove apps you don't use to free up space and reduce clutter.</p>
+                    <p><strong>How to delete apps:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li><strong>iPhone:</strong> Press and hold an app icon until it jiggles, then tap the X or minus sign</li>
+                        <li><strong>Android:</strong> Press and hold an app, then drag to "Uninstall" or tap the info icon</li>
+                        <li>Look for apps you haven't opened in months</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Games and shopping apps you forgot about are good ones to remove!</p>
+                `
+            },
+            // Weekly bonuses
+            302: { // Streaming weekly
+                title: "📺 Streaming Setup",
+                content: `
+                    <p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p>
+                    <p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p>
+                    <p><strong>How to watch:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Check if you already have a subscription (ask family!)</li>
+                        <li>Download the app from the App Store</li>
+                        <li>Log in with your account</li>
+                        <li>Browse and tap something to watch!</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try a movie or show someone recommended!</p>
+                `
+            },
+            306: { // Aisle app
+                title: "🛒 Aisle App Setup",
+                content: `
+                    <p><strong>What is it?</strong> An app that shows grocery deals and lets you clip digital coupons.</p>
+                    <p><strong>How to get started:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Download <strong>"Aisle"</strong> from the App Store</li>
+                        <li>Create an account with your email</li>
+                        <li>Select your local grocery stores</li>
+                        <li>Browse deals and tap to "clip" coupons</li>
+                        <li>Show the app at checkout or link your store loyalty card</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Check the app before your grocery trip!</p>
+                `
+            },
+            313: { // ChatGPT
+                title: "🤖 ChatGPT Setup",
+                content: `
+                    <p><strong>What is it?</strong> An AI assistant that can answer questions, help with writing, and more.</p>
+                    <p><strong>How to use it:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Go to <strong>chat.openai.com</strong> in your browser</li>
+                        <li>Or download the <strong>ChatGPT</strong> app</li>
+                        <li>Create a free account</li>
+                        <li>Type any question and hit enter!</li>
+                    </ol>
+                    <p style="margin-top: 15px;"><strong>Try asking:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>"What should I make for dinner tonight?"</li>
+                        <li>"Explain why the sky is blue"</li>
+                        <li>"Help me write a birthday message"</li>
+                    </ul>
+                `
+            },
+            318: { // Mystery Shop
+                title: "🕵️ Mystery Shopping",
+                content: `
+                    <p><strong>What is it?</strong> Get paid to shop and review stores or restaurants.</p>
+                    <p><strong>How to get started:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>Search for "mystery shopping companies" or try sites like:</li>
+                        <li><strong>Market Force</strong> (marketforce.com)</li>
+                        <li><strong>BestMark</strong> (bestmark.com)</li>
+                        <li>Create an account and fill out your profile</li>
+                        <li>Browse available shops in your area</li>
+                        <li>Apply for ones that interest you</li>
+                    </ol>
+                    <p style="margin-top: 15px; color: var(--primary);">💡 Tip: Never pay to become a mystery shopper - legit ones are free to join!</p>
+                `
+            }
+        };
+
+        // Track tasks that have been completed at least once (persisted)
+        function getCompletedEverTasks() {
+            return JSON.parse(localStorage.getItem('hr_completed_ever') || '[]');
+        }
+        
+        function markTaskCompletedEver(taskId) {
+            const completed = getCompletedEverTasks();
+            if (!completed.includes(taskId)) {
+                completed.push(taskId);
+                localStorage.setItem('hr_completed_ever', JSON.stringify(completed));
+            }
+        }
+        
+        function showTaskHelp(taskId) {
+            const help = TASK_HELP[taskId];
+            if (help) {
+                document.getElementById('helpModalTitle').textContent = help.title;
+                document.getElementById('helpModalContent').innerHTML = help.content;
+                openModal('taskHelpModal');
+            }
+        }
+
         // ========== CONFIG & STATE ==========
         // Points system: 100 points = $1.00
         // Routine tasks = lower value, Stretch goals = higher value
         const DAILY_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75 },
+            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75, requiresTech: true },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
-            { id: 5, name: "🟩 Play Wordle", value: 10 }
+            { id: 5, name: "🟩 Play Wordle", value: 10, requiresTech: true }
         ];
 
         // Daily bonus tasks (1 rotates each day) - fun extras!
@@ -589,48 +870,48 @@
             { id: 122, name: "🚗 Clean out the car", value: 50, needsPhoto: true },
             { id: 109, name: "🗑️ Throw away one thing you don't need", value: 50, needsPhoto: true },
             // Simple checkbox tasks (no prompt needed)
-            { id: 123, name: "🔗 Try NYTimes Connections", value: 35 },
+            { id: 123, name: "🔗 Try NYTimes Connections", value: 35, requiresTech: true },
             { id: 103, name: "🌳 Spend 10 minutes outside", value: 50 },
             { id: 106, name: "🔋 Charge devices overnight", value: 50 },
             { id: 111, name: "🧽 Wipe down a counter or surface", value: 50 },
             { id: 112, name: "🛏️ Make the bed", value: 50 },
             { id: 114, name: "🧘 Do 5 minutes of stretching", value: 50 },
             { id: 115, name: "💊 Take vitamins", value: 50 },
-            { id: 120, name: "📧 Clear out old emails", value: 50 },
+            { id: 120, name: "📧 Clear out old emails", value: 50, requiresTech: true, excludeFromStu: true },
             { id: 121, name: "📝 Make a to-do list for tomorrow", value: 50 },
             // Tasks with specific comment prompts (no photo needed)
             { id: 104, name: "🎵 Listen to a new song", value: 50, needsComment: true, commentPrompt: "What song did you listen to?" },
             { id: 105, name: "📞 Call or text a friend", value: 100, needsComment: true, commentPrompt: "Who did you contact?" },
             { id: 116, name: "📖 Read for 10 minutes", value: 50, needsComment: true, commentPrompt: "What are you reading?" },
-            { id: 117, name: "🎧 Listen to a podcast", value: 50, needsComment: true, commentPrompt: "Which podcast?" },
-            { id: 118, name: "📺 Watch something new on streaming", value: 50, needsComment: true, commentPrompt: "What did you watch?" },
-            { id: 119, name: "📱 Delete an unused app", value: 50, needsComment: true, commentPrompt: "Which app did you delete?" }
+            { id: 117, name: "🎧 Listen to a podcast", value: 50, needsComment: true, commentPrompt: "Which podcast?", requiresTech: true },
+            { id: 118, name: "📺 Watch something new on streaming", value: 50, needsComment: true, commentPrompt: "What did you watch?", requiresTech: true },
+            { id: 119, name: "📱 Delete an unused app", value: 50, needsComment: true, commentPrompt: "Which app did you delete?", requiresTech: true }
         ];
 
         const DAILY_MAX_POINTS = 1000; // $10 daily cap for daily tasks
 
         // Permanent weekly task (always shown) - tennis is special, can be logged 3x
-        const TENNIS_WEEKLY = { id: 300, name: "🎾 Tennis/Pickleball", value: 30, isWeekly: true, isTennis: true, target: 3 };
+        const TENNIS_WEEKLY = { id: 300, name: "🎾 Tennis/Pickleball", value: 30, isWeekly: true, isTennis: true, target: 3, stuOnly: true };
 
         // Rotating weekly bonus tasks (1 selected per week) - exempt from daily cap
         // Fun/reward-focused activities (100 pts = $1.00)
         const WEEKLY_BONUSES = [
             { id: 301, name: "💿 Sell coins or vinyls", value: 500, isWeekly: true, needsComment: true, commentPrompt: "What did you sell?" },
-            { id: 302, name: "📺 Watch show/movie (streaming)", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you watch?" },
+            { id: 302, name: "📺 Watch show/movie (streaming)", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you watch?", requiresTech: true },
             { id: 305, name: "🍿 Use the microwave", value: 50, isWeekly: true },
-            { id: 306, name: "🛒 Check Aisle app for deals", value: 150, isWeekly: true, needsComment: true, commentPrompt: "Did you buy anything?" },
+            { id: 306, name: "🛒 Check Aisle app for deals", value: 150, isWeekly: true, needsComment: true, commentPrompt: "Did you buy anything?", requiresTech: true, stuOnly: true },
             { id: 307, name: "💑 Take wife to lunch/dinner", value: 500, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?" },
             { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What restaurant?" },
             { id: 309, name: "💌 Tell a kid you're thinking of them", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you reach out to?" },
             { id: 310, name: "❤️ Do something nice for wife", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you do?" },
             { id: 311, name: "🛍️ Buy a new grocery item", value: 150, isWeekly: true, needsComment: true, commentPrompt: "What did you buy?" },
-            { id: 312, name: "🍔 Lunch with tennis friends", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?" },
-            { id: 313, name: "🤖 Use ChatGPT to solve something", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you ask?" },
+            { id: 312, name: "🍔 Lunch with tennis friends", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?", stuOnly: true },
+            { id: 313, name: "🤖 Use ChatGPT to solve something", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you ask?", requiresTech: true },
             { id: 314, name: "📞 Call a friend or family", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you call?" },
             { id: 315, name: "📦 Get rid of 3 office items", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What items?" },
             { id: 316, name: "👕 Donate clothing", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What did you donate?" },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true, needsComment: true, commentPrompt: "How many pairs?" },
-            { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?" },
+            { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?", requiresTech: true, stuOnly: true },
             { id: 319, name: "🗑️ Throw away 5 items", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you throw away?" }
         ];
 
@@ -671,18 +952,31 @@
             return new Date().getDay() === 3; // 3 = Wednesday
         }
 
-        // Get today's daily bonus task
+        // Get today's daily bonus task (filtered for tech comfort and profile)
         function getDailyBonus() {
             const dayNum = getDayNumber();
-            const index = dayNum % DAILY_BONUSES.length;
-            return DAILY_BONUSES[index];
+            let filteredBonuses = filterForProfile(filterForTechComfort(DAILY_BONUSES));
+            if (filteredBonuses.length === 0) return null;
+            const index = dayNum % filteredBonuses.length;
+            return filteredBonuses[index];
         }
 
-        // Get this week's bonus tasks (tennis + 1 rotating)
+        // Get this week's bonus tasks (tennis + 1 rotating, filtered for tech comfort and profile)
         function getWeeklyBonuses() {
             const weekNum = getWeekNumber();
-            const index = weekNum % WEEKLY_BONUSES.length;
-            return [TENNIS_WEEKLY, WEEKLY_BONUSES[index]]; // Tennis always + 1 rotating
+            let filteredWeekly = filterForProfile(filterForTechComfort(WEEKLY_BONUSES));
+            const bonuses = [];
+            
+            // Only include Tennis/Pickleball if not filtered out by profile
+            if (!TENNIS_WEEKLY.stuOnly || IS_STU_PROFILE) {
+                bonuses.push(TENNIS_WEEKLY);
+            }
+            
+            if (filteredWeekly.length > 0) {
+                const index = weekNum % filteredWeekly.length;
+                bonuses.push(filteredWeekly[index]);
+            }
+            return bonuses;
         }
 
         let state = {
@@ -1046,7 +1340,7 @@
             if (saved) {
                 state = JSON.parse(saved);
             } else {
-                state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
+                state.tasks = JSON.parse(JSON.stringify(filterForProfile(filterForTechComfort(DAILY_TASKS))));
             }
             // Load weekly counters
             const weekNum = getWeekNumber();
@@ -1077,7 +1371,7 @@
             const today = new Date().toDateString();
             const lastDate = localStorage.getItem('hr_date');
             if (lastDate !== today) {
-                state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
+                state.tasks = JSON.parse(JSON.stringify(filterForProfile(filterForTechComfort(DAILY_TASKS))));
                 localStorage.setItem('hr_date', today);
                 saveState();
             } else {
@@ -1191,10 +1485,15 @@
             state.tasks.forEach(task => {
                 if (!task.completed) allDone = false;
                 
+                // Always show help icon for tech tasks that have help info
+                const showHelp = TASK_HELP[task.id];
+                const helpBtn = showHelp ? `<button class="task-help-btn" onclick="event.stopPropagation(); showTaskHelp(${task.id})" title="How to get started">?</button>` : '';
+                
                 const div = document.createElement('div');
                 div.className = 'task-row';
                 div.innerHTML = `
-                    <div class="task-content">
+                    ${helpBtn}
+                    <div class="task-content" style="${showHelp ? '' : 'flex: 1;'}">
                         <div class="task-name" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.name}</div>
                         <div class="task-reward">+${task.value} pts</div>
                     </div>
@@ -1237,9 +1536,14 @@
                 } else {
                     const isCompleted = state.weeklyBonusesCompleted.includes(b.id);
                     
+                    // Always show help icon for tech tasks that have help info
+                    const showHelp = TASK_HELP[b.id];
+                    const helpBtn = showHelp ? `<button class="task-help-btn" style="background: rgba(255,255,255,0.9); border-color: white;" onclick="event.stopPropagation(); showTaskHelp(${b.id})" title="How to get started">?</button>` : '';
+                    
                     const row = document.createElement('div');
                     row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.15); padding: 14px 16px; border-radius: 20px; width: 100%;';
                     row.innerHTML = `
+                        ${helpBtn}
                         <div style="flex: 1; margin-right: 15px; text-align: left;">
                             <div style="font-weight: 700; font-size: 18px; ${isCompleted ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${b.name}</div>
                             <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${isCompleted ? '✅ Done!' : `+${b.value} pts`}</div>
@@ -1252,22 +1556,35 @@
                 }
             });
 
-            // Daily bonus task
+            // Daily bonus task (hide if no bonus available for low-tech users)
             const dailyBonus = getDailyBonus();
-            const dailyBonusCompleted = state.dailyBonusCompleted === getDayNumber();
-            document.getElementById('dailyBonusName').textContent = dailyBonus.name;
-            document.getElementById('dailyBonusReward').textContent = `+${dailyBonus.value} pts`;
-            const dailyBtn = document.getElementById('dailyBonusBtn');
-            if (dailyBonusCompleted) {
-                dailyBtn.innerHTML = '✓';
-                dailyBtn.style.background = 'rgba(255,255,255,0.9)';
-                dailyBtn.style.color = '#f97316';
-                dailyBtn.classList.add('completed');
+            const dailyBonusSection = document.getElementById('dailyBonusSection');
+            if (dailyBonus) {
+                dailyBonusSection.style.display = 'block';
+                const dailyBonusCompleted = state.dailyBonusCompleted === getDayNumber();
+                document.getElementById('dailyBonusName').textContent = dailyBonus.name;
+                document.getElementById('dailyBonusReward').textContent = `+${dailyBonus.value} pts`;
+                
+                // Always show help icon for daily bonus if it has help info
+                const showDailyHelp = TASK_HELP[dailyBonus.id];
+                document.getElementById('dailyBonusHelpBtn').innerHTML = showDailyHelp 
+                    ? `<button class="task-help-btn" style="background: rgba(255,255,255,0.9); border-color: white; color: #f97316;" onclick="event.stopPropagation(); showTaskHelp(${dailyBonus.id})" title="How to get started">?</button>` 
+                    : '';
+                
+                const dailyBtn = document.getElementById('dailyBonusBtn');
+                if (dailyBonusCompleted) {
+                    dailyBtn.innerHTML = '✓';
+                    dailyBtn.style.background = 'rgba(255,255,255,0.9)';
+                    dailyBtn.style.color = '#f97316';
+                    dailyBtn.classList.add('completed');
+                } else {
+                    dailyBtn.innerHTML = '';
+                    dailyBtn.style.background = 'rgba(255,255,255,0.3)';
+                    dailyBtn.style.color = 'white';
+                    dailyBtn.classList.remove('completed');
+                }
             } else {
-                dailyBtn.innerHTML = '';
-                dailyBtn.style.background = 'rgba(255,255,255,0.3)';
-                dailyBtn.style.color = 'white';
-                dailyBtn.classList.remove('completed');
+                dailyBonusSection.style.display = 'none';
             }
 
             // Survey unlock (if at least one task done)
@@ -1316,6 +1633,9 @@
         
         function completeTaskDirectly(task) {
             task.completed = true;
+            
+            // Mark as completed ever (for help icon tracking)
+            markTaskCompletedEver(task.id);
             
             // Calculate points with bonuses
             let pts = task.value;
@@ -1431,8 +1751,9 @@
 
         function completeDailyBonus() {
             const dayNum = getDayNumber();
+            const bonus = getDailyBonus();
+            if (!bonus) return; // No bonus available (low-tech mode)
             if (state.dailyBonusCompleted !== dayNum) {
-                const bonus = getDailyBonus();
                 // Open task modal for photo/comment submission
                 state.currentTaskId = 'daily_bonus';
                 state.currentDailyBonus = bonus;
@@ -1487,6 +1808,9 @@
             const bonus = state.currentDailyBonus;
             const comment = document.getElementById('taskComment').value.trim();
             
+            // Mark as completed ever (for help icon tracking)
+            markTaskCompletedEver(bonus.id);
+            
             // Store the daily bonus comment
             if (!state.dailyBonusComments) state.dailyBonusComments = [];
             state.dailyBonusComments.push({
@@ -1520,6 +1844,7 @@
         
         function undoDailyBonus() {
             const bonus = getDailyBonus();
+            if (!bonus) return; // No bonus available (low-tech mode)
             if (confirm(`Undo "${bonus.name}"? You'll lose ${bonus.value} pts.`)) {
                 state.dailyBonusCompleted = null;
                 state.balance -= bonus.value;
@@ -1560,6 +1885,9 @@
         function confirmWeeklyBonus() {
             const bonus = state.currentWeeklyBonus;
             const comment = document.getElementById('taskComment').value.trim();
+            
+            // Mark as completed ever (for help icon tracking)
+            markTaskCompletedEver(bonus.id);
             
             // Store the comment with task info
             if (!state.weeklyBonusComments) state.weeklyBonusComments = [];
@@ -1808,6 +2136,7 @@
             
             if (type === 'daily') {
                 const dailyBonus = getDailyBonus();
+                if (!dailyBonus) return; // No bonus available (low-tech mode)
                 reportingTask = { type: 'daily', name: dailyBonus.name, id: dailyBonus.id };
             } else if (type === 'weekly') {
                 const weeklyBonuses = getWeeklyBonuses();

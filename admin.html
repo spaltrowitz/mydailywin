@@ -149,6 +149,7 @@
             gap: 6px;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            justify-content: center;
             background: white;
             padding: 10px;
             border-radius: 16px;
@@ -344,16 +345,16 @@
 </head>
 <body>
     <div class="top-bar">
-        <div class="top-bar-left">
+        <a href="home.html?v=2" class="top-bar-left" style="text-decoration: none; color: inherit;">
             <div class="logo">🏆</div>
             <div class="top-bar-title">
                 <h1>HabitRewards</h1>
                 <p>Admin Dashboard</p>
             </div>
-        </div>
+        </a>
         <div class="top-bar-links">
-            <a href="index.html">👤 Stu's App</a>
-            <a href="home.html">🏠 Homepage</a>
+            <a id="appLink" href="app.html">👤 <span class="user-name">User</span>'s App</a>
+            <a href="home.html?v=2">🏠 Homepage</a>
         </div>
     </div>
 
@@ -364,6 +365,7 @@
             <button class="tab" onclick="showTab('tasks')">📋 Tasks</button>
             <button class="tab" onclick="showTab('payments')">💰 Payments</button>
             <button class="tab" onclick="showTab('levels')">🏆 Levels</button>
+            <button class="tab" onclick="showTab('admins')">👥 Admins</button>
             <button class="tab" onclick="showTab('faq')">❓ FAQ</button>
             <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
         </div>
@@ -371,7 +373,7 @@
         <!-- DASHBOARD TAB -->
         <div id="dashboard" class="tab-content active">
             <div class="card">
-                <h2>📊 Stu's Progress</h2>
+                <h2>📊 <span class="user-name">User</span>'s Progress</h2>
                 <div class="stat-grid">
                     <div class="stat-box highlight">
                         <div class="value" id="totalPts">0</div>
@@ -401,7 +403,7 @@
                 
                 <div class="info-box">
                     <strong>💰 Point System:</strong> 100 points = $1.00<br>
-                    Payouts sent via Zelle at month end.
+                    User cashes out anytime via Settings.
                 </div>
 
                 <div id="streakBonusInfo" style="display: none;" class="warning-box">
@@ -433,7 +435,7 @@
 
             <div class="card">
                 <h2>🚩 Reported Tasks</h2>
-                <p style="color: var(--text-light); margin-bottom: 15px;">Tasks Stu has flagged for review</p>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Tasks <span class="user-name">User</span> has flagged for review</p>
                 <div id="reportsContainer">
                     <div class="empty-state">No reported tasks yet ✅</div>
                 </div>
@@ -485,8 +487,8 @@
         <!-- PAYMENTS TAB -->
         <div id="payments" class="tab-content">
             <div class="card">
-                <h2>💰 Monthly Payments</h2>
-                <p style="color: var(--text-light); margin-bottom: 20px;">Track Zelle payments to Stu</p>
+                <h2>💰 Payment History</h2>
+                <p style="color: var(--text-light); margin-bottom: 20px;">Track Zelle payments to <span class="user-name">User</span></p>
                 
                 <div id="paymentsContainer"></div>
                 
@@ -534,6 +536,36 @@
             </div>
         </div>
 
+        <!-- ADMINS TAB -->
+        <div id="admins" class="tab-content">
+            <div class="card">
+                <h2>👥 Manage Admins</h2>
+                <p style="color: var(--text-light); margin-bottom: 20px;">
+                    Admins can view progress, customize tasks, and manage payments for <strong class="user-name">this user</strong>. 
+                    Multiple people can be admins—great for family members who want to help.
+                </p>
+                
+                <h3 style="margin-bottom: 12px;">Current Admins</h3>
+                <div id="adminsList" style="margin-bottom: 20px;"></div>
+                
+                <h3 style="margin-bottom: 12px;">➕ Add New Admin</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="email" id="newAdminEmail" placeholder="Enter email address" style="flex: 1; min-width: 200px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px;">
+                    <button class="btn btn-primary" onclick="addAdmin()">Add Admin</button>
+                </div>
+                <p style="font-size: 12px; color: var(--text-light); margin-top: 10px;">
+                    They'll receive an email invitation and can sign in to manage this profile.
+                </p>
+            </div>
+            
+            <div class="card">
+                <h2>📧 Pending Invitations</h2>
+                <div id="pendingInvites">
+                    <p style="color: var(--text-light); text-align: center; padding: 20px;">No pending invitations</p>
+                </div>
+            </div>
+        </div>
+
         <!-- FAQ TAB -->
         <div id="faq" class="tab-content">
             <!-- Quick Reference Card -->
@@ -541,7 +573,7 @@
                 <h2>📊 Quick Reference</h2>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 14px;">
                     <div><strong>💰 Points:</strong> 100 pts = $1.00</div>
-                    <div><strong>📅 Payouts:</strong> End of month</div>
+                    <div><strong>📅 Payouts:</strong> On-demand</div>
                     <div><strong>🔥 7-day streak:</strong> 1.5x bonus</div>
                     <div><strong>🔥 14-day streak:</strong> 2x bonus</div>
                     <div><strong>🎰 Spin wheel:</strong> 10-150 pts</div>
@@ -556,7 +588,7 @@
                     <div class="faq-q">💰 How does the point system work?</div>
                     <div class="faq-a">
                         <strong>100 points = $1.00</strong><br><br>
-                        Stu earns points from:
+                        <span class="user-name">User</span> earns points from:
                         <ul style="margin: 8px 0 0 20px;">
                             <li><strong>Daily Tasks</strong> – 3 core tasks every day (Walk, Duolingo, Crossword)</li>
                             <li><strong>Daily Bonus</strong> – 1 rotating bonus task each day</li>
@@ -582,7 +614,7 @@
                 <div class="faq-item">
                     <div class="faq-q">🎰 What is the spin wheel?</div>
                     <div class="faq-a">
-                        When Stu completes all 3 daily tasks, a <strong>bonus spin wheel</strong> unlocks!
+                        When <span class="user-name">User</span> completes all 3 daily tasks, a <strong>bonus spin wheel</strong> unlocks!
                         <ul style="margin: 8px 0 0 20px;">
                             <li>One free spin per day</li>
                             <li>Prizes range from <strong>10 to 150 points</strong></li>
@@ -605,7 +637,7 @@
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-q">😴 What happens if Stu misses a day?</div>
+                    <div class="faq-q">😴 What happens if <span class="user-name">User</span> misses a day?</div>
                     <div class="faq-a">
                         <ul style="margin: 0 0 0 20px;">
                             <li><strong>Streak resets</strong> to 0 (loses multiplier)</li>
@@ -635,35 +667,36 @@
                     <div class="faq-q">💵 How do payouts work?</div>
                     <div class="faq-a">
                         <ul style="margin: 0 0 0 20px;">
-                            <li>Points accumulate throughout the month</li>
-                            <li>Check <strong>Dashboard → Current Balance</strong> for amount owed</li>
-                            <li>Send payment via Zelle at month end</li>
-                            <li>Record it in <strong>Payments tab</strong> (resets balance)</li>
+                            <li>Points accumulate as tasks are completed</li>
+                            <li><span class="user-name">User</span> can redeem anytime via <strong>Settings → Redeem Points</strong></li>
+                            <li>You'll receive a notification when they request a payout</li>
+                            <li>Send payment via Zelle, then record it in <strong>Payments tab</strong></li>
                         </ul>
+                        <p style="margin-top: 8px; color: var(--primary);">💡 Tip: No monthly deadline — they cash out when they're ready!</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-q">🚩 What if Stu reports a task?</div>
+                    <div class="faq-q">🚩 What if <span class="user-name">User</span> reports a task?</div>
                     <div class="faq-a">
-                        Stu can tap ••• on any bonus task to report it if he doesn't like it.
+                        <span class="user-name">User</span> can tap ••• on any bonus task to report it if they don't like it.
                         <ul style="margin: 8px 0 0 20px;">
                             <li>Reports appear in the <strong>Reports tab</strong></li>
-                            <li>Review the reason he gave</li>
+                            <li>Review the reason they gave</li>
                             <li>Edit or remove the task from Tasks tab</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-q">� Can Stu recover a lost streak?</div>
+                    <div class="faq-q">🔄 Can <span class="user-name">User</span> recover a lost streak?</div>
                     <div class="faq-a">
-                        <strong>Yes!</strong> If Stu misses a day and his streak is at risk:
+                        <strong>Yes!</strong> If <span class="user-name">User</span> misses a day and their streak is at risk:
                         <ul style="margin: 8px 0 0 20px;">
-                            <li>He can tap the <strong>streak badge</strong> on the main screen</li>
+                            <li>They can tap the <strong>streak badge</strong> on the main screen</li>
                             <li>A "Streak Recovery" option will appear</li>
-                            <li>To recover, he must <strong>call a family member</strong></li>
-                            <li>He enters who he called, and the streak is restored!</li>
+                            <li>To recover, they must <strong>call a family member</strong></li>
+                            <li>They enter who they called, and the streak is restored!</li>
                         </ul>
                         <p style="margin-top: 8px; color: var(--primary);">💡 This encourages family connection while being forgiving about missed days.</p>
                     </div>
@@ -675,7 +708,7 @@
                         Levels are based on <strong>total lifetime points earned</strong> (not current balance).
                         <ul style="margin: 8px 0 0 20px;">
                             <li>10 levels from Beginner to Hall of Fame</li>
-                            <li>Stu can tap his level badge to see all levels</li>
+                            <li><span class="user-name">User</span> can tap their level badge to see all levels</li>
                             <li>Levels never go down, even after payouts</li>
                         </ul>
                         <p style="margin-top: 8px;">See <strong>Levels tab</strong> for full breakdown!</p>
@@ -712,7 +745,7 @@
                 <h2>ℹ️ About</h2>
                 <p style="font-size: 14px; color: var(--text-light); line-height: 1.6;">
                     <strong>HabitRewards</strong> v1.0<br><br>
-                    A gamified habit-tracking app designed to encourage daily positive behaviors through monetary rewards. Built with a fun, Duolingo-inspired interface.
+                    A gamified habit-tracking app designed to encourage daily positive behaviors through monetary rewards. Uses proven gamification mechanics like streaks, levels, and spin-to-win.
                 </p>
             </div>
         </div>
@@ -781,7 +814,103 @@
         </div>
     </div>
 
+    <!-- Auth Overlay (hidden by default, shown only if not signed in) -->
+    <div id="authOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px;">
+            <div style="font-size: 48px; margin-bottom: 15px;">🔐</div>
+            <h2 style="margin-bottom: 10px;">Admin Access Required</h2>
+            <p style="color: #777; margin-bottom: 20px;">Please sign in to access Admin Mode</p>
+            <a href="login.html" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 30px; background: #58cc02; color: white; border-radius: 12px; font-weight: 600;">Sign In</a>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    
+    <!-- EmailJS SDK (free tier: 200 emails/month) -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
+            authDomain: "habitrewards-131.firebaseapp.com",
+            projectId: "habitrewards-131",
+            storageBucket: "habitrewards-131.firebasestorage.app",
+            messagingSenderId: "814515329989",
+            appId: "1:814515329989:web:cc256861680e9b67c449ac"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Check auth state
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in - hide overlay and continue
+                document.getElementById('authOverlay').style.display = 'none';
+                
+                // Auto-link this profile to the user's account
+                const profileParam = new URLSearchParams(window.location.search).get('profile');
+                if (profileParam) {
+                    const profileName = profileParam === 'stu' ? 'Stu' : profileParam;
+                    const userProfilesKey = 'hr_user_profiles_' + user.uid;
+                    let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
+                    if (!userProfiles.find(p => p.id === profileParam)) {
+                        userProfiles.push({ id: profileParam, name: profileName });
+                        localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
+                    }
+                }
+            } else {
+                // Not signed in - store the profile we're trying to access, then show overlay
+                const profileParam = new URLSearchParams(window.location.search).get('profile');
+                if (profileParam) {
+                    sessionStorage.setItem('hr_pending_profile', profileParam);
+                    sessionStorage.setItem('hr_pending_profile_name', profileParam === 'stu' ? 'Stu' : profileParam);
+                }
+                document.getElementById('authOverlay').style.display = 'flex';
+            }
+        });
+    </script>
+
+    <script>
+        // ========== PROFILE DETECTION ==========
+        const urlParams = new URLSearchParams(window.location.search);
+        const PROFILE_ID = urlParams.get('profile');
+        
+        // Special case: "stu" profile uses legacy (no suffix) storage keys for backwards compatibility
+        const IS_LEGACY_PROFILE = PROFILE_ID === 'stu';
+        
+        // Storage key prefix based on profile
+        const STORAGE_KEY = IS_LEGACY_PROFILE ? 'hr_state' : (PROFILE_ID ? 'hr_state_' + PROFILE_ID : 'hr_state');
+        const ADMIN_KEY = IS_LEGACY_PROFILE ? 'hr_admin' : (PROFILE_ID ? 'hr_admin_' + PROFILE_ID : 'hr_admin');
+
+        // If no profile, redirect to get-started
+        if (!PROFILE_ID) {
+            window.location.href = '/get-started.html';
+        }
+
+        // Load profile info if available
+        let PROFILE_NAME = 'User';
+        if (IS_LEGACY_PROFILE) {
+            PROFILE_NAME = 'Stu';
+            document.title = "Stu's Admin Mode";
+        } else {
+            const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
+            if (profileData) {
+                const profile = JSON.parse(profileData);
+                PROFILE_NAME = profile.name || 'User';
+                document.title = PROFILE_NAME + "'s Admin Mode";
+            }
+        }
+
+        // Replace all user name placeholders with actual name
+        document.querySelectorAll('.user-name').forEach(el => {
+            el.textContent = PROFILE_NAME;
+        });
+
         // ========== TAB FUNCTIONALITY ==========
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -795,17 +924,17 @@
 
         // ========== STATE MANAGEMENT ==========
         function loadState() {
-            const saved = localStorage.getItem('hr_state');
+            const saved = localStorage.getItem(STORAGE_KEY);
             return saved ? JSON.parse(saved) : { balance: 0, totalEarned: 0, streak: 0 };
         }
 
         function loadAdminData() {
-            const saved = localStorage.getItem('hr_admin');
+            const saved = localStorage.getItem(ADMIN_KEY);
             return saved ? JSON.parse(saved) : { payments: [], customTasks: {} };
         }
 
         function saveAdminData(data) {
-            localStorage.setItem('hr_admin', JSON.stringify(data));
+            localStorage.setItem(ADMIN_KEY, JSON.stringify(data));
         }
 
         // ========== TASK LISTS (from main app) ==========
@@ -1203,7 +1332,7 @@
             // Reset user balance after payment
             const state = loadState();
             state.balance = 0;
-            localStorage.setItem('hr_state', JSON.stringify(state));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 
             closeModal('paymentModal');
             displayPayments();
@@ -1246,24 +1375,26 @@
         }
 
         function downloadAllData() {
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
             const data = {
                 state: loadState(),
                 admin: loadAdminData(),
-                completedLog: JSON.parse(localStorage.getItem('hr_completed_log') || '[]'),
-                feedback: JSON.parse(localStorage.getItem('hr_feedback') || '[]'),
-                reports: JSON.parse(localStorage.getItem('hr_reports') || '[]')
+                completedLog: JSON.parse(localStorage.getItem('hr_completed_log' + suffix) || '[]'),
+                feedback: JSON.parse(localStorage.getItem('hr_feedback' + suffix) || '[]'),
+                reports: JSON.parse(localStorage.getItem('hr_reports' + suffix) || '[]')
             };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `habitrewards-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `habitrewards-${PROFILE_NAME}-backup-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
 
         function clearReports() {
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
             if (confirm('Clear all reports?')) {
-                localStorage.removeItem('hr_reports');
+                localStorage.removeItem('hr_reports' + suffix);
                 displayReports();
             }
         }
@@ -1271,12 +1402,13 @@
         function resetUserData() {
             if (confirm('⚠️ DELETE ALL user data?\n\nThis removes:\n• Points & balance\n• Streak\n• Completed tasks\n• Achievements')) {
                 if (confirm('Are you absolutely sure?')) {
-                    localStorage.removeItem('hr_state');
-                    localStorage.removeItem('hr_date');
-                    localStorage.removeItem('hr_week');
-                    localStorage.removeItem('hr_feedback');
-                    localStorage.removeItem('hr_completed_log');
-                    localStorage.removeItem('hr_reports');
+                    const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+                    localStorage.removeItem('hr_state' + suffix);
+                    localStorage.removeItem('hr_date' + suffix);
+                    localStorage.removeItem('hr_week' + suffix);
+                    localStorage.removeItem('hr_feedback' + suffix);
+                    localStorage.removeItem('hr_completed_log' + suffix);
+                    localStorage.removeItem('hr_reports' + suffix);
                     displayStats();
                     displayReports();
                     displayLevels();
@@ -1311,12 +1443,272 @@
             }
         }
 
+        // ========== ADMIN MANAGEMENT ==========
+        function getAdminsKey() {
+            return PROFILE_ID ? 'hr_profile_admins_' + PROFILE_ID : 'hr_profile_admins';
+        }
+
+        function getInvitesKey() {
+            return PROFILE_ID ? 'hr_profile_invites_' + PROFILE_ID : 'hr_profile_invites';
+        }
+
+        function loadAdmins() {
+            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            const currentUser = firebase.auth().currentUser;
+            
+            const container = document.getElementById('adminsList');
+            container.innerHTML = '';
+            
+            // Always show the profile owner first
+            const ownerName = currentUser ? (currentUser.displayName || currentUser.email) : 'Owner';
+            const ownerDiv = document.createElement('div');
+            ownerDiv.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-radius: 10px; margin-bottom: 8px;';
+            ownerDiv.innerHTML = `
+                <div>
+                    <strong>${ownerName}</strong>
+                    ${currentUser && currentUser.displayName ? `<span style="color: var(--text-light); font-size: 12px; margin-left: 5px;">(${currentUser.email})</span>` : ''}
+                    <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; margin-left: 8px;">Owner</span>
+                </div>
+            `;
+            container.appendChild(ownerDiv);
+            
+            // Show other admins
+            admins.forEach((admin, index) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border-radius: 10px; margin-bottom: 8px;';
+                div.innerHTML = `
+                    <div>
+                        <strong>${admin.email}</strong>
+                        ${admin.name ? `<span style="color: var(--text-light);"> (${admin.name})</span>` : ''}
+                        <span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 20px; font-size: 11px; margin-left: 8px;">Admin</span>
+                    </div>
+                    <button onclick="removeAdmin(${index})" style="background: #fee2e2; border: none; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+            
+            if (admins.length === 0) {
+                const emptyDiv = document.createElement('p');
+                emptyDiv.style.cssText = 'color: var(--text-light); font-size: 14px; padding: 10px;';
+                emptyDiv.textContent = 'No additional admins yet. Add family members or caregivers above.';
+                container.appendChild(emptyDiv);
+            }
+        }
+
+        function loadPendingInvites() {
+            const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
+            const container = document.getElementById('pendingInvites');
+            container.innerHTML = '';
+            
+            if (invites.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 20px;">No pending invitations</p>';
+                return;
+            }
+            
+            invites.forEach((invite, index) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #fef3c7; border-radius: 10px; margin-bottom: 8px;';
+                div.innerHTML = `
+                    <div>
+                        <strong>${invite.email}</strong>
+                        <div style="font-size: 12px; color: var(--text-light);">Sent ${new Date(invite.sentAt).toLocaleDateString()}</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="resendInvite(${index})" style="background: var(--primary); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Resend</button>
+                        <button onclick="cancelInvite(${index})" style="background: #fee2e2; border: none; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Cancel</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addAdmin() {
+            const emailInput = document.getElementById('newAdminEmail');
+            const email = emailInput.value.trim().toLowerCase();
+            
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+            
+            if (!email.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            // Check if already an admin
+            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            if (admins.find(a => a.email === email)) {
+                alert('This person is already an admin');
+                return;
+            }
+            
+            // Add to pending invites
+            const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
+            invites.push({
+                email: email,
+                sentAt: new Date().toISOString(),
+                profileId: PROFILE_ID,
+                profileName: PROFILE_NAME
+            });
+            localStorage.setItem(getInvitesKey(), JSON.stringify(invites));
+            
+            // Also add to the managed profiles for that email
+            const managedKey = 'hr_managed_profiles_' + email;
+            const managed = JSON.parse(localStorage.getItem(managedKey) || '[]');
+            if (!managed.find(p => p.id === PROFILE_ID)) {
+                managed.push({ id: PROFILE_ID, name: PROFILE_NAME });
+                localStorage.setItem(managedKey, JSON.stringify(managed));
+            }
+            
+            // Add as admin immediately (in real app, might wait for acceptance)
+            admins.push({ email: email, addedAt: new Date().toISOString() });
+            localStorage.setItem(getAdminsKey(), JSON.stringify(admins));
+            
+            // Send invitation email
+            sendInviteEmail(email);
+            
+            emailInput.value = '';
+            loadAdmins();
+            loadPendingInvites();
+            
+            alert(`Invitation sent to ${email}! They can now sign in to manage ${PROFILE_NAME}'s profile.`);
+        }
+
+        // ========== EMAILJS CONFIG ==========
+        // Free tier: 200 emails/month
+        // Set up at https://www.emailjs.com/
+        const EMAILJS_PUBLIC_KEY = 'zj5fBo7DU8vtJg44g';
+        const EMAILJS_SERVICE_ID = 'service_lzv2w8n';
+        const EMAILJS_TEMPLATE_ID = 'template_ka99fef';
+        
+        // Initialize EmailJS
+        if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+        }
+        
+        async function sendInviteEmail(email) {
+            const currentUser = auth.currentUser;
+            const senderName = currentUser?.displayName || currentUser?.email || 'A HabitRewards user';
+            const appUrl = window.location.origin;
+            const adminUrl = `${appUrl}/admin.html?profile=${encodeURIComponent(PROFILE_ID)}`;
+            const guideUrl = `${appUrl}/admin-guide.html`;
+            const loginUrl = `${appUrl}/login.html`;
+            
+            // Check if EmailJS is configured
+            if (typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+                console.log('EmailJS not configured, using mailto fallback');
+                fallbackMailto(email, senderName);
+                return;
+            }
+            
+            try {
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                    to_email: email,
+                    to_name: email.split('@')[0],
+                    from_name: senderName,
+                    profile_name: PROFILE_NAME,
+                    admin_url: adminUrl,
+                    login_url: loginUrl,
+                    guide_url: guideUrl,
+                    app_url: appUrl
+                });
+                console.log('Invitation email sent successfully');
+                return true;
+            } catch (error) {
+                console.error('EmailJS error:', error);
+                alert('Could not send email automatically. Opening your email client instead...');
+                // Fallback to mailto if EmailJS fails
+                fallbackMailto(email, senderName);
+                return false;
+            }
+        }
+        
+        function fallbackMailto(email, senderName) {
+            const appUrl = window.location.origin + '/login.html';
+            const guideUrl = window.location.origin + '/admin-guide.html';
+            const subject = encodeURIComponent(`You've been added as an admin for ${PROFILE_NAME} on HabitRewards`);
+            const body = encodeURIComponent(
+                `Hi!\n\n` +
+                `${senderName} has invited you to be an admin for ${PROFILE_NAME}'s HabitRewards profile.\n\n` +
+                `As an admin, you can:\n` +
+                `• View ${PROFILE_NAME}'s progress and streaks\n` +
+                `• Customize daily tasks\n` +
+                `• Record payments\n` +
+                `• Download reports\n\n` +
+                `Sign in here to get started:\n${appUrl}\n\n` +
+                `New to HabitRewards? Read the admin guide:\n${guideUrl}\n\n` +
+                `— The HabitRewards Team`
+            );
+            
+            // Use location.href instead of window.open to avoid blank tabs
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        }
+
+        function removeAdmin(index) {
+            if (!confirm('Remove this admin? They will no longer have access to this profile.')) return;
+            
+            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            const removed = admins.splice(index, 1)[0];
+            localStorage.setItem(getAdminsKey(), JSON.stringify(admins));
+            
+            // Also remove from their managed profiles
+            if (removed) {
+                const managedKey = 'hr_managed_profiles_' + removed.email;
+                const managed = JSON.parse(localStorage.getItem(managedKey) || '[]');
+                const filtered = managed.filter(p => p.id !== PROFILE_ID);
+                localStorage.setItem(managedKey, JSON.stringify(filtered));
+            }
+            
+            loadAdmins();
+        }
+
+        function resendInvite(index) {
+            const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
+            const invite = invites[index];
+            if (invite) {
+                sendInviteEmail(invite.email);
+                invite.sentAt = new Date().toISOString();
+                localStorage.setItem(getInvitesKey(), JSON.stringify(invites));
+                loadPendingInvites();
+            }
+        }
+
+        function cancelInvite(index) {
+            const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
+            const removed = invites.splice(index, 1)[0];
+            localStorage.setItem(getInvitesKey(), JSON.stringify(invites));
+            
+            // Also remove from admins
+            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            const filtered = admins.filter(a => a.email !== removed.email);
+            localStorage.setItem(getAdminsKey(), JSON.stringify(filtered));
+            
+            // Remove from their managed profiles
+            if (removed) {
+                const managedKey = 'hr_managed_profiles_' + removed.email;
+                const managed = JSON.parse(localStorage.getItem(managedKey) || '[]');
+                const filteredManaged = managed.filter(p => p.id !== PROFILE_ID);
+                localStorage.setItem(managedKey, JSON.stringify(filteredManaged));
+            }
+            
+            loadAdmins();
+            loadPendingInvites();
+        }
+
         // ========== INIT ==========
+        // Set app link with profile parameter
+        if (PROFILE_ID) {
+            document.getElementById('appLink').href = 'app.html?profile=' + PROFILE_ID;
+        }
+        
         displayStats();
         displayTasks();
         displayLevels();
         displayPayments();
         displayReports();
+        loadAdmins();
+        loadPendingInvites();
     </script>
 </body>
 </html>

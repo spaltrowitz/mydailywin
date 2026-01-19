@@ -276,6 +276,9 @@
             <div class="progress-step" id="prog3"></div>
             <div class="progress-step" id="prog4"></div>
             <div class="progress-step" id="prog5"></div>
+            <div class="progress-step" id="prog6"></div>
+            <div class="progress-step" id="prog7"></div>
+            <div class="progress-step" id="prog8"></div>
         </div>
 
         <!-- STEP 1: Who is this for? -->
@@ -466,21 +469,88 @@
                 </div>
                 <div style="margin-top: 20px;">
                     <label style="font-weight: 600; display: block; margin-bottom: 8px;">💡 Any other activities?</label>
-                    <textarea id="customActivities" placeholder="E.g., Tennis 3x/week, try a new restaurant, practice an instrument..."></textarea>
+                    <textarea id="customActivities" placeholder="E.g., Tennis, Pickleball, Try a new restaurant, Practice guitar..."></textarea>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 8px;">💡 Tip: Separate activities with commas — each one becomes a trackable task!</p>
                 </div>
-                <button class="btn btn-primary" onclick="goToSummary()">Continue →</button>
+                <button class="btn btn-primary" onclick="goToNameStep()">Continue →</button>
             </div>
             <button class="btn btn-secondary" onclick="goBack()">← Back</button>
         </div>
 
-        <!-- STEP 6: Summary -->
+        <!-- STEP 6: User's Name -->
         <div class="step" id="step6">
             <div class="card">
-                <h2>🎉 You're all set!</h2>
-                <p>Here's your personalized HabitRewards setup:</p>
+                <h2>👋 One last thing!</h2>
+                <p id="step6Question">What's the name of the person who will use the app?</p>
+                <input type="text" id="userName" placeholder="First name" style="font-size: 18px; text-align: center;">
+                <button class="btn btn-primary" onclick="goToPayoutStep()" style="margin-top: 10px;">Continue →</button>
+            </div>
+            <button class="btn btn-secondary" onclick="goBack()">← Back</button>
+        </div>
+
+        <!-- STEP 7: Payout Preference -->
+        <div class="step" id="step7">
+            <div class="card">
+                <h2>💰 Reward Payouts</h2>
+                <p id="step7Question">How would you like to receive reward payouts?</p>
+                <div class="options">
+                    <div class="option" onclick="selectPayoutPref('ondemand')">
+                        <div class="option-icon">🎯</div>
+                        <div class="option-text">
+                            <strong>Cash out when I want</strong>
+                            <span>✨ Recommended — request payout anytime via the app</span>
+                        </div>
+                        <div class="option-check">✓</div>
+                    </div>
+                    <div class="option" onclick="selectPayoutPref('monthly')">
+                        <div class="option-icon">📅</div>
+                        <div class="option-text">
+                            <strong>Regular monthly payouts</strong>
+                            <span>Receive rewards at the beginning of each month</span>
+                        </div>
+                        <div class="option-check">✓</div>
+                    </div>
+                </div>
+                <p style="font-size: 13px; color: var(--text-light); margin-top: 15px; text-align: center;">💡 We recommend on-demand for more autonomy — you decide when to cash out!</p>
+            </div>
+            <button class="btn btn-secondary" onclick="goBack()">← Back</button>
+        </div>
+
+        <!-- STEP 8: Need Help? -->
+        <div class="step" id="step8">
+            <div class="card">
+                <h2>🛠️ Need help setting up?</h2>
+                <p>Would you like help customizing the task list for your situation?</p>
+                <div class="options">
+                    <div class="option" onclick="selectHelpOption('calendly')">
+                        <div class="option-icon">📅</div>
+                        <div class="option-text">
+                            <strong>Yes, schedule a free call</strong>
+                            <span>15 min setup session with the developer</span>
+                        </div>
+                        <div class="option-check">✓</div>
+                    </div>
+                    <div class="option" onclick="selectHelpOption('self')">
+                        <div class="option-icon">🚀</div>
+                        <div class="option-text">
+                            <strong>No thanks, I'll set it up myself</strong>
+                            <span>Jump right into the app</span>
+                        </div>
+                        <div class="option-check">✓</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="goBack()">← Back</button>
+        </div>
+
+        <!-- STEP 9: Summary -->
+        <div class="step" id="step9">
+            <div class="card">
+                <h2>🎉 <span id="userNameDisplay">Your</span> HabitRewards is ready!</h2>
+                <p>Here's the personalized setup:</p>
                 
                 <div class="summary-section">
-                    <h4>Setting up for:</h4>
+                    <h4>Created for:</h4>
                     <p id="summaryWho"></p>
                 </div>
                 
@@ -493,13 +563,27 @@
                     <h4>Activities to track:</h4>
                     <div class="summary-tags" id="summaryActivities"></div>
                 </div>
+
+                <div class="summary-section" id="profileLinksSection">
+                    <h4>Your personalized links:</h4>
+                    <div style="background: #f0fdf4; padding: 15px; border-radius: 12px; margin-top: 10px;">
+                        <div style="margin-bottom: 10px;">
+                            <strong>📱 App:</strong><br>
+                            <code id="appLink" style="font-size: 12px; word-break: break-all;"></code>
+                        </div>
+                        <div>
+                            <strong>⚙️ Admin:</strong><br>
+                            <code id="adminLink" style="font-size: 12px; word-break: break-all;"></code>
+                        </div>
+                    </div>
+                </div>
                 
                 <div style="margin-top: 25px;">
-                    <a href="index.html" class="btn btn-primary">🚀 Open HabitRewards App</a>
-                    <a href="admin.html" class="btn btn-secondary">⚙️ Customize in Admin Mode</a>
+                    <button class="btn btn-primary" onclick="openUserApp()">🚀 Open <span id="btnUserName">the</span> App</button>
+                    <button class="btn btn-secondary" onclick="openAdminMode()">⚙️ Customize in Admin Mode</button>
                 </div>
             </div>
-            <a href="home.html" class="back-link">← Back to Homepage</a>
+            <a href="home.html?v=2" class="back-link">← Back to Homepage</a>
         </div>
     </div>
 
@@ -511,8 +595,19 @@
             phoneComfort: null,
             motivation: null,
             activities: [],
-            customActivities: ''
+            customActivities: '',
+            userName: '',
+            payoutPref: 'ondemand',
+            needsHelp: null,
+            profileId: null
         };
+
+        function generateProfileId() {
+            // Generate a unique profile ID
+            const timestamp = Date.now().toString(36);
+            const random = Math.random().toString(36).substring(2, 8);
+            return timestamp + random;
+        }
 
         function selectOption(step, value) {
             // Mark selected
@@ -553,10 +648,14 @@
                 document.getElementById('step3Question').textContent = 'How comfortable are you with using a smartphone?';
                 document.getElementById('step4Question').textContent = 'What would make completing daily tasks more rewarding for you?';
                 document.getElementById('step5Question').textContent = 'What activities would you like to track and be rewarded for?';
+                document.getElementById('step6Question').textContent = 'What\'s your name?';
+                document.getElementById('step7Question').textContent = 'How would you like to receive reward payouts?';
             } else {
                 document.getElementById('step3Question').textContent = 'How comfortable is this person with using a smartphone?';
                 document.getElementById('step4Question').textContent = 'What would make completing daily tasks more rewarding for them?';
                 document.getElementById('step5Question').textContent = 'What activities would they like to track and be rewarded for?';
+                document.getElementById('step6Question').textContent = 'What\'s the name of the person who will use the app?';
+                document.getElementById('step7Question').textContent = 'How would they like to receive reward payouts?';
             }
         }
 
@@ -571,26 +670,121 @@
             }
         }
 
-        function goToSummary() {
+        function goToNameStep() {
             answers.customActivities = document.getElementById('customActivities').value.trim();
             currentStep = 6;
             showStep(6);
+        }
+
+        function goToPayoutStep() {
+            const name = document.getElementById('userName').value.trim();
+            if (!name) {
+                alert('Please enter a name to continue.');
+                return;
+            }
+            answers.userName = name;
+            currentStep = 7;
+            showStep(7);
+        }
+
+        function selectPayoutPref(pref) {
+            // Mark selected
+            const stepEl = document.getElementById('step7');
+            stepEl.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            answers.payoutPref = pref;
+            
+            // Auto-advance to help step
+            setTimeout(() => {
+                currentStep = 8;
+                showStep(8);
+            }, 300);
+        }
+
+        function selectHelpOption(option) {
+            // Mark selected
+            const stepEl = document.getElementById('step8');
+            stepEl.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            answers.needsHelp = option;
+
+            setTimeout(() => {
+                if (option === 'calendly') {
+                    // Open Calendly in new tab, then show summary
+                    window.open('https://calendly.com/spaltrowitz', '_blank');
+                }
+                goToSummary();
+            }, 300);
+        }
+
+        function goToSummary() {
+            // Generate profile ID if not already done
+            if (!answers.profileId) {
+                answers.profileId = generateProfileId();
+            }
+            
+            currentStep = 9;
+            showStep(9);
             buildSummary();
+            
+            // Save the profile setup to localStorage
+            saveProfileSetup();
+        }
+
+        function saveProfileSetup() {
+            const profileData = {
+                id: answers.profileId,
+                name: answers.userName,
+                forWho: answers.forWho,
+                relationship: answers.relationship,
+                phoneComfort: answers.phoneComfort,
+                motivation: answers.motivation,
+                activities: answers.activities,
+                customActivities: answers.customActivities,
+                payoutPref: answers.payoutPref,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save to localStorage with profile ID
+            localStorage.setItem('hr_profile_' + answers.profileId, JSON.stringify(profileData));
+            
+            // Also save to a profiles index
+            let profiles = JSON.parse(localStorage.getItem('hr_profiles_index') || '[]');
+            if (!profiles.find(p => p.id === answers.profileId)) {
+                profiles.push({ id: answers.profileId, name: answers.userName, createdAt: profileData.createdAt });
+                localStorage.setItem('hr_profiles_index', JSON.stringify(profiles));
+            }
+            
+            // Link to authenticated user if available
+            const pendingUserUid = sessionStorage.getItem('hr_pending_user_uid');
+            if (pendingUserUid) {
+                const userProfilesKey = 'hr_user_profiles_' + pendingUserUid;
+                let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
+                if (!userProfiles.find(p => p.id === answers.profileId)) {
+                    userProfiles.push({ id: answers.profileId, name: answers.userName });
+                    localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
+                }
+                sessionStorage.removeItem('hr_pending_user_uid');
+            }
         }
 
         function buildSummary() {
+            // User name display
+            document.getElementById('userNameDisplay').textContent = answers.userName + "'s";
+            document.getElementById('btnUserName').textContent = answers.userName + "'s";
+
             // Who
-            let whoText = '';
-            if (answers.forWho === 'self') {
-                whoText = 'Yourself';
-            } else {
+            let whoText = answers.userName;
+            if (answers.forWho !== 'self') {
                 const relMap = {
-                    'parent': 'Your parent',
-                    'spouse': 'Your spouse/partner',
-                    'grandparent': 'Your grandparent',
-                    'other': 'Someone you care about'
+                    'parent': '(your parent)',
+                    'spouse': '(your spouse/partner)',
+                    'grandparent': '(your grandparent)',
+                    'other': ''
                 };
-                whoText = relMap[answers.relationship] || 'Someone special';
+                whoText += ' ' + (relMap[answers.relationship] || '');
             }
             document.getElementById('summaryWho').textContent = whoText;
 
@@ -629,17 +823,33 @@
                 tag.textContent = '✏️ ' + answers.customActivities.substring(0, 30) + (answers.customActivities.length > 30 ? '...' : '');
                 actContainer.appendChild(tag);
             }
+
+            // Profile links
+            const baseUrl = window.location.origin;
+            const appUrl = baseUrl + '/app.html?profile=' + answers.profileId;
+            const adminUrl = baseUrl + '/admin.html?profile=' + answers.profileId;
+            
+            document.getElementById('appLink').textContent = appUrl;
+            document.getElementById('adminLink').textContent = adminUrl;
+        }
+
+        function openUserApp() {
+            window.location.href = '/app.html?profile=' + answers.profileId;
+        }
+
+        function openAdminMode() {
+            window.location.href = '/admin.html?profile=' + answers.profileId;
         }
 
         function showStep(step) {
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
             document.getElementById('step' + step).classList.add('active');
             
-            // Update progress bar
-            for (let i = 1; i <= 5; i++) {
+            // Update progress bar (now 8 steps)
+            for (let i = 1; i <= 8; i++) {
                 const prog = document.getElementById('prog' + i);
                 prog.classList.remove('active', 'completed');
-                if (i < step || (step === 6 && i <= 5)) {
+                if (i < step || (step === 9 && i <= 8)) {
                     prog.classList.add('completed');
                 } else if (i === step) {
                     prog.classList.add('active');
@@ -660,6 +870,12 @@
                 currentStep = 4;
             } else if (currentStep === 6) {
                 currentStep = 5;
+            } else if (currentStep === 7) {
+                currentStep = 6;
+            } else if (currentStep === 8) {
+                currentStep = 7;
+            } else if (currentStep === 9) {
+                currentStep = 8;
             }
             showStep(currentStep);
         }

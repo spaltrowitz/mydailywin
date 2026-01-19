@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - HabitRewards</title>
+    <style>
+        :root {
+            --primary: #58cc02;
+            --primary-dark: #46a302;
+            --bg: #f7f7f7;
+            --text: #3c3c3c;
+            --text-light: #777;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .logo {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 28px;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+        .btn-google {
+            background: white;
+            border: 2px solid #e5e7eb;
+            color: var(--text);
+        }
+        .btn-google:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+        }
+        .btn-email {
+            background: var(--primary);
+            border: none;
+            color: white;
+        }
+        .btn-email:hover {
+            background: var(--primary-dark);
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+        .email-form {
+            display: none;
+        }
+        .email-form.active {
+            display: block;
+        }
+        .email-form input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            background: var(--bg);
+        }
+        .email-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            color: var(--primary);
+        }
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            color: var(--text-light);
+        }
+        .loading.show {
+            display: flex;
+        }
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e5e7eb;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .profile-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .profile-list h3 {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+        .profile-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .profile-item:hover {
+            background: #e5e7eb;
+        }
+        .profile-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .profile-arrow {
+            color: var(--text-light);
+        }
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .user-info.show {
+            display: flex;
+        }
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        .user-details {
+            text-align: left;
+        }
+        .user-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .user-email {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        .btn-signout {
+            background: #fee2e2;
+            border: none;
+            color: #dc2626;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo">🏆</div>
+        <h1>HabitRewards</h1>
+        <p class="subtitle">Sign in to access your profiles</p>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <span>Signing in...</span>
+        </div>
+        
+        <div id="userInfo" class="user-info">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-details">
+                <div class="user-name" id="userName"></div>
+                <div class="user-email" id="userEmail"></div>
+            </div>
+            <button class="btn-signout" onclick="signOut()">Sign Out</button>
+        </div>
+        
+        <div id="authButtons">
+            <button class="btn btn-google" onclick="signInWithGoogle()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                Continue with Google
+            </button>
+            
+            <div class="divider">or</div>
+            
+            <button class="btn btn-email" onclick="showEmailForm()">
+                ✉️ Continue with Email
+            </button>
+            
+            <div id="emailForm" class="email-form">
+                <input type="email" id="email" placeholder="Email address">
+                <input type="password" id="password" placeholder="Password">
+                <button class="btn btn-email" onclick="signInWithEmail()">Sign In</button>
+                <button class="btn btn-google" onclick="createAccount()">Create Account</button>
+            </div>
+        </div>
+        
+        <div id="profileSection" class="profile-list" style="display: none;">
+            <h3>👤 Your Profiles</h3>
+            <p style="font-size: 12px; color: var(--text-light); margin-bottom: 10px;">Profiles you created</p>
+            <div id="profileList"></div>
+            
+            <div id="managedSection" style="margin-top: 20px; display: none;">
+                <h3>👥 Profiles You Manage</h3>
+                <p style="font-size: 12px; color: var(--text-light); margin-bottom: 10px;">You've been added as an admin</p>
+                <div id="managedList"></div>
+            </div>
+            
+            <button class="btn btn-email" onclick="createNewProfile()" style="margin-top: 15px;">
+                ➕ Create New Profile
+            </button>
+        </div>
+        
+        <a href="home.html?v=2" class="back-link">← Back to Homepage</a>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
+            authDomain: "habitrewards-131.firebaseapp.com",
+            projectId: "habitrewards-131",
+            storageBucket: "habitrewards-131.firebasestorage.app",
+            messagingSenderId: "814515329989",
+            appId: "1:814515329989:web:cc256861680e9b67c449ac"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Check auth state on load
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Check if there's a pending profile to link (from admin page redirect)
+                const pendingProfile = sessionStorage.getItem('hr_pending_profile');
+                const pendingProfileName = sessionStorage.getItem('hr_pending_profile_name');
+                if (pendingProfile) {
+                    const userProfilesKey = 'hr_user_profiles_' + user.uid;
+                    let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
+                    if (!userProfiles.find(p => p.id === pendingProfile)) {
+                        userProfiles.push({ id: pendingProfile, name: pendingProfileName || pendingProfile });
+                        localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
+                    }
+                    sessionStorage.removeItem('hr_pending_profile');
+                    sessionStorage.removeItem('hr_pending_profile_name');
+                }
+                
+                showUserLoggedIn(user);
+                loadUserProfiles(user);
+            } else {
+                showLoginForm();
+            }
+        });
+
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.classList.add('show');
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('authButtons').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        function showUserLoggedIn(user) {
+            hideLoading();
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userInfo').classList.add('show');
+            document.getElementById('userName').textContent = user.displayName || 'User';
+            document.getElementById('userEmail').textContent = user.email;
+            
+            const avatar = document.getElementById('userAvatar');
+            if (user.photoURL) {
+                avatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar">`;
+            } else {
+                avatar.textContent = (user.displayName || user.email || 'U')[0].toUpperCase();
+            }
+        }
+
+        function showLoginForm() {
+            hideLoading();
+            document.getElementById('authButtons').style.display = 'block';
+            document.getElementById('userInfo').classList.remove('show');
+            document.getElementById('profileSection').style.display = 'none';
+        }
+
+        function showEmailForm() {
+            document.getElementById('emailForm').classList.add('active');
+        }
+
+        async function signInWithGoogle() {
+            hideError();
+            showLoading();
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                await auth.signInWithPopup(provider);
+            } catch (error) {
+                hideLoading();
+                showError(error.message);
+            }
+        }
+
+        async function signInWithEmail() {
+            hideError();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showError('Please enter email and password');
+                return;
+            }
+            
+            showLoading();
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                hideLoading();
+                showError(error.message);
+            }
+        }
+
+        async function createAccount() {
+            hideError();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showError('Please enter email and password');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters');
+                return;
+            }
+            
+            showLoading();
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+            } catch (error) {
+                hideLoading();
+                showError(error.message);
+            }
+        }
+
+        async function signOut() {
+            await auth.signOut();
+        }
+
+        function loadUserProfiles(user) {
+            // Get profiles created by this user
+            const userProfilesKey = 'hr_user_profiles_' + user.uid;
+            const savedProfiles = localStorage.getItem(userProfilesKey);
+            let profiles = savedProfiles ? JSON.parse(savedProfiles) : [];
+            
+            // Get profiles this user manages (was added as admin)
+            const managedProfilesKey = 'hr_managed_profiles_' + user.email;
+            const savedManaged = localStorage.getItem(managedProfilesKey);
+            let managedProfiles = savedManaged ? JSON.parse(savedManaged) : [];
+            
+            const profileList = document.getElementById('profileList');
+            const managedList = document.getElementById('managedList');
+            const managedSection = document.getElementById('managedSection');
+            profileList.innerHTML = '';
+            managedList.innerHTML = '';
+            
+            document.getElementById('profileSection').style.display = 'block';
+            
+            // Show owned profiles
+            if (profiles.length === 0) {
+                profileList.innerHTML = '<p style="color: var(--text-light); font-size: 14px; text-align: center;">No profiles created yet.</p>';
+            } else {
+                profiles.forEach(profile => {
+                    const div = document.createElement('div');
+                    div.className = 'profile-item';
+                    div.style.cssText = 'flex-direction: column; align-items: stretch; cursor: default;';
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span class="profile-name" style="font-size: 16px;">👤 ${profile.name}</span>
+                            <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 12px; font-size: 11px;">Owner</span>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button onclick="openProfile('${profile.id}')" style="flex: 1; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Open App</button>
+                            <button onclick="openAdmin('${profile.id}')" style="flex: 1; padding: 10px 16px; background: #e0e7ff; color: #4338ca; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">⚙️ Admin</button>
+                        </div>
+                    `;
+                    profileList.appendChild(div);
+                });
+            }
+            
+            // Show managed profiles
+            if (managedProfiles.length > 0) {
+                managedSection.style.display = 'block';
+                managedProfiles.forEach(profile => {
+                    const div = document.createElement('div');
+                    div.className = 'profile-item';
+                    div.style.cssText = 'flex-direction: column; align-items: stretch; cursor: default;';
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span class="profile-name" style="font-size: 16px;">👥 ${profile.name}</span>
+                            <span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 12px; font-size: 11px;">Admin</span>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button onclick="openProfile('${profile.id}')" style="flex: 1; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Open App</button>
+                            <button onclick="openAdmin('${profile.id}')" style="flex: 1; padding: 10px 16px; background: #e0e7ff; color: #4338ca; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">⚙️ Admin</button>
+                        </div>
+                    `;
+                    managedList.appendChild(div);
+                });
+            } else {
+                managedSection.style.display = 'none';
+            }
+        }
+
+        function openProfile(profileId) {
+            window.location.href = '/app.html?profile=' + profileId;
+        }
+
+        function openAdmin(profileId) {
+            window.location.href = '/admin.html?profile=' + profileId;
+        }
+
+        function createNewProfile() {
+            // Store user ID for linking after survey
+            const user = auth.currentUser;
+            if (user) {
+                sessionStorage.setItem('hr_pending_user_uid', user.uid);
+            }
+            window.location.href = '/get-started.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Guide - HabitRewards</title>
+    <style>
+        :root {
+            --primary: #58cc02;
+            --primary-dark: #46a302;
+            --bg: #f7f7f7;
+            --text: #3c3c3c;
+            --text-light: #777;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .section h2 {
+            font-size: 24px;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h3 {
+            font-size: 18px;
+            margin: 20px 0 10px;
+            color: var(--text);
+        }
+        .section p, .section li {
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+        .section ul {
+            padding-left: 20px;
+        }
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 0;
+        }
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        .faq-q {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .faq-a {
+            color: var(--text-light);
+            font-size: 15px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .highlight-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .cta {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
+        <h1>Admin Guide</h1>
+        <p>Everything you need to know about managing a HabitRewards profile</p>
+    </div>
+
+    <div class="container">
+        <!-- What is HabitRewards -->
+        <div class="section">
+            <h2>🏆 What is HabitRewards?</h2>
+            <p>HabitRewards is a gamified habit tracking app that helps people build and maintain healthy daily routines. Users earn points for completing tasks like:</p>
+            <ul>
+                <li>Going for walks</li>
+                <li>Learning with Duolingo</li>
+                <li>Doing puzzles and brain games</li>
+                <li>Staying connected with family and friends</li>
+            </ul>
+            <p style="margin-top: 15px;">Points can be redeemed for real rewards, making habit-building fun and motivating!</p>
+            
+            <div class="highlight-box">
+                <h4>💰 Points System</h4>
+                <p style="margin: 0;"><strong>100 points = $1.00</strong> — Users can cash out when they reach their balance goal.</p>
+            </div>
+        </div>
+
+        <!-- What Can Admins Do -->
+        <div class="section">
+            <h2>⚙️ What Can Admins Do?</h2>
+            <p>As an admin, you have access to powerful tools to help manage and customize the experience:</p>
+            
+            <h3>📊 View Progress</h3>
+            <p>See the user's current points, streaks, and level. Track their daily activity and celebrate their wins!</p>
+            
+            <h3>📋 Customize Tasks</h3>
+            <p>Add, edit, or remove daily tasks. Enable or disable bonus challenges. Tailor the experience to what matters most.</p>
+            
+            <h3>💰 Record Payments</h3>
+            <p>When you pay out rewards, record the payment to reset their balance and keep accurate records.</p>
+            
+            <h3>📥 Download Reports</h3>
+            <p>Export data for tracking progress over time. Great for caregivers who need documentation.</p>
+            
+            <h3>👥 Invite Other Admins</h3>
+            <p>Add family members or caregivers as additional admins. Everyone stays in the loop!</p>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="section">
+            <h2>🚀 Getting Started</h2>
+            <ol style="padding-left: 20px;">
+                <li style="margin-bottom: 15px;">
+                    <strong>Sign in</strong> at <a href="login.html" style="color: var(--primary);">habitrewards-131.web.app/login.html</a> using Google or email
+                </li>
+                <li style="margin-bottom: 15px;">
+                    <strong>Find your profile</strong> under "Profiles You Manage" — it will show profiles you've been invited to
+                </li>
+                <li style="margin-bottom: 15px;">
+                    <strong>Click "Admin"</strong> to open the Admin Dashboard
+                </li>
+                <li style="margin-bottom: 15px;">
+                    <strong>Explore the tabs</strong> — Dashboard, Tasks, Payments, Admins, and more
+                </li>
+            </ol>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section">
+            <h2>❓ Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-q">Can multiple people be admins for the same user?</div>
+                <div class="faq-a">Yes! You can have as many admins as you need. This is great for families where multiple siblings want to help manage a parent's profile.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-q">Can the user see that I'm an admin?</div>
+                <div class="faq-a">The user's app doesn't show admin information directly. They just see their tasks and rewards. Admins work behind the scenes.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-q">How do I pay out rewards?</div>
+                <div class="faq-a">When the user wants to cash out, pay them directly (Venmo, cash, gift card, etc.) and then record the payment in the Admin Dashboard under the Payments tab. This resets their balance.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-q">What if I want to change the tasks?</div>
+                <div class="faq-a">Go to Admin Mode → Tasks tab. You can enable/disable any task, change point values, or add custom tasks that are specific to your user.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-q">Is there a cost to use HabitRewards?</div>
+                <div class="faq-a">The app is free! The only "cost" is the rewards you choose to pay out — and you control those amounts and when/if you pay.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-q">Can I remove myself as an admin?</div>
+                <div class="faq-a">The profile owner can remove admins from the Admins tab. If you're the owner and want to transfer ownership, contact the developer.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-q">What data do you store?</div>
+                <div class="faq-a">All data is stored locally in the browser. We don't have access to user activity, points, or personal information. Your data stays on your device.</div>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="section">
+            <h2>💡 Tips for Success</h2>
+            <ul>
+                <li><strong>Start simple</strong> — Don't enable too many tasks at once. 3-5 daily tasks is a good starting point.</li>
+                <li><strong>Celebrate streaks</strong> — When the user hits a milestone (7 days, 30 days), make it special!</li>
+                <li><strong>Adjust as needed</strong> — If a task is too hard or too easy, change the points or swap it out.</li>
+                <li><strong>Stay connected</strong> — Check in regularly to see progress and offer encouragement.</li>
+                <li><strong>Pay promptly</strong> — When they request a cash out, process it quickly to keep motivation high.</li>
+            </ul>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta">
+            <h2 style="margin-bottom: 15px;">Ready to get started?</h2>
+            <a href="login.html" class="btn">🔐 Sign In Now</a>
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="home.html?v=2">← Back to Homepage</a></p>
+        <p style="margin-top: 10px;">HabitRewards © 2026 • Questions? <a href="mailto:support@habitrewards.app">Contact Support</a></p>
+    </footer>
+</body>
+</html>

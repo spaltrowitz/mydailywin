@@ -475,6 +475,13 @@
                 <div style="font-size: 18px; color: var(--text-light); margin-top: 5px;" id="settingsDollars">= $0.00</div>
             </div>
             
+            <!-- Admin Mode -->
+            <h3 style="margin-bottom: 10px;">🔧 Admin Mode</h3>
+            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Customize tasks, record payments, view reports</p>
+            <a id="adminLink" href="admin.html" class="btn" style="display: inline-block; text-decoration: none; text-align: center;">⚙️ Open Admin Mode</a>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+            
             <!-- Suggest Task -->
             <h3 style="margin-bottom: 10px;">💡 Suggest a Task</h3>
             <input type="text" id="propName" placeholder="Task name (e.g., Water the plants)">
@@ -571,6 +578,31 @@
     </div>
 
     <script>
+        // ========== PROFILE DETECTION ==========
+        // Get profile ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const PROFILE_ID = urlParams.get('profile');
+        
+        // Storage key prefix based on profile
+        const STORAGE_KEY = PROFILE_ID ? 'hr_state_' + PROFILE_ID : 'hr_state';
+        const WEEK_KEY = PROFILE_ID ? 'hr_week_' + PROFILE_ID : 'hr_week';
+        const DATE_KEY = PROFILE_ID ? 'hr_date_' + PROFILE_ID : 'hr_date';
+        const REPORTS_KEY = PROFILE_ID ? 'hr_reports_' + PROFILE_ID : 'hr_reports';
+
+        // If no profile, redirect to get-started
+        if (!PROFILE_ID) {
+            window.location.href = '/get-started.html';
+        }
+
+        // Load profile info if available
+        let PROFILE_NAME = 'Friend'; // Default name
+        const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
+        if (profileData) {
+            const profile = JSON.parse(profileData);
+            PROFILE_NAME = profile.name || 'Friend';
+            document.title = PROFILE_NAME + "'s HabitRewards";
+        }
+
         // ========== CONFIG & STATE ==========
         // Points system: 100 points = $1.00
         // Routine tasks = lower value, Stretch goals = higher value
@@ -701,6 +733,11 @@
 
         // ========== INIT ==========
         function init() {
+            // Set admin link with profile parameter
+            if (PROFILE_ID) {
+                document.getElementById('adminLink').href = 'admin.html?profile=' + PROFILE_ID;
+            }
+            
             loadState();
             applyTheme();
             checkNewDay();
@@ -1042,7 +1079,7 @@
         }
 
         function loadState() {
-            const saved = localStorage.getItem('hr_state');
+            const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 state = JSON.parse(saved);
             } else {
@@ -1050,12 +1087,12 @@
             }
             // Load weekly counters
             const weekNum = getWeekNumber();
-            const savedWeek = localStorage.getItem('hr_week');
+            const savedWeek = localStorage.getItem(WEEK_KEY);
             if (savedWeek !== String(weekNum)) {
                 // New week - reset weekly counters
                 state.weeklyCounters = {};
                 state.weeklyBonusesCompleted = [];
-                localStorage.setItem('hr_week', String(weekNum));
+                localStorage.setItem(WEEK_KEY, String(weekNum));
             }
             if (!state.weeklyCounters) state.weeklyCounters = {};
             if (!state.weeklyBonusesCompleted) state.weeklyBonusesCompleted = [];
@@ -1070,15 +1107,15 @@
         }
 
         function saveState() {
-            localStorage.setItem('hr_state', JSON.stringify(state));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         }
 
         function checkNewDay() {
             const today = new Date().toDateString();
-            const lastDate = localStorage.getItem('hr_date');
+            const lastDate = localStorage.getItem(DATE_KEY);
             if (lastDate !== today) {
                 state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
-                localStorage.setItem('hr_date', today);
+                localStorage.setItem(DATE_KEY, today);
                 saveState();
             } else {
                 // Always sync task values from config (in case they changed)
@@ -1097,11 +1134,11 @@
             const hour = new Date().getHours();
             let greeting;
             if (hour < 12) {
-                greeting = "Good Morning, Stu! ☀️";
+                greeting = "Good Morning, " + PROFILE_NAME + "! ☀️";
             } else if (hour < 17) {
-                greeting = "Good Afternoon, Stu! 🌤️";
+                greeting = "Good Afternoon, " + PROFILE_NAME + "! 🌤️";
             } else {
-                greeting = "Good Evening, Stu! 🌙";
+                greeting = "Good Evening, " + PROFILE_NAME + "! 🌙";
             }
             document.getElementById('greeting').textContent = greeting;
         }
@@ -1831,7 +1868,7 @@
             const comment = document.getElementById('reportComment').value;
             
             // Store report in localStorage for manager review
-            const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+            const reports = JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
             reports.push({
                 date: new Date().toISOString(),
                 taskType: reportingTask.type,
@@ -1840,7 +1877,7 @@
                 reason: reason,
                 comment: comment
             });
-            localStorage.setItem('hr_reports', JSON.stringify(reports));
+            localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
             
             alert('Thanks for the feedback! We\'ll review this task.');
             closeModal('reportModal');
