@@ -538,11 +538,13 @@
 
         <!-- ADMINS TAB -->
         <div id="admins" class="tab-content">
+            <!-- Notifications Banner -->
+            <div id="adminNotifications" style="display: none;"></div>
+            
             <div class="card">
                 <h2>👥 Manage Admins</h2>
                 <p style="color: var(--text-light); margin-bottom: 20px;">
-                    Admins can view progress, customize tasks, and manage payments for <strong class="user-name">this user</strong>. 
-                    Multiple people can be admins—great for family members who want to help.
+                    Invite family members to help track progress and manage rewards for <strong class="user-name">this user</strong>.
                 </p>
                 
                 <h3 style="margin-bottom: 12px;">Current Admins</h3>
@@ -557,13 +559,6 @@
                     They'll receive an email invitation and can sign in to manage this profile.
                 </p>
             </div>
-            
-            <div class="card">
-                <h2>📧 Pending Invitations</h2>
-                <div id="pendingInvites">
-                    <p style="color: var(--text-light); text-align: center; padding: 20px;">No pending invitations</p>
-                </div>
-            </div>
         </div>
 
         <!-- FAQ TAB -->
@@ -572,12 +567,12 @@
             <div class="card" style="background: linear-gradient(135deg, #22c55e22, #22c55e44); border: 2px solid var(--primary);">
                 <h2>📊 Quick Reference</h2>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 14px;">
+                    <div><strong>🎉 Cost:</strong> 100% Free</div>
                     <div><strong>💰 Points:</strong> 100 pts = $1.00</div>
                     <div><strong>📅 Payouts:</strong> On-demand</div>
                     <div><strong>🔥 7-day streak:</strong> 1.5x bonus</div>
                     <div><strong>🔥 14-day streak:</strong> 2x bonus</div>
                     <div><strong>🎰 Spin wheel:</strong> 10-150 pts</div>
-                    <div><strong>🍀 Lucky Day:</strong> 10% chance, 1.5x</div>
                 </div>
             </div>
 
@@ -737,6 +732,7 @@
             <div class="card">
                 <h2>📥 Data Management</h2>
                 <button class="btn btn-secondary btn-block" onclick="downloadAllData()">💾 Export All Data</button>
+                <button class="btn btn-secondary btn-block" onclick="exportSurveyDataCSV()">📊 Export Survey Data (CSV)</button>
                 <button class="btn btn-danger btn-block" onclick="resetUserData()">🔄 Reset All User Data</button>
                 <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px;">Warning: Reset clears all progress permanently!</p>
             </div>
@@ -830,6 +826,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     
     <!-- EmailJS SDK (free tier: 200 emails/month) -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -848,9 +845,10 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // Check auth state
-        auth.onAuthStateChanged(user => {
+        auth.onAuthStateChanged(async user => {
             if (user) {
                 // User is signed in - hide overlay and continue
                 document.getElementById('authOverlay').style.display = 'none';
@@ -864,6 +862,51 @@
                     if (!userProfiles.find(p => p.id === profileParam)) {
                         userProfiles.push({ id: profileParam, name: profileName });
                         localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
+                    }
+                    
+                    // Check if this user is an admin in Firestore and mark as accepted
+                    const userEmail = user.email?.toLowerCase();
+                    const displayName = user.displayName || null;
+                    const firstName = displayName ? displayName.split(' ')[0] : null;
+                    
+                    try {
+                        const profileRef = db.collection('profiles').doc(profileParam);
+                        const adminsRef = profileRef.collection('admins').doc(userEmail);
+                        const adminDoc = await adminsRef.get();
+                        
+                        if (adminDoc.exists && !adminDoc.data().acceptedAt) {
+                            // Mark as accepted in Firestore
+                            await adminsRef.update({
+                                acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                name: displayName,
+                                firstName: firstName
+                            });
+                            
+                            // Create notification in Firestore for the profile owner
+                            await profileRef.collection('notifications').add({
+                                type: 'invite_accepted',
+                                email: userEmail,
+                                name: firstName || userEmail.split('@')[0],
+                                displayName: displayName,
+                                acceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                read: false
+                            });
+                            
+                            console.log('✅ Admin marked as accepted in Firestore:', userEmail);
+                        }
+                    } catch (error) {
+                        console.log('Firestore not available, using localStorage fallback:', error.message);
+                        
+                        // Fallback to localStorage
+                        const adminsKey = profileParam === 'stu' ? 'hr_additional_admins' : 'hr_additional_admins_' + profileParam;
+                        const admins = JSON.parse(localStorage.getItem(adminsKey) || '[]');
+                        const existingAdmin = admins.find(a => a.email.toLowerCase() === userEmail);
+                        if (existingAdmin && !existingAdmin.acceptedAt) {
+                            existingAdmin.acceptedAt = new Date().toISOString();
+                            existingAdmin.name = displayName;
+                            existingAdmin.firstName = firstName;
+                            localStorage.setItem(adminsKey, JSON.stringify(admins));
+                        }
                     }
                 }
             } else {
@@ -1407,6 +1450,71 @@
             a.click();
         }
 
+        function exportSurveyDataCSV() {
+            // Get all survey responses from the log
+            const surveyLog = JSON.parse(localStorage.getItem('hr_survey_log') || '[]');
+            
+            if (surveyLog.length === 0) {
+                alert('No survey data found. Survey data is collected when new profiles are created through the Get Started wizard.');
+                return;
+            }
+            
+            // CSV headers
+            const headers = [
+                'Profile ID',
+                'Name',
+                'For Who',
+                'Relationship',
+                'Phone Comfort',
+                'Motivation',
+                'Activities',
+                'Custom Activities',
+                'Payout Preference',
+                'Template',
+                'Admin Goals',
+                'Admin Challenges',
+                'Admin Notes',
+                'Created At',
+                'Survey Completed At'
+            ];
+            
+            // Build CSV content
+            let csv = headers.join(',') + '\n';
+            
+            surveyLog.forEach(entry => {
+                const row = [
+                    escapeCSV(entry.id || ''),
+                    escapeCSV(entry.name || ''),
+                    escapeCSV(entry.forWho || ''),
+                    escapeCSV(entry.relationship || ''),
+                    escapeCSV(entry.phoneComfort || ''),
+                    escapeCSV(entry.motivation || ''),
+                    escapeCSV((entry.activities || []).join('; ')),
+                    escapeCSV(entry.customActivities || ''),
+                    escapeCSV(entry.payoutPref || ''),
+                    escapeCSV(entry.template || ''),
+                    escapeCSV(entry.adminGoals || ''),
+                    escapeCSV(entry.adminChallenges || ''),
+                    escapeCSV(entry.adminNotes || ''),
+                    escapeCSV(entry.createdAt || ''),
+                    escapeCSV(entry.surveyCompletedAt || '')
+                ];
+                csv += row.join(',') + '\n';
+            });
+            
+            downloadCSV(csv, 'habitrewards-survey-data');
+        }
+        
+        function escapeCSV(value) {
+            if (value === null || value === undefined) return '""';
+            const str = String(value);
+            // Escape quotes and wrap in quotes if contains comma, quote, or newline
+            if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                return '"' + str.replace(/"/g, '""') + '"';
+            }
+            return '"' + str + '"';
+        }
+
         function clearReports() {
             const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
             if (confirm('Clear all reports?')) {
@@ -1468,10 +1576,8 @@
             return PROFILE_ID ? 'hr_profile_invites_' + PROFILE_ID : 'hr_profile_invites';
         }
 
-        function loadAdmins() {
-            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+        async function loadAdmins() {
             const currentUser = firebase.auth().currentUser;
-            
             const container = document.getElementById('adminsList');
             container.innerHTML = '';
             
@@ -1488,17 +1594,38 @@
             `;
             container.appendChild(ownerDiv);
             
+            // Try to load admins from Firestore first
+            let admins = [];
+            try {
+                const adminsSnapshot = await db.collection('profiles').doc(PROFILE_ID).collection('admins').get();
+                adminsSnapshot.forEach(doc => {
+                    admins.push({ id: doc.id, ...doc.data() });
+                });
+                console.log('✅ Loaded admins from Firestore:', admins.length);
+            } catch (error) {
+                console.log('Firestore not available, using localStorage:', error.message);
+                admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            }
+            
             // Show other admins
             admins.forEach((admin, index) => {
                 const div = document.createElement('div');
+                const hasAccepted = admin.acceptedAt;
+                const statusBg = hasAccepted ? '#dcfce7' : '#fef3c7';
+                const statusColor = hasAccepted ? '#166534' : '#92400e';
+                const statusText = hasAccepted ? '✓ Active' : '⏳ Pending';
+                
+                // Use firstName if available, otherwise email
+                const displayName = admin.firstName || admin.name || admin.email;
+                
                 div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border-radius: 10px; margin-bottom: 8px;';
                 div.innerHTML = `
                     <div>
-                        <strong>${admin.email}</strong>
-                        ${admin.name ? `<span style="color: var(--text-light);"> (${admin.name})</span>` : ''}
-                        <span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 20px; font-size: 11px; margin-left: 8px;">Admin</span>
+                        <strong>${displayName}</strong>
+                        ${admin.firstName ? `<span style="color: var(--text-light); font-size: 12px;"> (${admin.email})</span>` : ''}
+                        <span style="background: ${statusBg}; color: ${statusColor}; padding: 2px 8px; border-radius: 20px; font-size: 11px; margin-left: 8px;">${statusText}</span>
                     </div>
-                    <button onclick="removeAdmin(${index})" style="background: #fee2e2; border: none; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Remove</button>
+                    <button onclick="removeAdmin('${admin.email || index}')" style="background: #fee2e2; border: none; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Remove</button>
                 `;
                 container.appendChild(div);
             });
@@ -1511,34 +1638,121 @@
             }
         }
 
-        function loadPendingInvites() {
-            const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
-            const container = document.getElementById('pendingInvites');
-            container.innerHTML = '';
+        function cleanupPendingInvites() {
+            // Auto-clean: Remove any invites for admins who have already accepted
+            let invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
+            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            const acceptedEmails = admins.filter(a => a.acceptedAt).map(a => a.email.toLowerCase());
+            const originalLength = invites.length;
+            invites = invites.filter(invite => !acceptedEmails.includes(invite.email.toLowerCase()));
             
-            if (invites.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 20px;">No pending invitations</p>';
+            // Save cleaned list if any were removed
+            if (invites.length !== originalLength) {
+                localStorage.setItem(getInvitesKey(), JSON.stringify(invites));
+            }
+        }
+
+        function getNotificationsKey() {
+            return IS_LEGACY_PROFILE ? 'hr_admin_notifications' : 'hr_admin_notifications_' + PROFILE_ID;
+        }
+
+        function loadAdminNotifications() {
+            const notifications = JSON.parse(localStorage.getItem(getNotificationsKey()) || '[]');
+            const unreadNotifications = notifications.filter(n => !n.read);
+            const container = document.getElementById('adminNotifications');
+            
+            if (unreadNotifications.length === 0) {
+                container.style.display = 'none';
                 return;
             }
             
-            invites.forEach((invite, index) => {
-                const div = document.createElement('div');
-                div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #fef3c7; border-radius: 10px; margin-bottom: 8px;';
-                div.innerHTML = `
-                    <div>
-                        <strong>${invite.email}</strong>
-                        <div style="font-size: 12px; color: var(--text-light);">Sent ${new Date(invite.sentAt).toLocaleDateString()}</div>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick="resendInvite(${index})" style="background: var(--primary); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Resend</button>
-                        <button onclick="cancelInvite(${index})" style="background: #fee2e2; border: none; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Cancel</button>
-                    </div>
-                `;
-                container.appendChild(div);
+            container.style.display = 'block';
+            container.innerHTML = '';
+            
+            unreadNotifications.forEach((notification, index) => {
+                if (notification.type === 'invite_accepted') {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 2px solid #22c55e; border-radius: 12px; padding: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;';
+                    div.innerHTML = `
+                        <div>
+                            <strong style="color: #166534;">🎉 ${notification.name || notification.email} accepted your invitation!</strong>
+                            <div style="font-size: 13px; color: #166534; margin-top: 4px;">They can now help manage ${PROFILE_NAME}'s profile.</div>
+                        </div>
+                        <button onclick="dismissNotification(${index})" style="background: white; border: 1px solid #22c55e; color: #166534; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Dismiss</button>
+                    `;
+                    container.appendChild(div);
+                }
             });
         }
 
-        function addAdmin() {
+        async function loadAdminNotifications() {
+            const container = document.getElementById('adminNotifications');
+            let unreadNotifications = [];
+            
+            // Try to load from Firestore first
+            try {
+                const notificationsSnapshot = await db.collection('profiles').doc(PROFILE_ID)
+                    .collection('notifications')
+                    .where('read', '==', false)
+                    .orderBy('acceptedAt', 'desc')
+                    .get();
+                
+                notificationsSnapshot.forEach(doc => {
+                    unreadNotifications.push({ id: doc.id, ...doc.data() });
+                });
+                console.log('✅ Loaded notifications from Firestore:', unreadNotifications.length);
+            } catch (error) {
+                console.log('Firestore notifications not available, using localStorage:', error.message);
+                const notifications = JSON.parse(localStorage.getItem(getNotificationsKey()) || '[]');
+                unreadNotifications = notifications.filter(n => !n.read);
+            }
+            
+            if (unreadNotifications.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            container.innerHTML = '';
+            
+            unreadNotifications.forEach((notification) => {
+                if (notification.type === 'invite_accepted') {
+                    const displayName = notification.name || notification.email;
+                    const div = document.createElement('div');
+                    div.style.cssText = 'background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 2px solid #22c55e; border-radius: 12px; padding: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;';
+                    div.innerHTML = `
+                        <div>
+                            <strong style="color: #166534;">🎉 ${displayName} has accepted the invitation!</strong>
+                            <div style="font-size: 13px; color: #166534; margin-top: 4px;">They can now help manage ${PROFILE_NAME}'s profile.</div>
+                        </div>
+                        <button onclick="dismissNotification('${notification.id || notification.email}')" style="background: white; border: 1px solid #22c55e; color: #166534; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Dismiss</button>
+                    `;
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        async function dismissNotification(notificationId) {
+            // Try to mark as read in Firestore
+            try {
+                await db.collection('profiles').doc(PROFILE_ID)
+                    .collection('notifications').doc(notificationId)
+                    .update({ read: true });
+                console.log('✅ Notification dismissed in Firestore');
+            } catch (error) {
+                console.log('Firestore not available, using localStorage:', error.message);
+                // Fallback to localStorage
+                const notifications = JSON.parse(localStorage.getItem(getNotificationsKey()) || '[]');
+                const notification = notifications.find(n => n.email === notificationId);
+                if (notification) {
+                    notification.read = true;
+                    localStorage.setItem(getNotificationsKey(), JSON.stringify(notifications));
+                }
+            }
+            loadAdminNotifications();
+        }
+
+        async function addAdmin() {
             const emailInput = document.getElementById('newAdminEmail');
             const email = emailInput.value.trim().toLowerCase();
             
@@ -1552,49 +1766,58 @@
                 return;
             }
             
-            // Check if already an admin
-            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
-            if (admins.find(a => a.email.toLowerCase() === email)) {
+            // Check if already an admin (check Firestore first, then localStorage)
+            let isExistingAdmin = false;
+            try {
+                const adminDoc = await db.collection('profiles').doc(PROFILE_ID).collection('admins').doc(email).get();
+                isExistingAdmin = adminDoc.exists;
+            } catch (e) {
+                // Fallback to localStorage
+                const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+                isExistingAdmin = admins.some(a => a.email.toLowerCase() === email);
+            }
+            
+            if (isExistingAdmin) {
                 alert('This person is already an admin');
                 return;
             }
             
-            // Check if already has pending invite
-            const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
-            if (invites.find(i => i.email.toLowerCase() === email)) {
-                alert('An invitation has already been sent to this email');
-                return;
+            // Add admin to Firestore
+            try {
+                const currentUser = auth.currentUser;
+                await db.collection('profiles').doc(PROFILE_ID).collection('admins').doc(email).set({
+                    email: email,
+                    addedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    addedBy: currentUser?.email || 'unknown',
+                    profileId: PROFILE_ID,
+                    profileName: PROFILE_NAME,
+                    acceptedAt: null,
+                    name: null,
+                    firstName: null
+                });
+                console.log('✅ Admin added to Firestore:', email);
+            } catch (error) {
+                console.log('Firestore not available, using localStorage:', error.message);
             }
             
-            // Add to pending invites
-            invites.push({
-                email: email,
-                sentAt: new Date().toISOString(),
-                profileId: PROFILE_ID,
-                profileName: PROFILE_NAME
-            });
-            localStorage.setItem(getInvitesKey(), JSON.stringify(invites));
-            
-            // Also add to the managed profiles for that email
-            const managedKey = 'hr_managed_profiles_' + email;
-            const managed = JSON.parse(localStorage.getItem(managedKey) || '[]');
-            if (!managed.find(p => p.id === PROFILE_ID)) {
-                managed.push({ id: PROFILE_ID, name: PROFILE_NAME });
-                localStorage.setItem(managedKey, JSON.stringify(managed));
+            // Also save to localStorage as fallback
+            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            if (!admins.find(a => a.email.toLowerCase() === email)) {
+                admins.push({ email: email, addedAt: new Date().toISOString() });
+                localStorage.setItem(getAdminsKey(), JSON.stringify(admins));
             }
             
-            // Add as admin immediately (in real app, might wait for acceptance)
-            admins.push({ email: email, addedAt: new Date().toISOString() });
-            localStorage.setItem(getAdminsKey(), JSON.stringify(admins));
-            
-            // Send invitation email
-            sendInviteEmail(email);
+            // Send invitation email and wait for result
+            const emailSent = await sendInviteEmail(email);
             
             emailInput.value = '';
             loadAdmins();
-            loadPendingInvites();
             
-            alert(`Invitation sent to ${email}!\n\nNote: The email may take a few minutes to arrive. They can sign in to manage ${PROFILE_NAME}'s profile once they receive it.`);
+            if (emailSent) {
+                alert(`Invitation sent to ${email}!\n\nThey can now sign in to manage ${PROFILE_NAME}'s profile.`);
+            } else {
+                alert(`${email} was added as an admin, but we couldn't send the email notification.\n\nPlease let them know they can sign in at ${window.location.origin}/login.html to manage ${PROFILE_NAME}'s profile.`);
+            }
         }
 
         // ========== EMAILJS CONFIG ==========
@@ -1618,21 +1841,32 @@
             const loginUrl = `${appUrl}/login.html`;
             
             // Debug: Log EmailJS status
-            console.log('EmailJS check:', {
-                emailjsDefined: typeof emailjs !== 'undefined',
-                publicKey: EMAILJS_PUBLIC_KEY,
-                serviceId: EMAILJS_SERVICE_ID,
-                templateId: EMAILJS_TEMPLATE_ID
+            console.log('=== EmailJS Debug Info ===');
+            console.log('EmailJS SDK loaded:', typeof emailjs !== 'undefined');
+            console.log('Public Key:', EMAILJS_PUBLIC_KEY);
+            console.log('Service ID:', EMAILJS_SERVICE_ID);
+            console.log('Template ID:', EMAILJS_TEMPLATE_ID);
+            console.log('Sending to:', email);
+            console.log('Template params:', {
+                to_email: email,
+                to_name: email.split('@')[0],
+                from_name: senderName,
+                profile_name: PROFILE_NAME,
+                admin_url: adminUrl,
+                login_url: loginUrl,
+                guide_url: guideUrl,
+                app_url: appUrl
             });
             
             // Check if EmailJS is configured
             if (typeof emailjs === 'undefined') {
-                console.error('EmailJS SDK not loaded');
+                console.error('❌ EmailJS SDK not loaded - check if script tag is present');
                 alert('Email service not available. The invitation was saved - please notify the admin manually.');
                 return false;
             }
             
             try {
+                console.log('📧 Attempting to send email via EmailJS...');
                 const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                     to_email: email,
                     to_name: email.split('@')[0],
@@ -1643,11 +1877,17 @@
                     guide_url: guideUrl,
                     app_url: appUrl
                 });
-                console.log('Invitation email sent successfully', result);
+                console.log('✅ Email sent successfully!', result);
+                console.log('Response status:', result.status);
+                console.log('Response text:', result.text);
                 return true;
             } catch (error) {
-                console.error('EmailJS error:', error);
-                alert('Could not send email: ' + (error.text || error.message || JSON.stringify(error)));
+                console.error('❌ EmailJS error:', error);
+                console.error('Error type:', typeof error);
+                console.error('Error status:', error.status);
+                console.error('Error text:', error.text);
+                console.error('Full error object:', JSON.stringify(error, null, 2));
+                alert('Could not send email: ' + (error.text || error.message || 'Unknown error - check console for details'));
                 return false;
             }
         }
@@ -1675,34 +1915,39 @@
             mailtoLink.click();
         }
 
-        function removeAdmin(index) {
+        async function removeAdmin(emailOrIndex) {
             if (!confirm('Remove this admin? They will no longer have access to this profile.')) return;
             
-            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
-            const removed = admins.splice(index, 1)[0];
-            localStorage.setItem(getAdminsKey(), JSON.stringify(admins));
+            // emailOrIndex could be an email string (from Firestore) or index (from localStorage)
+            const email = typeof emailOrIndex === 'string' ? emailOrIndex : null;
             
-            // Also remove from their managed profiles
-            if (removed) {
-                const managedKey = 'hr_managed_profiles_' + removed.email;
-                const managed = JSON.parse(localStorage.getItem(managedKey) || '[]');
-                const filtered = managed.filter(p => p.id !== PROFILE_ID);
-                localStorage.setItem(managedKey, JSON.stringify(filtered));
+            // Remove from Firestore
+            if (email) {
+                try {
+                    await db.collection('profiles').doc(PROFILE_ID).collection('admins').doc(email).delete();
+                    console.log('✅ Admin removed from Firestore:', email);
+                } catch (error) {
+                    console.log('Firestore delete failed:', error.message);
+                }
             }
+            
+            // Also remove from localStorage
+            const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            let removed;
+            if (email) {
+                const idx = admins.findIndex(a => a.email === email);
+                if (idx !== -1) removed = admins.splice(idx, 1)[0];
+            } else {
+                removed = admins.splice(emailOrIndex, 1)[0];
+            }
+            localStorage.setItem(getAdminsKey(), JSON.stringify(admins));
             
             loadAdmins();
         }
 
-        async function resendInvite(index) {
-            const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
-            const invite = invites[index];
-            if (invite) {
-                await sendInviteEmail(invite.email);
-                invite.sentAt = new Date().toISOString();
-                localStorage.setItem(getInvitesKey(), JSON.stringify(invites));
-                loadPendingInvites();
-                alert(`Invitation resent to ${invite.email}\n\nNote: The email may take a few minutes to arrive.`);
-            }
+        async function resendInvite(email) {
+            await sendInviteEmail(email);
+            alert(`Invitation resent to ${email}\n\nNote: The email may take a few minutes to arrive.`);
         }
 
         function cancelInvite(index) {
@@ -1724,7 +1969,6 @@
             }
             
             loadAdmins();
-            loadPendingInvites();
         }
 
         // ========== INIT ==========
@@ -1745,7 +1989,8 @@
         displayPayments();
         displayReports();
         loadAdmins();
-        loadPendingInvites();
+        cleanupPendingInvites();
+        loadAdminNotifications();
     </script>
 </body>
 </html>

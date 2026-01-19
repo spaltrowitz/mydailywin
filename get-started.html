@@ -516,6 +516,32 @@
             <button class="btn btn-secondary" onclick="goBack()">← Back</button>
         </div>
 
+        <!-- STEP 7.5: Admin Goals (only if setting up for someone else) -->
+        <div class="step" id="step7b">
+            <div class="card">
+                <h2>🎯 Your Goals for Them</h2>
+                <p>What would you specifically like to focus on rewarding? (Optional)</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text);">Main goals or habits to encourage:</label>
+                    <textarea id="adminGoals" placeholder="e.g., Getting more exercise, staying social, taking medications on time, reducing screen time..." style="width: 100%; min-height: 100px; padding: 15px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text);">Any specific challenges or things to avoid?</label>
+                    <textarea id="adminChallenges" placeholder="e.g., Limited mobility, forgets to take breaks, tends to isolate..." style="width: 100%; min-height: 80px; padding: 15px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text);">Anything else we should know?</label>
+                    <textarea id="adminNotes" placeholder="e.g., Likes puzzles, responds well to encouragement, preferred reward types..." style="width: 100%; min-height: 80px; padding: 15px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveAdminGoals()" style="margin-top: 20px;">Continue →</button>
+            </div>
+            <button class="btn btn-secondary" onclick="goBack()">← Back</button>
+        </div>
+
         <!-- STEP 8: Need Help? -->
         <div class="step" id="step8">
             <div class="card">
@@ -564,6 +590,11 @@
                     <div class="summary-tags" id="summaryActivities"></div>
                 </div>
 
+                <div class="summary-section" id="adminGoalsSection" style="display: none;">
+                    <h4>🎯 Your Goals for Them:</h4>
+                    <p id="summaryAdminGoals" style="color: #4a5568; font-style: italic;"></p>
+                </div>
+
                 <div class="summary-section" id="profileLinksSection">
                     <h4>Your personalized links:</h4>
                     <div style="background: #f0fdf4; padding: 15px; border-radius: 12px; margin-top: 10px;">
@@ -599,7 +630,11 @@
             userName: '',
             payoutPref: 'ondemand',
             needsHelp: null,
-            profileId: null
+            profileId: null,
+            // Admin goals (when setting up for someone else)
+            adminGoals: '',
+            adminChallenges: '',
+            adminNotes: ''
         };
 
         function generateProfileId() {
@@ -695,11 +730,28 @@
             
             answers.payoutPref = pref;
             
-            // Auto-advance to help step
+            // If setting up for someone else, go to admin goals step
+            // Otherwise skip to help step
             setTimeout(() => {
-                currentStep = 8;
-                showStep(8);
+                if (answers.forWho !== 'self') {
+                    currentStep = '7b';
+                    showStep('7b');
+                } else {
+                    currentStep = 8;
+                    showStep(8);
+                }
             }, 300);
+        }
+
+        function saveAdminGoals() {
+            // Capture admin goals data
+            answers.adminGoals = document.getElementById('adminGoals').value.trim();
+            answers.adminChallenges = document.getElementById('adminChallenges').value.trim();
+            answers.adminNotes = document.getElementById('adminNotes').value.trim();
+            
+            // Proceed to help step
+            currentStep = 8;
+            showStep(8);
         }
 
         function selectHelpOption(option) {
@@ -734,6 +786,12 @@
         }
 
         function saveProfileSetup() {
+            // Determine template based on phone comfort
+            let template = 'regular';
+            if (answers.phoneComfort === 'learning') {
+                template = 'lowtech';
+            }
+            
             const profileData = {
                 id: answers.profileId,
                 name: answers.userName,
@@ -744,6 +802,11 @@
                 activities: answers.activities,
                 customActivities: answers.customActivities,
                 payoutPref: answers.payoutPref,
+                template: template, // 'lowtech' or 'regular'
+                // Admin goals (when setting up for someone else)
+                adminGoals: answers.adminGoals || '',
+                adminChallenges: answers.adminChallenges || '',
+                adminNotes: answers.adminNotes || '',
                 createdAt: new Date().toISOString()
             };
             
@@ -768,6 +831,19 @@
                 }
                 sessionStorage.removeItem('hr_pending_user_uid');
             }
+            
+            // Also save survey data for export
+            saveSurveyData(profileData);
+        }
+        
+        function saveSurveyData(profileData) {
+            // Append to survey data log for CSV export
+            let surveyLog = JSON.parse(localStorage.getItem('hr_survey_log') || '[]');
+            surveyLog.push({
+                ...profileData,
+                surveyCompletedAt: new Date().toISOString()
+            });
+            localStorage.setItem('hr_survey_log', JSON.stringify(surveyLog));
         }
 
         function buildSummary() {
@@ -822,6 +898,19 @@
                 tag.className = 'summary-tag';
                 tag.textContent = '✏️ ' + answers.customActivities.substring(0, 30) + (answers.customActivities.length > 30 ? '...' : '');
                 actContainer.appendChild(tag);
+            }
+
+            // Show admin goals if provided
+            if (answers.forWho !== 'self' && (answers.adminGoals || answers.adminChallenges || answers.adminNotes)) {
+                const goalsSection = document.getElementById('adminGoalsSection');
+                goalsSection.style.display = 'block';
+                
+                let goalsText = [];
+                if (answers.adminGoals) goalsText.push('Goals: ' + answers.adminGoals);
+                if (answers.adminChallenges) goalsText.push('Challenges to address: ' + answers.adminChallenges);
+                if (answers.adminNotes) goalsText.push('Notes: ' + answers.adminNotes);
+                
+                document.getElementById('summaryAdminGoals').textContent = goalsText.join(' • ');
             }
 
             // Profile links

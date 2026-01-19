@@ -300,6 +300,21 @@
         
         <div style="text-align: center; margin-bottom: 20px;">
             <h2 id="greeting" style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: var(--text);"></h2>
+            
+            <!-- Daily Quote -->
+            <div id="quoteContainer" style="margin-bottom: 15px; padding: 0 10px;">
+                <div id="dailyQuote" style="font-style: italic; color: var(--text-light); font-size: 14px; line-height: 1.5;"></div>
+                <div id="quoteSpanish" style="display: none; font-style: italic; color: var(--primary); font-size: 14px; line-height: 1.5; margin-top: 8px;"></div>
+                <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px; align-items: center;">
+                    <button id="quoteAckBtn" onclick="acknowledgeQuote()" style="background: var(--bg); border: 2px solid var(--primary); color: var(--primary); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                        ✨ +5 pts
+                    </button>
+                    <button id="spanishBtn" onclick="showSpanishQuote()" style="display: none; background: var(--bg); border: 2px solid #f59e0b; color: #f59e0b; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                        🇪🇸 +5 pts
+                    </button>
+                </div>
+            </div>
+            
             <div class="streak-badge" onclick="checkStreakRecovery()" style="cursor: pointer;">
                 🔥 <span id="streakDays">0</span> Day Streak
             </div>
@@ -542,6 +557,55 @@
         </div>
     </div>
 
+    <!-- CASHOUT MODAL -->
+    <div id="cashoutModal" class="modal">
+        <div class="modal-box" style="text-align: center;">
+            <span class="close-modal" onclick="closeModal('cashoutModal')">&times;</span>
+            
+            <!-- Header -->
+            <div style="font-size: 50px; margin-bottom: 10px;">💰</div>
+            <h2 style="margin-bottom: 5px; font-size: 24px;">Cash Out</h2>
+            <p style="color: var(--text-light); margin-bottom: 25px;">Request your earnings via Zelle</p>
+            
+            <!-- Balance Display -->
+            <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">Available Balance</div>
+                <div id="cashoutPoints" style="font-size: 36px; font-weight: 800;">0 pts</div>
+                <div id="cashoutDollars" style="font-size: 24px; opacity: 0.9; margin-top: 5px;">= $0.00</div>
+            </div>
+            
+            <!-- Breakdown -->
+            <div style="background: var(--bg); border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: left;">
+                <div style="font-weight: 700; margin-bottom: 12px; color: var(--text);">💡 How it works</div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">1</span>
+                    <span style="color: var(--text-light); font-size: 14px;">Tap "Request Payout" below</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">2</span>
+                    <span style="color: var(--text-light); font-size: 14px;">Your admin will be notified</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">3</span>
+                    <span style="color: var(--text-light); font-size: 14px;">Receive payment via Zelle</span>
+                </div>
+            </div>
+            
+            <!-- Exchange Rate Note -->
+            <div style="font-size: 12px; color: var(--text-light); margin-bottom: 20px;">
+                📊 Exchange rate: <strong>100 pts = $1.00</strong>
+            </div>
+            
+            <!-- Buttons -->
+            <button id="cashoutBtn" onclick="confirmCashout()" class="btn btn-success" style="width: 100%; padding: 16px; font-size: 16px; margin-bottom: 10px;">
+                💸 Request Payout
+            </button>
+            <button onclick="closeModal('cashoutModal')" style="background: none; border: none; color: var(--text-light); font-size: 14px; cursor: pointer; padding: 10px;">
+                Maybe Later
+            </button>
+        </div>
+    </div>
+
     <!-- WEEKLY FEEDBACK MODAL -->
     <div id="feedbackModal" class="modal">
         <div class="modal-box">
@@ -596,48 +660,160 @@
 
         // Load profile info if available
         let PROFILE_NAME = 'Friend'; // Default name
-        const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
-        if (profileData) {
-            const profile = JSON.parse(profileData);
-            PROFILE_NAME = profile.name || 'Friend';
-            document.title = PROFILE_NAME + "'s HabitRewards";
+        
+        // Legacy profile: Stu
+        if (PROFILE_ID === 'stu') {
+            PROFILE_NAME = 'Stu';
+            document.title = "Stu's HabitRewards";
+        } else {
+            const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
+            if (profileData) {
+                const profile = JSON.parse(profileData);
+                PROFILE_NAME = profile.name || 'Friend';
+                document.title = PROFILE_NAME + "'s HabitRewards";
+            }
         }
 
         // ========== CONFIG & STATE ==========
         // Points system: 100 points = $1.00
         // Routine tasks = lower value, Stretch goals = higher value
-        const DAILY_TASKS = [
+        
+        // Daily motivational quotes (public domain / generic sayings)
+        // Each quote has English and Spanish translation
+        const DAILY_QUOTES = [
+            // Habit & Consistency
+            { en: "We are what we repeatedly do. Excellence is not an act, but a habit.", es: "Somos lo que hacemos repetidamente. La excelencia no es un acto, sino un hábito." },
+            { en: "Small daily improvements lead to stunning long-term results.", es: "Pequeñas mejoras diarias conducen a resultados sorprendentes a largo plazo." },
+            { en: "Success is the sum of small efforts repeated day in and day out.", es: "El éxito es la suma de pequeños esfuerzos repetidos día tras día." },
+            { en: "The secret of your future is hidden in your daily routine.", es: "El secreto de tu futuro está escondido en tu rutina diaria." },
+            { en: "Consistency is what transforms average into excellence.", es: "La constancia es lo que transforma lo promedio en excelencia." },
+            { en: "A river cuts through rock not by power, but by persistence.", es: "Un río atraviesa la roca no por su fuerza, sino por su persistencia." },
+            { en: "What you do every day matters more than what you do once in a while.", es: "Lo que haces cada día importa más que lo que haces de vez en cuando." },
+            { en: "Good habits formed today become tomorrow's character.", es: "Los buenos hábitos formados hoy se convierten en el carácter del mañana." },
+            { en: "Discipline is the bridge between goals and accomplishment.", es: "La disciplina es el puente entre las metas y los logros." },
+            { en: "Progress, not perfection.", es: "Progreso, no perfección." },
+            
+            // Health & Fitness
+            { en: "Take care of your body. It's the only place you have to live.", es: "Cuida tu cuerpo. Es el único lugar donde tienes que vivir." },
+            { en: "The body achieves what the mind believes.", es: "El cuerpo logra lo que la mente cree." },
+            { en: "Fitness is not about being better than someone else. It's about being better than you used to be.", es: "El ejercicio no se trata de ser mejor que otra persona. Se trata de ser mejor de lo que eras antes." },
+            { en: "A healthy outside starts from the inside.", es: "Un exterior saludable comienza desde el interior." },
+            { en: "Movement is medicine for the body and mind.", es: "El movimiento es medicina para el cuerpo y la mente." },
+            { en: "Your health is an investment, not an expense.", es: "Tu salud es una inversión, no un gasto." },
+            { en: "The groundwork for all happiness is good health.", es: "La base de toda felicidad es la buena salud." },
+            { en: "Every step forward is a step toward your best self.", es: "Cada paso adelante es un paso hacia tu mejor versión." },
+            { en: "Strong body, strong mind.", es: "Cuerpo fuerte, mente fuerte." },
+            { en: "Rest when you need to, but never quit.", es: "Descansa cuando lo necesites, pero nunca te rindas." },
+            
+            // Positivity & Motivation
+            { en: "Every day is a chance to get better.", es: "Cada día es una oportunidad para mejorar." },
+            { en: "Start where you are. Use what you have. Do what you can.", es: "Empieza donde estás. Usa lo que tienes. Haz lo que puedas." },
+            { en: "Believe you can and you're halfway there.", es: "Cree que puedes y ya estarás a medio camino." },
+            { en: "The best time to start was yesterday. The next best time is now.", es: "El mejor momento para empezar fue ayer. El segundo mejor momento es ahora." },
+            { en: "You don't have to be great to start, but you have to start to be great.", es: "No tienes que ser grande para empezar, pero tienes que empezar para ser grande." },
+            { en: "One day or day one. You decide.", es: "Algún día o el día uno. Tú decides." },
+            { en: "Your only limit is you.", es: "Tu único límite eres tú." },
+            { en: "Make today so awesome that yesterday gets jealous.", es: "Haz que hoy sea tan increíble que el ayer tenga celos." },
+            { en: "Dream it. Believe it. Build it.", es: "Sueñalo. Créelo. Constrúyelo." },
+            { en: "Be stronger than your excuses.", es: "Sé más fuerte que tus excusas." },
+            
+            // Focus & Mindset
+            { en: "Focus on progress, not perfection.", es: "Enfócate en el progreso, no en la perfección." },
+            { en: "It's not about having time. It's about making time.", es: "No se trata de tener tiempo. Se trata de hacer tiempo." },
+            { en: "The difference between try and triumph is a little 'umph'.", es: "La diferencia entre intentar y triunfar es un poco de esfuerzo extra." },
+            { en: "Tough times don't last. Tough people do.", es: "Los tiempos difíciles no duran. La gente fuerte sí." },
+            { en: "Fall seven times, stand up eight.", es: "Cae siete veces, levántate ocho." },
+            { en: "Success doesn't come to you. You go to it.", es: "El éxito no viene a ti. Tú vas hacia él." },
+            { en: "Champions keep going when they don't have anything left.", es: "Los campeones siguen adelante cuando ya no les queda nada." },
+            { en: "The pain you feel today becomes the strength you feel tomorrow.", es: "El dolor que sientes hoy se convierte en la fuerza que sentirás mañana." },
+            { en: "A year from now you'll wish you had started today.", es: "Dentro de un año desearás haber empezado hoy." },
+            { en: "Stay patient and trust your journey.", es: "Ten paciencia y confía en tu camino." }
+        ];
+        
+        // Get today's quote index (same quote for the whole day)
+        function getDailyQuoteIndex() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            return dayOfYear % DAILY_QUOTES.length;
+        }
+        
+        function getDailyQuote() {
+            return DAILY_QUOTES[getDailyQuoteIndex()].en;
+        }
+        
+        function getDailyQuoteSpanish() {
+            return DAILY_QUOTES[getDailyQuoteIndex()].es;
+        }
+
+        // ========== TASK TEMPLATES ==========
+        // Templates based on user type / phone comfort level
+        
+        // LOW-TECH TEMPLATE: Simple, essential daily tasks for users who need straightforward activities
+        const LOW_TECH_TASKS = [
+            { id: 1, name: "🚶 Go for a walk", value: 50 },
+            { id: 2, name: "💊 Take medications", value: 25 },
+            { id: 3, name: "🥤 Drink 8 glasses of water", value: 25 },
+            { id: 4, name: "🛏️ Make the bed", value: 25 },
+            { id: 5, name: "📞 Call a family member", value: 50 }
+        ];
+        
+        const LOW_TECH_BONUSES = [
+            // freq: relative frequency (higher = more often). Default is 1
+            { id: 101, name: "🌳 Spend 15 minutes outside", value: 50, freq: 2 },
+            { id: 102, name: "🧘 Do some stretching", value: 50, freq: 2 },
+            { id: 103, name: "📺 Watch a favorite show", value: 25, freq: 1.5 },
+            { id: 104, name: "🍽️ Eat a healthy meal", value: 50, freq: 2 },
+            { id: 105, name: "😴 Get a good night's sleep", value: 50, freq: 2 },
+            { id: 106, name: "🧹 Tidy up one room", value: 50, freq: 1 },
+            { id: 107, name: "📖 Read for 15 minutes", value: 50, freq: 2 },
+            { id: 108, name: "🎵 Listen to music you enjoy", value: 25, freq: 2 }
+        ];
+        
+        // REGULAR TEMPLATE: Standard tasks for tech-comfortable users (like Stu's current setup)
+        const REGULAR_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
             { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75 },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
             { id: 5, name: "🟩 Play Wordle", value: 10 }
         ];
-
-        // Daily bonus tasks (1 rotates each day) - fun extras!
-        const DAILY_BONUSES = [
-            // Photo-based tasks (keep photo upload)
-            { id: 101, name: "📸 Take a photo of something interesting", value: 50, needsPhoto: true },
-            { id: 102, name: "🧹 Organize one drawer or shelf", value: 50, needsPhoto: true },
-            { id: 122, name: "🚗 Clean out the car", value: 50, needsPhoto: true },
-            { id: 109, name: "🗑️ Throw away one thing you don't need", value: 50, needsPhoto: true },
-            // Simple checkbox tasks (no prompt needed)
-            { id: 123, name: "🔗 Try NYTimes Connections", value: 35 },
-            { id: 103, name: "🌳 Spend 10 minutes outside", value: 50 },
-            { id: 106, name: "🔋 Charge devices overnight", value: 50 },
-            { id: 111, name: "🧽 Wipe down a counter or surface", value: 50 },
-            { id: 112, name: "🛏️ Make the bed", value: 50 },
-            { id: 114, name: "🧘 Do 5 minutes of stretching", value: 50 },
-            { id: 115, name: "💊 Take vitamins", value: 50 },
-            { id: 120, name: "📧 Clear out old emails", value: 50 },
-            { id: 121, name: "📝 Make a to-do list for tomorrow", value: 50 },
-            // Tasks with specific comment prompts (no photo needed)
-            { id: 104, name: "🎵 Listen to a new song", value: 50, needsComment: true, commentPrompt: "What song did you listen to?" },
-            { id: 105, name: "📞 Call or text a friend", value: 100, needsComment: true, commentPrompt: "Who did you contact?" },
-            { id: 116, name: "📖 Read for 10 minutes", value: 50, needsComment: true, commentPrompt: "What are you reading?" },
-            { id: 117, name: "🎧 Listen to a podcast", value: 50, needsComment: true, commentPrompt: "Which podcast?" },
-            { id: 118, name: "📺 Watch something new on streaming", value: 50, needsComment: true, commentPrompt: "What did you watch?" },
-            { id: 119, name: "📱 Delete an unused app", value: 50, needsComment: true, commentPrompt: "Which app did you delete?" }
+        
+        const REGULAR_BONUSES = [
+            // freq: relative frequency (higher = more often). Default is 1
+            { id: 101, name: "📸 Take a photo of something interesting", value: 50, needsPhoto: true, freq: 2 },
+            { id: 102, name: "🧹 Organize one drawer or shelf", value: 50, needsPhoto: true, freq: 1 },
+            { id: 122, name: "🚗 Clean out the car", value: 50, needsPhoto: true, freq: 0.5 },
+            { id: 109, name: "🗑️ Throw away one thing you don't need", value: 50, needsPhoto: true, freq: 1 },
+            { id: 123, name: "🔗 Try NYTimes Connections", value: 35, freq: 2 },
+            { id: 103, name: "🌳 Spend 10 minutes outside", value: 50, freq: 2 },
+            { id: 106, name: "🔋 Charge devices overnight", value: 50, freq: 1 },
+            { id: 111, name: "🧽 Wipe down a counter or surface", value: 50, freq: 1 },
+            { id: 112, name: "🛏️ Make the bed", value: 50, freq: 1.5 },
+            { id: 114, name: "🧘 Do 5 minutes of stretching", value: 50, freq: 1.5 },
+            { id: 115, name: "💊 Take vitamins", value: 50, freq: 1.5 },
+            { id: 120, name: "📧 Clear out old emails", value: 50, freq: 1 },
+            { id: 121, name: "📝 Make a to-do list for tomorrow", value: 50, freq: 1.5 },
+            { id: 104, name: "🎵 Listen to a new song", value: 50, needsComment: true, commentPrompt: "What song did you listen to?", freq: 2 },
+            { id: 105, name: "📞 Call or text a friend", value: 100, needsComment: true, commentPrompt: "Who did you contact?", freq: 2 },
+            { id: 116, name: "📖 Read for 10 minutes", value: 50, needsComment: true, commentPrompt: "What are you reading?", freq: 2 },
+            { id: 117, name: "🎧 Listen to a podcast", value: 50, needsComment: true, commentPrompt: "Which podcast?", freq: 2 },
+            { id: 118, name: "📺 Watch something new on streaming", value: 50, needsComment: true, commentPrompt: "What did you watch?", freq: 1.5 },
+            { id: 119, name: "📱 Delete an unused app", value: 50, needsComment: true, commentPrompt: "Which app did you delete?", freq: 0.5 }
         ];
+        
+        // Load profile data and determine which template to use
+        let profileTemplate = 'regular'; // default
+        const profileDataRaw = localStorage.getItem('hr_profile_' + PROFILE_ID);
+        if (profileDataRaw) {
+            const profileInfo = JSON.parse(profileDataRaw);
+            // If phone comfort is "learning" or "moderate", use low-tech template
+            if (profileInfo.phoneComfort === 'learning') {
+                profileTemplate = 'lowtech';
+            }
+        }
+        
+        // Select tasks based on template (Stu always gets regular for backwards compatibility)
+        const DAILY_TASKS = (PROFILE_ID === 'stu' || profileTemplate === 'regular') ? REGULAR_TASKS : LOW_TECH_TASKS;
+        const DAILY_BONUSES = (PROFILE_ID === 'stu' || profileTemplate === 'regular') ? REGULAR_BONUSES : LOW_TECH_BONUSES;
 
         const DAILY_MAX_POINTS = 1000; // $10 daily cap for daily tasks
 
@@ -703,11 +879,25 @@
             return new Date().getDay() === 3; // 3 = Wednesday
         }
 
-        // Get today's daily bonus task
+        // Get today's daily bonus task (weighted by frequency)
         function getDailyBonus() {
             const dayNum = getDayNumber();
-            const index = dayNum % DAILY_BONUSES.length;
-            return DAILY_BONUSES[index];
+            
+            // Build weighted list based on freq property
+            const weightedList = [];
+            DAILY_BONUSES.forEach((task, originalIndex) => {
+                const freq = task.freq || 1; // default frequency is 1
+                // Add task multiple times based on frequency (scaled by 10 for precision)
+                const count = Math.round(freq * 10);
+                for (let i = 0; i < count; i++) {
+                    weightedList.push(originalIndex);
+                }
+            });
+            
+            // Use day number as seed for consistent daily selection
+            const index = dayNum % weightedList.length;
+            const selectedIndex = weightedList[index];
+            return DAILY_BONUSES[selectedIndex];
         }
 
         // Get this week's bonus tasks (tennis + 1 rotating)
@@ -1141,6 +1331,123 @@
                 greeting = "Good Evening, " + PROFILE_NAME + "! 🌙";
             }
             document.getElementById('greeting').textContent = greeting;
+            
+            // Set daily quote
+            document.getElementById('dailyQuote').textContent = '"' + getDailyQuote() + '"';
+            document.getElementById('quoteSpanish').textContent = '"' + getDailyQuoteSpanish() + '"';
+            
+            // Show Spanish button only for Stu's profile
+            if (PROFILE_ID === 'stu') {
+                document.getElementById('spanishBtn').style.display = 'inline-block';
+            }
+            
+            // Check if quote was already acknowledged today
+            updateQuoteButtons();
+        }
+        
+        // ========== QUOTE INTERACTIONS ==========
+        function showToast(message) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--primary);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 30px;
+                font-weight: 600;
+                font-size: 14px;
+                z-index: 9999;
+                animation: slideInUp 0.3s ease-out;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            `;
+            document.body.appendChild(toast);
+            
+            // Remove after 2.5 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+        
+        function getQuoteKey() {
+            const today = new Date().toDateString();
+            return PROFILE_ID ? 'hr_quote_' + PROFILE_ID + '_' + today : 'hr_quote_' + today;
+        }
+        
+        function getQuoteState() {
+            const saved = localStorage.getItem(getQuoteKey());
+            return saved ? JSON.parse(saved) : { acknowledged: false, spanish: false };
+        }
+        
+        function saveQuoteState(state) {
+            localStorage.setItem(getQuoteKey(), JSON.stringify(state));
+        }
+        
+        function updateQuoteButtons() {
+            const state = getQuoteState();
+            const ackBtn = document.getElementById('quoteAckBtn');
+            const spanishBtn = document.getElementById('spanishBtn');
+            
+            if (state.acknowledged) {
+                ackBtn.textContent = '✨ Done!';
+                ackBtn.style.background = 'var(--primary)';
+                ackBtn.style.color = 'white';
+                ackBtn.style.cursor = 'default';
+            }
+            
+            if (state.spanish) {
+                spanishBtn.textContent = '🇪🇸 Done!';
+                spanishBtn.style.background = '#f59e0b';
+                spanishBtn.style.color = 'white';
+                spanishBtn.style.cursor = 'default';
+                document.getElementById('quoteSpanish').style.display = 'block';
+            }
+        }
+        
+        function acknowledgeQuote() {
+            const state = getQuoteState();
+            if (state.acknowledged) return;
+            
+            state.acknowledged = true;
+            saveQuoteState(state);
+            
+            // Add 5 points
+            const appState = loadState();
+            appState.balance += 5;
+            appState.totalEarned += 5;
+            saveState(appState);
+            
+            updateQuoteButtons();
+            updateBalanceDisplay();
+            
+            // Show celebration
+            showToast('+5 pts for daily inspiration! ✨');
+        }
+        
+        function showSpanishQuote() {
+            const state = getQuoteState();
+            if (state.spanish) return;
+            
+            state.spanish = true;
+            saveQuoteState(state);
+            
+            // Add 5 points
+            const appState = loadState();
+            appState.balance += 5;
+            appState.totalEarned += 5;
+            saveState(appState);
+            
+            updateQuoteButtons();
+            updateBalanceDisplay();
+            
+            // Show celebration
+            showToast('+5 pts for Spanish! ¡Muy bien! 🇪🇸');
         }
 
         // ========== LEVELS ==========
@@ -1893,14 +2200,63 @@
         }
 
         function requestPayout() {
-            if (state.balance <= 0) {
-                alert("Nothing to cash out yet! Complete some tasks to earn points.");
-                return;
-            }
             const pts = Math.floor(state.balance);
             const dollars = (pts / 100).toFixed(2);
-            alert(`Cash out requested! 🎉\n\n${pts} pts = $${dollars}\n\nYou'll receive payment via Zelle soon!`);
-            closeModal('settingsModal');
+            
+            // Update modal content
+            document.getElementById('cashoutPoints').textContent = pts + ' pts';
+            document.getElementById('cashoutDollars').textContent = '= $' + dollars;
+            
+            // Update button state
+            const btn = document.getElementById('cashoutBtn');
+            if (pts <= 0) {
+                btn.textContent = '🔒 No Balance Yet';
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            } else {
+                btn.textContent = '💸 Request $' + dollars + ' Payout';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+            
+            openModal('cashoutModal');
+        }
+        
+        function confirmCashout() {
+            const pts = Math.floor(state.balance);
+            const dollars = (pts / 100).toFixed(2);
+            
+            if (pts <= 0) return;
+            
+            // Could add: send notification to admin, log payout request, etc.
+            
+            // Show success state in modal
+            const modalContent = document.querySelector('#cashoutModal .modal-box');
+            modalContent.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 60px; margin-bottom: 15px;">🎉</div>
+                    <h2 style="margin-bottom: 10px; color: var(--primary);">Payout Requested!</h2>
+                    <p style="color: var(--text-light); margin-bottom: 25px;">Your request has been submitted</p>
+                    
+                    <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
+                        <div style="font-size: 14px; opacity: 0.9;">Amount Requested</div>
+                        <div style="font-size: 36px; font-weight: 800;">$${dollars}</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-top: 5px;">(${pts} pts)</div>
+                    </div>
+                    
+                    <div style="background: #fef3c7; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
+                        <div style="color: #92400e; font-size: 14px;">
+                            ⏳ Your admin will process this soon. Payment will arrive via Zelle.
+                        </div>
+                    </div>
+                    
+                    <button onclick="closeModal('cashoutModal'); location.reload();" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                        Got it!
+                    </button>
+                </div>
+            `;
         }
 
         function shareApp() {
