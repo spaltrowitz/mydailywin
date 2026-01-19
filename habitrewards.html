@@ -52,6 +52,11 @@
         @keyframes pop { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes jackpot { 0% { transform: scale(1); } 25% { transform: scale(1.2) rotate(-5deg); } 50% { transform: scale(1.3) rotate(5deg); } 75% { transform: scale(1.2) rotate(-3deg); } 100% { transform: scale(1); } }
+        @keyframes goldShine { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        @keyframes coinDrop { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+        @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
         /* ========== UI COMPONENTS ========== */
         header {
@@ -129,11 +134,19 @@
         .balance-hero {
             background: linear-gradient(135deg, var(--primary), #4ade80);
             color: white; padding: 30px; text-align: center; border-radius: 24px;
-            margin-bottom: 30px; box-shadow: 0 10px 30px rgba(88, 204, 2, 0.4);
+            margin-bottom: 30px; box-shadow: 0 10px 0 var(--primary-shade);
             position: relative; overflow: hidden;
         }
-        .balance-title { font-size: 14px; text-transform: uppercase; opacity: 0.9; font-weight: 700; margin-bottom: 5px; }
-        .balance-amount { font-size: 56px; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .balance-hero::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 200%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+        .balance-title { font-size: 14px; text-transform: uppercase; opacity: 0.9; font-weight: 700; margin-bottom: 5px; letter-spacing: 2px; }
+        .balance-amount { 
+            font-size: 56px; font-weight: 800; 
+            text-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
         
         .hero-emoji { position: absolute; font-size: 60px; opacity: 0.2; animation: float 3s infinite ease-in-out; }
         .hero-1 { top: 10px; right: 10px; animation-delay: 0s; }
@@ -262,15 +275,47 @@
             </div>
         </div>
 
+        <!-- Daily Login Bonus -->
+        <div id="loginBonusSection" style="display: none; margin-bottom: 20px;">
+            <div class="card" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; color: #1a1a2e; text-align: center; padding: 20px;">
+                <div style="font-size: 40px;">🎁</div>
+                <div style="font-size: 18px; font-weight: 800; margin: 10px 0;">Daily Login Bonus!</div>
+                <div style="font-size: 14px;">+25 pts just for showing up!</div>
+            </div>
+        </div>
+
+        <!-- Lucky Day Banner -->
+        <div id="luckyDayBanner" style="display: none; margin-bottom: 20px;">
+            <div class="card" style="background: linear-gradient(135deg, #7c3aed, #a855f7); border: 2px solid #ffd700; color: white; text-align: center; padding: 15px;">
+                <div style="font-size: 24px;">🍀✨ LUCKY DAY! ✨🍀</div>
+                <div style="font-size: 14px; margin-top: 5px;">All tasks worth <strong>1.5x points</strong> today!</div>
+            </div>
+        </div>
+
         <!-- Daily Progress -->
         <div class="card" style="padding: 16px; margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span style="font-weight: 700;">Today's Progress</span>
                 <span id="progressText" style="font-weight: 700; color: var(--primary);">0/4 tasks</span>
             </div>
-            <div style="height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden;">
+            <div style="height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; position: relative;">
                 <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--primary), #4ade80); width: 0%; transition: width 0.5s ease; position: relative;">
                 </div>
+            </div>
+            <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--primary); font-weight: 600;">
+                🎰 Complete all tasks for BONUS SPIN!
+            </div>
+        </div>
+
+        <!-- Lucky Spin -->
+        <div id="spinSection" style="display: none; margin-bottom: 25px;">
+            <div class="card" style="background: linear-gradient(135deg, var(--primary), #4ade80); border: none; color: white; text-align: center; padding: 25px;">
+                <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">🎰 BONUS SPIN UNLOCKED!</div>
+                <div style="font-size: 80px; margin: 15px 0; transition: transform 0.5s;" id="spinEmoji">🎰</div>
+                <button onclick="spinWheel()" id="spinBtn" style="background: white; color: var(--primary); border: none; border-radius: 16px; padding: 16px 40px; font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: all 0.1s;">
+                    🎲 SPIN TO WIN!
+                </button>
+                <div id="spinResult" style="margin-top: 15px; font-size: 24px; font-weight: 800;"></div>
             </div>
         </div>
 
@@ -281,12 +326,12 @@
 
         <!-- Daily Bonus Task -->
         <div id="dailyBonusSection" style="margin-top: 25px;">
-            <div class="card" style="background: linear-gradient(135deg, #f59e0b, #f97316); border: none; color: white; padding: 20px;">
+            <div class="card" style="background: linear-gradient(135deg, #f97316, #fb923c); border: none; color: white; padding: 20px; position: relative; overflow: hidden;">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <div style="font-size: 12px; text-transform: uppercase; opacity: 0.9; font-weight: 700;">⭐ Today's Bonus</div>
+                        <div style="font-size: 12px; text-transform: uppercase; opacity: 0.9; font-weight: 700; letter-spacing: 1px;">⭐ Today's Bonus Task</div>
                         <div id="dailyBonusName" style="font-size: 18px; font-weight: 800; margin-top: 5px;">Loading...</div>
-                        <div id="dailyBonusReward" style="font-size: 14px; opacity: 0.9; margin-top: 3px;">+100 pts</div>
+                        <div id="dailyBonusReward" style="font-size: 14px; opacity: 0.9; margin-top: 3px;">+50 pts</div>
                     </div>
                     <button id="dailyBonusBtn" onclick="completeDailyBonus()" style="width: 52px; height: 52px; border-radius: 16px; background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.2s;">
                     </button>
@@ -368,38 +413,35 @@
         // Routine tasks = lower value, Stretch goals = higher value
         const DAILY_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 2, name: "🎾 Play tennis / pickleball", value: 25 },
-            { id: 3, name: "🦉 Do Duolingo", value: 75 },
-            { id: 4, name: "📝 Do crossword puzzle", value: 50 }
+            { id: 2, name: "🦉 Do a Duolingo lesson", value: 75 },
+            { id: 3, name: "📝 Do a crossword puzzle", value: 50 }
         ];
 
         // Daily bonus tasks (1 rotates each day) - fun extras!
         const DAILY_BONUSES = [
             // Original fun tasks
-            { id: 101, name: "📸 Take a photo of something interesting", value: 100 },
-            { id: 102, name: "🧹 Organize one drawer or shelf", value: 100 },
-            { id: 103, name: "🌳 Spend 10 minutes outside", value: 100 },
-            { id: 104, name: "🎵 Listen to a new song", value: 100 },
+            { id: 101, name: "📸 Take a photo of something interesting", value: 50 },
+            { id: 102, name: "🧹 Organize one drawer or shelf", value: 50 },
+            { id: 103, name: "🌳 Spend 10 minutes outside", value: 50 },
+            { id: 104, name: "🎵 Listen to a new song", value: 50 },
             { id: 105, name: "📞 Call or text a friend", value: 100 },
             // Household tasks
             { id: 106, name: "🔋 Charge devices overnight", value: 50 },
-            { id: 109, name: "🗑️ Throw away one thing you don't need", value: 100 },
-            { id: 110, name: "👕 Put away some laundry", value: 100 },
-            { id: 111, name: "🧽 Wipe down a counter or surface", value: 100 },
+            { id: 109, name: "🗑️ Throw away one thing you don't need", value: 50 },
+            { id: 111, name: "🧽 Wipe down a counter or surface", value: 50 },
             { id: 112, name: "🛏️ Make the bed", value: 50 },
             // Wellness/Self-care
-            { id: 113, name: "💧 Drink 8 glasses of water today", value: 100 },
-            { id: 114, name: "🧘 Do 5 minutes of stretching", value: 100 },
+            { id: 114, name: "🧘 Do 5 minutes of stretching", value: 50 },
             { id: 115, name: "💊 Take vitamins", value: 50 },
             // Learning/Entertainment
-            { id: 116, name: "📖 Read for 10 minutes", value: 100 },
-            { id: 117, name: "🎧 Listen to a podcast", value: 100 },
-            { id: 118, name: "📺 Watch something new on streaming", value: 100 },
+            { id: 116, name: "📖 Read for 10 minutes", value: 50 },
+            { id: 117, name: "🎧 Listen to a podcast", value: 50 },
+            { id: 118, name: "📺 Watch something new on streaming", value: 50 },
             // Digital cleanup
             { id: 119, name: "📱 Delete an unused app", value: 50 },
-            { id: 120, name: "📧 Clear out old emails", value: 100 },
+            { id: 120, name: "📧 Clear out old emails", value: 50 },
             // Planning
-            { id: 121, name: "📝 Make a to-do list for tomorrow", value: 100 }
+            { id: 121, name: "📝 Make a to-do list for tomorrow", value: 50 }
         ];
 
         const DAILY_MAX_POINTS = 1000; // $10 daily cap for daily tasks
@@ -407,11 +449,12 @@
         // Weekly bonus tasks (1 selected per week) - exempt from daily cap
         // Fun/reward-focused activities (100 pts = $1.00)
         const WEEKLY_BONUSES = [
+            { id: 300, name: "🎾 Play tennis / pickleball this week", value: 30, isWeekly: true },
             { id: 301, name: "💿 Sell your coins or vinyls", value: 500, isWeekly: true },
             { id: 302, name: "📺 Find a new show or movie to watch on Netflix", value: 200, isWeekly: true },
             { id: 303, name: "📺 Find a new show or movie to watch on Amazon Video", value: 200, isWeekly: true },
             { id: 304, name: "📺 Find a new show or movie to watch on Apple TV", value: 200, isWeekly: true },
-            { id: 305, name: "🍿 Use the microwave", value: 100, isWeekly: true },
+            { id: 305, name: "🍿 Use the microwave", value: 50, isWeekly: true },
             { id: 306, name: "🛒 Check Aisle for grocery deals", value: 150, isWeekly: true },
             { id: 307, name: "💑 Take your wife out to lunch or dinner", value: 500, isWeekly: true },
             { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true },
@@ -423,7 +466,8 @@
             { id: 314, name: "📞 Call a friend or family member", value: 200, isWeekly: true },
             { id: 315, name: "📦 Get rid of 3 items from office", value: 300, isWeekly: true },
             { id: 316, name: "👕 Donate clothing items", value: 250, isWeekly: true },
-            { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true }
+            { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true },
+            { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true }
         ];
 
         // BACKLOG - Tasks (can add back if needed):
@@ -472,7 +516,10 @@
             totalEarned: 0,
             history: [],
             mode: localStorage.getItem('theme') || 'light',
-            currentTaskId: null
+            currentTaskId: null,
+            lastLoginDate: null,
+            spinUsedToday: false,
+            achievements: []
         };
 
         // ========== INIT ==========
@@ -480,8 +527,174 @@
             loadState();
             applyTheme();
             checkNewDay();
+            checkDailyLoginBonus();
+            checkLuckyDay();
             updateGreeting();
             render();
+        }
+
+        // ========== GAMBLER FEATURES ==========
+        function isLuckyDay() {
+            // 10% chance each day is a lucky day (seeded by date for consistency)
+            const today = new Date().toDateString();
+            let hash = 0;
+            for (let i = 0; i < today.length; i++) {
+                hash = ((hash << 5) - hash) + today.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return Math.abs(hash) % 10 === 0; // 10% chance
+        }
+
+        function checkLuckyDay() {
+            if (isLuckyDay()) {
+                document.getElementById('luckyDayBanner').style.display = 'block';
+            }
+        }
+
+        function checkDailyLoginBonus() {
+            const today = new Date().toDateString();
+            if (state.lastLoginDate !== today) {
+                // Give login bonus
+                state.lastLoginDate = today;
+                state.balance += 25;
+                state.totalEarned += 25;
+                state.spinUsedToday = false; // Reset spin for new day
+                saveState();
+                
+                // Show login bonus animation
+                document.getElementById('loginBonusSection').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('loginBonusSection').style.display = 'none';
+                }, 3000);
+                triggerConfetti();
+            }
+        }
+
+        function getStreakMultiplier() {
+            if (state.streak >= 14) return 2.0;
+            if (state.streak >= 7) return 1.5;
+            return 1.0;
+        }
+
+        function getRandomBonus() {
+            // 10% chance of 2x bonus on any task
+            return Math.random() < 0.1 ? 2 : 1;
+        }
+
+        function spinWheel() {
+            if (state.spinUsedToday) {
+                alert('You already spun today! Come back tomorrow.');
+                return;
+            }
+            
+            const spinEmoji = document.getElementById('spinEmoji');
+            const spinResult = document.getElementById('spinResult');
+            const spinBtn = document.getElementById('spinBtn');
+            
+            spinBtn.disabled = true;
+            spinBtn.textContent = '🎲 Spinning...';
+            
+            // Spin animation
+            const prizes = [
+                { emoji: '💰', pts: 50, text: '+50 pts!' },
+                { emoji: '⭐', pts: 25, text: '+25 pts!' },
+                { emoji: '🎉', pts: 100, text: 'JACKPOT! +100 pts!' },
+                { emoji: '✨', pts: 10, text: '+10 pts!' },
+                { emoji: '🍀', pts: 75, text: 'Lucky! +75 pts!' },
+                { emoji: '💎', pts: 150, text: 'MEGA WIN! +150 pts!' }
+            ];
+            
+            let spins = 0;
+            const spinInterval = setInterval(() => {
+                spinEmoji.textContent = prizes[Math.floor(Math.random() * prizes.length)].emoji;
+                spinEmoji.style.transform = `rotate(${spins * 30}deg)`;
+                spins++;
+                
+                if (spins > 20) {
+                    clearInterval(spinInterval);
+                    
+                    // Weighted random - jackpot is rarer
+                    const weights = [25, 30, 5, 20, 15, 5]; // Total 100
+                    let random = Math.random() * 100;
+                    let prizeIndex = 0;
+                    for (let i = 0; i < weights.length; i++) {
+                        random -= weights[i];
+                        if (random <= 0) {
+                            prizeIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    const prize = prizes[prizeIndex];
+                    spinEmoji.textContent = prize.emoji;
+                    spinEmoji.style.transform = 'rotate(0deg) scale(1.3)';
+                    spinResult.textContent = prize.text;
+                    
+                    state.balance += prize.pts;
+                    state.totalEarned += prize.pts;
+                    state.spinUsedToday = true;
+                    saveState();
+                    render();
+                    triggerCoinRain();
+                    
+                    setTimeout(() => {
+                        spinEmoji.style.transform = 'rotate(0deg) scale(1)';
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        function triggerCoinRain() {
+            for(let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.innerText = ['💰', '💵', '🪙', '💲'][Math.floor(Math.random()*4)];
+                    el.style.position = 'fixed';
+                    el.style.left = Math.random() * 100 + 'vw';
+                    el.style.top = '-50px';
+                    el.style.fontSize = '40px';
+                    el.style.transition = 'top 1.5s ease-in, opacity 1.5s ease-in';
+                    el.style.zIndex = '9999';
+                    document.body.appendChild(el);
+                    
+                    setTimeout(() => {
+                        el.style.top = '110vh';
+                        el.style.opacity = '0';
+                    }, 50);
+                    
+                    setTimeout(() => el.remove(), 1600);
+                }, i * 50);
+            }
+        }
+
+        function checkAchievements() {
+            const newAchievements = [];
+            
+            if (state.totalEarned >= 100 && !state.achievements.includes('first_dollar')) {
+                newAchievements.push({ id: 'first_dollar', name: '💵 First Dollar!', desc: 'Earned your first $1' });
+                state.achievements.push('first_dollar');
+            }
+            if (state.streak >= 7 && !state.achievements.includes('week_streak')) {
+                newAchievements.push({ id: 'week_streak', name: '🔥 Week Warrior!', desc: '7 day streak' });
+                state.achievements.push('week_streak');
+            }
+            if (state.streak >= 30 && !state.achievements.includes('month_streak')) {
+                newAchievements.push({ id: 'month_streak', name: '🏆 Monthly Master!', desc: '30 day streak' });
+                state.achievements.push('month_streak');
+            }
+            if (state.totalEarned >= 1000 && !state.achievements.includes('ten_dollars')) {
+                newAchievements.push({ id: 'ten_dollars', name: '💰 Big Earner!', desc: 'Earned $10 total' });
+                state.achievements.push('ten_dollars');
+            }
+            
+            newAchievements.forEach(a => {
+                setTimeout(() => {
+                    alert(`🏆 ACHIEVEMENT UNLOCKED!\n\n${a.name}\n${a.desc}`);
+                    triggerCoinRain();
+                }, 500);
+            });
+            
+            if (newAchievements.length > 0) saveState();
         }
 
         function loadState() {
@@ -504,6 +717,9 @@
             if (!state.weeklyBonusesCompleted) state.weeklyBonusesCompleted = [];
             if (state.dailyBonusCompleted === undefined) state.dailyBonusCompleted = null;
             if (state.totalEarned === undefined) state.totalEarned = 0;
+            if (state.lastLoginDate === undefined) state.lastLoginDate = null;
+            if (state.spinUsedToday === undefined) state.spinUsedToday = false;
+            if (state.achievements === undefined) state.achievements = [];
         }
 
         function saveState() {
@@ -535,12 +751,21 @@
 
         // ========== LEVELS ==========
         function getLevel(totalPoints) {
-            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700" };
-            if (totalPoints >= 2500) return { name: "⭐ Expert", color: "#c0c0c0" };
-            if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32" };
-            if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80" };
-            if (totalPoints >= 100) return { name: "🌱 Starter", color: "#86efac" };
-            return { name: "🌱 Beginner", color: "#bbf7d0" };
+            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700", next: null, nextPts: null };
+            if (totalPoints >= 2500) return { name: "⭐ Expert", color: "#c0c0c0", next: "🏆 Champion", nextPts: 5000 };
+            if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32", next: "⭐ Expert", nextPts: 2500 };
+            if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80", next: "🌟 Pro", nextPts: 1000 };
+            if (totalPoints >= 100) return { name: "🌱 Starter", color: "#86efac", next: "🌿 Regular", nextPts: 500 };
+            return { name: "🌱 Beginner", color: "#bbf7d0", next: "🌱 Starter", nextPts: 100 };
+        }
+
+        function getNearMissMessage(totalPoints) {
+            const level = getLevel(totalPoints);
+            if (!level.nextPts) return null;
+            const remaining = level.nextPts - totalPoints;
+            if (remaining <= 50) return `🔥 Only ${remaining} pts to ${level.next}!`;
+            if (remaining <= 100) return `Almost there! ${remaining} pts to ${level.next}`;
+            return null;
         }
 
         // ========== RENDER ==========
@@ -549,9 +774,15 @@
             document.getElementById('todayBalance').textContent = `${pts} pts`;
             document.getElementById('streakDays').textContent = state.streak;
             
-            // Level
+            // Level with near-miss
             const level = getLevel(state.totalEarned || 0);
-            document.getElementById('levelBadge').textContent = level.name;
+            const nearMiss = getNearMissMessage(state.totalEarned || 0);
+            let levelText = level.name;
+            if (nearMiss) {
+                document.getElementById('levelBadge').innerHTML = `${level.name} <br><span style="font-size: 10px; opacity: 0.9;">${nearMiss}</span>`;
+            } else {
+                document.getElementById('levelBadge').textContent = level.name;
+            }
             
             // Daily progress
             const completed = state.tasks.filter(t => t.completed).length;
@@ -639,6 +870,24 @@
             // Survey unlock (if at least one task done)
             const tasksDone = state.tasks.filter(t => t.completed).length;
             document.getElementById('surveySection').style.display = tasksDone > 0 ? 'block' : 'none';
+            
+            // Show spin section if all tasks done and not used today
+            const spinSection = document.getElementById('spinSection');
+            if (allDone && !state.spinUsedToday) {
+                spinSection.style.display = 'block';
+                document.getElementById('multiplierHint').innerHTML = '🎉 All tasks done! Spin available above!';
+            } else if (state.spinUsedToday) {
+                spinSection.style.display = 'none';
+                document.getElementById('multiplierHint').innerHTML = '✅ Spin used! Come back tomorrow!';
+            } else {
+                spinSection.style.display = 'none';
+            }
+            
+            // Show streak multiplier
+            const mult = getStreakMultiplier();
+            if (mult > 1) {
+                document.getElementById('multiplierHint').innerHTML += ` <br>🔥 ${mult}x streak bonus active!`;
+            }
         }
 
         // ========== ACTIONS ==========
@@ -669,15 +918,50 @@
             const task = state.tasks.find(t => t.id === state.currentTaskId);
             if (task) {
                 task.completed = true;
-                task.proof = document.getElementById('taskComment').value; // In real app, upload photo
-                state.balance += task.value;
-                state.totalEarned += task.value;
+                task.proof = document.getElementById('taskComment').value;
+                
+                // Calculate points with bonuses
+                let pts = task.value;
+                let bonusMsg = '';
+                
+                // Streak multiplier
+                const streakMult = getStreakMultiplier();
+                if (streakMult > 1) {
+                    pts = Math.floor(pts * streakMult);
+                    bonusMsg += `🔥 ${streakMult}x streak bonus! `;
+                }
+                
+                // Lucky day
+                if (isLuckyDay()) {
+                    pts = Math.floor(pts * 1.5);
+                    bonusMsg += '🍀 Lucky day 1.5x! ';
+                }
+                
+                // Random bonus (10% chance of 2x)
+                const randomMult = getRandomBonus();
+                if (randomMult > 1) {
+                    pts = Math.floor(pts * randomMult);
+                    bonusMsg += '🎲 LUCKY 2x BONUS! ';
+                }
+                
+                state.balance += pts;
+                state.totalEarned += pts;
                 
                 checkStreak();
+                checkAchievements();
                 saveState();
                 render();
                 closeModal('taskModal');
-                triggerConfetti();
+                
+                if (bonusMsg) {
+                    setTimeout(() => alert(`+${pts} pts! ${bonusMsg}`), 300);
+                }
+                
+                if (randomMult > 1) {
+                    triggerCoinRain();
+                } else {
+                    triggerConfetti();
+                }
             }
         }
 
