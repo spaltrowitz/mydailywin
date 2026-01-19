@@ -1089,7 +1089,7 @@
             if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32", next: "⭐ Expert", nextPts: 2500 };
             if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80", next: "🌟 Pro", nextPts: 1000 };
             if (totalPoints >= 150) return { name: "🌱 Starter", color: "#86efac", next: "🌿 Regular", nextPts: 500 };
-            return { name: "🥚 Beginner", color: "#3c3c3c", next: "🌱 Starter", nextPts: 150 };
+            return { name: "🥚 Beginner", color: "#58cc02", next: "🌱 Starter", nextPts: 150 };
         }
 
         function getPrevLevelPts(totalPoints) {
@@ -1846,7 +1846,7 @@
         
         function populateLevelsTable() {
             const allLevels = [
-                { name: "🥚 Beginner", pts: 0, color: "#3c3c3c" },
+                { name: "🥚 Beginner", pts: 0, color: "#58cc02" },
                 { name: "🌱 Starter", pts: 150, color: "#86efac" },
                 { name: "🌿 Regular", pts: 500, color: "#4ade80" },
                 { name: "🌟 Pro", pts: 1000, color: "#cd7f32" },
