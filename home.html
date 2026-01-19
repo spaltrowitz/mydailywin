@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitRewards - Build Better Habits, Earn Real Rewards</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Turn daily habits into a rewarding game. Track activities, build streaks, earn real money. Perfect for staying active, sharp, and motivated.">
+    <meta name="keywords" content="habit tracker, rewards, gamification, daily tasks, streak, motivation, wellness">
+    <meta name="author" content="HabitRewards">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://habitrewards-131.web.app/">
+    <meta property="og:title" content="HabitRewards - Build Better Habits, Earn Real Rewards">
+    <meta property="og:description" content="Turn daily habits into a rewarding game. Track activities, build streaks, earn real money. Perfect for staying active, sharp, and motivated.">
+    <meta property="og:image" content="https://habitrewards-131.web.app/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://habitrewards-131.web.app/">
+    <meta property="twitter:title" content="HabitRewards - Build Better Habits, Earn Real Rewards">
+    <meta property="twitter:description" content="Turn daily habits into a rewarding game. Track activities, build streaks, earn real money.">
+    <meta property="twitter:image" content="https://habitrewards-131.web.app/og-image.png">
+    
     <style>
         :root {
             --primary: #58cc02;
@@ -393,6 +417,338 @@
             font-size: 12px;
             color: var(--text-light);
         }
+        /* App Mockup Styles */
+        .app-preview {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .phone-frame {
+            display: inline-block;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 54px;
+            padding: 12px;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.1),
+                0 0 0 3px #3a3a3a,
+                0 25px 50px rgba(0,0,0,0.4),
+                inset 0 1px 1px rgba(255,255,255,0.05);
+            width: 270px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .phone-frame:hover {
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.15),
+                0 0 0 3px #3a3a3a,
+                0 35px 70px rgba(0,0,0,0.5),
+                inset 0 1px 1px rgba(255,255,255,0.05);
+        }
+        .phone-tap-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .phone-tap-hint:hover {
+            transform: scale(1.05);
+            background: var(--primary);
+            color: white;
+        }
+        .app-preview .phone-frame {
+            display: block;
+            margin: 0 auto;
+        }
+        .app-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        /* Demo Modal */
+        .demo-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .demo-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .demo-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .demo-modal-close:hover {
+            transform: scale(1.1);
+        }
+        .demo-phone {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 58px;
+            padding: 14px;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.1),
+                0 0 0 4px #3a3a3a,
+                0 30px 80px rgba(0,0,0,0.6),
+                inset 0 1px 1px rgba(255,255,255,0.05);
+            width: 320px;
+            max-width: 90vw;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .demo-modal.active .demo-phone {
+            transform: scale(1);
+        }
+        .demo-screen {
+            background: var(--bg);
+            border-radius: 46px;
+            overflow: hidden;
+            height: 680px;
+            max-height: 85vh;
+        }
+        .demo-dynamic-island {
+            background: #000;
+            height: 26px;
+            width: 90px;
+            margin: 12px auto 0;
+            border-radius: 16px;
+            box-shadow: inset 0 0 2px rgba(255,255,255,0.1);
+        }
+        .demo-status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 24px 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a1a1a;
+            background: #f0f2f5;
+        }
+        .demo-task {
+            background: white;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 2px solid rgba(0,0,0,0.05);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+        }
+        .demo-task-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .demo-task-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .demo-task-pts {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--primary);
+            background: rgba(88, 204, 2, 0.1);
+            padding: 2px 6px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .demo-task-check {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            box-shadow: 0 2px 0 #d1d5db;
+        }
+        .demo-task-check.done {
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 2px 0 #46a302;
+        }
+        .demo-task-name.done {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .phone-screen {
+            background: var(--bg);
+            border-radius: 44px;
+            overflow: hidden;
+            text-align: left;
+            height: 530px;
+        }
+        .phone-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #1a1a1a;
+            background: var(--bg);
+        }
+        .phone-status-bar .time {
+            font-weight: 700;
+        }
+        .phone-status-bar .icons {
+            display: flex;
+            gap: 4px;
+            font-size: 10px;
+        }
+        .phone-dynamic-island {
+            background: #000;
+            height: 22px;
+            margin: 10px auto 0;
+            width: 72px;
+            border-radius: 14px;
+            position: relative;
+            box-shadow: inset 0 0 2px rgba(255,255,255,0.1);
+        }
+        .mock-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 14px 14px;
+            text-align: center;
+        }
+        .mock-header h3 {
+            font-size: 17px;
+            margin: 0;
+            font-weight: 800;
+        }
+        .mock-header p {
+            font-size: 12px;
+            opacity: 0.95;
+            margin: 4px 0 0;
+        }
+        .mock-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 10px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .mock-stat {
+            text-align: center;
+        }
+        .mock-stat-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .mock-stat-label {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .mock-tasks {
+            padding: 12px;
+        }
+        .mock-task {
+            background: white;
+            border-radius: 12px;
+            padding: 10px 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+            border: 1.5px solid rgba(0,0,0,0.06);
+        }
+        .mock-task-content {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .mock-task-check {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 0 #d1d5db;
+        }
+        .mock-task-check.done {
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 2px 0 #46a302;
+        }
+        .mock-task-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .mock-task-name.done {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .mock-task-pts {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--primary);
+            background: rgba(88, 204, 2, 0.1);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+        @media (max-width: 600px) {
+            .phone-frame {
+                width: 240px;
+                border-radius: 48px;
+                padding: 10px;
+            }
+            .phone-screen {
+                height: 470px;
+                border-radius: 40px;
+            }
+        }
         @media (max-width: 600px) {
             .hero h1 { font-size: 32px; }
             .hero p { font-size: 16px; }
@@ -476,6 +832,72 @@
             <a href="#how-it-works">How It Works</a>
             <a href="#faq">FAQ</a>
         </div>
+    </div>
+
+    <!-- APP PREVIEW MOCKUP -->
+    <div class="app-preview">
+        <h2 class="section-title" style="margin-bottom: 20px;">📱 See It In Action</h2>
+        <p style="color: var(--text-light); max-width: 500px; margin: 0 auto 30px;">A simple, beautiful app that makes building habits feel like a game</p>
+        <div class="phone-frame" onclick="openDemo()">
+            <div class="phone-screen">
+                <div class="phone-dynamic-island"></div>
+                <div class="phone-status-bar">
+                    <span class="time">9:41</span>
+                    <span class="icons">📶 🔋</span>
+                </div>
+                <div class="mock-header">
+                    <h3>🏆 HabitRewards</h3>
+                    <p>🔥 7 Day Streak!</p>
+                </div>
+                <div class="mock-stats">
+                    <div class="mock-stat">
+                        <div class="mock-stat-value">1,250</div>
+                        <div class="mock-stat-label">Points</div>
+                    </div>
+                    <div class="mock-stat">
+                        <div class="mock-stat-value">$12.50</div>
+                        <div class="mock-stat-label">Earned</div>
+                    </div>
+                    <div class="mock-stat">
+                        <div class="mock-stat-value">🏆</div>
+                        <div class="mock-stat-label">Pro Level</div>
+                    </div>
+                </div>
+                <div class="mock-tasks">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-light); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Daily Habits</div>
+                    <div class="mock-task">
+                        <div class="mock-task-content">
+                            <div class="mock-task-name done">🚶 Go for a walk</div>
+                            <div class="mock-task-pts">+25 pts</div>
+                        </div>
+                        <div class="mock-task-check done">✓</div>
+                    </div>
+                    <div class="mock-task">
+                        <div class="mock-task-content">
+                            <div class="mock-task-name done">🟩 Do Wordle</div>
+                            <div class="mock-task-pts">+50 pts</div>
+                        </div>
+                        <div class="mock-task-check done">✓</div>
+                    </div>
+                    <div class="mock-task">
+                        <div class="mock-task-content">
+                            <div class="mock-task-name">📝 Do a crossword</div>
+                            <div class="mock-task-pts">+50 pts</div>
+                        </div>
+                        <div class="mock-task-check"></div>
+                    </div>
+                    <div class="mock-task" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b;">
+                        <div class="mock-task-content">
+                            <div class="mock-task-name">🏃 Exercise today</div>
+                            <div class="mock-task-pts" style="color: #f59e0b; background: rgba(245,158,11,0.15);">+75 pts ⭐</div>
+                        </div>
+                        <div class="mock-task-check" style="background: rgba(245,158,11,0.2); box-shadow: 0 2px 0 rgba(245,158,11,0.3);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="phone-tap-hint" onclick="openDemo()">👆 Tap to explore</div>
+        <p style="margin-top: 15px; font-size: 14px; color: var(--text-light);">Complete tasks → Earn points → Get paid via Zelle</p>
     </div>
 
     <!-- WHY HABITREWARDS -->
@@ -740,10 +1162,142 @@
             if (e.key === 'Escape' && document.querySelector('.slide-menu').classList.contains('active')) {
                 toggleMenu();
             }
+            if (e.key === 'Escape' && document.querySelector('.demo-modal').classList.contains('active')) {
+                closeDemo();
+            }
         });
 
         // Load profiles on page load
         loadProfiles();
+
+        // Demo Modal Functions
+        function openDemo() {
+            document.querySelector('.demo-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDemo() {
+            document.querySelector('.demo-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
     </script>
+
+    <!-- Demo Modal -->
+    <div class="demo-modal" onclick="if(event.target === this) closeDemo()">
+        <button class="demo-modal-close" onclick="closeDemo()">×</button>
+        <div class="demo-phone">
+            <div class="demo-screen" style="position: relative; overflow-y: auto;">
+                <div class="demo-dynamic-island"></div>
+                <div class="demo-status-bar">
+                    <span>9:41</span>
+                    <span>📶 🔋</span>
+                </div>
+                
+                <!-- App Header -->
+                <div style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 3px 0 rgba(0,0,0,0.15);">
+                    <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; color: white;">
+                        <span>🏆</span> HabitRewards
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <span style="background: rgba(255,255,255,0.2); padding: 6px; border-radius: 8px; font-size: 14px;">⚙️</span>
+                        <span style="background: rgba(255,255,255,0.2); padding: 6px; border-radius: 8px; font-size: 14px;">🌙</span>
+                    </div>
+                </div>
+                
+                <!-- Content Area -->
+                <div style="padding: 16px; background: #f0f2f5;">
+                    <!-- Greeting & Streak -->
+                    <div style="text-align: center; margin-bottom: 16px;">
+                        <div style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Good morning! ☀️</div>
+                        <div style="display: inline-flex; align-items: center; gap: 6px; background: #fff3cd; color: #856404; padding: 6px 12px; border-radius: 16px; font-weight: 700; font-size: 12px;">
+                            🔥 7 Day Streak
+                        </div>
+                    </div>
+                    
+                    <!-- Balance Hero -->
+                    <div style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 16px; text-align: center; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 0 #3d8a02;">
+                        <div style="display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 700;">🏆 Pro Level</div>
+                        <div style="font-size: 36px; font-weight: 800; margin: 8px 0;">1,250 pts</div>
+                        <div style="font-size: 14px; opacity: 0.9;">= $12.50</div>
+                        <div style="margin-top: 10px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; overflow: hidden;">
+                            <div style="width: 65%; height: 100%; background: white; border-radius: 3px;"></div>
+                        </div>
+                        <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">350 pts to next level</div>
+                    </div>
+                    
+                    <!-- Daily Progress -->
+                    <div style="background: white; border-radius: 14px; padding: 12px; margin-bottom: 16px; border: 2px solid rgba(0,0,0,0.05); box-shadow: 0 3px 0 rgba(0,0,0,0.04);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 700; font-size: 13px;">Today's Progress</span>
+                            <span style="font-weight: 700; font-size: 13px; color: var(--primary);">2/4 tasks</span>
+                        </div>
+                        <div style="height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden;">
+                            <div style="height: 100%; background: linear-gradient(90deg, var(--primary), #4ade80); width: 50%;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Daily Habits Section -->
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-light); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Daily Habits</div>
+                    
+                    <div class="demo-task">
+                        <div class="demo-task-content">
+                            <div class="demo-task-name done">🚶 Go for a walk</div>
+                            <div class="demo-task-pts">+25 pts</div>
+                        </div>
+                        <div class="demo-task-check done">✓</div>
+                    </div>
+                    
+                    <div class="demo-task">
+                        <div class="demo-task-content">
+                            <div class="demo-task-name done">🟩 Do Wordle</div>
+                            <div class="demo-task-pts">+50 pts</div>
+                        </div>
+                        <div class="demo-task-check done">✓</div>
+                    </div>
+                    
+                    <div class="demo-task">
+                        <div class="demo-task-content">
+                            <div class="demo-task-name">📝 Do a crossword</div>
+                            <div class="demo-task-pts">+50 pts</div>
+                        </div>
+                        <div class="demo-task-check"></div>
+                    </div>
+                    
+                    <div class="demo-task">
+                        <div class="demo-task-content">
+                            <div class="demo-task-name">📖 Read for 20 mins</div>
+                            <div class="demo-task-pts">+40 pts</div>
+                        </div>
+                        <div class="demo-task-check"></div>
+                    </div>
+                    
+                    <!-- Today's Bonus Section -->
+                    <div style="font-size: 11px; font-weight: 700; color: #f97316; margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.5px;">⭐ Today's Bonus</div>
+                    
+                    <div style="background: linear-gradient(135deg, #f97316, #fb923c); border-radius: 14px; padding: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 0 #ea580c;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-size: 14px; font-weight: 700; color: white;">🏃 Exercise today</span>
+                            <span style="font-size: 11px; font-weight: 800; color: #f97316; padding: 3px 8px; border-radius: 8px; background: rgba(255,255,255,0.9);">+75 pts</span>
+                        </div>
+                        <div style="width: 36px; height: 36px; border-radius: 12px; background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5); flex-shrink: 0;"></div>
+                    </div>
+                    
+                    <!-- Weekly Challenges Section -->
+                    <div style="background: linear-gradient(135deg, #a855f7, #ec4899); border-radius: 14px; padding: 16px; margin-top: 16px; text-align: center; color: white;">
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">🏆 Weekly Challenges</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600;">
+                                🎯 Complete all tasks 5 days <span style="background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 6px; margin-left: 4px;">+100 pts</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600;">
+                                📚 Read every day this week <span style="background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 6px; margin-left: 4px;">+75 pts</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

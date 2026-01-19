@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FFA500"/>
+      <stop offset="100%" style="stop-color:#FF8C00"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#58cc02"/>
+      <stop offset="100%" style="stop-color:#58a700"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#green)"/>
+  <!-- Trophy cup -->
+  <path d="M30 30 L70 30 L65 55 Q50 70 35 55 Z" fill="url(#gold)"/>
+  <!-- Trophy handles -->
+  <path d="M25 35 Q15 35 15 45 Q15 55 28 52" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M75 35 Q85 35 85 45 Q85 55 72 52" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
+  <!-- Trophy base -->
+  <rect x="40" y="62" width="20" height="8" rx="2" fill="url(#gold)"/>
+  <rect x="35" y="70" width="30" height="6" rx="2" fill="url(#gold)"/>
+  <!-- Star on trophy -->
+  <polygon points="50,38 52,44 58,44 53,48 55,54 50,50 45,54 47,48 42,44 48,44" fill="white"/>
+</svg>
