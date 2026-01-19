@@ -486,6 +486,12 @@
 
         <!-- PAYMENTS TAB -->
         <div id="payments" class="tab-content">
+            <div class="card" id="pendingRequestsCard" style="display: none;">
+                <h2>🔔 Pending Payout Requests</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;"><span class="user-name">User</span> has requested a payout</p>
+                <div id="pendingRequestsContainer"></div>
+            </div>
+            
             <div class="card">
                 <h2>💰 Payment History</h2>
                 <p style="color: var(--text-light); margin-bottom: 20px;">Track Zelle payments to <span class="user-name">User</span></p>
@@ -1212,24 +1218,194 @@
             if (payments.length === 0) {
                 container.innerHTML = '<div class="empty-state">No payments recorded yet</div>';
                 document.getElementById('totalPaid').textContent = '$0';
-                return;
-            }
-
-            let totalPaid = 0;
-            container.innerHTML = payments.map(p => {
-                totalPaid += parseFloat(p.amount);
-                return `
-                    <div class="payment-row paid">
-                        <div>
-                            <div style="font-weight: 700;">${p.month}</div>
-                            <div style="font-size: 12px; color: var(--text-light);">${p.notes || 'Via Zelle'}</div>
+            } else {
+                let totalPaid = 0;
+                container.innerHTML = payments.map(p => {
+                    totalPaid += parseFloat(p.amount);
+                    return `
+                        <div class="payment-row paid">
+                            <div>
+                                <div style="font-weight: 700;">${p.month}</div>
+                                <div style="font-size: 12px; color: var(--text-light);">${p.notes || 'Via Zelle'}</div>
+                            </div>
+                            <div class="payment-amount">$${parseFloat(p.amount).toFixed(2)}</div>
                         </div>
-                        <div class="payment-amount">$${parseFloat(p.amount).toFixed(2)}</div>
+                    `;
+                }).join('');
+                document.getElementById('totalPaid').textContent = '$' + totalPaid.toFixed(2);
+            }
+            
+            // Display pending payout requests from Firestore
+            displayPendingRequests();
+        }
+        
+        async function displayPendingRequests() {
+            const profileId = PROFILE_ID || 'stu';
+            const card = document.getElementById('pendingRequestsCard');
+            const container = document.getElementById('pendingRequestsContainer');
+            
+            try {
+                // Query Firestore for pending requests for this profile
+                // Using simple query first, then filter client-side to avoid index issues
+                const snapshot = await db.collection('payoutRequests')
+                    .where('profileId', '==', profileId)
+                    .get();
+                
+                // Filter pending and sort client-side
+                const pendingDocs = snapshot.docs
+                    .filter(doc => doc.data().status === 'pending')
+                    .sort((a, b) => {
+                        const aTime = a.data().requestedAt?.toMillis?.() || 0;
+                        const bTime = b.data().requestedAt?.toMillis?.() || 0;
+                        return bTime - aTime;
+                    });
+                
+                if (pendingDocs.length === 0) {
+                    card.style.display = 'none';
+                    return;
+                }
+                
+                card.style.display = 'block';
+                container.innerHTML = pendingDocs.map(doc => {
+                    const r = doc.data();
+                    const requestedDate = r.requestedAt?.toDate?.() || new Date();
+                    return `
+                        <div class="payment-row" style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; font-size: 18px; color: #92400e;">$${parseFloat(r.amount).toFixed(2)}</div>
+                                <div style="font-size: 12px; color: #b45309;">Requested ${requestedDate.toLocaleDateString()} at ${requestedDate.toLocaleTimeString()}</div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="approvePayoutRequest('${doc.id}', ${r.amount}, ${r.points})">✓ Paid</button>
+                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="dismissPayoutRequest('${doc.id}')">✕</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Error loading payout requests:', err);
+                // Fallback to localStorage
+                const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+                const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+                const pendingRequests = requests.filter(r => r.status === 'pending');
+                
+                if (pendingRequests.length === 0) {
+                    card.style.display = 'none';
+                    return;
+                }
+                
+                card.style.display = 'block';
+                container.innerHTML = pendingRequests.map(r => `
+                    <div class="payment-row" style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 18px; color: #92400e;">$${parseFloat(r.amount).toFixed(2)}</div>
+                            <div style="font-size: 12px; color: #b45309;">Requested ${new Date(r.requestedAt).toLocaleDateString()} at ${new Date(r.requestedAt).toLocaleTimeString()}</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="approvePayoutRequestLocal('${r.id}')">✓ Paid</button>
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="dismissPayoutRequestLocal('${r.id}')">✕</button>
+                        </div>
                     </div>
-                `;
-            }).join('');
-
-            document.getElementById('totalPaid').textContent = '$' + totalPaid.toFixed(2);
+                `).join('');
+            }
+        }
+        
+        async function approvePayoutRequest(requestId, amount, points) {
+            try {
+                // Update Firestore
+                await db.collection('payoutRequests').doc(requestId).update({
+                    status: 'completed',
+                    completedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Record the payment locally
+                const admin = loadAdminData();
+                admin.payments = admin.payments || [];
+                admin.payments.unshift({
+                    month: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                    amount: amount,
+                    notes: 'Payout request approved',
+                    date: new Date().toISOString()
+                });
+                saveAdminData(admin);
+                
+                // Deduct from user's balance
+                const state = loadState();
+                state.balance = Math.max(0, state.balance - points);
+                saveState(state);
+                
+                showToast('✅ Payment of $' + parseFloat(amount).toFixed(2) + ' recorded');
+                displayPayments();
+                displayStats();
+            } catch (err) {
+                console.error('Error approving payout:', err);
+                showToast('❌ Error processing payment');
+            }
+        }
+        
+        async function dismissPayoutRequest(requestId) {
+            if (!confirm('Dismiss this payout request without paying?')) return;
+            
+            try {
+                await db.collection('payoutRequests').doc(requestId).update({
+                    status: 'dismissed',
+                    dismissedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast('Request dismissed');
+                displayPendingRequests();
+            } catch (err) {
+                console.error('Error dismissing payout:', err);
+                showToast('❌ Error dismissing request');
+            }
+        }
+        
+        // Fallback functions for localStorage
+        function approvePayoutRequestLocal(requestId) {
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+            const request = requests.find(r => r.id === requestId);
+            
+            if (!request) return;
+            
+            request.status = 'completed';
+            request.completedAt = new Date().toISOString();
+            localStorage.setItem('hr_payout_requests' + suffix, JSON.stringify(requests));
+            
+            const admin = loadAdminData();
+            admin.payments = admin.payments || [];
+            admin.payments.unshift({
+                month: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                amount: request.amount,
+                notes: 'Payout request approved',
+                date: new Date().toISOString()
+            });
+            saveAdminData(admin);
+            
+            const state = loadState();
+            state.balance = Math.max(0, state.balance - request.points);
+            saveState(state);
+            
+            showToast('✅ Payment of $' + parseFloat(request.amount).toFixed(2) + ' recorded');
+            displayPayments();
+            displayStats();
+        }
+        
+        function dismissPayoutRequestLocal(requestId) {
+            if (!confirm('Dismiss this payout request without paying?')) return;
+            
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+            const index = requests.findIndex(r => r.id === requestId);
+            
+            if (index > -1) {
+                requests[index].status = 'dismissed';
+                requests[index].dismissedAt = new Date().toISOString();
+                localStorage.setItem('hr_payout_requests' + suffix, JSON.stringify(requests));
+            }
+            
+            showToast('Request dismissed');
+            displayPendingRequests();
         }
 
         function displayReports() {
@@ -1605,7 +1781,48 @@
             return PROFILE_ID ? 'hr_profile_invites_' + PROFILE_ID : 'hr_profile_invites';
         }
 
+        // Migrate localStorage admins to Firestore (one-time sync)
+        async function syncLocalStorageToFirestore() {
+            const localAdmins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
+            const legacyAdmins = JSON.parse(localStorage.getItem('hr_additional_admins') || '[]');
+            const allLocalAdmins = [...localAdmins, ...legacyAdmins];
+            
+            if (allLocalAdmins.length === 0) return;
+            
+            console.log('🔄 Syncing localStorage admins to Firestore:', allLocalAdmins.length);
+            
+            try {
+                for (const admin of allLocalAdmins) {
+                    const email = admin.email?.toLowerCase();
+                    if (!email) continue;
+                    
+                    const adminRef = db.collection('profiles').doc(PROFILE_ID).collection('admins').doc(email);
+                    const existing = await adminRef.get();
+                    
+                    if (!existing.exists) {
+                        // Create in Firestore
+                        await adminRef.set({
+                            email: email,
+                            addedAt: admin.addedAt ? new Date(admin.addedAt) : firebase.firestore.FieldValue.serverTimestamp(),
+                            addedBy: admin.addedBy || 'migrated',
+                            profileId: PROFILE_ID,
+                            profileName: PROFILE_NAME,
+                            acceptedAt: admin.acceptedAt ? new Date(admin.acceptedAt) : null,
+                            name: admin.name || null,
+                            firstName: admin.firstName || null
+                        });
+                        console.log('✅ Migrated admin to Firestore:', email);
+                    }
+                }
+            } catch (error) {
+                console.log('Firestore sync failed:', error.message);
+            }
+        }
+
         async function loadAdmins() {
+            // First, sync any localStorage admins to Firestore
+            await syncLocalStorageToFirestore();
+            
             const currentUser = firebase.auth().currentUser;
             const container = document.getElementById('adminsList');
             container.innerHTML = '';
@@ -1685,35 +1902,6 @@
             return IS_LEGACY_PROFILE ? 'hr_admin_notifications' : 'hr_admin_notifications_' + PROFILE_ID;
         }
 
-        function loadAdminNotifications() {
-            const notifications = JSON.parse(localStorage.getItem(getNotificationsKey()) || '[]');
-            const unreadNotifications = notifications.filter(n => !n.read);
-            const container = document.getElementById('adminNotifications');
-            
-            if (unreadNotifications.length === 0) {
-                container.style.display = 'none';
-                return;
-            }
-            
-            container.style.display = 'block';
-            container.innerHTML = '';
-            
-            unreadNotifications.forEach((notification, index) => {
-                if (notification.type === 'invite_accepted') {
-                    const div = document.createElement('div');
-                    div.style.cssText = 'background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 2px solid #22c55e; border-radius: 12px; padding: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;';
-                    div.innerHTML = `
-                        <div>
-                            <strong style="color: #166534;">🎉 ${notification.name || notification.email} accepted your invitation!</strong>
-                            <div style="font-size: 13px; color: #166534; margin-top: 4px;">They can now help manage ${PROFILE_NAME}'s profile.</div>
-                        </div>
-                        <button onclick="dismissNotification(${index})" style="background: white; border: 1px solid #22c55e; color: #166534; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Dismiss</button>
-                    `;
-                    container.appendChild(div);
-                }
-            });
-        }
-
         async function loadAdminNotifications() {
             const container = document.getElementById('adminNotifications');
             let unreadNotifications = [];
@@ -1723,7 +1911,6 @@
                 const notificationsSnapshot = await db.collection('profiles').doc(PROFILE_ID)
                     .collection('notifications')
                     .where('read', '==', false)
-                    .orderBy('acceptedAt', 'desc')
                     .get();
                 
                 notificationsSnapshot.forEach(doc => {

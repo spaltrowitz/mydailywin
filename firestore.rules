@@ -41,5 +41,20 @@ service cloud.firestore {
         allow delete: if request.auth != null;
       }
     }
+    
+    // Payout requests collection - syncs across devices
+    match /payoutRequests/{requestId} {
+      // Anyone can read payout requests (needed for both user and admin)
+      allow read: if true;
+      
+      // Anyone can create a payout request
+      allow create: if true;
+      
+      // Anyone can update status (for admin approval)
+      allow update: if true;
+      
+      // Allow delete
+      allow delete: if true;
+    }
   }
 }

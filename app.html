@@ -641,7 +641,25 @@
         </div>
     </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
+            authDomain: "habitrewards-131.firebaseapp.com",
+            projectId: "habitrewards-131",
+            storageBucket: "habitrewards-131.firebasestorage.app",
+            messagingSenderId: "814515329989",
+            appId: "1:814515329989:web:cc256861680e9b67c449ac"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         // ========== PROFILE DETECTION ==========
         // Get profile ID from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
@@ -2224,13 +2242,40 @@
             openModal('cashoutModal');
         }
         
-        function confirmCashout() {
+        async function confirmCashout() {
             const pts = Math.floor(state.balance);
             const dollars = (pts / 100).toFixed(2);
             
             if (pts <= 0) return;
             
-            // Could add: send notification to admin, log payout request, etc.
+            const profileId = PROFILE_ID || 'stu';
+            const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+            
+            // Save to Firestore for cross-device sync
+            try {
+                await db.collection('payoutRequests').doc(requestId).set({
+                    id: requestId,
+                    profileId: profileId,
+                    profileName: PROFILE_NAME,
+                    amount: parseFloat(dollars),
+                    points: pts,
+                    status: 'pending',
+                    requestedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (err) {
+                console.error('Error saving payout request to Firestore:', err);
+                // Fallback to localStorage
+                const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+                const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+                requests.push({
+                    id: requestId,
+                    amount: parseFloat(dollars),
+                    points: pts,
+                    status: 'pending',
+                    requestedAt: new Date().toISOString()
+                });
+                localStorage.setItem('hr_payout_requests' + suffix, JSON.stringify(requests));
+            }
             
             // Show success state in modal
             const modalContent = document.querySelector('#cashoutModal .modal-box');
