@@ -242,7 +242,7 @@
             <div class="balance-amount" id="todayBalance">0 pts</div>
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="openRedeem()" style="flex: 1; background: white; color: var(--primary); border: none; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">🎁 Redeem / Cash Out</button>
+                <button onclick="openCashOut()" style="flex: 1; background: white; color: var(--primary); border: none; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">🏦 Cash Out</button>
             </div>
         </div>
 
@@ -297,37 +297,31 @@
         </div>
     </div>
 
-    <!-- REDEEM MODAL -->
-    <div id="redeemModal" class="modal">
-        <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('redeemModal')">&times;</span>
-            <h2 style="margin-bottom: 20px;">Redeem / Cash Out</h2>
+    <!-- CASH OUT MODAL -->
+    <div id="cashOutModal" class="modal">
+        <div class="modal-box" style="text-align: center;">
+            <span class="close-modal" onclick="closeModal('cashOutModal')">&times;</span>
+            <div style="font-size: 50px; margin-bottom: 10px;">🏦</div>
+            <h2 style="margin-bottom: 20px;">Cash Out</h2>
             
-            <div style="background: var(--bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
-                 <p style="margin-bottom: 5px; font-weight: 700;">Current Balance</p>
-                 <div style="font-size: 24px; color: var(--success); font-weight: 800;" id="redeemModalBalance">0 pts</div>
-                 <div style="font-size: 14px; opacity: 0.7;" id="redeemModalDollars">$0.00</div>
-                 
-                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button class="btn btn-primary" style="flex: 1; background: var(--text); font-size: 14px;" onclick="processCashOut('Save')">🐷 Save in Jar</button>
-                    <button class="btn btn-success" style="flex: 1; font-size: 14px;" onclick="processCashOut('Pay')">💸 Payout</button>
-                 </div>
+            <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                 <p style="margin-bottom: 5px; font-weight: 700;">Your Balance</p>
+                 <div style="font-size: 32px; color: var(--success); font-weight: 800;" id="cashOutBalance">0 pts</div>
+                 <div style="font-size: 16px; opacity: 0.7;" id="cashOutDollars">$0.00</div>
             </div>
-
-            <h3 style="font-size: 16px; margin-bottom: 10px; opacity: 0.7;">Redeem for Goodies</h3>
-            <div style="display: grid; gap: 10px;">
-                <button class="btn btn-accent" onclick="redeem('Ice Cream', 5000)">🍦 Ice Cream (5,000 pts)</button>
-                <button class="btn btn-purple" onclick="redeem('Movie Night', 10000)">🎬 Movie Night (10,000 pts)</button>
-                <button class="btn btn-ghost" onclick="redeem('Custom', 0)">✨ Custom Reward</button>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" style="flex: 1; background: var(--text);" onclick="processCashOut('Save')'">🐷 Save in Jar</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="processCashOut('Pay')">💸 Get Paid</button>
             </div>
         </div>
     </div>
 
-    <!-- PROPOSE MODAL -->
+    <!-- SUGGEST TASK MODAL -->
     <div id="proposeModal" class="modal">
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal('proposeModal')">&times;</span>
-            <h2>Propose Task</h2>
+            <h2>Suggest a Task</h2>
             <input type="text" id="propName" placeholder="Task Name">
             <input type="number" id="propValue" placeholder="Value ($)">
             <button class="btn btn-success" onclick="submitProposal()">Submit</button>
@@ -341,7 +335,7 @@
             { id: 1, name: "🚶 Go for a walk", value: 50 },
             { id: 2, name: "🎾 Play tennis / pickleball", value: 50 },
             { id: 3, name: "🦉 Do Duolingo", value: 200 },
-            { id: 4, name: "📝 Do crossword puzzle", value: 100 }
+            { id: 4, name: "📝 Do crossword puzzle", value: 50 }
         ];
 
         // BACKLOG - Tasks to potentially add later:
@@ -618,38 +612,18 @@
             const name = document.getElementById('propName').value;
             const val = parseFloat(document.getElementById('propValue').value);
             if(name && val) {
-                alert('Proposal sent to Manager!');
+                alert('New task idea submitted!');
                 closeModal('proposeModal');
             }
         }
 
         // ========== MONEY ==========
-        function openRedeem() {
+        function openCashOut() {
             const pts = Math.floor(state.balance);
             const dollars = (pts / 1000).toFixed(2);
-            document.getElementById('redeemModalBalance').textContent = `${pts} pts`;
-            document.getElementById('redeemModalDollars').textContent = `$${dollars}`;
-            openModal('redeemModal');
-        }
-
-        function redeem(item, cost) {
-            if (state.balance >= cost) {
-                if (cost > 0) {
-                    const dollars = (cost / 1000).toFixed(2);
-                    if(confirm(`Spend ${cost.toLocaleString()} pts ($${dollars}) for ${item}?`)) {
-                        state.balance -= cost;
-                        saveState();
-                        render();
-                        triggerConfetti();
-                        alert(`Redeemed ${item}!`);
-                    }
-                } else {
-                    alert('Custom reward request sent!');
-                }
-                closeModal('redeemModal');
-            } else {
-                alert("Not enough points!");
-            }
+            document.getElementById('cashOutBalance').textContent = `${pts} pts`;
+            document.getElementById('cashOutDollars').textContent = `$${dollars}`;
+            openModal('cashOutModal');
         }
 
         function processCashOut(type) {
@@ -664,7 +638,7 @@
             saveState();
             render();
             triggerConfetti();
-            closeModal('redeemModal');
+            closeModal('cashOutModal');
         }
 
         // ========== SURVEY ==========
