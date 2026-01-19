@@ -193,7 +193,6 @@ Accessed via gear icon in top right:
 ## Technical Notes
 
 - Data stored in browser localStorage
-- Works offline once loaded
 - Dark mode available (moon icon)
 - Mobile-friendly design
 - No login required

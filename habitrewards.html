@@ -300,8 +300,11 @@
         
         <div style="text-align: center; margin-bottom: 20px;">
             <h2 id="greeting" style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: var(--text);"></h2>
-            <div class="streak-badge">
+            <div class="streak-badge" onclick="checkStreakRecovery()" style="cursor: pointer;">
                 🔥 <span id="streakDays">0</span> Day Streak
+            </div>
+            <div id="streakRecoveryHint" style="display: none; color: #f59e0b; font-size: 12px; margin-top: 5px; font-weight: 600;">
+                ⚠️ Streak at risk! Tap to recover
             </div>
             <div style="color: var(--text-light); font-size: 14px;" id="dateDisplay"></div>
         </div>
@@ -483,6 +486,13 @@
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
+            <!-- Share Progress -->
+            <h3 style="margin-bottom: 10px;">📊 Share Your Progress</h3>
+            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Brag about your streak!</p>
+            <button class="btn btn-accent" onclick="shareProgress()" style="margin-bottom: 0;">🎯 Share Progress</button>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+            
             <!-- Refer a Friend -->
             <h3 style="margin-bottom: 10px;">👥 Refer a Friend</h3>
             <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Know someone who'd enjoy HabitRewards?</p>
@@ -506,6 +516,25 @@
             <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-light);">
                 Keep earning points to unlock higher levels!
             </div>
+        </div>
+    </div>
+
+    <!-- STREAK RECOVERY MODAL -->
+    <div id="streakRecoveryModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('streakRecoveryModal')">&times;</span>
+            <h2 style="margin-bottom: 10px; font-size: 24px;">🔥 Recover Your Streak!</h2>
+            <p style="color: var(--text-light); margin-bottom: 20px;">You missed a day, but you can get your streak back!</p>
+            
+            <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); padding: 20px; border-radius: 16px; color: #1a1a2e; margin-bottom: 20px;">
+                <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">📞 Call a Family Member</div>
+                <div style="font-size: 14px; opacity: 0.9;">Call a family member to check in and tell them what you've been up to. This restores your streak!</div>
+            </div>
+            
+            <p style="margin-bottom: 10px; font-weight: 700;">💬 Who did you call?</p>
+            <input type="text" id="streakRecoveryWho" placeholder="e.g., Son, Daughter, Sibling...">
+            
+            <button class="btn btn-success" onclick="confirmStreakRecovery()" style="margin-top: 15px;">✓ I Made the Call - Restore Streak</button>
         </div>
     </div>
 
@@ -551,7 +580,9 @@
         const DAILY_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
             { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75 },
-            { id: 4, name: "📝 Do a crossword puzzle", value: 50 }
+            { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
+            { id: 5, name: "🟩 Play Wordle", value: 50 },
+            { id: 6, name: "🔗 Play Connections", value: 50 }
         ];
 
         // Daily bonus tasks (1 rotates each day) - fun extras!
@@ -1121,6 +1152,9 @@
             document.getElementById('todayBalance').textContent = `${pts} pts`;
             document.getElementById('balanceDollars').textContent = `= $${dollars}`;
             document.getElementById('streakDays').textContent = state.streak;
+            
+            // Check streak recovery
+            updateStreakRecoveryHint();
             
             // Level with progress bar
             const level = getLevel(state.totalEarned || 0);
@@ -1696,6 +1730,66 @@
             }
         }
 
+        function isStreakAtRisk() {
+            // Check if yesterday was missed (no activity) and streak > 0
+            if (state.streak === 0) return false;
+            
+            const today = new Date();
+            const lastActive = state.lastStreakDate ? new Date(state.lastStreakDate) : null;
+            
+            if (!lastActive) return false;
+            
+            // Calculate days since last activity
+            const diffTime = today - lastActive;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // At risk if more than 1 day has passed
+            return diffDays >= 1 && !state.streakRecoveredToday;
+        }
+
+        function checkStreakRecovery() {
+            if (isStreakAtRisk()) {
+                openModal('streakRecoveryModal');
+            }
+        }
+
+        function confirmStreakRecovery() {
+            const who = document.getElementById('streakRecoveryWho').value.trim();
+            if (!who) {
+                alert('Please enter who you called!');
+                return;
+            }
+            
+            // Restore streak and mark as recovered today
+            state.streakRecoveredToday = new Date().toDateString();
+            state.lastStreakDate = new Date().toDateString();
+            
+            // Store recovery log
+            if (!state.streakRecoveries) state.streakRecoveries = [];
+            state.streakRecoveries.push({
+                date: new Date().toISOString(),
+                who: who,
+                streakSaved: state.streak
+            });
+            
+            saveState();
+            closeModal('streakRecoveryModal');
+            document.getElementById('streakRecoveryHint').style.display = 'none';
+            
+            triggerConfetti();
+            alert(`🔥 Streak saved! Great job calling ${who}!`);
+            render();
+        }
+
+        function updateStreakRecoveryHint() {
+            const hint = document.getElementById('streakRecoveryHint');
+            if (isStreakAtRisk()) {
+                hint.style.display = 'block';
+            } else {
+                hint.style.display = 'none';
+            }
+        }
+
         function submitProposal() {
             const name = document.getElementById('propName').value;
             const reason = document.getElementById('propReason').value;
@@ -1791,6 +1885,32 @@
                     alert('Link copied to clipboard! 📋\n\nShare it with friends and family!');
                 }).catch(() => {
                     alert('Share this link:\n\n' + shareUrl);
+                });
+            }
+        }
+
+        function shareProgress() {
+            const tasksCompleted = state.tasks.filter(t => t.completed).length;
+            const totalTasks = state.tasks.length;
+            const streak = state.streak;
+            const pts = Math.floor(state.balance);
+            
+            const shareText = `🏆 HabitRewards Update!\n\n` +
+                `✅ ${tasksCompleted}/${totalTasks} tasks completed today\n` +
+                `🔥 ${streak} day streak\n` +
+                `💰 ${pts} pts earned\n\n` +
+                `Build better habits at habitrewards-131.web.app`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My HabitRewards Progress',
+                    text: shareText
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Progress copied to clipboard! 📋\n\nPaste it anywhere to share!');
+                }).catch(() => {
+                    alert(shareText);
                 });
             }
         }
