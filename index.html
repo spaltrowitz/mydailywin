@@ -238,11 +238,13 @@
         <div class="balance-hero">
             <div class="hero-emoji hero-1">💰</div>
             <div class="hero-emoji hero-2">💸</div>
-            <div class="balance-title">Today's Points</div>
+            <div class="balance-title">Total Points</div>
             <div class="balance-amount" id="todayBalance">0 pts</div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="openCashOut()" style="flex: 1; background: white; color: var(--primary); border: none; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">🏦 Cash Out</button>
+            <div style="margin-top: 10px; font-size: 12px; opacity: 0.8; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block;">
+                100 pts = $1.00
+            </div>
+            <div style="margin-top: 15px;">
+                <button onclick="openCashOut()" style="background: white; color: var(--primary); border: none; border-radius: 12px; padding: 12px 24px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 16px;">💸 Cash Out</button>
             </div>
         </div>
 
@@ -317,17 +319,17 @@
         <div class="modal-box" style="text-align: center;">
             <span class="close-modal" onclick="closeModal('cashOutModal')">&times;</span>
             <div style="font-size: 50px; margin-bottom: 10px;">💸</div>
-            <h2 style="margin-bottom: 10px;">Request Payout</h2>
-            <p style="color: var(--text-light); margin-bottom: 20px;">Request your earnings via Zelle!</p>
+            <h2 style="margin-bottom: 10px;">Cash Out</h2>
+            <p style="color: var(--text-light); margin-bottom: 20px;">Convert your points to cash!</p>
             
             <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                 <p style="margin-bottom: 5px; font-weight: 700;">Your Balance</p>
-                 <div style="font-size: 32px; color: var(--primary); font-weight: 800;" id="cashOutBalance">0 pts</div>
-                 <div style="font-size: 18px; color: var(--primary); font-weight: 700;" id="cashOutDollars">$0.00</div>
+                 <div style="font-size: 36px; color: var(--primary); font-weight: 800;" id="cashOutBalance">0 pts</div>
+                 <div style="font-size: 14px; color: var(--text-light); margin: 10px 0;">=</div>
+                 <div style="font-size: 28px; color: var(--primary); font-weight: 800;" id="cashOutDollars">$0.00</div>
             </div>
             
             <button class="btn btn-success" onclick="requestPayout()">💸 Request Payout</button>
-            <p style="margin-top: 15px; font-size: 13px; color: var(--text-light);">You'll receive payment via Zelle shortly after requesting.</p>
+            <p style="margin-top: 15px; font-size: 13px; color: var(--text-light);">Payouts sent via Zelle at the start of each month.</p>
         </div>
     </div>
 
@@ -345,47 +347,64 @@
 
     <script>
         // ========== CONFIG & STATE ==========
-        // Points system: 100 points = $0.10 | Daily max: 10,000 points ($10) - weekly tasks exempt
+        // Points system: 100 points = $1.00
         const DAILY_TASKS = [
-            { id: 1, name: "🚶 Go for a walk", value: 50 },
-            { id: 2, name: "🎾 Play tennis / pickleball", value: 50 },
-            { id: 3, name: "🦉 Do Duolingo", value: 200 },
-            { id: 4, name: "📝 Do crossword puzzle", value: 50 }
+            { id: 1, name: "🚶 Go for a walk", value: 100 },
+            { id: 2, name: "🎾 Play tennis / pickleball", value: 200 },
+            { id: 3, name: "🦉 Do Duolingo", value: 75 },
+            { id: 4, name: "📝 Do crossword puzzle", value: 100 }
         ];
 
         // Daily bonus tasks (1 rotates each day) - fun extras!
         const DAILY_BONUSES = [
+            // Original fun tasks
             { id: 101, name: "📸 Take a photo of something interesting", value: 100 },
             { id: 102, name: "🧹 Organize one drawer or shelf", value: 100 },
             { id: 103, name: "🌳 Spend 10 minutes outside", value: 100 },
             { id: 104, name: "🎵 Listen to a new song", value: 100 },
-            { id: 105, name: "📞 Call or text a friend", value: 100 }
+            { id: 105, name: "📞 Call or text a friend", value: 100 },
+            // Household tasks
+            { id: 106, name: "🔋 Charge devices overnight", value: 50 },
+            { id: 107, name: "📬 Check and sort the mail", value: 50 },
+            { id: 108, name: "🧹 Clean up kitchen table", value: 100 },
+            { id: 109, name: "🗑️ Throw away one thing you don't need", value: 100 },
+            { id: 110, name: "👕 Put away some laundry", value: 100 },
+            { id: 111, name: "🧽 Wipe down a counter or surface", value: 100 },
+            { id: 112, name: "🛏️ Make the bed", value: 50 },
+            // Wellness/Self-care
+            { id: 113, name: "💧 Drink 8 glasses of water today", value: 100 },
+            { id: 114, name: "🧘 Do 5 minutes of stretching", value: 100 },
+            { id: 115, name: "💊 Take vitamins", value: 50 },
+            // Learning/Entertainment
+            { id: 116, name: "📖 Read for 10 minutes", value: 100 },
+            { id: 117, name: "🎧 Listen to a podcast", value: 100 },
+            { id: 118, name: "📺 Watch something new on streaming", value: 100 },
+            // Digital cleanup
+            { id: 119, name: "📱 Delete an unused app", value: 50 },
+            { id: 120, name: "📧 Clear out old emails", value: 100 },
+            // Planning
+            { id: 121, name: "📝 Make a to-do list for tomorrow", value: 100 }
         ];
 
-        // BACKLOG - Tasks to potentially add later:
-        // { id: 201, name: "🧹 Clean up kitchen table", value: 50 },
-        // { id: 202, name: "🔋 Charge devices overnight", value: 20 },
-        // { id: 203, name: "📬 Check and sort the mail", value: 20 },
-
-        const DAILY_MAX_POINTS = 10000; // $10 daily cap for daily tasks
+        const DAILY_MAX_POINTS = 1000; // $10 daily cap for daily tasks
 
         // Weekly bonus tasks (1 selected per week) - exempt from daily cap
-        // Fun/reward-focused activities
+        // Fun/reward-focused activities (100 pts = $1.00)
         const WEEKLY_BONUSES = [
-            { id: 301, name: "💿 Sell your coins or vinyls", value: 1000, isWeekly: true },
-            { id: 302, name: "📺 Find a new show or movie to watch on Netflix", value: 400, isWeekly: true },
-            { id: 303, name: "📺 Find a new show or movie to watch on Amazon Video", value: 400, isWeekly: true },
-            { id: 304, name: "📺 Find a new show or movie to watch on Apple TV", value: 400, isWeekly: true },
+            { id: 301, name: "💿 Sell your coins or vinyls", value: 500, isWeekly: true },
+            { id: 302, name: "📺 Find a new show or movie to watch on Netflix", value: 200, isWeekly: true },
+            { id: 303, name: "📺 Find a new show or movie to watch on Amazon Video", value: 200, isWeekly: true },
+            { id: 304, name: "📺 Find a new show or movie to watch on Apple TV", value: 200, isWeekly: true },
             { id: 305, name: "🍿 Use the microwave", value: 100, isWeekly: true },
             { id: 306, name: "🛒 Check Aisle for grocery deals", value: 150, isWeekly: true },
-            { id: 307, name: "💑 Take your wife out to lunch or dinner", value: 1500, isWeekly: true },
-            { id: 308, name: "🍽️ Try a new restaurant", value: 1000, isWeekly: true },
-            { id: 309, name: "💌 Tell one of your kids you are thinking of them", value: 600, isWeekly: true },
-            { id: 310, name: "❤️ Do something nice for your wife", value: 1000, isWeekly: true },
+            { id: 307, name: "💑 Take your wife out to lunch or dinner", value: 500, isWeekly: true },
+            { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true },
+            { id: 309, name: "💌 Tell one of your kids you are thinking of them", value: 200, isWeekly: true },
+            { id: 310, name: "❤️ Do something nice for your wife", value: 300, isWeekly: true },
             { id: 311, name: "🛍️ Buy a new item from the grocery store", value: 150, isWeekly: true },
-            { id: 312, name: "🍔 Go out to lunch with tennis friends", value: 1000, isWeekly: true },
-            { id: 313, name: "🤖 Use ChatGPT to solve a problem (chat.openai.com)", value: 500, isWeekly: true },
-            { id: 314, name: "📞 Call a friend or family member", value: 800, isWeekly: true },
+            { id: 312, name: "🍔 Go out to lunch with tennis friends", value: 300, isWeekly: true },
+            { id: 313, name: "🤖 Use ChatGPT to solve a problem (chat.openai.com)", value: 200, isWeekly: true },
+            { id: 314, name: "📞 Call a friend or family member", value: 200, isWeekly: true },
             { id: 315, name: "📦 Get rid of 3 items from office", value: 300, isWeekly: true },
             { id: 316, name: "👕 Donate clothing items", value: 250, isWeekly: true },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true }
@@ -498,7 +517,8 @@
 
         // ========== RENDER ==========
         function render() {
-            document.getElementById('todayBalance').textContent = `${Math.floor(state.balance)} pts`;
+            const pts = Math.floor(state.balance);
+            document.getElementById('todayBalance').textContent = `${pts} pts`;
             document.getElementById('streakDays').textContent = state.streak;
             
             // Date
@@ -691,10 +711,10 @@
             }
         }
 
-        // ========== MONEY ==========
+        // ========== CASH OUT ==========
         function openCashOut() {
             const pts = Math.floor(state.balance);
-            const dollars = (pts / 1000).toFixed(2);
+            const dollars = (pts / 100).toFixed(2);
             document.getElementById('cashOutBalance').textContent = `${pts} pts`;
             document.getElementById('cashOutDollars').textContent = `$${dollars}`;
             openModal('cashOutModal');
@@ -702,16 +722,12 @@
 
         function requestPayout() {
             if (state.balance <= 0) {
-                alert("Nothing to withdraw!");
+                alert("Nothing to cash out yet! Complete some tasks to earn points.");
                 return;
             }
             const pts = Math.floor(state.balance);
-            const dollars = (pts / 1000).toFixed(2);
-            alert(`Payout requested! 🎉\n\n${pts} pts ($${dollars}) will be sent to you via Zelle shortly.`);
-            state.balance = 0;
-            saveState();
-            render();
-            triggerConfetti();
+            const dollars = (pts / 100).toFixed(2);
+            alert(`Payout requested! 🎉\n\n${pts} pts = $${dollars}\n\nYou'll receive payment via Zelle at the start of next month.`);
             closeModal('cashOutModal');
         }
 
