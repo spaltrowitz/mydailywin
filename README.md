@@ -1,20 +1,22 @@
 # HabitRewards
 
-A gamified habit-tracking app designed to encourage daily positive behaviors through monetary rewards. Built with a fun, Duolingo-inspired interface.
+A gamified habit-tracking app designed to encourage daily positive behaviors through rewards and recognition. Built with a fun, Duolingo-inspired interface.
 
-**Live App:** https://habitrewards-131.web.app
+**Live App:** https://habitrewards-131.web.app  
+**Homepage:** https://habitrewards-131.web.app/home.html  
+**Admin Mode:** https://habitrewards-131.web.app/admin.html
 
 ---
 
-## Manager's Guide
+## Admin Mode Guide
 
-This guide explains how HabitRewards works so you can effectively manage and motivate Stu.
+This guide explains how HabitRewards works so you can customize and manage the experience.
 
 ### Point System
 
 **100 points = $1.00**
 
-Points are earned by completing tasks and bonuses. User can request payout anytime via Zelle.
+Points are earned by completing tasks and bonuses. Users can request payout anytime.
 
 ---
 
@@ -175,19 +177,19 @@ Unlock badges at milestones:
 
 Accessed via gear icon in top right:
 - View current balance with $ conversion
-- Cash out anytime via Zelle
+- Cash out via Zelle
 - Suggest new tasks
 - Share progress
 
 ---
 
-## Tips for Managers
+## Admin Mode Tips
 
-1. **Be responsive with payouts** - Send Zelle when requested
-2. **Celebrate level-ups** - Acknowledge when Stu reaches a new level
+1. **Be responsive with payouts** - Process requests promptly
+2. **Celebrate level-ups** - Acknowledge when users reach new levels
 3. **Watch for streaks** - Celebrate 7-day, 14-day, 30-day milestones
-4. **Review task suggestions** - Stu can propose new tasks via settings
-5. **Adjust as needed** - Point values can be modified if needed
+4. **Review task suggestions** - Users can propose new tasks via settings
+5. **Customize tasks** - Add, remove, or adjust point values as needed
 
 ---
 
@@ -196,4 +198,4 @@ Accessed via gear icon in top right:
 - Data stored in browser localStorage
 - Dark mode available (moon icon)
 - Mobile-friendly design
-- No login required
+- Admin Mode for customizing tasks and viewing progress
