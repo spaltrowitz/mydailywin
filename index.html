@@ -227,7 +227,10 @@
         <div class="brand">
             <span>🎯</span> HabitRewards
         </div>
-        <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="theme-btn" onclick="openModal('settingsModal')" title="Settings">⚙️</button>
+            <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+        </div>
     </header>
 
     <div class="container">
@@ -254,8 +257,8 @@
             <div style="margin-top: 10px; font-size: 12px; opacity: 0.8; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block;">
                 100 pts = $1.00
             </div>
-            <div style="margin-top: 15px;">
-                <button onclick="openCashOut()" style="background: white; color: var(--primary); border: none; border-radius: 12px; padding: 12px 24px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 16px;">💸 Cash Out</button>
+            <div style="margin-top: 15px; font-size: 13px; opacity: 0.85;">
+                💸 Points automatically paid out via Zelle at month end
             </div>
         </div>
 
@@ -290,15 +293,11 @@
                 </div>
             </div>
         </div>
-        
-        <button class="btn btn-ghost" onclick="openPropose()" style="margin-top: 20px;">+ Suggest a Task</button>
 
-        <div id="bonusSection" style="margin-top: 40px;">
-            <div class="section-title">Weekly Tasks</div>
-            <div class="card" style="background: linear-gradient(135deg, #a855f7, #ec4899); border: none; color: white; text-align: center;">
-                <h2 style="font-size: 24px; margin-bottom: 10px;">🏆 Weekly Challenges</h2>
-                <p>Complete these recurring tasks + this week's bonus!</p>
-                <div id="bonusOptions" style="margin-top: 20px; display: grid; gap: 10px;"></div>
+        <div id="bonusSection" style="margin-top: 30px;">
+            <div class="card" style="background: linear-gradient(135deg, #a855f7, #ec4899); border: none; color: white; text-align: center; padding: 20px;">
+                <h2 style="font-size: 22px; margin-bottom: 8px;">🏆 Weekly Challenges</h2>
+                <div id="bonusOptions" style="margin-top: 15px; display: grid; gap: 10px;"></div>
             </div>
         </div>
 
@@ -337,34 +336,29 @@
         </div>
     </div>
 
-    <!-- CASH OUT MODAL -->
-    <div id="cashOutModal" class="modal">
-        <div class="modal-box" style="text-align: center;">
-            <span class="close-modal" onclick="closeModal('cashOutModal')">&times;</span>
-            <div style="font-size: 50px; margin-bottom: 10px;">💸</div>
-            <h2 style="margin-bottom: 10px;">Cash Out</h2>
-            <p style="color: var(--text-light); margin-bottom: 20px;">Convert your points to cash!</p>
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('settingsModal')">&times;</span>
+            <h2 style="margin-bottom: 20px;">⚙️ Settings</h2>
             
-            <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                 <div style="font-size: 36px; color: var(--primary); font-weight: 800;" id="cashOutBalance">0 pts</div>
-                 <div style="font-size: 14px; color: var(--text-light); margin: 10px 0;">=</div>
-                 <div style="font-size: 28px; color: var(--primary); font-weight: 800;" id="cashOutDollars">$0.00</div>
+            <!-- Current Balance -->
+            <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                <div style="font-size: 14px; color: var(--text-light); margin-bottom: 5px;">Your Balance</div>
+                <div style="font-size: 32px; color: var(--primary); font-weight: 800;" id="settingsBalance">0 pts</div>
+                <div style="font-size: 18px; color: var(--text-light); margin-top: 5px;" id="settingsDollars">= $0.00</div>
             </div>
             
-            <button class="btn btn-success" onclick="requestPayout()">💸 Request Payout</button>
-            <p style="margin-top: 15px; font-size: 13px; color: var(--text-light);">Payouts sent via Zelle at the start of each month.</p>
-        </div>
-    </div>
-
-    <!-- SUGGEST TASK MODAL -->
-    <div id="proposeModal" class="modal">
-        <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('proposeModal')">&times;</span>
-            <h2>💡 Suggest a Task</h2>
-            <p style="color: var(--text-light); margin-bottom: 15px;">Have an idea for a new task? Submit it and we'll review it!</p>
+            <button class="btn btn-success" onclick="requestPayout()" style="margin-bottom: 12px;">💸 Request Early Payout</button>
+            <p style="text-align: center; font-size: 12px; color: var(--text-light); margin-bottom: 20px;">Payouts normally sent via Zelle at month end</p>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+            
+            <!-- Suggest Task -->
+            <h3 style="margin-bottom: 10px;">💡 Suggest a Task</h3>
             <input type="text" id="propName" placeholder="Task name (e.g., Water the plants)">
-            <textarea id="propReason" placeholder="Why should this be a task? (optional)" rows="3" style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; margin: 10px 0; background: var(--bg); color: var(--text); resize: none;"></textarea>
-            <button class="btn btn-success" onclick="submitProposal()">Submit Request</button>
+            <textarea id="propReason" placeholder="Why should this be a task? (optional)" rows="2" style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; margin: 10px 0; background: var(--bg); color: var(--text); resize: none;"></textarea>
+            <button class="btn" onclick="submitProposal()">Submit Suggestion</button>
         </div>
     </div>
 
@@ -389,8 +383,6 @@
             { id: 105, name: "📞 Call or text a friend", value: 100 },
             // Household tasks
             { id: 106, name: "🔋 Charge devices overnight", value: 50 },
-            { id: 107, name: "📬 Check and sort the mail", value: 50 },
-            { id: 108, name: "🧹 Clean up kitchen table", value: 100 },
             { id: 109, name: "🗑️ Throw away one thing you don't need", value: 100 },
             { id: 110, name: "👕 Put away some laundry", value: 100 },
             { id: 111, name: "🧽 Wipe down a counter or surface", value: 100 },
@@ -756,19 +748,19 @@
                 alert('Task suggestion submitted! We\'ll review it and let you know.');
                 document.getElementById('propName').value = '';
                 document.getElementById('propReason').value = '';
-                closeModal('proposeModal');
+                closeModal('settingsModal');
             } else {
                 alert('Please enter a task name');
             }
         }
 
-        // ========== CASH OUT ==========
-        function openCashOut() {
+        // ========== SETTINGS ==========
+        function openSettings() {
             const pts = Math.floor(state.balance);
             const dollars = (pts / 100).toFixed(2);
-            document.getElementById('cashOutBalance').textContent = `${pts} pts`;
-            document.getElementById('cashOutDollars').textContent = `$${dollars}`;
-            openModal('cashOutModal');
+            document.getElementById('settingsBalance').textContent = `${pts} pts`;
+            document.getElementById('settingsDollars').textContent = `= $${dollars}`;
+            openModal('settingsModal');
         }
 
         function requestPayout() {
@@ -779,7 +771,7 @@
             const pts = Math.floor(state.balance);
             const dollars = (pts / 100).toFixed(2);
             alert(`Payout requested! 🎉\n\n${pts} pts = $${dollars}\n\nYou'll receive payment via Zelle at the start of next month.`);
-            closeModal('cashOutModal');
+            closeModal('settingsModal');
         }
 
         // ========== SURVEY ==========
@@ -824,7 +816,6 @@
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
         }
-        function openPropose() { openModal('proposeModal'); }
 
         function triggerConfetti() {
             for(let i=0; i<20; i++) {
