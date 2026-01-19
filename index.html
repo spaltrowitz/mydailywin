@@ -416,14 +416,16 @@
             <span class="close-modal" onclick="closeModal('taskModal')">&times;</span>
             <h2 id="modalTaskTitle" style="margin-bottom: 20px; font-size: 24px;">Complete Task</h2>
             
-            <p style="margin-bottom: 10px; font-weight: 700;">1. Proof (Optional)</p>
-            <div class="file-upload" onclick="document.getElementById('taskPhoto').click()">
-                📸 Upload Photo
-                <input type="file" id="taskPhoto" hidden accept="image/*" onchange="previewImage(this)">
+            <div id="photoSection">
+                <p style="margin-bottom: 10px; font-weight: 700;">📸 Photo (Optional)</p>
+                <div class="file-upload" onclick="document.getElementById('taskPhoto').click()">
+                    📷 Upload Photo
+                    <input type="file" id="taskPhoto" hidden accept="image/*" onchange="previewImage(this)">
+                </div>
+                <div id="imgPreview" style="margin-bottom: 15px; border-radius: 12px; overflow: hidden;"></div>
             </div>
-            <div id="imgPreview" style="margin-bottom: 15px; border-radius: 12px; overflow: hidden;"></div>
 
-            <p style="margin-bottom: 10px; font-weight: 700;">2. Comment (Optional)</p>
+            <p id="commentLabel" style="margin-bottom: 10px; font-weight: 700;">💬 Comment (Optional)</p>
             <input type="text" id="taskComment" placeholder="Quick note...">
 
             <button class="btn btn-success" onclick="confirmTask()" style="margin-top: 10px;">✓ Complete Task</button>
