@@ -318,6 +318,10 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        
+        // Check for redirect URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redirect');
 
         // Check auth state on load
         auth.onAuthStateChanged(user => {
@@ -334,6 +338,12 @@
                     }
                     sessionStorage.removeItem('hr_pending_profile');
                     sessionStorage.removeItem('hr_pending_profile_name');
+                    
+                    // If there's a redirect URL, go there immediately
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                        return;
+                    }
                 }
                 
                 showUserLoggedIn(user);

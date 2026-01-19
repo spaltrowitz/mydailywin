@@ -817,10 +817,13 @@
     <!-- Auth Overlay (hidden by default, shown only if not signed in) -->
     <div id="authOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 9999;">
         <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px;">
-            <div style="font-size: 48px; margin-bottom: 15px;">🔐</div>
-            <h2 style="margin-bottom: 10px;">Admin Access Required</h2>
-            <p style="color: #777; margin-bottom: 20px;">Please sign in to access Admin Mode</p>
-            <a href="login.html" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 30px; background: #58cc02; color: white; border-radius: 12px; font-weight: 600;">Sign In</a>
+            <div style="font-size: 48px; margin-bottom: 15px;">🎉</div>
+            <h2 style="margin-bottom: 10px;">You're Invited!</h2>
+            <p style="color: #777; margin-bottom: 20px;">Sign in to become an admin and start managing this profile</p>
+            <a id="signInLink" href="login.html" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 30px; background: #58cc02; color: white; border-radius: 12px; font-weight: 600;">Sign In to Accept</a>
+            <p style="color: #999; font-size: 12px; margin-top: 15px;">
+                <a href="admin-guide.html" style="color: #58cc02;">New to HabitRewards? Read the Admin Guide →</a>
+            </p>
         </div>
     </div>
 
@@ -869,6 +872,11 @@
                 if (profileParam) {
                     sessionStorage.setItem('hr_pending_profile', profileParam);
                     sessionStorage.setItem('hr_pending_profile_name', profileParam === 'stu' ? 'Stu' : profileParam);
+                    // Update sign-in link to include redirect back to this page
+                    const signInLink = document.getElementById('signInLink');
+                    if (signInLink) {
+                        signInLink.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
+                    }
                 }
                 document.getElementById('authOverlay').style.display = 'flex';
             }
@@ -916,7 +924,15 @@
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+            // Find the correct tab button and mark it active
+            document.querySelectorAll('.tab').forEach(t => {
+                if (t.textContent.toLowerCase().includes(tabId.toLowerCase()) || 
+                    t.getAttribute('onclick')?.includes(tabId)) {
+                    t.classList.add('active');
+                }
+            });
+            // Save current tab to sessionStorage
+            sessionStorage.setItem('hr_admin_tab', tabId);
         }
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -1538,13 +1554,19 @@
             
             // Check if already an admin
             const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
-            if (admins.find(a => a.email === email)) {
+            if (admins.find(a => a.email.toLowerCase() === email)) {
                 alert('This person is already an admin');
                 return;
             }
             
-            // Add to pending invites
+            // Check if already has pending invite
             const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
+            if (invites.find(i => i.email.toLowerCase() === email)) {
+                alert('An invitation has already been sent to this email');
+                return;
+            }
+            
+            // Add to pending invites
             invites.push({
                 email: email,
                 sentAt: new Date().toISOString(),
@@ -1572,7 +1594,7 @@
             loadAdmins();
             loadPendingInvites();
             
-            alert(`Invitation sent to ${email}! They can now sign in to manage ${PROFILE_NAME}'s profile.`);
+            alert(`Invitation sent to ${email}!\n\nNote: The email may take a few minutes to arrive. They can sign in to manage ${PROFILE_NAME}'s profile once they receive it.`);
         }
 
         // ========== EMAILJS CONFIG ==========
@@ -1595,15 +1617,23 @@
             const guideUrl = `${appUrl}/admin-guide.html`;
             const loginUrl = `${appUrl}/login.html`;
             
+            // Debug: Log EmailJS status
+            console.log('EmailJS check:', {
+                emailjsDefined: typeof emailjs !== 'undefined',
+                publicKey: EMAILJS_PUBLIC_KEY,
+                serviceId: EMAILJS_SERVICE_ID,
+                templateId: EMAILJS_TEMPLATE_ID
+            });
+            
             // Check if EmailJS is configured
-            if (typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-                console.log('EmailJS not configured, using mailto fallback');
-                fallbackMailto(email, senderName);
-                return;
+            if (typeof emailjs === 'undefined') {
+                console.error('EmailJS SDK not loaded');
+                alert('Email service not available. The invitation was saved - please notify the admin manually.');
+                return false;
             }
             
             try {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                     to_email: email,
                     to_name: email.split('@')[0],
                     from_name: senderName,
@@ -1613,13 +1643,11 @@
                     guide_url: guideUrl,
                     app_url: appUrl
                 });
-                console.log('Invitation email sent successfully');
+                console.log('Invitation email sent successfully', result);
                 return true;
             } catch (error) {
                 console.error('EmailJS error:', error);
-                alert('Could not send email automatically. Opening your email client instead...');
-                // Fallback to mailto if EmailJS fails
-                fallbackMailto(email, senderName);
+                alert('Could not send email: ' + (error.text || error.message || JSON.stringify(error)));
                 return false;
             }
         }
@@ -1641,8 +1669,10 @@
                 `— The HabitRewards Team`
             );
             
-            // Use location.href instead of window.open to avoid blank tabs
-            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+            // Create a temporary link and click it (more reliable than location.href)
+            const mailtoLink = document.createElement('a');
+            mailtoLink.href = `mailto:${email}?subject=${subject}&body=${body}`;
+            mailtoLink.click();
         }
 
         function removeAdmin(index) {
@@ -1663,14 +1693,15 @@
             loadAdmins();
         }
 
-        function resendInvite(index) {
+        async function resendInvite(index) {
             const invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
             const invite = invites[index];
             if (invite) {
-                sendInviteEmail(invite.email);
+                await sendInviteEmail(invite.email);
                 invite.sentAt = new Date().toISOString();
                 localStorage.setItem(getInvitesKey(), JSON.stringify(invites));
                 loadPendingInvites();
+                alert(`Invitation resent to ${invite.email}\n\nNote: The email may take a few minutes to arrive.`);
             }
         }
 
@@ -1700,6 +1731,12 @@
         // Set app link with profile parameter
         if (PROFILE_ID) {
             document.getElementById('appLink').href = 'app.html?profile=' + PROFILE_ID;
+        }
+        
+        // Restore last active tab
+        const savedTab = sessionStorage.getItem('hr_admin_tab');
+        if (savedTab) {
+            showTab(savedTab);
         }
         
         displayStats();
