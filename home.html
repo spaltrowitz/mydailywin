@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitRewards - Build Better Habits, Earn Real Rewards</title>
+    <style>
+        :root {
+            --primary: #58cc02;
+            --primary-dark: #58a700;
+            --secondary: #ce82ff;
+            --orange: #ff9600;
+            --bg: #f7f7f7;
+            --text: #3c3c3c;
+            --text-light: #777777;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero-logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-white {
+            background: white;
+            color: var(--primary);
+        }
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 3px solid white;
+            margin-left: 15px;
+        }
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: var(--text);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        .how-it-works {
+            background: white;
+        }
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+        .step {
+            text-align: center;
+            max-width: 200px;
+        }
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 auto 15px;
+        }
+        .step h4 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .step p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        .earnings-section {
+            background: linear-gradient(135deg, #fff9e6, #fff3cc);
+            text-align: center;
+        }
+        .earnings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .earning-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .earning-card .amount {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .earning-card .label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        .gamification {
+            text-align: center;
+        }
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .badge-item {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .cta-section {
+            background: var(--primary);
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+        }
+        .cta-section h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        .cta-section p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        footer {
+            background: #3c3c3c;
+            color: #aaa;
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 14px;
+        }
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        .nav-links {
+            margin-top: 15px;
+        }
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+        }
+        .nav-links a:hover {
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 16px; }
+            .btn { display: block; margin: 10px auto; }
+            .btn-outline { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-logo">🏆</div>
+        <h1>HabitRewards</h1>
+        <p>Build better habits and earn real money. Complete daily tasks, build streaks, and watch your rewards grow!</p>
+        <a href="index.html" class="btn btn-white">🚀 Open App</a>
+        <a href="admin.html" class="btn btn-outline">👤 Account Manager</a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#earnings">Earnings</a>
+        </div>
+    </div>
+
+    <div id="features" class="container">
+        <h2 class="section-title">✨ Features</h2>
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Daily Tasks</h3>
+                <p>Simple, achievable tasks like going for a walk, learning a language, or doing a crossword puzzle.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔥</div>
+                <h3>Streak Bonuses</h3>
+                <p>Build a streak for 1.5x points at 7 days and 2x points at 14+ days. Consistency pays off!</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎰</div>
+                <h3>Spin Wheel</h3>
+                <p>Complete your daily tasks to unlock a bonus spin with prizes from 10 to 150 points!</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🍀</div>
+                <h3>Lucky Days</h3>
+                <p>Random 10% chance each day for 1.5x bonus on everything. Will today be your lucky day?</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>Level Up</h3>
+                <p>10 levels from Beginner to Hall of Fame. Track your progress and unlock achievements!</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Real Payouts</h3>
+                <p>100 points = $1.00. Earn real money sent via Zelle at the end of each month.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">🎯 How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Open App Daily</h4>
+                    <p>Start your day by opening HabitRewards. Get +25 login bonus!</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Complete Tasks</h4>
+                    <p>Check off daily tasks, bonuses, and weekly challenges.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Build Streaks</h4>
+                    <p>Come back every day to multiply your earnings!</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Get Paid</h4>
+                    <p>Receive your earnings via Zelle at month end.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="earnings" class="earnings-section">
+        <div class="container">
+            <h2 class="section-title">💵 Earning Potential</h2>
+            <div class="earnings-grid">
+                <div class="earning-card">
+                    <div class="amount">~$2.65</div>
+                    <div class="label">Daily (base)</div>
+                </div>
+                <div class="earning-card">
+                    <div class="amount">~$80-90</div>
+                    <div class="label">Monthly</div>
+                </div>
+                <div class="earning-card">
+                    <div class="amount">$100+</div>
+                    <div class="label">With streaks</div>
+                </div>
+            </div>
+            <p style="margin-top: 30px; color: var(--text-light);">100 points = $1.00 • Paid monthly via Zelle</p>
+        </div>
+    </div>
+
+    <div class="gamification">
+        <div class="container">
+            <h2 class="section-title">🎮 Gamification That Works</h2>
+            <p style="color: var(--text-light); max-width: 600px; margin: 0 auto;">Inspired by apps like Duolingo and Candy Crush, HabitRewards uses proven engagement mechanics to make building habits fun and rewarding.</p>
+            <div class="badges">
+                <div class="badge-item">🔥 Streak Counter</div>
+                <div class="badge-item">🎰 Daily Spin</div>
+                <div class="badge-item">🍀 Lucky Days</div>
+                <div class="badge-item">🏆 10 Levels</div>
+                <div class="badge-item">⭐ Achievements</div>
+                <div class="badge-item">📈 Progress Bar</div>
+                <div class="badge-item">🎁 Login Bonus</div>
+                <div class="badge-item">✨ Random 2x Bonus</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-section">
+        <h2>Ready to Start?</h2>
+        <p>Build better habits and earn rewards today!</p>
+        <a href="index.html" class="btn btn-white">🚀 Open HabitRewards</a>
+    </div>
+
+    <footer>
+        <p>HabitRewards &copy; 2026 • <a href="admin.html">Account Manager</a></p>
+        <p style="margin-top: 10px;">Questions? Contact the developer.</p>
+    </footer>
+</body>
+</html>

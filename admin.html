@@ -6,10 +6,14 @@
     <title>HabitRewards - Account Manager</title>
     <style>
         :root {
-            --primary: #22c55e;
-            --bg: #f8fafc;
-            --text: #1e293b;
-            --text-light: #64748b;
+            --primary: #58cc02;
+            --primary-dark: #58a700;
+            --secondary: #ce82ff;
+            --orange: #ff9600;
+            --bg: #f7f7f7;
+            --text: #3c3c3c;
+            --text-light: #777777;
+            --card-bg: white;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -17,27 +21,34 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+        }
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
             padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+        .logo {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        .top-bar h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .top-bar p {
+            opacity: 0.9;
+            font-size: 14px;
         }
         .container {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            padding: 30px 0;
-            border-bottom: 2px solid #e5e7eb;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-        .header p {
-            color: var(--text-light);
+            padding: 20px;
         }
         .card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 20px;
@@ -49,6 +60,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--primary-dark);
         }
         .card h3 {
             font-size: 16px;
@@ -56,38 +68,29 @@
             color: var(--text-light);
         }
         .btn {
-            display: block;
-            width: 100%;
-            padding: 16px 24px;
+            display: inline-block;
+            padding: 14px 24px;
             border: none;
             border-radius: 12px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            margin-bottom: 12px;
             transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
         }
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #16a34a;
-        }
-        .btn-secondary {
-            background: #e5e7eb;
-            color: var(--text);
-        }
-        .btn-secondary:hover {
-            background: #d1d5db;
-        }
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #dc2626;
-        }
+        .btn-block { display: block; width: 100%; margin-bottom: 12px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-secondary { background: #e5e7eb; color: var(--text); }
+        .btn-secondary:hover { background: #d1d5db; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-purple { background: var(--secondary); color: white; }
+        .btn-purple:hover { background: #9333ea; }
+        .btn-orange { background: var(--orange); color: white; }
+        .btn-orange:hover { background: #ea580c; }
+        .btn-sm { padding: 8px 16px; font-size: 14px; }
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -114,121 +117,71 @@
             background: linear-gradient(135deg, #22c55e22, #22c55e44);
             border: 2px solid var(--primary);
         }
-        .report-item {
-            background: #fef2f2;
-            border-left: 4px solid #ef4444;
-            padding: 14px;
-            border-radius: 0 10px 10px 0;
-            margin-bottom: 10px;
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 10px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-        .report-item .task-name {
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .report-item .reason {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        .report-item .date {
-            font-size: 12px;
-            color: var(--text-light);
-            margin-top: 6px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-light);
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            color: var(--primary);
-            text-decoration: none;
+        .tab {
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: transparent;
+            cursor: pointer;
             font-weight: 600;
+            font-size: 13px;
+            border: none;
+            color: var(--text-light);
+            transition: all 0.2s;
         }
-        .back-link:hover {
-            text-decoration: underline;
+        .tab:hover { background: var(--bg); }
+        .tab.active {
+            background: var(--primary);
+            color: white;
         }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
         }
         th, td {
-            padding: 10px 8px;
+            padding: 12px 10px;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
         }
         th {
             background: var(--bg);
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             color: var(--text-light);
         }
-        tr:last-child td {
-            border-bottom: none;
-        }
-        .task-name-cell {
-            font-weight: 600;
-        }
-        .points-cell {
-            color: var(--primary);
-            font-weight: 700;
-        }
-        .dollar-cell {
-            color: var(--text-light);
-        }
+        .task-name-cell { font-weight: 600; }
+        .points-cell { color: var(--primary); font-weight: 700; }
+        .dollar-cell { color: var(--text-light); }
+        .editable-row { cursor: pointer; transition: background 0.2s; }
+        .editable-row:hover { background: #f0fdf4; }
         .level-row {
             display: flex;
             align-items: center;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: var(--bg);
         }
         .level-row.current {
             background: linear-gradient(135deg, var(--primary)22, var(--primary)44);
             border: 2px solid var(--primary);
         }
-        .level-row.unlocked {
-            opacity: 0.6;
-        }
-        .level-row.locked {
-            opacity: 0.4;
-        }
-        .level-name {
-            flex: 1;
-            font-weight: 600;
-        }
-        .level-pts {
-            font-size: 13px;
-            color: var(--text-light);
-        }
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .tab {
-            padding: 10px 16px;
-            border-radius: 20px;
-            background: #e5e7eb;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            border: none;
-        }
-        .tab.active {
-            background: var(--primary);
-            color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
+        .level-row.locked { opacity: 0.4; }
+        .level-name { flex: 1; font-weight: 600; }
+        .level-pts { font-size: 13px; color: var(--text-light); }
         .info-box {
             background: #f0fdf4;
             border-left: 4px solid var(--primary);
@@ -245,6 +198,21 @@
             margin-bottom: 15px;
             font-size: 14px;
         }
+        .report-item {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 14px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 10px;
+        }
+        .report-item .task-name { font-weight: 700; margin-bottom: 4px; }
+        .report-item .reason { font-size: 14px; color: var(--text-light); }
+        .report-item .date { font-size: 12px; color: var(--text-light); margin-top: 6px; }
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+        }
         .feature-item {
             display: flex;
             align-items: flex-start;
@@ -252,37 +220,118 @@
             padding: 12px 0;
             border-bottom: 1px solid #e5e7eb;
         }
-        .feature-item:last-child {
-            border-bottom: none;
+        .feature-item:last-child { border-bottom: none; }
+        .feature-icon { font-size: 24px; }
+        .feature-content h4 { font-weight: 700; margin-bottom: 4px; }
+        .feature-content p { font-size: 13px; color: var(--text-light); }
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
         }
-        .feature-icon {
-            font-size: 24px;
+        .payment-row.paid { background: #f0fdf4; border-left: 4px solid var(--primary); }
+        .payment-row.pending { background: #fefce8; border-left: 4px solid #eab308; }
+        .payment-amount { font-weight: 800; font-size: 18px; color: var(--primary); }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            background: white;
+            color: var(--text);
         }
-        .feature-content h4 {
-            font-weight: 700;
-            margin-bottom: 4px;
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
         }
-        .feature-content p {
-            font-size: 13px;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-box h2 { margin-bottom: 20px; }
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
             color: var(--text-light);
         }
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q {
+            font-weight: 700;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-a {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .badge-success { background: #dcfce7; color: #16a34a; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-purple { background: #f3e8ff; color: #9333ea; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>👔 Account Manager</h1>
-            <p>HabitRewards Admin Panel for Stu</p>
-        </div>
+    <div class="top-bar">
+        <div class="logo">🏆</div>
+        <h1>HabitRewards</h1>
+        <p>Account Manager Dashboard</p>
+    </div>
 
+    <div class="container">
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
-            <button class="tab" onclick="showTab('tasks')">📋 All Tasks</button>
+            <button class="tab" onclick="showTab('tasks')">📋 Tasks</button>
+            <button class="tab" onclick="showTab('payments')">💰 Payments</button>
             <button class="tab" onclick="showTab('levels')">🏆 Levels</button>
-            <button class="tab" onclick="showTab('features')">🎮 Features</button>
             <button class="tab" onclick="showTab('reports')">🚩 Reports</button>
-            <button class="tab" onclick="showTab('data')">📥 Data</button>
+            <button class="tab" onclick="showTab('faq')">❓ FAQ</button>
+            <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
         </div>
 
         <!-- DASHBOARD TAB -->
@@ -304,7 +353,7 @@
                     </div>
                     <div class="stat-box">
                         <div class="value" id="balanceDollars">$0</div>
-                        <div class="label">Current Balance ($)</div>
+                        <div class="label">Owed This Month ($)</div>
                     </div>
                     <div class="stat-box">
                         <div class="value" id="streak">0</div>
@@ -328,93 +377,88 @@
             </div>
 
             <div class="card">
-                <h2>💵 Payout Estimate</h2>
+                <h2>💵 Earnings Overview</h2>
                 <div class="stat-grid">
                     <div class="stat-box">
-                        <div class="value" id="dailyAvg">~$2</div>
-                        <div class="label">Daily Average</div>
+                        <div class="value">~$2.65</div>
+                        <div class="label">Est. Daily (base)</div>
                     </div>
                     <div class="stat-box">
-                        <div class="value" id="monthlyEst">~$60</div>
-                        <div class="label">Monthly Estimate</div>
+                        <div class="value">~$80-90</div>
+                        <div class="label">Est. Monthly</div>
                     </div>
                 </div>
-                <p style="font-size: 13px; color: var(--text-light); text-align: center;">Based on completing all daily tasks + bonuses</p>
+                <p style="font-size: 13px; color: var(--text-light); text-align: center;">With streak bonuses (1.5x-2x), can reach $100-120+</p>
+            </div>
+
+            <div class="card">
+                <h2>📥 Quick Actions</h2>
+                <button class="btn btn-primary btn-block" onclick="downloadTaskResponses()">📋 Download Task Log (CSV)</button>
+                <button class="btn btn-secondary btn-block" onclick="downloadFeedbackLog()">📝 Download Check-ins (CSV)</button>
             </div>
         </div>
 
         <!-- TASKS TAB -->
         <div id="tasks" class="tab-content">
             <div class="card">
-                <h2>📋 Daily Tasks (Every Day)</h2>
-                <p style="color: var(--text-light); margin-bottom: 15px;">These 3 tasks appear every day. Total: 150 pts ($1.50)</p>
-                <table>
-                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
-                    <tr><td class="task-name-cell">🚶 Go for a walk</td><td class="points-cell">25</td><td class="dollar-cell">$0.25</td></tr>
-                    <tr><td class="task-name-cell">🦉 Do a Duolingo lesson</td><td class="points-cell">75</td><td class="dollar-cell">$0.75</td></tr>
-                    <tr><td class="task-name-cell">📝 Do a crossword puzzle</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                <h2>📋 Daily Tasks</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Core tasks that appear every day. Click to edit.</p>
+                <table id="dailyTasksTable">
+                    <tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>
                 </table>
+                <button class="btn btn-primary btn-sm" style="margin-top: 15px;" onclick="openAddTaskModal('daily')">+ Add Daily Task</button>
             </div>
 
-            <div class="card">
-                <h2>⭐ Daily Bonus Tasks (Rotating)</h2>
-                <p style="color: var(--text-light); margin-bottom: 15px;">One of these rotates each day (18 options)</p>
-                <table>
-                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
-                    <tr><td class="task-name-cell">📸 Take a photo of something interesting</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🧹 Organize one drawer or shelf</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🌳 Spend 10 minutes outside</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🎵 Listen to a new song</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">📞 Call or text a friend</td><td class="points-cell">100</td><td class="dollar-cell">$1.00</td></tr>
-                    <tr><td class="task-name-cell">🔋 Charge devices overnight</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🗑️ Throw away one thing you don't need</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🧽 Wipe down a counter or surface</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🛏️ Make the bed</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🧘 Do 5 minutes of stretching</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">💊 Take vitamins</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">📖 Read for 10 minutes</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🎧 Listen to a podcast</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">📺 Watch something new on streaming</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">📱 Delete an unused app</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">📧 Clear out old emails</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">📝 Make a to-do list for tomorrow</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🚗 Clean out the car</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+            <div class="card" style="border-left: 4px solid var(--orange);">
+                <h2 style="color: var(--orange);">⭐ Daily Bonus Tasks</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">One rotates each day. Click to edit.</p>
+                <table id="dailyBonusTable">
+                    <tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>
                 </table>
+                <button class="btn btn-orange btn-sm" style="margin-top: 15px;" onclick="openAddTaskModal('dailyBonus')">+ Add Daily Bonus</button>
             </div>
 
-            <div class="card">
-                <h2>🏆 Weekly Challenges</h2>
-                <p style="color: var(--text-light); margin-bottom: 15px;">Tennis is permanent. One other rotates weekly (19 options)</p>
+            <div class="card" style="border-left: 4px solid var(--secondary);">
+                <h2 style="color: var(--secondary);">🏆 Weekly Challenges</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Click to edit, move, or delete.</p>
                 
-                <h3>🎾 Permanent Weekly Task</h3>
-                <table>
-                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
-                    <tr><td class="task-name-cell">🎾 Tennis/pickleball 3x this week</td><td class="points-cell">30</td><td class="dollar-cell">$0.30</td></tr>
+                <h3>🎾 Permanent</h3>
+                <table id="permanentWeeklyTable">
+                    <tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>
                 </table>
+                <button class="btn btn-purple btn-sm" style="margin-top: 15px;" onclick="openAddTaskModal('permanentWeekly')">+ Add Permanent Weekly</button>
 
-                <h3>📅 Rotating Weekly Challenges</h3>
-                <table>
-                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
-                    <tr><td class="task-name-cell">💿 Sell your coins or vinyls</td><td class="points-cell">500</td><td class="dollar-cell">$5.00</td></tr>
-                    <tr><td class="task-name-cell">💑 Take your wife out to lunch or dinner</td><td class="points-cell">500</td><td class="dollar-cell">$5.00</td></tr>
-                    <tr><td class="task-name-cell">🍽️ Try a new restaurant</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
-                    <tr><td class="task-name-cell">📦 Get rid of 3 items from office</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
-                    <tr><td class="task-name-cell">❤️ Do something nice for your wife</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
-                    <tr><td class="task-name-cell">🍔 Go out to lunch with tennis friends</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
-                    <tr><td class="task-name-cell">👕 Donate clothing items</td><td class="points-cell">250</td><td class="dollar-cell">$2.50</td></tr>
-                    <tr><td class="task-name-cell">👟 Donate sneakers</td><td class="points-cell">250</td><td class="dollar-cell">$2.50</td></tr>
-                    <tr><td class="task-name-cell">📺 Find a new show on Netflix</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
-                    <tr><td class="task-name-cell">📺 Find a new show on Amazon Video</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
-                    <tr><td class="task-name-cell">📺 Find a new show on Apple TV</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
-                    <tr><td class="task-name-cell">💌 Tell one of your kids you are thinking of them</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
-                    <tr><td class="task-name-cell">🤖 Use ChatGPT to solve a problem</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
-                    <tr><td class="task-name-cell">📞 Call a friend or family member</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
-                    <tr><td class="task-name-cell">🕵️ Apply for a Mystery Shop</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
-                    <tr><td class="task-name-cell">🛒 Check Aisle for grocery deals</td><td class="points-cell">150</td><td class="dollar-cell">$1.50</td></tr>
-                    <tr><td class="task-name-cell">🛍️ Buy a new item from the grocery store</td><td class="points-cell">150</td><td class="dollar-cell">$1.50</td></tr>
-                    <tr><td class="task-name-cell">🍿 Use the microwave</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
-                    <tr><td class="task-name-cell">🗑️ Throw away 5 items you no longer need</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                <h3 style="margin-top: 25px;">📅 Rotating</h3>
+                <table id="weeklyBonusTable">
+                    <tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>
                 </table>
+                <button class="btn btn-purple btn-sm" style="margin-top: 15px;" onclick="openAddTaskModal('weekly')">+ Add Weekly Bonus</button>
+            </div>
+        </div>
+
+        <!-- PAYMENTS TAB -->
+        <div id="payments" class="tab-content">
+            <div class="card">
+                <h2>💰 Monthly Payments</h2>
+                <p style="color: var(--text-light); margin-bottom: 20px;">Track Zelle payments to Stu</p>
+                
+                <div id="paymentsContainer"></div>
+                
+                <button class="btn btn-primary btn-block" style="margin-top: 20px;" onclick="openPaymentModal()">+ Record New Payment</button>
+            </div>
+
+            <div class="card">
+                <h2>📊 Payment Summary</h2>
+                <div class="stat-grid">
+                    <div class="stat-box">
+                        <div class="value" id="totalPaid">$0</div>
+                        <div class="label">Total Paid Out</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="currentOwed">$0</div>
+                        <div class="label">Currently Owed</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -422,74 +466,24 @@
         <div id="levels" class="tab-content">
             <div class="card">
                 <h2>🏆 Level Progression</h2>
-                <p style="color: var(--text-light); margin-bottom: 20px;">Levels are based on <strong>total lifetime points earned</strong></p>
+                <p style="color: var(--text-light); margin-bottom: 20px;">Levels based on <strong>total lifetime points earned</strong></p>
                 <div id="levelsDisplay"></div>
             </div>
-        </div>
-
-        <!-- FEATURES TAB -->
-        <div id="features" class="tab-content">
-            <div class="card">
-                <h2>🎮 Gamification Features</h2>
-                <p style="color: var(--text-light); margin-bottom: 20px;">Casino-style features to keep Stu engaged!</p>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">🎁</div>
-                    <div class="feature-content">
-                        <h4>Daily Login Bonus</h4>
-                        <p>+25 pts just for opening the app each day. Shows celebratory animation.</p>
-                    </div>
-                </div>
-
-                <div class="feature-item">
-                    <div class="feature-icon">🔥</div>
-                    <div class="feature-content">
-                        <h4>Streak Multiplier</h4>
-                        <p>7+ day streak = <strong>1.5x points</strong> on all tasks<br>
-                        14+ day streak = <strong>2x points</strong> on all tasks</p>
-                    </div>
-                </div>
-
-                <div class="feature-item">
-                    <div class="feature-icon">🍀</div>
-                    <div class="feature-content">
-                        <h4>Lucky Day</h4>
-                        <p>10% chance each day is a "Lucky Day" - all tasks worth <strong>1.5x points</strong>. Banner shows when active.</p>
-                    </div>
-                </div>
-
-                <div class="feature-item">
-                    <div class="feature-icon">🎲</div>
-                    <div class="feature-content">
-                        <h4>Random Bonus</h4>
-                        <p>10% chance on any task to get <strong>2x points</strong>! Triggers coin rain animation.</p>
-                    </div>
-                </div>
-
-                <div class="feature-item">
-                    <div class="feature-icon">🎰</div>
-                    <div class="feature-content">
-                        <h4>Bonus Spin Wheel</h4>
-                        <p>Unlocks automatically when ALL 3 daily tasks done. One spin/day. Prizes: 10, 25, 50, 75, 100, or 150 pts.</p>
-                    </div>
-                </div>
-
-                <div class="feature-item">
-                    <div class="feature-icon">🏆</div>
-                    <div class="feature-content">
-                        <h4>Achievements</h4>
-                        <p>💵 First Dollar (100 pts) • 🔥 Week Warrior (7-day streak) • 🏆 Monthly Master (30-day streak) • 💰 Big Earner (1,000 pts)</p>
-                    </div>
-                </div>
-            </div>
 
             <div class="card">
-                <h2>💵 Sample Earnings</h2>
+                <h2>📈 Level Thresholds</h2>
                 <table>
-                    <tr><th>Scenario</th><th>Daily Pts</th><th>Daily $</th></tr>
-                    <tr><td>Typical day (no bonuses)</td><td class="points-cell">235</td><td class="dollar-cell">$2.35</td></tr>
-                    <tr><td>With 7-day streak (1.5x)</td><td class="points-cell">340</td><td class="dollar-cell">$3.40</td></tr>
-                    <tr><td>Lucky Day + Jackpot</td><td class="points-cell">500+</td><td class="dollar-cell">$5.00+</td></tr>
+                    <tr><th>Level</th><th>Points</th><th>$ Value</th><th>Est. Time</th></tr>
+                    <tr><td>🥚 Beginner</td><td>0</td><td>$0</td><td>Day 1</td></tr>
+                    <tr><td>🌱 Starter</td><td>150</td><td>$1.50</td><td>Day 1</td></tr>
+                    <tr><td>🌿 Regular</td><td>500</td><td>$5</td><td>~3 days</td></tr>
+                    <tr><td>🌟 Pro</td><td>1,000</td><td>$10</td><td>~1 week</td></tr>
+                    <tr><td>⭐ Expert</td><td>2,500</td><td>$25</td><td>~2 weeks</td></tr>
+                    <tr><td>🏆 Champion</td><td>5,000</td><td>$50</td><td>~3-4 weeks</td></tr>
+                    <tr><td>💎 Diamond</td><td>10,000</td><td>$100</td><td>~2 months</td></tr>
+                    <tr><td>👑 Legend</td><td>25,000</td><td>$250</td><td>~5 months</td></tr>
+                    <tr><td>🌟 Superstar</td><td>50,000</td><td>$500</td><td>~9 months</td></tr>
+                    <tr><td>🔥 Hall of Fame</td><td>100,000</td><td>$1,000</td><td>~1.5 years</td></tr>
                 </table>
             </div>
         </div>
@@ -500,34 +494,272 @@
                 <h2>🚩 Reported Tasks</h2>
                 <p style="color: var(--text-light); margin-bottom: 15px;">Tasks Stu has flagged for review</p>
                 <div id="reportsContainer">
-                    <div class="empty-state">No reported tasks yet</div>
+                    <div class="empty-state">No reported tasks yet ✅</div>
                 </div>
-                <button class="btn btn-secondary" onclick="clearReports()" style="margin-top: 15px;">Clear All Reports</button>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="btn btn-secondary btn-sm" onclick="downloadReports()">📥 Download</button>
+                    <button class="btn btn-danger btn-sm" onclick="clearReports()">🗑️ Clear All</button>
+                </div>
             </div>
         </div>
 
-        <!-- DATA TAB -->
-        <div id="data" class="tab-content">
-            <div class="card">
-                <h2>📥 Download Data</h2>
-                <p style="color: var(--text-light); margin-bottom: 16px;">Export activity logs for review</p>
-                <button class="btn btn-primary" onclick="downloadTaskResponses()">📋 Task Responses (CSV)</button>
-                <button class="btn btn-primary" onclick="downloadFeedbackLog()">📝 Weekly Check-ins (CSV)</button>
-                <button class="btn btn-secondary" onclick="downloadReports()">🚩 Task Reports (CSV)</button>
+        <!-- FAQ TAB -->
+        <div id="faq" class="tab-content">
+            <!-- Quick Reference Card -->
+            <div class="card" style="background: linear-gradient(135deg, #22c55e22, #22c55e44); border: 2px solid var(--primary);">
+                <h2>📊 Quick Reference</h2>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 14px;">
+                    <div><strong>💰 Points:</strong> 100 pts = $1.00</div>
+                    <div><strong>📅 Payouts:</strong> End of month</div>
+                    <div><strong>🔥 7-day streak:</strong> 1.5x bonus</div>
+                    <div><strong>🔥 14-day streak:</strong> 2x bonus</div>
+                    <div><strong>🎰 Spin wheel:</strong> 10-150 pts</div>
+                    <div><strong>🍀 Lucky Day:</strong> 10% chance, 1.5x</div>
+                </div>
             </div>
 
             <div class="card">
-                <h2>⚠️ Danger Zone</h2>
-                <button class="btn btn-danger" onclick="resetUserData()">🔄 Reset All User Data</button>
-                <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px;">Warning: This clears all progress permanently!</p>
+                <h2>❓ Frequently Asked Questions</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-q">💰 How does the point system work?</div>
+                    <div class="faq-a">
+                        <strong>100 points = $1.00</strong><br><br>
+                        Stu earns points from:
+                        <ul style="margin: 8px 0 0 20px;">
+                            <li><strong>Daily Tasks</strong> – 3 core tasks every day (Walk, Duolingo, Crossword)</li>
+                            <li><strong>Daily Bonus</strong> – 1 rotating bonus task each day</li>
+                            <li><strong>Weekly Challenges</strong> – Bigger goals for extra points</li>
+                            <li><strong>Spin Wheel</strong> – Bonus spin after completing daily tasks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">🔥 How do streaks work?</div>
+                    <div class="faq-a">
+                        Complete at least one task per day to build a streak:
+                        <table style="margin-top: 10px; font-size: 13px;">
+                            <tr><td style="padding: 4px 12px 4px 0;"><strong>Days 1-6:</strong></td><td>Normal points (1x)</td></tr>
+                            <tr><td style="padding: 4px 12px 4px 0;"><strong>Days 7-13:</strong></td><td>🔥 1.5x multiplier on ALL tasks</td></tr>
+                            <tr><td style="padding: 4px 12px 4px 0;"><strong>Days 14+:</strong></td><td>🔥🔥 2x multiplier on ALL tasks</td></tr>
+                        </table>
+                        <p style="margin-top: 8px; color: #ef4444;">⚠️ Missing a day resets the streak to 0!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">🎰 What is the spin wheel?</div>
+                    <div class="faq-a">
+                        When Stu completes all 3 daily tasks, a <strong>bonus spin wheel</strong> unlocks!
+                        <ul style="margin: 8px 0 0 20px;">
+                            <li>One free spin per day</li>
+                            <li>Prizes range from <strong>10 to 150 points</strong></li>
+                            <li>No approval needed – it's automatic</li>
+                            <li>Jackpot (150 pts) is rare but exciting! 🎉</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">🍀 What is a "Lucky Day"?</div>
+                    <div class="faq-a">
+                        Each day has a <strong>10% random chance</strong> of being a Lucky Day!
+                        <ul style="margin: 8px 0 0 20px;">
+                            <li>All tasks worth <strong>1.5x points</strong></li>
+                            <li>Stacks with streak bonuses</li>
+                            <li>Green "Lucky Day" banner appears at top of app</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">😴 What happens if Stu misses a day?</div>
+                    <div class="faq-a">
+                        <ul style="margin: 0 0 0 20px;">
+                            <li><strong>Streak resets</strong> to 0 (loses multiplier)</li>
+                            <li>Daily tasks reset (can't complete yesterday's)</li>
+                            <li>No penalty – just missed opportunity for points</li>
+                            <li>Weekly challenges still available until week ends</li>
+                        </ul>
+                        <p style="margin-top: 8px;">💡 The app sends a login bonus (+25 pts) each day to encourage opening it!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">✏️ How do I add, edit, or remove tasks?</div>
+                    <div class="faq-a">
+                        Go to the <strong>Tasks tab</strong>:
+                        <ul style="margin: 8px 0 0 20px;">
+                            <li><strong>Add:</strong> Click the "+ Add" button under any section</li>
+                            <li><strong>Edit:</strong> Click any task row → change name/points</li>
+                            <li><strong>Delete:</strong> Click task → "Delete Task" button</li>
+                            <li><strong>Move:</strong> Click task → change Category dropdown</li>
+                        </ul>
+                        <p style="margin-top: 8px;">Changes take effect immediately!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">💵 How do payouts work?</div>
+                    <div class="faq-a">
+                        <ul style="margin: 0 0 0 20px;">
+                            <li>Points accumulate throughout the month</li>
+                            <li>Check <strong>Dashboard → Current Balance</strong> for amount owed</li>
+                            <li>Send payment via Zelle at month end</li>
+                            <li>Record it in <strong>Payments tab</strong> (resets balance)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">🚩 What if Stu reports a task?</div>
+                    <div class="faq-a">
+                        Stu can tap ••• on any bonus task to report it if he doesn't like it.
+                        <ul style="margin: 8px 0 0 20px;">
+                            <li>Reports appear in the <strong>Reports tab</strong></li>
+                            <li>Review the reason he gave</li>
+                            <li>Edit or remove the task from Tasks tab</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">📱 Does the app work offline?</div>
+                    <div class="faq-a">
+                        <strong>Yes!</strong> The app saves everything locally.
+                        <ul style="margin: 8px 0 0 20px;">
+                            <li>Works without internet once loaded</li>
+                            <li>Data stored in browser (localStorage)</li>
+                            <li>⚠️ Must use <strong>same browser/device</strong></li>
+                            <li>⚠️ Clearing browser data will erase progress</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">🏆 How do levels work?</div>
+                    <div class="faq-a">
+                        Levels are based on <strong>total lifetime points earned</strong> (not current balance).
+                        <ul style="margin: 8px 0 0 20px;">
+                            <li>10 levels from Beginner to Hall of Fame</li>
+                            <li>Stu can tap his level badge to see all levels</li>
+                            <li>Levels never go down, even after payouts</li>
+                        </ul>
+                        <p style="margin-top: 8px;">See <strong>Levels tab</strong> for full breakdown!</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <a href="index.html" class="back-link">← Back to App</a>
+        <!-- SETTINGS TAB -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h2>👤 Account Manager</h2>
+                <div class="info-box">
+                    <strong>Developer Contact:</strong><br>
+                    For technical issues or feature requests, contact the developer directly.
+                </div>
+                <button class="btn btn-primary btn-block" onclick="contactDeveloper()">✉️ Contact Developer</button>
+            </div>
+
+            <div class="card">
+                <h2>🔗 Share HabitRewards</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Know someone who could benefit from HabitRewards? Share the app with them!</p>
+                <button class="btn btn-primary btn-block" onclick="referFriend()">👥 Refer a Friend</button>
+            </div>
+
+            <div class="card">
+                <h2>📥 Data Management</h2>
+                <button class="btn btn-secondary btn-block" onclick="downloadAllData()">💾 Export All Data</button>
+                <button class="btn btn-danger btn-block" onclick="resetUserData()">🔄 Reset All User Data</button>
+                <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px;">Warning: Reset clears all progress permanently!</p>
+            </div>
+
+            <div class="card">
+                <h2>ℹ️ About</h2>
+                <p style="font-size: 14px; color: var(--text-light); line-height: 1.6;">
+                    <strong>HabitRewards</strong> v1.0<br><br>
+                    A gamified habit-tracking app designed to encourage daily positive behaviors through monetary rewards. Built with a fun, Duolingo-inspired interface.
+                </p>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="card" style="background: linear-gradient(135deg, #58cc0222, #58cc0244); border: 2px solid var(--primary);">
+            <h2 style="margin-bottom: 12px;">🔗 Quick Links</h2>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="index.html" class="btn btn-primary" style="flex: 1; min-width: 140px;">👤 Stu's App</a>
+                <a href="home.html" class="btn btn-secondary" style="flex: 1; min-width: 140px;">🏠 Homepage</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD TASK MODAL -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('addTaskModal')">&times;</span>
+            <h2 id="addTaskTitle">Add Task</h2>
+            <input type="text" id="newTaskName" placeholder="Task name (e.g., 🚶 Go for a walk)">
+            <input type="number" id="newTaskPoints" placeholder="Points (e.g., 50)">
+            <input type="hidden" id="newTaskType">
+            <button class="btn btn-primary btn-block" onclick="saveNewTask()">Save Task</button>
+        </div>
+    </div>
+
+    <!-- EDIT TASK MODAL -->
+    <div id="editTaskModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('editTaskModal')">&times;</span>
+            <h2>Edit Task</h2>
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Task Name</label>
+            <input type="text" id="editTaskName" placeholder="Task name">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Points</label>
+            <input type="number" id="editTaskPoints" placeholder="Points">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Category</label>
+            <select id="editTaskCategory">
+                <option value="daily">📋 Daily Tasks</option>
+                <option value="dailyBonus">⭐ Daily Bonus</option>
+                <option value="permanentWeekly">🎾 Permanent Weekly</option>
+                <option value="weekly">📅 Weekly Bonus</option>
+            </select>
+            <input type="hidden" id="editTaskId">
+            <input type="hidden" id="editTaskType">
+            <button class="btn btn-primary btn-block" onclick="saveEditTask()">Save Changes</button>
+            <button class="btn btn-danger btn-block" onclick="deleteTask()">Delete Task</button>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('paymentModal')">&times;</span>
+            <h2>💰 Record Payment</h2>
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Month</label>
+            <select id="paymentMonth">
+                <option value="January 2026">January 2026</option>
+                <option value="February 2026">February 2026</option>
+                <option value="March 2026">March 2026</option>
+                <option value="April 2026">April 2026</option>
+                <option value="May 2026">May 2026</option>
+                <option value="June 2026">June 2026</option>
+                <option value="July 2026">July 2026</option>
+                <option value="August 2026">August 2026</option>
+                <option value="September 2026">September 2026</option>
+                <option value="October 2026">October 2026</option>
+                <option value="November 2026">November 2026</option>
+                <option value="December 2026">December 2026</option>
+            </select>
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Amount Paid ($)</label>
+            <input type="number" id="paymentAmount" placeholder="e.g., 65.50" step="0.01">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Notes (optional)</label>
+            <input type="text" id="paymentNotes" placeholder="e.g., Zelle confirmation #1234">
+            <button class="btn btn-primary btn-block" onclick="savePayment()">Save Payment</button>
+        </div>
     </div>
 
     <script>
-        // Tab functionality
+        // ========== TAB FUNCTIONALITY ==========
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -535,16 +767,98 @@
             event.target.classList.add('active');
         }
 
-        // Load user state
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // ========== STATE MANAGEMENT ==========
         function loadState() {
             const saved = localStorage.getItem('hr_state');
-            if (saved) {
-                return JSON.parse(saved);
-            }
-            return { balance: 0, totalEarned: 0, streak: 0 };
+            return saved ? JSON.parse(saved) : { balance: 0, totalEarned: 0, streak: 0 };
         }
 
-        // Get level from points
+        function loadAdminData() {
+            const saved = localStorage.getItem('hr_admin');
+            return saved ? JSON.parse(saved) : { payments: [], customTasks: {} };
+        }
+
+        function saveAdminData(data) {
+            localStorage.setItem('hr_admin', JSON.stringify(data));
+        }
+
+        // ========== TASK LISTS (from main app) ==========
+        const DEFAULT_DAILY_TASKS = [
+            { id: 1, name: "🚶 Go for a walk", value: 25 },
+            { id: 3, name: "🦉 Do a Duolingo lesson", value: 75 },
+            { id: 4, name: "📝 Do a crossword puzzle", value: 50 }
+        ];
+
+        const DEFAULT_DAILY_BONUSES = [
+            { id: 101, name: "📸 Take a photo of something interesting", value: 50 },
+            { id: 102, name: "🧹 Organize one drawer or shelf", value: 50 },
+            { id: 103, name: "🌳 Spend 10 minutes outside", value: 50 },
+            { id: 104, name: "🎵 Listen to a new song", value: 50 },
+            { id: 105, name: "📞 Call or text a friend", value: 100 },
+            { id: 106, name: "🔋 Charge devices overnight", value: 50 },
+            { id: 107, name: "🗑️ Throw away one thing you don't need", value: 50 },
+            { id: 108, name: "🧽 Wipe down a counter or surface", value: 50 },
+            { id: 109, name: "🛏️ Make the bed", value: 50 },
+            { id: 110, name: "🧘 Do 5 minutes of stretching", value: 50 },
+            { id: 111, name: "💊 Take vitamins", value: 50 },
+            { id: 112, name: "📖 Read for 10 minutes", value: 50 },
+            { id: 113, name: "🎧 Listen to a podcast", value: 50 },
+            { id: 114, name: "📺 Watch something new on streaming", value: 50 },
+            { id: 115, name: "📱 Delete an unused app", value: 50 },
+            { id: 116, name: "📧 Clear out old emails", value: 50 },
+            { id: 117, name: "📝 Make a to-do list for tomorrow", value: 50 },
+            { id: 118, name: "🚗 Clean out the car", value: 50 }
+        ];
+
+        const DEFAULT_PERMANENT_WEEKLY = [
+            { id: 200, name: "🎾 Tennis/pickleball 3x this week", value: 30 }
+        ];
+
+        const DEFAULT_WEEKLY_BONUSES = [
+            { id: 301, name: "💿 Sell your coins or vinyls", value: 500 },
+            { id: 302, name: "💑 Take your wife out to lunch or dinner", value: 500 },
+            { id: 303, name: "🍽️ Try a new restaurant", value: 300 },
+            { id: 304, name: "📦 Get rid of 3 items from office", value: 300 },
+            { id: 305, name: "❤️ Do something nice for your wife", value: 300 },
+            { id: 312, name: "🍔 Lunch with tennis friends", value: 300 },
+            { id: 306, name: "👕 Donate clothing items", value: 250 },
+            { id: 307, name: "👟 Donate sneakers", value: 250 },
+            { id: 308, name: "📺 Find a new show on Netflix", value: 200 },
+            { id: 309, name: "📺 Find a new show on Amazon Video", value: 200 },
+            { id: 310, name: "📺 Find a new show on Apple TV", value: 200 },
+            { id: 311, name: "💌 Tell one of your kids you are thinking of them", value: 200 },
+            { id: 313, name: "🤖 Use ChatGPT to solve a problem", value: 200 },
+            { id: 314, name: "📞 Call a friend or family member", value: 200 },
+            { id: 315, name: "🕵️ Apply for a Mystery Shop", value: 200 },
+            { id: 316, name: "🛒 Check Aisle for grocery deals", value: 150 },
+            { id: 317, name: "🛍️ Buy a new item from the grocery store", value: 150 },
+            { id: 318, name: "🍿 Use the microwave", value: 50 },
+            { id: 319, name: "🗑️ Throw away 5 items you no longer need", value: 200 }
+        ];
+
+        function getTasks(type) {
+            const admin = loadAdminData();
+            if (admin.customTasks && admin.customTasks[type]) {
+                return [...admin.customTasks[type]];
+            }
+            if (type === 'daily') return [...DEFAULT_DAILY_TASKS];
+            if (type === 'dailyBonus') return [...DEFAULT_DAILY_BONUSES];
+            if (type === 'permanentWeekly') return [...DEFAULT_PERMANENT_WEEKLY];
+            if (type === 'weekly') return [...DEFAULT_WEEKLY_BONUSES];
+            return [];
+        }
+
+        function saveTasks(type, tasks) {
+            const admin = loadAdminData();
+            if (!admin.customTasks) admin.customTasks = {};
+            admin.customTasks[type] = tasks;
+            saveAdminData(admin);
+        }
+
+        // ========== LEVELS ==========
         function getLevel(totalPoints) {
             if (totalPoints >= 100000) return { name: "🔥 Hall of Fame", color: "#ff4500" };
             if (totalPoints >= 50000) return { name: "🌟 Superstar", color: "#ff69b4" };
@@ -555,10 +869,10 @@
             if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32" };
             if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80" };
             if (totalPoints >= 150) return { name: "🌱 Starter", color: "#86efac" };
-            return { name: "🥚 Beginner", color: "#bbf7d0" };
+            return { name: "🥚 Beginner", color: "#3c3c3c" };
         }
 
-        // Display stats
+        // ========== DISPLAY FUNCTIONS ==========
         function displayStats() {
             const state = loadState();
             const totalEarned = state.totalEarned || 0;
@@ -570,12 +884,12 @@
             document.getElementById('currentBalance').textContent = Math.floor(balance).toLocaleString();
             document.getElementById('balanceDollars').textContent = '$' + (balance / 100).toFixed(2);
             document.getElementById('streak').textContent = streak;
+            document.getElementById('currentOwed').textContent = '$' + (balance / 100).toFixed(2);
             
             const level = getLevel(totalEarned);
             document.getElementById('currentLevel').textContent = level.name;
             document.getElementById('currentLevel').style.color = level.color;
 
-            // Streak bonus info
             if (streak >= 14) {
                 document.getElementById('streakBonusInfo').style.display = 'block';
                 document.getElementById('streakBonusText').textContent = '2x points on all tasks (14+ day streak)';
@@ -585,7 +899,68 @@
             }
         }
 
-        // Display levels
+        function displayTasks() {
+            // Daily tasks
+            const dailyTable = document.getElementById('dailyTasksTable');
+            const dailyTasks = getTasks('daily');
+            dailyTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            dailyTasks.forEach(t => {
+                dailyTable.innerHTML += `
+                    <tr class="editable-row" onclick="openEditTask('daily', ${t.id})">
+                        <td class="task-name-cell">${t.name}</td>
+                        <td class="points-cell">${t.value}</td>
+                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
+                        <td>✏️</td>
+                    </tr>
+                `;
+            });
+
+            // Daily bonus tasks
+            const bonusTable = document.getElementById('dailyBonusTable');
+            const bonusTasks = getTasks('dailyBonus');
+            bonusTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            bonusTasks.forEach(t => {
+                bonusTable.innerHTML += `
+                    <tr class="editable-row" onclick="openEditTask('dailyBonus', ${t.id})">
+                        <td class="task-name-cell">${t.name}</td>
+                        <td class="points-cell">${t.value}</td>
+                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
+                        <td>✏️</td>
+                    </tr>
+                `;
+            });
+
+            // Permanent weekly tasks
+            const permWeeklyTable = document.getElementById('permanentWeeklyTable');
+            const permWeeklyTasks = getTasks('permanentWeekly');
+            permWeeklyTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            permWeeklyTasks.forEach(t => {
+                permWeeklyTable.innerHTML += `
+                    <tr class="editable-row" onclick="openEditTask('permanentWeekly', ${t.id})">
+                        <td class="task-name-cell">${t.name}</td>
+                        <td class="points-cell">${t.value}</td>
+                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
+                        <td>✏️</td>
+                    </tr>
+                `;
+            });
+
+            // Weekly bonus tasks
+            const weeklyTable = document.getElementById('weeklyBonusTable');
+            const weeklyTasks = getTasks('weekly');
+            weeklyTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            weeklyTasks.forEach(t => {
+                weeklyTable.innerHTML += `
+                    <tr class="editable-row" onclick="openEditTask('weekly', ${t.id})">
+                        <td class="task-name-cell">${t.name}</td>
+                        <td class="points-cell">${t.value}</td>
+                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
+                        <td>✏️</td>
+                    </tr>
+                `;
+            });
+        }
+
         function displayLevels() {
             const state = loadState();
             const totalEarned = state.totalEarned || 0;
@@ -608,17 +983,44 @@
             container.innerHTML = allLevels.map(lvl => {
                 const isCurrent = currentLevel.name === lvl.name;
                 const isUnlocked = totalEarned >= lvl.pts;
-                let className = isCurrent ? 'current' : (isUnlocked ? 'unlocked' : 'locked');
+                let className = isCurrent ? 'current' : (isUnlocked ? '' : 'locked');
                 return `
                     <div class="level-row ${className}">
-                        <div class="level-name">${lvl.name} ${isCurrent ? '← CURRENT' : ''}</div>
-                        <div class="level-pts">${lvl.pts.toLocaleString()} pts ($${(lvl.pts/100).toFixed(2)})</div>
+                        <div class="level-name">${lvl.name} ${isCurrent ? '<span class="badge badge-success">CURRENT</span>' : ''}</div>
+                        <div class="level-pts">${lvl.pts.toLocaleString()} pts</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Display reports
+        function displayPayments() {
+            const admin = loadAdminData();
+            const payments = admin.payments || [];
+            const container = document.getElementById('paymentsContainer');
+            
+            if (payments.length === 0) {
+                container.innerHTML = '<div class="empty-state">No payments recorded yet</div>';
+                document.getElementById('totalPaid').textContent = '$0';
+                return;
+            }
+
+            let totalPaid = 0;
+            container.innerHTML = payments.map(p => {
+                totalPaid += parseFloat(p.amount);
+                return `
+                    <div class="payment-row paid">
+                        <div>
+                            <div style="font-weight: 700;">${p.month}</div>
+                            <div style="font-size: 12px; color: var(--text-light);">${p.notes || 'Via Zelle'}</div>
+                        </div>
+                        <div class="payment-amount">$${parseFloat(p.amount).toFixed(2)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('totalPaid').textContent = '$' + totalPaid.toFixed(2);
+        }
+
         function displayReports() {
             const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
             const container = document.getElementById('reportsContainer');
@@ -646,54 +1048,147 @@
             `).join('');
         }
 
-        // Download functions
-        function downloadFeedbackLog() {
-            const feedback = JSON.parse(localStorage.getItem('hr_feedback') || '[]');
-            if (feedback.length === 0) {
-                alert('No feedback data to download');
-                return;
-            }
-            
-            let csv = 'Date,Mood,Energy,Overall,Comments\n';
-            feedback.forEach(f => {
-                const date = new Date(f.date).toLocaleDateString();
-                csv += `"${date}","${f.mood || ''}","${f.energy || ''}","${f.overall || ''}","${(f.comments || '').replace(/"/g, '""')}"\n`;
-            });
-            
-            downloadCSV(csv, 'habitrewards-feedback');
+        // ========== TASK EDITING ==========
+        function openAddTaskModal(type) {
+            document.getElementById('newTaskType').value = type;
+            document.getElementById('newTaskName').value = '';
+            document.getElementById('newTaskPoints').value = '';
+            const titles = { 
+                daily: 'Add Daily Task', 
+                dailyBonus: 'Add Daily Bonus', 
+                permanentWeekly: 'Add Permanent Weekly',
+                weekly: 'Add Weekly Bonus' 
+            };
+            document.getElementById('addTaskTitle').textContent = titles[type];
+            openModal('addTaskModal');
         }
 
-        function downloadTaskResponses() {
-            const completedLog = JSON.parse(localStorage.getItem('hr_completed_log') || '[]');
-            
-            if (completedLog.length === 0) {
-                alert('No task data to download');
+        function saveNewTask() {
+            const type = document.getElementById('newTaskType').value;
+            const name = document.getElementById('newTaskName').value.trim();
+            const points = parseInt(document.getElementById('newTaskPoints').value);
+
+            if (!name || !points) {
+                alert('Please enter task name and points');
                 return;
             }
+
+            const tasks = getTasks(type);
+            const newId = Math.max(...tasks.map(t => t.id), 0) + 1;
+            tasks.push({ id: newId, name, value: points });
+            saveTasks(type, tasks);
             
-            let csv = 'Date,Task Type,Task Name,Points,Comment\n';
-            completedLog.forEach(entry => {
-                csv += `"${entry.date}","${entry.type}","${entry.task}","${entry.points}","${(entry.comment || '').replace(/"/g, '""')}"\n`;
-            });
-            
-            downloadCSV(csv, 'habitrewards-tasks');
+            closeModal('addTaskModal');
+            displayTasks();
+            alert('Task added successfully!');
         }
 
-        function downloadReports() {
-            const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
-            if (reports.length === 0) {
-                alert('No reports to download');
+        function openEditTask(type, id) {
+            const tasks = getTasks(type);
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('editTaskType').value = type;
+            document.getElementById('editTaskId').value = id;
+            document.getElementById('editTaskName').value = task.name;
+            document.getElementById('editTaskPoints').value = task.value;
+            document.getElementById('editTaskCategory').value = type;
+            openModal('editTaskModal');
+        }
+
+        function saveEditTask() {
+            const originalType = document.getElementById('editTaskType').value;
+            const newType = document.getElementById('editTaskCategory').value;
+            const id = parseInt(document.getElementById('editTaskId').value);
+            const name = document.getElementById('editTaskName').value.trim();
+            const points = parseInt(document.getElementById('editTaskPoints').value);
+
+            if (!name || !points) {
+                alert('Please enter task name and points');
                 return;
             }
-            
-            let csv = 'Date,Task Type,Task Name,Reason,Comment\n';
-            reports.forEach(r => {
-                csv += `"${new Date(r.date).toLocaleDateString()}","${r.taskType}","${r.taskName}","${r.reason}","${(r.comment || '').replace(/"/g, '""')}"\n`;
-            });
-            
-            downloadCSV(csv, 'habitrewards-reports');
+
+            // If moving to a different category
+            if (originalType !== newType) {
+                // Remove from original
+                let oldTasks = getTasks(originalType);
+                oldTasks = oldTasks.filter(t => t.id !== id);
+                saveTasks(originalType, oldTasks);
+                
+                // Add to new category
+                const newTasks = getTasks(newType);
+                const newId = Math.max(...newTasks.map(t => t.id), 0) + 1;
+                newTasks.push({ id: newId, name, value: points });
+                saveTasks(newType, newTasks);
+                
+                closeModal('editTaskModal');
+                displayTasks();
+                alert('Task moved and updated!');
+            } else {
+                // Same category, just update
+                const tasks = getTasks(originalType);
+                const idx = tasks.findIndex(t => t.id === id);
+                if (idx !== -1) {
+                    tasks[idx].name = name;
+                    tasks[idx].value = points;
+                    saveTasks(originalType, tasks);
+                }
+                
+                closeModal('editTaskModal');
+                displayTasks();
+                alert('Task updated!');
+            }
         }
 
+        function deleteTask() {
+            if (!confirm('Delete this task?')) return;
+
+            const type = document.getElementById('editTaskType').value;
+            const id = parseInt(document.getElementById('editTaskId').value);
+            
+            let tasks = getTasks(type);
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks(type, tasks);
+            
+            closeModal('editTaskModal');
+            displayTasks();
+            alert('Task deleted!');
+        }
+
+        // ========== PAYMENTS ==========
+        function openPaymentModal() {
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentNotes').value = '';
+            openModal('paymentModal');
+        }
+
+        function savePayment() {
+            const month = document.getElementById('paymentMonth').value;
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const notes = document.getElementById('paymentNotes').value;
+
+            if (!amount) {
+                alert('Please enter an amount');
+                return;
+            }
+
+            const admin = loadAdminData();
+            if (!admin.payments) admin.payments = [];
+            admin.payments.push({ month, amount, notes, date: new Date().toISOString() });
+            saveAdminData(admin);
+
+            // Reset user balance after payment
+            const state = loadState();
+            state.balance = 0;
+            localStorage.setItem('hr_state', JSON.stringify(state));
+
+            closeModal('paymentModal');
+            displayPayments();
+            displayStats();
+            alert('Payment recorded! User balance reset to 0.');
+        }
+
+        // ========== DOWNLOADS ==========
         function downloadCSV(csv, filename) {
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
@@ -703,17 +1198,56 @@
             a.click();
         }
 
+        function downloadTaskResponses() {
+            const log = JSON.parse(localStorage.getItem('hr_completed_log') || '[]');
+            if (log.length === 0) { alert('No data'); return; }
+            let csv = 'Date,Type,Task,Points,Comment\n';
+            log.forEach(e => csv += `"${e.date}","${e.type}","${e.task}","${e.points}","${(e.comment||'').replace(/"/g,'""')}"\n`);
+            downloadCSV(csv, 'habitrewards-tasks');
+        }
+
+        function downloadFeedbackLog() {
+            const fb = JSON.parse(localStorage.getItem('hr_feedback') || '[]');
+            if (fb.length === 0) { alert('No data'); return; }
+            let csv = 'Date,Mood,Energy,Overall,Comments\n';
+            fb.forEach(f => csv += `"${new Date(f.date).toLocaleDateString()}","${f.mood||''}","${f.energy||''}","${f.overall||''}","${(f.comments||'').replace(/"/g,'""')}"\n`);
+            downloadCSV(csv, 'habitrewards-feedback');
+        }
+
+        function downloadReports() {
+            const rpts = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+            if (rpts.length === 0) { alert('No data'); return; }
+            let csv = 'Date,Type,Task,Reason,Comment\n';
+            rpts.forEach(r => csv += `"${new Date(r.date).toLocaleDateString()}","${r.taskType}","${r.taskName}","${r.reason}","${(r.comment||'').replace(/"/g,'""')}"\n`);
+            downloadCSV(csv, 'habitrewards-reports');
+        }
+
+        function downloadAllData() {
+            const data = {
+                state: loadState(),
+                admin: loadAdminData(),
+                completedLog: JSON.parse(localStorage.getItem('hr_completed_log') || '[]'),
+                feedback: JSON.parse(localStorage.getItem('hr_feedback') || '[]'),
+                reports: JSON.parse(localStorage.getItem('hr_reports') || '[]')
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `habitrewards-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
         function clearReports() {
-            if (confirm('Clear all task reports?')) {
+            if (confirm('Clear all reports?')) {
                 localStorage.removeItem('hr_reports');
                 displayReports();
-                alert('Reports cleared');
             }
         }
 
         function resetUserData() {
-            if (confirm('⚠️ This will DELETE ALL user data including:\n\n• Points balance\n• Streak progress\n• Completed tasks\n• Achievements\n\nAre you sure?')) {
-                if (confirm('Really delete everything? This cannot be undone!')) {
+            if (confirm('⚠️ DELETE ALL user data?\n\nThis removes:\n• Points & balance\n• Streak\n• Completed tasks\n• Achievements')) {
+                if (confirm('Are you absolutely sure?')) {
                     localStorage.removeItem('hr_state');
                     localStorage.removeItem('hr_date');
                     localStorage.removeItem('hr_week');
@@ -723,15 +1257,43 @@
                     displayStats();
                     displayReports();
                     displayLevels();
-                    alert('All user data has been reset');
+                    alert('All user data reset');
                 }
             }
         }
 
-        // Initialize
+        // ========== SETTINGS ACTIONS ==========
+        function contactDeveloper() {
+            const subject = encodeURIComponent('HabitRewards - Support Request');
+            const body = encodeURIComponent('Hi,\n\nI have a question about HabitRewards:\n\n');
+            window.location.href = `mailto:developer@habitrewards.app?subject=${subject}&body=${body}`;
+        }
+
+        function shareApp() {
+            const url = 'https://habitrewards-131.web.app';
+            if (navigator.share) {
+                navigator.share({ title: 'HabitRewards', text: 'Check out this habit tracking app!', url });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('Link copied to clipboard!\n\n' + url);
+            }
+        }
+
+        function referFriend() {
+            const msg = encodeURIComponent('Hey! Check out HabitRewards - a fun app that pays you for building good habits. https://habitrewards-131.web.app');
+            if (navigator.share) {
+                navigator.share({ title: 'HabitRewards', text: msg });
+            } else {
+                window.location.href = `sms:?body=${msg}`;
+            }
+        }
+
+        // ========== INIT ==========
         displayStats();
-        displayReports();
+        displayTasks();
         displayLevels();
+        displayPayments();
+        displayReports();
     </script>
 </body>
 </html>
