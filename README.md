@@ -2,104 +2,175 @@
 
 A gamified habit-tracking app designed to encourage daily positive behaviors through monetary rewards. Built with a fun, Duolingo-inspired interface.
 
+**Live App:** https://habitrewards-131.web.app
+
 ---
 
 ## Manager's Guide
 
-This guide explains how HabitRewards works so you can effectively manage and motivate your user.
+This guide explains how HabitRewards works so you can effectively manage and motivate Stu.
 
-### How the App Works
+### Point System
 
-HabitRewards is a simple reward-based system where your user earns money by completing daily habits and bonus challenges. The app resets daily, giving fresh opportunities to earn each day.
+**100 points = $1.00**
 
-### Daily Tasks
+Points are earned by completing tasks and bonuses. Payouts are sent via Zelle at the end of each month.
 
-Your user has a set of pre-configured daily habits to complete:
+---
 
-| Task | Reward |
-|------|--------|
-| Clean up kitchen table | $1.00 |
-| Go for a walk | $1.50 |
-| Play tennis / pickleball | $2.50 |
-| Do Duolingo | $0.75 |
-| Do crossword puzzle | $1.00 |
-| Charge devices overnight | $0.50 |
+## Levels & Progression
 
-**Maximum daily earnings from tasks: $7.25**
+Stu earns levels based on **total lifetime points earned**:
 
-Each task can only be completed once per day. When the user taps a task, they can optionally:
-- Upload a photo as proof
-- Add a comment/note
+| Level | Badge | Points Required | $ Equivalent |
+|-------|-------|-----------------|--------------|
+| 🌱 Beginner | Starting out | 0 pts | $0.00 |
+| 🌱 Starter | First milestone | 100 pts | $1.00 |
+| 🌿 Regular | Getting consistent | 500 pts | $5.00 |
+| 🌟 Pro | Solid habits | 1,000 pts | $10.00 |
+| ⭐ Expert | Dedicated | 2,500 pts | $25.00 |
+| 🏆 Champion | Master level! | 5,000 pts | $50.00 |
 
-### Weekly Bonus Challenges
+The app shows "near-miss" messages when close to the next level (e.g., "Only 15 pts to 🌿 Regular!").
 
-After completing ALL daily tasks, bonus challenges unlock:
+---
 
-**Permanent Weekly Bonuses:**
-- Play tennis/pickleball 3x this week → $5.00 (progress tracked)
-- Get rid of 3 items from office → $3.00
+## Daily Tasks
 
-**Rotating Weekly Bonus:**
-One additional bonus rotates each week from a pool including:
-- Take your wife out to lunch/dinner ($5.00)
-- Try a new restaurant ($3.00)
-- Tell one of your kids you're thinking of them ($2.00)
-- Do something nice for your wife ($3.00)
-- Find a new show on Netflix/Amazon/Apple TV ($2.00)
-- Use the microwave ($1.00)
-- And more...
+These 4 tasks appear every day:
 
-Weekly bonuses reset at the start of each week.
+| Task | Points | $ Value |
+|------|--------|---------|
+| 🚶 Go for a walk | 25 pts | $0.25 |
+| 🎾 Play tennis / pickleball | 10 pts | $0.10 |
+| 🦉 Do a Duolingo lesson | 75 pts | $0.75 |
+| 📝 Do a crossword puzzle | 50 pts | $0.50 |
 
-### Daily Survey
+**Daily task total: 160 pts ($1.60)**
 
-After completing at least one task, a quick mood survey appears. Completing it earns an extra **$0.10**.
+---
 
-### Streaks
+## Daily Bonus Task
 
-The app tracks consecutive days with activity. The streak counter displays prominently to encourage consistency.
+One rotating bonus task appears each day (different every day):
 
-### Cash Out Options
+| Sample Bonus Tasks | Points |
+|--------------------|--------|
+| 📸 Take a photo of something interesting | 50 pts |
+| 🧹 Organize one drawer or shelf | 50 pts |
+| 📞 Call or text a friend | **100 pts** |
+| 🧘 Do 5 minutes of stretching | 50 pts |
+| 📖 Read for 10 minutes | 50 pts |
+| ...and 12 more rotating options | 50 pts each |
 
-When your user wants to collect their earnings, they have two options:
+Most daily bonuses are worth **50 pts ($0.50)**. Calling a friend is worth **100 pts ($1.00)**.
 
-1. **🐷 Save in Jar** - Moves balance to a virtual savings jar (for larger goals)
-2. **💸 Pay Me Now** - Request immediate payment
+---
 
-### Rewards Shop
+## Weekly Challenges
 
-Users can also spend their balance directly on preset rewards:
-- 🍦 Ice Cream - $5.00
-- 🎬 Movie Night - $10.00
-- ✨ Custom Reward - User can propose something specific
+One rotating challenge appears each week:
 
-### Task Proposals
+| Weekly Challenge | Points | $ Value |
+|------------------|--------|---------|
+| 💿 Sell your coins or vinyls | 500 pts | $5.00 |
+| 💑 Take your wife out to lunch or dinner | 500 pts | $5.00 |
+| 🍽️ Try a new restaurant | 300 pts | $3.00 |
+| 📦 Get rid of 3 items from office | 300 pts | $3.00 |
+| ❤️ Do something nice for your wife | 300 pts | $3.00 |
+| 🍔 Go out to lunch with tennis friends | 300 pts | $3.00 |
+| 👕 Donate clothing items | 250 pts | $2.50 |
+| 👟 Donate sneakers | 250 pts | $2.50 |
+| 📺 Find a new show on Netflix/Amazon/Apple TV | 200 pts | $2.00 |
+| 💌 Tell one of your kids you are thinking of them | 200 pts | $2.00 |
+| 🤖 Use ChatGPT to solve a problem | 200 pts | $2.00 |
+| 📞 Call a friend or family member | 200 pts | $2.00 |
+| 🕵️ Apply for a Mystery Shop | 200 pts | $2.00 |
+| 🛒 Check Aisle for grocery deals | 150 pts | $1.50 |
+| 🛍️ Buy a new item from the grocery store | 150 pts | $1.50 |
+| 🍿 Use the microwave | 50 pts | $0.50 |
 
-Users can propose new tasks using the "Propose New Task" button. They submit:
-- Task name
-- Suggested dollar value
+---
 
-**As the manager, you'll receive these proposals and can approve/modify them.**
+## Gamification Features (Casino-Style!)
 
-### Tips for Managers
+### 🎁 Daily Login Bonus
+- **+25 pts** just for opening the app each day
+- Shows a celebratory animation
 
-1. **Be consistent with payouts** - Honor the earnings to maintain trust and motivation
-2. **Celebrate streaks** - Acknowledge milestone streak days (7, 14, 30 days)
-3. **Review proposals promptly** - Quick responses keep engagement high
-4. **Adjust task values** - If a task is too easy or hard, discuss modifying the reward
-5. **Add variety** - Consider adding seasonal or special event tasks to keep things fresh
-6. **Watch for patterns** - Note which tasks are consistently completed vs. skipped
+### 🔥 Streak Multiplier
+- 7+ day streak: **1.5x points** on all tasks
+- 14+ day streak: **2x points** on all tasks
 
-### Data Storage
+### 🍀 Lucky Day
+- 10% chance each day is a "Lucky Day"
+- All tasks worth **1.5x points** that day
+- Banner shows at the top when active
 
-All data is stored locally in the browser's localStorage. This means:
-- Data persists between sessions on the same device/browser
-- Clearing browser data will reset progress
-- No cloud sync between devices
+### 🎲 Random Bonus
+- 10% chance on any task completion to get **2x points**
+- Triggers coin rain animation when hit!
 
-### Technical Notes
+### 🎰 Bonus Spin Wheel
+- Unlocks when ALL daily tasks are completed
+- One spin per day
+- Prizes: 10, 25, 50, 75, 100, or 150 pts
+- Jackpots are rare but exciting!
 
-- The app works offline once loaded
-- Supports dark mode (toggle in header)
-- Mobile-friendly responsive design
-- No account/login required
+### 🏆 Achievements
+Unlock badges at milestones:
+- 💵 **First Dollar!** - Earn 100 pts total
+- 🔥 **Week Warrior!** - 7 day streak
+- 🏆 **Monthly Master!** - 30 day streak
+- 💰 **Big Earner!** - Earn 1,000 pts total
+
+---
+
+## Sample Earnings Calculation
+
+**Typical Day (no bonuses):**
+- Walk: 25 pts
+- Tennis: 10 pts
+- Duolingo: 75 pts
+- Crossword: 50 pts
+- Daily bonus: 50 pts
+- Login bonus: 25 pts
+- **Total: 235 pts ($2.35)**
+
+**With 7-day streak (1.5x multiplier):**
+- Tasks: 160 × 1.5 = 240 pts
+- Daily bonus: 50 × 1.5 = 75 pts
+- Login bonus: 25 pts
+- **Total: 340 pts ($3.40)**
+
+**Lucky Day + Spin Jackpot:**
+- Could earn **500+ pts ($5+)** in one day!
+
+---
+
+## Settings (⚙️ Icon)
+
+Accessed via gear icon in top right:
+- View current balance with $ conversion
+- Request early payout
+- Suggest new tasks
+
+---
+
+## Tips for Managers
+
+1. **Be consistent with payouts** - Send Zelle at month end as promised
+2. **Celebrate level-ups** - Acknowledge when Stu reaches a new level
+3. **Watch for streaks** - Celebrate 7-day, 14-day, 30-day milestones
+4. **Review task suggestions** - Stu can propose new tasks via settings
+5. **Adjust as needed** - Point values can be modified if needed
+
+---
+
+## Technical Notes
+
+- Data stored in browser localStorage
+- Works offline once loaded
+- Dark mode available (moon icon)
+- Mobile-friendly design
+- No login required

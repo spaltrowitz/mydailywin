@@ -733,6 +733,16 @@
                 state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
                 localStorage.setItem('hr_date', today);
                 saveState();
+            } else {
+                // Always sync task values from config (in case they changed)
+                state.tasks.forEach(t => {
+                    const configTask = DAILY_TASKS.find(d => d.id === t.id);
+                    if (configTask) {
+                        t.value = configTask.value;
+                        t.name = configTask.name;
+                    }
+                });
+                saveState();
             }
         }
 
