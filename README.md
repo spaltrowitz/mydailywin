@@ -76,6 +76,7 @@ One of these rotates each day (17 total options):
 | 15 | 📱 Delete an unused app | 50 pts | $0.50 | ✅ |
 | 16 | 📧 Clear out old emails | 50 pts | $0.50 | ✅ |
 | 17 | 📝 Make a to-do list for tomorrow | 50 pts | $0.50 | ✅ |
+| 18 | 🚗 Clean out the car | 50 pts | $0.50 | ✅ |
 
 ---
 
@@ -109,14 +110,7 @@ One of these rotates each week (18 total options), plus a permanent tennis count
 | 16 | 🛒 Check Aisle for grocery deals | 150 pts | $1.50 | ✅ |
 | 17 | 🛍️ Buy a new item from the grocery store | 150 pts | $1.50 | ✅ |
 | 18 | 🍿 Use the microwave | 50 pts | $0.50 | ✅ |
-
-### Backlog Tasks (Not Active - Can Add Later)
-| Task | Points | Status |
-|------|--------|--------|
-| 🚗 Clean out the car | 200 pts | ❌ Disabled |
-| 🗑️ Throw away 5 items you no longer need | 200 pts | ❌ Disabled |
-| 🛏️ Make the bed every day this week | 300 pts | ❌ Disabled |
-| 🧽 Clean a bathroom | 300 pts | ❌ Disabled |
+| 19 | 🗑️ Throw away 5 items you no longer need | 200 pts | $2.00 | ✅ |
 
 ---
 
