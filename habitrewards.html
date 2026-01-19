@@ -30,11 +30,13 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: var(--bg);
+            background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 50%, #f3e5f5 100%);
+            background-attachment: fixed;
             color: var(--text);
             padding-bottom: 120px;
             overflow-x: hidden;
             transition: background 0.3s, color 0.3s;
+            min-height: 100vh;
         }
 
         body.dark-mode {
@@ -42,6 +44,42 @@
             --card-bg: #202f36;
             --text: #e5e5e5;
             --text-light: #888;
+            background: linear-gradient(135deg, #1a2f1a 0%, #131f24 50%, #1f1a2f 100%);
+        }
+
+        /* Desktop wrapper for phone-like appearance */
+        @media (min-width: 700px) {
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 30px;
+            }
+            body::before {
+                content: '🏆 HabitRewards';
+                display: block;
+                font-size: 28px;
+                font-weight: 800;
+                color: var(--primary);
+                margin-bottom: 20px;
+                text-shadow: 0 2px 10px rgba(88, 204, 2, 0.3);
+            }
+            header, .container {
+                max-width: 420px;
+                width: 100%;
+            }
+            header {
+                border-radius: 20px 20px 0 0;
+            }
+            .container {
+                background: var(--bg);
+                border-radius: 0 0 20px 20px;
+                padding-bottom: 40px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            }
+            body.dark-mode .container {
+                background: var(--bg);
+            }
         }
 
         /* ========== ANIMATIONS ========== */
