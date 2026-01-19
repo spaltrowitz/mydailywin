@@ -199,3 +199,40 @@ Accessed via gear icon in top right:
 - Dark mode available (moon icon)
 - Mobile-friendly design
 - Admin Mode for customizing tasks and viewing progress
+
+---
+
+## External Services
+
+### Firebase (Authentication & Hosting)
+
+**Project:** habitrewards-131  
+**Console:** https://console.firebase.google.com/project/habitrewards-131
+
+| Service | Purpose | When to Use |
+|---------|---------|-------------|
+| **Hosting** | Serves the app at habitrewards-131.web.app | Deploy with `firebase deploy --only hosting` |
+| **Authentication** | Google Sign-In & email/password login | Manage users in Firebase Console → Authentication |
+
+**Deploying Updates:**
+```bash
+firebase deploy --only hosting
+```
+
+### EmailJS (Email Invitations)
+
+**Dashboard:** https://dashboard.emailjs.com  
+**Free Tier:** 200 emails/month
+
+| Setting | Value |
+|---------|-------|
+| Public Key | `zj5fBo7DU8vtJg44g` |
+| Service ID | `service_lzv2w8n` |
+| Template ID | `template_ka99fef` |
+
+**When to Use:**
+- Edit email template: Dashboard → Email Templates → admin_invite
+- Check email history: Dashboard → Email History
+- Monitor usage: Dashboard → Account (shows emails sent this month)
+
+**Template Source:** See [email-templates/admin-invite.html](email-templates/admin-invite.html)

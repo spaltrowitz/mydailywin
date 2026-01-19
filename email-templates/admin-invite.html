@@ -1,0 +1,73 @@
+<!--
+  HabitRewards Admin Invitation Email Template
+  
+  Used with EmailJS to send admin invitations.
+  
+  Template Variables (set automatically by the app):
+    {{to_email}}      - Recipient's email address
+    {{to_name}}       - Recipient's name (derived from email)
+    {{from_name}}     - Sender's display name
+    {{profile_name}}  - Profile being managed (e.g., "Stu")
+    {{admin_url}}     - Direct link to admin page
+    {{login_url}}     - Link to login page
+    {{guide_url}}     - Link to admin guide
+    {{app_url}}       - Base app URL
+  
+  EmailJS Settings:
+    Service ID:  service_lzv2w8n
+    Template ID: template_ka99fef
+    To Email:    {{to_email}}
+    Subject:     {{from_name}} invited you to manage {{profile_name}}'s HabitRewards
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f7f7f7;">
+  
+  <div style="text-align: center; margin-bottom: 30px;">
+    <a href="https://habitrewards-131.web.app" style="text-decoration: none;">
+      <h1 style="color: #58cc02; margin: 0; font-size: 28px;">HabitRewards</h1>
+      <p style="color: #777; margin-top: 5px; font-size: 14px;">Gamified Habit Tracking</p>
+    </a>
+  </div>
+  
+  <div style="background: linear-gradient(135deg, #58cc02 0%, #58a700 100%); border-radius: 12px; padding: 30px; color: white; margin-bottom: 20px; text-align: center;">
+    <h2 style="margin: 0 0 15px 0;">You're Invited! 🎉</h2>
+    <p style="margin: 0; font-size: 16px; line-height: 1.6;">
+      <strong>{{from_name}}</strong> invited you to help manage<br><strong>{{profile_name}}'s</strong> HabitRewards profile.
+    </p>
+  </div>
+  
+  <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid #e5e5e5;">
+    <h3 style="color: #3c3c3c; margin: 0 0 15px 0;">As an admin, you can:</h3>
+    <ul style="color: #555; padding-left: 0; margin: 0; list-style: none;">
+      <li style="margin-bottom: 10px;">✅ Create and manage daily habits</li>
+      <li style="margin-bottom: 10px;">🎁 Set up rewards they can earn</li>
+      <li style="margin-bottom: 10px;">📊 Track progress and streaks</li>
+      <li style="margin-bottom: 0;">💰 Manage their points balance</li>
+    </ul>
+  </div>
+  
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="{{admin_url}}" 
+       style="display: inline-block; background: linear-gradient(135deg, #58cc02 0%, #58a700 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 30px; font-weight: 600; font-size: 16px;">
+      Accept Invitation
+    </a>
+  </div>
+  
+  <p style="color: #777; font-size: 14px; text-align: center;">
+    New to HabitRewards? <a href="{{guide_url}}" style="color: #58cc02;">Read our Admin Guide</a> to learn more.
+  </p>
+  
+  <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 30px 0;">
+  
+  <p style="color: #999; font-size: 12px; text-align: center; margin: 0;">
+    This invitation was sent by {{from_name}} via 
+    <a href="https://habitrewards-131.web.app" style="color: #58cc02;">HabitRewards</a>.
+    <br>If you weren't expecting this, you can safely ignore it.
+  </p>
+  
+</body>
+</html>
