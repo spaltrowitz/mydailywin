@@ -409,7 +409,6 @@
         // Routine tasks = lower value, Stretch goals = higher value
         const DAILY_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 2, name: "🎾 Play tennis / pickleball", value: 10 },
             { id: 3, name: "🦉 Do a Duolingo lesson", value: 75 },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 }
         ];
@@ -446,6 +445,7 @@
         // Weekly bonus tasks (1 selected per week) - exempt from daily cap
         // Fun/reward-focused activities (100 pts = $1.00)
         const WEEKLY_BONUSES = [
+            { id: 300, name: "🎾 Play tennis / pickleball 3x this week", value: 30, isWeekly: true, isCounter: true, target: 3, counterId: 'tennis_weekly' },
             { id: 301, name: "💿 Sell your coins or vinyls", value: 500, isWeekly: true },
             { id: 302, name: "📺 Find a new show or movie to watch on Netflix", value: 200, isWeekly: true },
             { id: 303, name: "📺 Find a new show or movie to watch on Amazon Video", value: 200, isWeekly: true },

@@ -41,16 +41,15 @@ The app shows "near-miss" messages when close to the next level (e.g., "Only 15 
 
 ## Daily Tasks (Complete List)
 
-These 4 tasks appear every day:
+These 3 tasks appear every day:
 
 | # | Task | Points | $ Value | Approved |
 |---|------|--------|---------|----------|
 | 1 | 🚶 Go for a walk | 25 pts | $0.25 | ✅ |
-| 2 | 🎾 Play tennis / pickleball | 10 pts | $0.10 | ✅ |
-| 3 | 🦉 Do a Duolingo lesson | 75 pts | $0.75 | ✅ |
-| 4 | 📝 Do a crossword puzzle | 50 pts | $0.50 | ✅ |
+| 2 | 🦉 Do a Duolingo lesson | 75 pts | $0.75 | ✅ |
+| 3 | 📝 Do a crossword puzzle | 50 pts | $0.50 | ✅ |
 
-**Daily task total: 160 pts ($1.60)**
+**Daily task total: 150 pts ($1.50)**
 
 ---
 
@@ -82,8 +81,14 @@ One of these rotates each day (17 total options):
 
 ## Weekly Challenges (Complete List)
 
-One of these rotates each week (18 total options):
+One of these rotates each week (18 total options), plus a permanent tennis counter:
 
+### Permanent Weekly Task
+| Task | Points | $ Value | Type |
+|------|--------|---------|------|
+| 🎾 Play tennis / pickleball 3x this week | 30 pts | $0.30 | Counter (tap each time) |
+
+### Rotating Weekly Challenges
 | # | Task | Points | $ Value | Approved |
 |---|------|--------|---------|----------|
 | 1 | 💿 Sell your coins or vinyls | 500 pts | $5.00 | ✅ |
