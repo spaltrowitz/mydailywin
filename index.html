@@ -118,7 +118,12 @@
             display: inline-flex; align-items: center; gap: 8px;
             background: #fff3cd; color: #856404; padding: 8px 16px;
             border-radius: 20px; font-weight: 700; font-size: 14px;
-            margin-bottom: 10px; animation: bounce 2s infinite;
+            margin-bottom: 10px; animation: gentle-glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes gentle-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 200, 0, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(255, 200, 0, 0.6); }
         }
         
         .balance-hero {
@@ -238,6 +243,12 @@
         <div class="balance-hero">
             <div class="hero-emoji hero-1">💰</div>
             <div class="hero-emoji hero-2">💸</div>
+            
+            <!-- Level Badge -->
+            <div id="levelBadge" style="display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 10px;">
+                🌱 Beginner
+            </div>
+            
             <div class="balance-title">Total Points</div>
             <div class="balance-amount" id="todayBalance">0 pts</div>
             <div style="margin-top: 10px; font-size: 12px; opacity: 0.8; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block;">
@@ -245,6 +256,18 @@
             </div>
             <div style="margin-top: 15px;">
                 <button onclick="openCashOut()" style="background: white; color: var(--primary); border: none; border-radius: 12px; padding: 12px 24px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 16px;">💸 Cash Out</button>
+            </div>
+        </div>
+
+        <!-- Daily Progress -->
+        <div class="card" style="padding: 16px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: 700;">Today's Progress</span>
+                <span id="progressText" style="font-weight: 700; color: var(--primary);">0/4 tasks</span>
+            </div>
+            <div style="height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden;">
+                <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--primary), #4ade80); width: 0%; transition: width 0.5s ease; position: relative;">
+                </div>
             </div>
         </div>
 
@@ -348,11 +371,12 @@
     <script>
         // ========== CONFIG & STATE ==========
         // Points system: 100 points = $1.00
+        // Routine tasks = lower value, Stretch goals = higher value
         const DAILY_TASKS = [
-            { id: 1, name: "🚶 Go for a walk", value: 100 },
-            { id: 2, name: "🎾 Play tennis / pickleball", value: 200 },
+            { id: 1, name: "🚶 Go for a walk", value: 25 },
+            { id: 2, name: "🎾 Play tennis / pickleball", value: 25 },
             { id: 3, name: "🦉 Do Duolingo", value: 75 },
-            { id: 4, name: "📝 Do crossword puzzle", value: 100 }
+            { id: 4, name: "📝 Do crossword puzzle", value: 50 }
         ];
 
         // Daily bonus tasks (1 rotates each day) - fun extras!
@@ -453,6 +477,7 @@
             streak: 0,
             lastStreakDate: null,
             balance: 0,
+            totalEarned: 0,
             history: [],
             mode: localStorage.getItem('theme') || 'light',
             currentTaskId: null
@@ -486,6 +511,7 @@
             if (!state.weeklyCounters) state.weeklyCounters = {};
             if (!state.weeklyBonusesCompleted) state.weeklyBonusesCompleted = [];
             if (state.dailyBonusCompleted === undefined) state.dailyBonusCompleted = null;
+            if (state.totalEarned === undefined) state.totalEarned = 0;
         }
 
         function saveState() {
@@ -515,11 +541,32 @@
             document.getElementById('greeting').textContent = greeting;
         }
 
+        // ========== LEVELS ==========
+        function getLevel(totalPoints) {
+            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700" };
+            if (totalPoints >= 2500) return { name: "⭐ Expert", color: "#c0c0c0" };
+            if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32" };
+            if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80" };
+            if (totalPoints >= 100) return { name: "🌱 Starter", color: "#86efac" };
+            return { name: "🌱 Beginner", color: "#bbf7d0" };
+        }
+
         // ========== RENDER ==========
         function render() {
             const pts = Math.floor(state.balance);
             document.getElementById('todayBalance').textContent = `${pts} pts`;
             document.getElementById('streakDays').textContent = state.streak;
+            
+            // Level
+            const level = getLevel(state.totalEarned || 0);
+            document.getElementById('levelBadge').textContent = level.name;
+            
+            // Daily progress
+            const completed = state.tasks.filter(t => t.completed).length;
+            const total = state.tasks.length;
+            const pct = total > 0 ? (completed / total) * 100 : 0;
+            document.getElementById('progressText').textContent = `${completed}/${total} tasks`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
             
             // Date
             const opts = { weekday: 'long', month: 'long', day: 'numeric' };
@@ -632,6 +679,7 @@
                 task.completed = true;
                 task.proof = document.getElementById('taskComment').value; // In real app, upload photo
                 state.balance += task.value;
+                state.totalEarned += task.value;
                 
                 checkStreak();
                 saveState();
@@ -647,6 +695,7 @@
                 const bonus = getDailyBonus();
                 state.dailyBonusCompleted = dayNum;
                 state.balance += bonus.value;
+                state.totalEarned += bonus.value;
                 checkStreak();
                 saveState();
                 render();
@@ -668,6 +717,7 @@
             if (!state.weeklyBonusesCompleted.includes(bonus.id)) {
                 state.weeklyBonusesCompleted.push(bonus.id);
                 state.balance += bonus.value;
+                state.totalEarned += bonus.value;
                 saveState();
                 render();
                 triggerConfetti();
@@ -683,6 +733,7 @@
             // Check if target reached
             if (state.weeklyCounters[bonus.counterId] >= bonus.target) {
                 state.balance += bonus.value;
+                state.totalEarned += bonus.value;
                 triggerConfetti();
             }
             
@@ -741,7 +792,8 @@
 
         function submitSurvey() {
              if (!currentRating) { alert('Please tap a rating emoji!'); return; }
-             state.balance += 10;  // 10 pts = $0.01
+             state.balance += 10;  // 10 pts = $0.10
+             state.totalEarned += 10;
              alert('Thanks for the feedback! +10 pts');
              document.getElementById('surveySection').style.display = 'none'; // Hide after submit
              saveState();
