@@ -761,7 +761,11 @@
 
         // ========== LEVELS ==========
         function getLevel(totalPoints) {
-            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700", next: null, nextPts: null };
+            if (totalPoints >= 100000) return { name: "🔥 Hall of Fame", color: "#ff4500", next: null, nextPts: null };
+            if (totalPoints >= 50000) return { name: "🌟 Superstar", color: "#ff69b4", next: "🔥 Hall of Fame", nextPts: 100000 };
+            if (totalPoints >= 25000) return { name: "👑 Legend", color: "#9400d3", next: "🌟 Superstar", nextPts: 50000 };
+            if (totalPoints >= 10000) return { name: "💎 Diamond", color: "#00bfff", next: "👑 Legend", nextPts: 25000 };
+            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700", next: "💎 Diamond", nextPts: 10000 };
             if (totalPoints >= 2500) return { name: "⭐ Expert", color: "#c0c0c0", next: "🏆 Champion", nextPts: 5000 };
             if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32", next: "⭐ Expert", nextPts: 2500 };
             if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80", next: "🌟 Pro", nextPts: 1000 };

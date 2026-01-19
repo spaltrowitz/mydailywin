@@ -22,14 +22,18 @@ Points are earned by completing tasks and bonuses. Payouts are sent via Zelle at
 
 Stu earns levels based on **total lifetime points earned**:
 
-| Level | Badge | Points Required | $ Equivalent |
-|-------|-------|-----------------|--------------|
-| 🌱 Beginner | Starting out | 0 pts | $0.00 |
-| 🌱 Starter | First milestone | 100 pts | $1.00 |
-| 🌿 Regular | Getting consistent | 500 pts | $5.00 |
-| 🌟 Pro | Solid habits | 1,000 pts | $10.00 |
-| ⭐ Expert | Dedicated | 2,500 pts | $25.00 |
-| 🏆 Champion | Master level! | 5,000 pts | $50.00 |
+| Level | Badge | Points Required | $ Equivalent | Est. Time |
+|-------|-------|-----------------|--------------|-----------|
+| 🌱 Beginner | Starting out | 0 pts | $0 | Day 1 |
+| 🌱 Starter | First milestone | 100 pts | $1 | Day 1 |
+| 🌿 Regular | Getting consistent | 500 pts | $5 | ~Day 3 |
+| 🌟 Pro | Solid habits | 1,000 pts | $10 | ~Week 1 |
+| ⭐ Expert | Dedicated | 2,500 pts | $25 | ~Week 2 |
+| 🏆 Champion | Master level | 5,000 pts | $50 | ~Week 3-4 |
+| 💎 Diamond | Elite status | 10,000 pts | $100 | ~2 months |
+| 👑 Legend | Legendary | 25,000 pts | $250 | ~4-5 months |
+| 🌟 Superstar | Superstar | 50,000 pts | $500 | ~8-9 months |
+| 🔥 Hall of Fame | Ultimate! | 100,000 pts | $1,000 | ~1.5 years |
 
 The app shows "near-miss" messages when close to the next level (e.g., "Only 15 pts to 🌿 Regular!").
 

@@ -60,62 +60,19 @@
 
         /* ========== UI COMPONENTS ========== */
         header {
-            background: linear-gradient(135deg, var(--primary) 0%, #4ade80 50%, #22d3ee 100%);
-            padding: 16px 20px;
+            background: var(--card-bg);
+            padding: 15px 20px;
             position: sticky;
             top: 0;
             z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 20px rgba(88, 204, 2, 0.3);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
 
-        .brand { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            font-weight: 800; 
-            font-size: 22px; 
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .brand-logo {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.1);
-        }
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.1;
-        }
-        .brand-title { font-size: 20px; font-weight: 800; }
-        .brand-tagline { font-size: 11px; font-weight: 600; opacity: 0.9; }
-        .header-btn { 
-            background: rgba(255,255,255,0.2); 
-            border: none; 
-            font-size: 20px; 
-            cursor: pointer; 
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .header-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
-        }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: var(--primary); }
         .theme-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
@@ -281,15 +238,11 @@
 
     <header>
         <div class="brand">
-            <div class="brand-logo">🏆</div>
-            <div class="brand-text">
-                <span class="brand-title">HabitRewards</span>
-                <span class="brand-tagline">Earn while you grow</span>
-            </div>
+            <span>🎯</span> HabitRewards
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="header-btn" onclick="openModal('settingsModal')" title="Settings">⚙️</button>
-            <button class="header-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="theme-btn" onclick="openModal('settingsModal')" title="Settings">⚙️</button>
+            <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
         </div>
     </header>
 
@@ -502,16 +455,16 @@
             { id: 303, name: "📺 Find a new show or movie to watch on Amazon Video", value: 200, isWeekly: true },
             { id: 304, name: "📺 Find a new show or movie to watch on Apple TV", value: 200, isWeekly: true },
             { id: 305, name: "🍿 Use the microwave", value: 50, isWeekly: true },
-            { id: 306, name: "🛒 Check Aisle for grocery deals", value: 150, isWeekly: true, desc: "Use the Aisle app (red logo) to find grocery store deals" },
+            { id: 306, name: "🛒 Check Aisle for grocery deals", value: 150, isWeekly: true },
             { id: 307, name: "💑 Take your wife out to lunch or dinner", value: 500, isWeekly: true },
             { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true },
             { id: 309, name: "💌 Tell one of your kids you are thinking of them", value: 200, isWeekly: true },
             { id: 310, name: "❤️ Do something nice for your wife", value: 300, isWeekly: true },
             { id: 311, name: "🛍️ Buy a new item from the grocery store", value: 150, isWeekly: true },
             { id: 312, name: "🍔 Go out to lunch with tennis friends", value: 300, isWeekly: true },
-            { id: 313, name: "🤖 Use ChatGPT to solve a problem", value: 200, isWeekly: true, desc: "e.g. How long to microwave a sweet potato? Is this email a scam?" },
+            { id: 313, name: "🤖 Use ChatGPT to solve a problem (chat.openai.com)", value: 200, isWeekly: true },
             { id: 314, name: "📞 Call a friend or family member", value: 200, isWeekly: true },
-            { id: 315, name: "📦 Get rid of 3 items from office", value: 300, isWeekly: true, desc: "Donate or trash items you no longer need" },
+            { id: 315, name: "📦 Get rid of 3 items from office", value: 300, isWeekly: true },
             { id: 316, name: "👕 Donate clothing items", value: 250, isWeekly: true },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true },
             { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true }
@@ -808,7 +761,11 @@
 
         // ========== LEVELS ==========
         function getLevel(totalPoints) {
-            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700", next: null, nextPts: null };
+            if (totalPoints >= 100000) return { name: "🔥 Hall of Fame", color: "#ff4500", next: null, nextPts: null };
+            if (totalPoints >= 50000) return { name: "🌟 Superstar", color: "#ff69b4", next: "🔥 Hall of Fame", nextPts: 100000 };
+            if (totalPoints >= 25000) return { name: "👑 Legend", color: "#9400d3", next: "🌟 Superstar", nextPts: 50000 };
+            if (totalPoints >= 10000) return { name: "💎 Diamond", color: "#00bfff", next: "👑 Legend", nextPts: 25000 };
+            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700", next: "💎 Diamond", nextPts: 10000 };
             if (totalPoints >= 2500) return { name: "⭐ Expert", color: "#c0c0c0", next: "🏆 Champion", nextPts: 5000 };
             if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32", next: "⭐ Expert", nextPts: 2500 };
             if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80", next: "🌟 Pro", nextPts: 1000 };
@@ -883,12 +840,9 @@
             const weeklyBonuses = getWeeklyBonuses();
             weeklyBonuses.forEach(b => {
                 const isCompleted = state.weeklyBonusesCompleted.includes(b.id);
-                const btnWrapper = document.createElement('div');
-                btnWrapper.style.marginTop = '10px';
-                
                 const btn = document.createElement('button');
                 btn.className = 'btn ' + (isCompleted ? 'btn-ghost' : 'btn-purple');
-                btn.style.width = '100%';
+                btn.style.marginTop = '10px';
                 
                 if (b.isCounter) {
                     const count = state.weeklyCounters[b.counterId] || 0;
@@ -906,17 +860,7 @@
                         btn.onclick = () => completeWeeklyBonus(b);
                     }
                 }
-                btnWrapper.appendChild(btn);
-                
-                // Add description subtext if exists
-                if (b.desc && !isCompleted) {
-                    const descEl = document.createElement('div');
-                    descEl.style.cssText = 'font-size: 12px; opacity: 0.85; margin-top: 4px; font-style: italic; padding: 0 10px;';
-                    descEl.textContent = b.desc;
-                    btnWrapper.appendChild(descEl);
-                }
-                
-                bonusContainer.appendChild(btnWrapper);
+                bonusContainer.appendChild(btn);
             });
 
             // Daily bonus task
