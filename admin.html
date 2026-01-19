@@ -364,7 +364,6 @@
             <button class="tab" onclick="showTab('tasks')">📋 Tasks</button>
             <button class="tab" onclick="showTab('payments')">💰 Payments</button>
             <button class="tab" onclick="showTab('levels')">🏆 Levels</button>
-            <button class="tab" onclick="showTab('reports')">🚩 Reports</button>
             <button class="tab" onclick="showTab('faq')">❓ FAQ</button>
             <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
         </div>
@@ -430,6 +429,18 @@
                 <h2>📥 Quick Actions</h2>
                 <button class="btn btn-primary btn-block" onclick="downloadTaskResponses()">📋 Download Task Log (CSV)</button>
                 <button class="btn btn-secondary btn-block" onclick="downloadFeedbackLog()">📝 Download Check-ins (CSV)</button>
+            </div>
+
+            <div class="card">
+                <h2>🚩 Reported Tasks</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Tasks Stu has flagged for review</p>
+                <div id="reportsContainer">
+                    <div class="empty-state">No reported tasks yet ✅</div>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="btn btn-secondary btn-sm" onclick="downloadReports()">📥 Download</button>
+                    <button class="btn btn-danger btn-sm" onclick="clearReports()">🗑️ Clear All</button>
+                </div>
             </div>
         </div>
 
@@ -520,21 +531,6 @@
                     <tr><td>🌟 Superstar</td><td>50,000</td><td>$500</td><td>~9 months</td></tr>
                     <tr><td>🔥 Hall of Fame</td><td>100,000</td><td>$1,000</td><td>~1.5 years</td></tr>
                 </table>
-            </div>
-        </div>
-
-        <!-- REPORTS TAB -->
-        <div id="reports" class="tab-content">
-            <div class="card">
-                <h2>🚩 Reported Tasks</h2>
-                <p style="color: var(--text-light); margin-bottom: 15px;">Tasks Stu has flagged for review</p>
-                <div id="reportsContainer">
-                    <div class="empty-state">No reported tasks yet ✅</div>
-                </div>
-                <div style="margin-top: 15px; display: flex; gap: 10px;">
-                    <button class="btn btn-secondary btn-sm" onclick="downloadReports()">📥 Download</button>
-                    <button class="btn btn-danger btn-sm" onclick="clearReports()">🗑️ Clear All</button>
-                </div>
             </div>
         </div>
 
