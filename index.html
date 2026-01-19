@@ -473,11 +473,6 @@
                 <div style="font-size: 18px; color: var(--text-light); margin-top: 5px;" id="settingsDollars">= $0.00</div>
             </div>
             
-            <button class="btn btn-success" onclick="requestPayout()" style="margin-bottom: 12px;">💸 Cash Out via Zelle</button>
-            <p style="text-align: center; font-size: 12px; color: var(--text-light); margin-bottom: 20px;">Request payout anytime you're ready!</p>
-            
-            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
-            
             <!-- Suggest Task -->
             <h3 style="margin-bottom: 10px;">💡 Suggest a Task</h3>
             <input type="text" id="propName" placeholder="Task name (e.g., Water the plants)">
@@ -581,8 +576,7 @@
             { id: 1, name: "🚶 Go for a walk", value: 25 },
             { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75 },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
-            { id: 5, name: "🟩 Play Wordle", value: 50 },
-            { id: 6, name: "🔗 Play Connections", value: 50 }
+            { id: 5, name: "🟩 Play Wordle", value: 10 }
         ];
 
         // Daily bonus tasks (1 rotates each day) - fun extras!
@@ -593,6 +587,7 @@
             { id: 122, name: "🚗 Clean out the car", value: 50, needsPhoto: true },
             { id: 109, name: "🗑️ Throw away one thing you don't need", value: 50, needsPhoto: true },
             // Simple checkbox tasks (no prompt needed)
+            { id: 123, name: "🔗 Try NYTimes Connections", value: 35 },
             { id: 103, name: "🌳 Spend 10 minutes outside", value: 50 },
             { id: 106, name: "🔋 Charge devices overnight", value: 50 },
             { id: 111, name: "🧽 Wipe down a counter or surface", value: 50 },
