@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HabitRewards</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#58cc02">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-storage.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
+            authDomain: "habitrewards-131.firebaseapp.com",
+            projectId: "habitrewards-131",
+            storageBucket: "habitrewards-131.firebasestorage.app",
+            messagingSenderId: "814515329989",
+            appId: "1:814515329989:web:cc256861680e9b67c449ac"
+        };
+        
+        // Initialize Firebase services
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const rtdb = getDatabase(app);
+        const storage = getStorage(app);
+        
+        // Make available globally
+        window.firebase = {
+            app,
+            db,
+            auth,
+            rtdb,
+            storage,
+            // Firestore helpers
+            collection,
+            doc,
+            setDoc,
+            getDoc,
+            updateDoc,
+            onSnapshot,
+            // Auth helpers
+            signInAnonymously,
+            onAuthStateChanged,
+            // Realtime DB helpers
+            ref,
+            set,
+            onValue,
+            // Storage helpers
+            storageRef,
+            uploadBytes,
+            getDownloadURL
+        };
+    </script>
+    
+    <style>
+        :root {
+            --primary: #58cc02; /* Duolingo Green */
+            --primary-shade: #46a302;
+            --secondary: #2b70c9; /* Blue */
+            --secondary-shade: #184a8c;
+            --accent: #ffc800; /* Yellow */
+            --accent-shade: #e5a400;
+            --danger: #ff4b4b;
+            --danger-shade: #d33131;
+            --purple: #ce82ff;
+            --purple-shade: #a546e0;
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text: #3c3c3c;
+            --text-light: #777;
+            --radius-box: 20px;
+            --radius-btn: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 120px;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            --bg: #131f24;
+            --card-bg: #202f36;
+            --text: #e5e5e5;
+            --text-light: #888;
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(255, 200, 0, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 200, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 200, 0, 0); } }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        @keyframes pop { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* ========== UI COMPONENTS ========== */
+        header {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: var(--primary); }
+        .theme-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-box);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 2px solid rgba(0,0,0,0.05);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        body.dark-mode .card { border-color: #37464f; box-shadow: 0 6px 0 #37464f; }
+        .card:hover { transform: translateY(-4px); }
+
+        .section-title {
+            font-size: 20px; font-weight: 800; margin: 30px 0 15px;
+            color: var(--text-light); text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .btn {
+            border: none; outline: none; background: var(--secondary); color: white;
+            font-weight: 800; padding: 16px; border-radius: var(--radius-btn);
+            font-size: 16px; width: 100%; cursor: pointer; text-align: center;
+            box-shadow: 0 4px 0 var(--secondary-shade); transition: all 0.1s;
+            text-transform: uppercase; letter-spacing: 0.5px; position: relative; overflow: hidden;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+        .btn::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.2); opacity: 0; transition: opacity 0.3s;
+        }
+        .btn:hover::after { opacity: 1; }
+
+        .btn-success { background: var(--primary); box-shadow: 0 4px 0 var(--primary-shade); }
+        .btn-purple { background: var(--purple); box-shadow: 0 4px 0 var(--purple-shade); }
+        .btn-accent { background: var(--accent); color: #5a3a00; box-shadow: 0 4px 0 var(--accent-shade); }
+        .btn-ghost { background: transparent; color: var(--text-light); box-shadow: none; border: 2px solid #e5e5e5; }
+        body.dark-mode .btn-ghost { border-color: #37464f; }
+
+        /* ========== HERO ========== */
+        .streak-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #fff3cd; color: #856404; padding: 8px 16px;
+            border-radius: 20px; font-weight: 700; font-size: 14px;
+            margin-bottom: 10px; animation: bounce 2s infinite;
+        }
+        
+        .balance-hero {
+            background: linear-gradient(135deg, var(--primary), #4ade80);
+            color: white; padding: 30px; text-align: center; border-radius: 24px;
+            margin-bottom: 30px; box-shadow: 0 10px 30px rgba(88, 204, 2, 0.4);
+            position: relative; overflow: hidden;
+        }
+        .balance-title { font-size: 14px; text-transform: uppercase; opacity: 0.9; font-weight: 700; margin-bottom: 5px; }
+        .balance-amount { font-size: 56px; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .hero-emoji { position: absolute; font-size: 60px; opacity: 0.2; animation: float 3s infinite ease-in-out; }
+        .hero-1 { top: 10px; right: 10px; animation-delay: 0s; }
+        .hero-2 { bottom: 10px; left: 10px; animation-delay: 1.5s; }
+
+        /* ========== TASKS ========== */
+        .task-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--card-bg); padding: 16px; border-radius: var(--radius-box);
+            border: 2px solid rgba(0,0,0,0.05); box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            margin-bottom: 15px; transition: all 0.2s;
+        }
+        body.dark-mode .task-row { border-color: #37464f; box-shadow: 0 4px 0 #37464f; }
+        .task-row:hover { transform: translateY(-2px); border-color: var(--primary); }
+
+        .task-content { flex: 1; margin-right: 15px; }
+        .task-name { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+        .task-reward { 
+            display: inline-block; font-weight: 800; font-size: 14px; 
+            color: var(--primary); bg: rgba(88, 204, 2, 0.1); 
+            padding: 4px 10px; border-radius: 12px; background: rgba(88,204,2,0.1); 
+        }
+
+        .task-check {
+            width: 52px; height: 52px; border-radius: 16px; background: #e5e7eb;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: transparent; cursor: pointer;
+            box-shadow: 0 4px 0 #d1d5db; transition: all 0.2s; border: none;
+        }
+        body.dark-mode .task-check { background: #37464f; box-shadow: 0 4px 0 #2c3940; }
+        
+        .task-check.completed {
+            background: var(--primary); color: white;
+            box-shadow: 0 4px 0 var(--primary-shade);
+            animation: pop 0.3s;
+        }
+        .task-check:active { transform: translateY(4px); box-shadow: none; }
+
+        /* ========== BONUS & PROGRESS ========== */
+        .progress-bar {
+            height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%; background: var(--accent); width: 0%; 
+            transition: width 0.5s ease; position: relative;
+        }
+        .progress-fill::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* ========== MODAL ========== */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal.active { display: flex; opacity: 1; }
+        
+        .modal-box {
+            background: var(--card-bg); padding: 30px; border-radius: 24px;
+            width: 90%; max-width: 450px; position: relative;
+            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal.active .modal-box { transform: scale(1); }
+
+        .close-modal {
+            position: absolute; top: 20px; right: 20px; font-size: 28px;
+            color: var(--text-light); cursor: pointer; line-height: 1;
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px;
+            font-size: 16px; margin: 10px 0; background: var(--bg); color: var(--text);
+            outline: none; transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); }
+        body.dark-mode input, body.dark-mode textarea, body.dark-mode select { border-color: #37464f; }
+
+        .file-upload {
+            border: 2px dashed #e5e7eb; padding: 20px; text-align: center;
+            border-radius: 12px; margin: 15px 0; cursor: pointer; color: var(--text-light);
+        }
+        .file-upload:hover { border-color: var(--primary); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <span>🎯</span> HabitRewards
+        </div>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+    </header>
+
+    <div class="container">
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2 id="greeting" style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: var(--text);"></h2>
+            <div class="streak-badge">
+                <span id="streakDays">0</span> Day Streak 🔥
+            </div>
+            <div style="color: var(--text-light); font-size: 14px;" id="dateDisplay"></div>
+        </div>
+
+        <div class="balance-hero">
+            <div class="hero-emoji hero-1">💰</div>
+            <div class="hero-emoji hero-2">💸</div>
+            <div class="balance-title">Today's Balance</div>
+            <div class="balance-amount" id="todayBalance">$0.00</div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="openRedeem()" style="flex: 1; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); color: white; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer;">🎁 Redeem</button>
+                <button onclick="openCashOut()" style="flex: 1; background: white; color: var(--primary); border: none; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">🏦 Cash Out</button>
+            </div>
+        </div>
+
+        <div class="section-title">Daily Habits</div>
+        <div id="tasksContainer">
+            <!-- Tasks injected here -->
+        </div>
+        
+        <button class="btn btn-ghost" onclick="openPropose()" style="margin-top: 20px;">+ Propose New Task</button>
+
+        <div id="bonusSection" style="display: none; margin-top: 40px;">
+            <div class="card" style="background: linear-gradient(135deg, #a855f7, #ec4899); border: none; color: white; text-align: center;">
+                <h2 style="font-size: 24px; margin-bottom: 10px;">🎉 Perfect Day!</h2>
+                <p>You smashed all your goals! Here are your weekly bonus challenges:</p>
+                <div id="bonusOptions" style="margin-top: 20px; display: grid; gap: 10px;"></div>
+            </div>
+        </div>
+
+        <div id="surveySection" style="display: none; margin-top: 40px;">
+            <div class="card" style="text-align: center; border-color: var(--primary);">
+                <h3 style="margin-bottom: 15px;">How was today?</h3>
+                <div style="font-size: 40px; margin-bottom: 20px; display: flex; justify-content: center; gap: 15px;">
+                    <span onclick="rate(1)" style="cursor: pointer; transition: transform 0.2s;" class="rate-emoji">☹️</span>
+                    <span onclick="rate(3)" style="cursor: pointer; transition: transform 0.2s;" class="rate-emoji">😐</span>
+                    <span onclick="rate(5)" style="cursor: pointer; transition: transform 0.2s;" class="rate-emoji">🤩</span>
+                </div>
+                <input type="text" id="surveyFeedback" placeholder="What was the best part?">
+                <button class="btn btn-success" onclick="submitSurvey()">Submit & Earn $0.10</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TASK DETAIL MODAL -->
+    <div id="taskModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('taskModal')">&times;</span>
+            <h2 id="modalTaskTitle" style="margin-bottom: 20px; font-size: 24px;">Complete Task</h2>
+            
+            <p style="margin-bottom: 10px; font-weight: 700;">1. Proof (Optional)</p>
+            <div class="file-upload" onclick="document.getElementById('taskPhoto').click()">
+                📸 Upload Photo
+                <input type="file" id="taskPhoto" hidden accept="image/*" onchange="previewImage(this)">
+            </div>
+            <div id="imgPreview" style="margin-bottom: 15px; border-radius: 12px; overflow: hidden;"></div>
+
+            <p style="margin-bottom: 10px; font-weight: 700;">2. Comment (Optional)</p>
+            <input type="text" id="taskComment" placeholder="Quick note...">
+
+            <button class="btn btn-success" onclick="confirmTask()" style="margin-top: 10px;">✓ Complete Task</button>
+        </div>
+    </div>
+
+    <!-- CASH OUT MODAL -->
+    <div id="cashOutModal" class="modal">
+        <div class="modal-box" style="text-align: center;">
+            <span class="close-modal" onclick="closeModal('cashOutModal')">&times;</span>
+            <div style="font-size: 50px; margin-bottom: 10px;">🏦</div>
+            <h2 style="margin-bottom: 10px;">Cash Out</h2>
+            <p style="margin-bottom: 20px; color: var(--text-light);">Move your balance to your savings or get paid.</p>
+            <div style="font-size: 32px; font-weight: 800; color: var(--primary); margin-bottom: 20px;" id="cashOutAmount">$0.00</div>
+            <button class="btn btn-primary" style="background: var(--text); margin-bottom: 10px;" onclick="processCashOut('Save')">🐷 Save in Jar</button>
+            <button class="btn btn-success" onclick="processCashOut('Pay')">💸 Pay Me Now</button>
+        </div>
+    </div>
+
+    <!-- REDEEM MODAL -->
+    <div id="redeemModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('redeemModal')">&times;</span>
+            <h2>Rewards</h2>
+            <div style="display: grid; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-accent" onclick="redeem('Ice Cream', 5)">🍦 Ice Cream ($5.00)</button>
+                <button class="btn btn-purple" onclick="redeem('Movie Night', 10)">🎬 Movie Night ($10.00)</button>
+                <button class="btn btn-ghost" onclick="redeem('Custom', 0)">✨ Custom Reward</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROPOSE MODAL -->
+    <div id="proposeModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('proposeModal')">&times;</span>
+            <h2>Propose Task</h2>
+            <input type="text" id="propName" placeholder="Task Name">
+            <input type="number" id="propValue" placeholder="Value ($)">
+            <button class="btn btn-success" onclick="submitProposal()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== CONFIG & STATE ==========
+        const DAILY_TASKS = [
+            { id: 1, name: "🧹 Clean up kitchen table", value: 1.00 },
+            { id: 2, name: "🚶 Go for a walk", value: 1.50 },
+            { id: 3, name: "🎾 Play tennis / pickleball", value: 2.50 },
+            { id: 4, name: "🦉 Do Duolingo", value: 0.75 },
+            { id: 5, name: "📝 Do crossword puzzle", value: 1.00 },
+            { id: 6, name: "🔋 Charge devices overnight (phone, watch, Airpods, hearing aids)", value: 0.50 },
+            { id: 7, name: "📬 Check and sort the mail", value: 0.50 }
+        ];
+
+        // Permanent weekly bonus tasks (always shown)
+        const PERMANENT_WEEKLY_BONUSES = [
+            { id: 101, name: "🎾 Play tennis / pickleball 3x this week", value: 2.00, isCounter: true, target: 3, counterId: 'tennis_weekly' },
+            { id: 102, name: "📦 Get rid of 3 items from office", value: 3.00 },
+            { id: 103, name: "🗑️ Take out the trash", value: 1.00 },
+            { id: 104, name: "🚗 Clean out the car", value: 2.00 },
+            { id: 105, name: "💊 Take vitamins every day this week", value: 3.00 }
+        ];
+
+        // Rotating weekly bonus tasks (1 selected per week)
+        const ROTATING_WEEKLY_BONUSES = [
+            { id: 201, name: "💿 Sell your coins or vinyls", value: 5.00 },
+            { id: 202, name: "📺 Find a new show or movie to watch on Netflix", value: 2.00 },
+            { id: 203, name: "📺 Find a new show or movie to watch on Amazon Video", value: 2.00 },
+            { id: 204, name: "📺 Find a new show or movie to watch on Apple TV", value: 2.00 },
+            { id: 205, name: "🍿 Use the microwave", value: 1.00 },
+            { id: 206, name: "🛒 Check aisle for grocery deals", value: 1.50 },
+            { id: 207, name: "💑 Take your wife out to lunch or dinner", value: 5.00 },
+            { id: 208, name: "🍽️ Try a new restaurant", value: 3.00 },
+            { id: 209, name: "💌 Tell one of your kids you are thinking of them", value: 2.00 },
+            { id: 210, name: "❤️ Do something nice for your wife", value: 3.00 },
+            { id: 211, name: "🛍️ Buy a new item from the grocery store", value: 1.50 },
+            { id: 212, name: "🍔 Ask your tennis friends out to lunch", value: 3.00 },
+            { id: 213, name: "👕 Donate 5 items of clothing that you no longer wear", value: 2.00 },
+            { id: 214, name: "👟 Donate a pair of sneakers", value: 2.00 },
+            { id: 215, name: "🗑️ Throw away 5 items you no longer need", value: 1.50 },
+            { id: 216, name: "🤖 Use ChatGPT to solve a problem (chat.openai.com)", value: 2.00 },
+            { id: 217, name: "🛏️ Make the bed every day this week", value: 3.00 },
+            { id: 218, name: "🧽 Clean a bathroom", value: 2.00 },
+            { id: 219, name: "📞 Call a friend or family member", value: 2.00 }
+        ];
+
+        // Get the current week number of the year
+        function getWeekNumber() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 1);
+            const diff = now - start;
+            const oneWeek = 604800000; // milliseconds in a week
+            return Math.floor(diff / oneWeek);
+        }
+
+        // Get the rotating bonus for this week
+        function getRotatingBonusForWeek() {
+            const weekNum = getWeekNumber();
+            const index = weekNum % ROTATING_WEEKLY_BONUSES.length;
+            return ROTATING_WEEKLY_BONUSES[index];
+        }
+
+        // Get all weekly bonus options (permanent + this week's rotating)
+        function getWeeklyBonuses() {
+            const rotating = getRotatingBonusForWeek();
+            return [...PERMANENT_WEEKLY_BONUSES, rotating];
+        }
+
+        let state = {
+            tasks: [],
+            streak: 0,
+            lastStreakDate: null,
+            balance: 0,
+            history: [],
+            mode: localStorage.getItem('theme') || 'light',
+            currentTaskId: null
+        };
+
+        // ========== INIT ==========
+        function init() {
+            loadState();
+            applyTheme();
+            checkNewDay();
+            updateGreeting();
+            render();
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('hr_state');
+            if (saved) {
+                state = JSON.parse(saved);
+            } else {
+                state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
+            }
+            // Load weekly counters
+            const weekNum = getWeekNumber();
+            const savedWeek = localStorage.getItem('hr_week');
+            if (savedWeek !== String(weekNum)) {
+                // New week - reset weekly counters
+                state.weeklyCounters = {};
+                state.weeklyBonusesCompleted = [];
+                localStorage.setItem('hr_week', String(weekNum));
+            }
+            if (!state.weeklyCounters) state.weeklyCounters = {};
+            if (!state.weeklyBonusesCompleted) state.weeklyBonusesCompleted = [];
+        }
+
+        function saveState() {
+            localStorage.setItem('hr_state', JSON.stringify(state));
+        }
+
+        function checkNewDay() {
+            const today = new Date().toDateString();
+            const lastDate = localStorage.getItem('hr_date');
+            if (lastDate !== today) {
+                state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
+                localStorage.setItem('hr_date', today);
+                saveState();
+            }
+        }
+
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting;
+            if (hour < 12) {
+                greeting = "Good Morning, Stu! ☀️";
+            } else if (hour < 17) {
+                greeting = "Good Afternoon, Stu! 🌤️";
+            } else {
+                greeting = "Good Evening, Stu! 🌙";
+            }
+            document.getElementById('greeting').textContent = greeting;
+        }
+
+        // ========== RENDER ==========
+        function render() {
+            document.getElementById('todayBalance').textContent = `$${state.balance.toFixed(2)}`;
+            document.getElementById('streakDays').textContent = state.streak;
+            
+            // Date
+            const opts = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', opts);
+
+            // Tasks
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+            
+            let allDone = true;
+            state.tasks.forEach(task => {
+                if (!task.completed) allDone = false;
+                
+                const div = document.createElement('div');
+                div.className = 'task-row';
+                div.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-name" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.name}</div>
+                        <div class="task-reward">+$${task.value.toFixed(2)}</div>
+                    </div>
+                    <button class="task-check ${task.completed ? 'completed' : ''}" onclick="onTaskClick(${task.id})">
+                        ${task.completed ? '✓' : ''}
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+
+            // Bonus unlock - weekly bonuses
+            const bonusSection = document.getElementById('bonusSection');
+            if (allDone && state.tasks.length > 0) {
+                bonusSection.style.display = 'block';
+                const bonusContainer = document.getElementById('bonusOptions');
+                bonusContainer.innerHTML = ''; // Clear and rebuild
+                
+                const weeklyBonuses = getWeeklyBonuses();
+                weeklyBonuses.forEach(b => {
+                    const isCompleted = state.weeklyBonusesCompleted.includes(b.id);
+                    const btn = document.createElement('button');
+                    btn.className = 'btn ' + (isCompleted ? 'btn-ghost' : 'btn-purple');
+                    btn.style.marginTop = '10px';
+                    
+                    if (b.isCounter) {
+                        const count = state.weeklyCounters[b.counterId] || 0;
+                        const completed = count >= b.target;
+                        btn.textContent = `${completed ? '✅' : '🎾'} ${b.name} (${count}/${b.target}) ${completed ? '' : '+$' + b.value.toFixed(2)}`;
+                        btn.className = 'btn ' + (completed ? 'btn-ghost' : 'btn-accent');
+                        btn.disabled = completed;
+                        if (!completed) {
+                            btn.onclick = () => incrementCounter(b);
+                        }
+                    } else {
+                        btn.textContent = `${isCompleted ? '✅' : '✨'} ${b.name} ${isCompleted ? '(Done!)' : '(+$' + b.value.toFixed(2) + ')'}`;
+                        btn.disabled = isCompleted;
+                        if (!isCompleted) {
+                            btn.onclick = () => completeWeeklyBonus(b);
+                        }
+                    }
+                    bonusContainer.appendChild(btn);
+                });
+            } else {
+                bonusSection.style.display = 'none';
+            }
+
+            // Survey unlock (if at least one task done)
+            const tasksDone = state.tasks.filter(t => t.completed).length;
+            document.getElementById('surveySection').style.display = tasksDone > 0 ? 'block' : 'none';
+        }
+
+        // ========== ACTIONS ==========
+        function onTaskClick(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (task.completed) return; // Already done
+
+            // Open Detail Modal
+            state.currentTaskId = id;
+            document.getElementById('modalTaskTitle').textContent = task.name;
+            document.getElementById('taskPhoto').value = '';
+            document.getElementById('taskComment').value = '';
+            document.getElementById('imgPreview').innerHTML = '';
+            openModal('taskModal');
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imgPreview').innerHTML = `<img src="${e.target.result}" style="width: 100%;">`;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function confirmTask() {
+            const task = state.tasks.find(t => t.id === state.currentTaskId);
+            if (task) {
+                task.completed = true;
+                task.proof = document.getElementById('taskComment').value; // In real app, upload photo
+                state.balance += task.value;
+                
+                checkStreak();
+                saveState();
+                render();
+                closeModal('taskModal');
+                triggerConfetti();
+            }
+        }
+
+        function addBonus(bonus) {
+            const exists = state.tasks.find(t => t.id === bonus.id);
+            if (!exists) {
+                state.tasks.push({ ...bonus, completed: false });
+                saveState();
+                render();
+                document.getElementById('tasksContainer').lastElementChild.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function completeWeeklyBonus(bonus) {
+            if (!state.weeklyBonusesCompleted.includes(bonus.id)) {
+                state.weeklyBonusesCompleted.push(bonus.id);
+                state.balance += bonus.value;
+                saveState();
+                render();
+                triggerConfetti();
+            }
+        }
+
+        function incrementCounter(bonus) {
+            if (!state.weeklyCounters[bonus.counterId]) {
+                state.weeklyCounters[bonus.counterId] = 0;
+            }
+            state.weeklyCounters[bonus.counterId]++;
+            
+            // Check if target reached
+            if (state.weeklyCounters[bonus.counterId] >= bonus.target) {
+                state.balance += bonus.value;
+                triggerConfetti();
+            }
+            
+            saveState();
+            render();
+        }
+
+        function checkStreak() {
+            const today = new Date().toDateString();
+            if (state.lastStreakDate !== today) {
+                state.streak++;
+                state.lastStreakDate = today;
+            }
+        }
+
+        function submitProposal() {
+            const name = document.getElementById('propName').value;
+            const val = parseFloat(document.getElementById('propValue').value);
+            if(name && val) {
+                alert('Proposal sent to Manager!');
+                closeModal('proposeModal');
+            }
+        }
+
+        // ========== MONEY ==========
+        function openRedeem() {
+            openModal('redeemModal');
+        }
+
+        function redeem(item, cost) {
+            if (state.balance >= cost) {
+                if (cost > 0) {
+                    if(confirm(`Spend $${cost} for ${item}?`)) {
+                        state.balance -= cost;
+                        saveState();
+                        render();
+                        alert(`Redeemed ${item}!`);
+                    }
+                } else {
+                    alert('Custom reward request sent!');
+                }
+                closeModal('redeemModal');
+            } else {
+                alert("Not enough balance!");
+            }
+        }
+
+        function openCashOut() {
+            document.getElementById('cashOutAmount').textContent = `$${state.balance.toFixed(2)}`;
+            openModal('cashOutModal');
+        }
+
+        function processCashOut(type) {
+            if (state.balance <= 0) {
+                alert("Nothing to cash out!");
+                return;
+            }
+            alert(`Success! $${state.balance.toFixed(2)} has been ${type === 'Save' ? 'moved to your Savings Jar' : 'sent to you'}.`);
+            state.balance = 0;
+            saveState();
+            render();
+            closeModal('cashOutModal');
+        }
+
+        // ========== SURVEY ==========
+        let currentRating = 0;
+        function rate(n) {
+            currentRating = n;
+            document.querySelectorAll('.rate-emoji').forEach(e => e.style.transform = 'scale(1)');
+            event.target.style.transform = 'scale(1.5)';
+        }
+
+        function submitSurvey() {
+             if (!currentRating) { alert('Please tap a rating emoji!'); return; }
+             state.balance += 0.10;
+             alert('Thanks for the feedback! +$0.10');
+             document.getElementById('surveySection').style.display = 'none'; // Hide after submit
+             saveState();
+             render();
+        }
+
+        // ========== UI UTILS ==========
+        function toggleTheme() {
+            state.mode = state.mode === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', state.mode);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const btn = document.getElementById('themeIcon');
+            if (state.mode === 'dark') {
+                document.body.classList.add('dark-mode');
+                btn.textContent = '☀️';
+            } else {
+                document.body.classList.remove('dark-mode');
+                btn.textContent = '🌙';
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        function openPropose() { openModal('proposeModal'); }
+
+        function triggerConfetti() {
+            for(let i=0; i<20; i++) {
+                const el = document.createElement('div');
+                el.innerText = ['🎉', '⭐', '💰', '✨'][Math.floor(Math.random()*4)];
+                el.style.position = 'fixed';
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.top = '-50px';
+                el.style.fontSize = '30px';
+                el.style.transition = 'top 2s ease-in, opacity 2s ease-in';
+                document.body.appendChild(el);
+                
+                setTimeout(() => {
+                    el.style.top = '110vh';
+                    el.style.opacity = '0';
+                }, 100);
+                
+                setTimeout(() => el.remove(), 2000);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

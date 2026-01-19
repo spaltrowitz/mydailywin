@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HabitRewards</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#58cc02">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #58cc02;
+            --primary-shade: #46a302;
+            --secondary: #2b70c9;
+            --secondary-shade: #184a8c;
+            --accent: #ffc800;
+            --accent-shade: #e5a400;
+            --danger: #ff4b4b;
+            --danger-shade: #d33131;
+            --purple: #ce82ff;
+            --purple-shade: #a546e0;
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text: #3c3c3c;
+            --text-light: #777;
+            --radius-box: 20px;
+            --radius-btn: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 120px;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            --bg: #131f24;
+            --card-bg: #202f36;
+            --text: #e5e5e5;
+            --text-light: #888;
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(255, 200, 0, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 200, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 200, 0, 0); } }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        @keyframes pop { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* ========== UI COMPONENTS ========== */
+        header {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: var(--primary); }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        .theme-btn, .logout-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
+        .user-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary); }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-box);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 2px solid rgba(0,0,0,0.05);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        body.dark-mode .card { border-color: #37464f; box-shadow: 0 6px 0 #37464f; }
+        .card:hover { transform: translateY(-4px); }
+
+        .section-title {
+            font-size: 20px; font-weight: 800; margin: 30px 0 15px;
+            color: var(--text-light); text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .btn {
+            border: none; outline: none; background: var(--secondary); color: white;
+            font-weight: 800; padding: 16px; border-radius: var(--radius-btn);
+            font-size: 16px; width: 100%; cursor: pointer; text-align: center;
+            box-shadow: 0 4px 0 var(--secondary-shade); transition: all 0.1s;
+            text-transform: uppercase; letter-spacing: 0.5px; position: relative; overflow: hidden;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+        .btn::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.2); opacity: 0; transition: opacity 0.3s;
+        }
+        .btn:hover::after { opacity: 1; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-success { background: var(--primary); box-shadow: 0 4px 0 var(--primary-shade); }
+        .btn-purple { background: var(--purple); box-shadow: 0 4px 0 var(--purple-shade); }
+        .btn-accent { background: var(--accent); color: #5a3a00; box-shadow: 0 4px 0 var(--accent-shade); }
+        .btn-danger { background: var(--danger); box-shadow: 0 4px 0 var(--danger-shade); }
+        .btn-ghost { background: transparent; color: var(--text-light); box-shadow: none; border: 2px solid #e5e5e5; }
+        .btn-google { background: white; color: #333; box-shadow: 0 4px 0 #ddd; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        body.dark-mode .btn-ghost { border-color: #37464f; }
+
+        /* ========== LOGIN SCREEN ========== */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .login-logo { font-size: 80px; margin-bottom: 20px; }
+        .login-title { font-size: 36px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+        .login-subtitle { color: var(--text-light); margin-bottom: 40px; font-size: 18px; }
+        .login-box { width: 100%; max-width: 400px; }
+        .google-icon { width: 24px; height: 24px; }
+        .login-divider { display: flex; align-items: center; gap: 15px; margin: 20px 0; color: var(--text-light); }
+        .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: #e5e5e5; }
+
+        /* ========== ROLE SELECTOR ========== */
+        .role-selector {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .role-cards { display: grid; gap: 20px; width: 100%; max-width: 500px; margin-top: 30px; }
+        .role-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-box);
+            padding: 30px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .role-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+        .role-icon { font-size: 50px; margin-bottom: 15px; }
+        .role-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+        .role-desc { color: var(--text-light); font-size: 14px; }
+
+        /* ========== HERO ========== */
+        .streak-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #fff3cd; color: #856404; padding: 8px 16px;
+            border-radius: 20px; font-weight: 700; font-size: 14px;
+            margin-bottom: 10px; animation: bounce 2s infinite;
+        }
+        
+        .balance-hero {
+            background: linear-gradient(135deg, var(--primary), #4ade80);
+            color: white; padding: 30px; text-align: center; border-radius: 24px;
+            margin-bottom: 30px; box-shadow: 0 10px 30px rgba(88, 204, 2, 0.4);
+            position: relative; overflow: hidden;
+        }
+        .balance-title { font-size: 14px; text-transform: uppercase; opacity: 0.9; font-weight: 700; margin-bottom: 5px; }
+        .balance-amount { font-size: 56px; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .balance-pending { font-size: 14px; opacity: 0.8; margin-top: 5px; }
+        
+        .hero-emoji { position: absolute; font-size: 60px; opacity: 0.2; animation: float 3s infinite ease-in-out; }
+        .hero-1 { top: 10px; right: 10px; animation-delay: 0s; }
+        .hero-2 { bottom: 10px; left: 10px; animation-delay: 1.5s; }
+
+        /* ========== TASKS ========== */
+        .task-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--card-bg); padding: 16px; border-radius: var(--radius-box);
+            border: 2px solid rgba(0,0,0,0.05); box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            margin-bottom: 15px; transition: all 0.2s;
+        }
+        body.dark-mode .task-row { border-color: #37464f; box-shadow: 0 4px 0 #37464f; }
+        .task-row:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .task-row.pending { border-color: var(--accent); background: #fffbeb; }
+        body.dark-mode .task-row.pending { background: #3d3520; }
+
+        .task-content { flex: 1; margin-right: 15px; }
+        .task-name { font-weight: 700; font-size: 18px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .task-emoji { font-size: 22px; }
+        .task-reward { 
+            display: inline-block; font-weight: 800; font-size: 14px; 
+            color: var(--primary); padding: 4px 10px; border-radius: 12px; background: rgba(88,204,2,0.1); 
+        }
+        .task-status {
+            font-size: 12px; padding: 4px 8px; border-radius: 8px; font-weight: 700; margin-left: 8px;
+        }
+        .task-status.pending { background: var(--accent); color: #5a3a00; }
+        .task-status.approved { background: var(--primary); color: white; }
+        .task-status.rejected { background: var(--danger); color: white; }
+
+        .task-check {
+            width: 52px; height: 52px; border-radius: 16px; background: #e5e7eb;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: transparent; cursor: pointer;
+            box-shadow: 0 4px 0 #d1d5db; transition: all 0.2s; border: none;
+        }
+        body.dark-mode .task-check { background: #37464f; box-shadow: 0 4px 0 #2c3940; }
+        
+        .task-check.completed { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-shade); animation: pop 0.3s; }
+        .task-check.pending { background: var(--accent); color: #5a3a00; box-shadow: 0 4px 0 var(--accent-shade); }
+        .task-check:active { transform: translateY(4px); box-shadow: none; }
+
+        /* ========== MANAGER DASHBOARD ========== */
+        .pending-item {
+            background: var(--card-bg);
+            border-radius: var(--radius-box);
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+        }
+        .pending-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .pending-user { display: flex; align-items: center; gap: 10px; }
+        .pending-user-avatar { width: 40px; height: 40px; border-radius: 50%; }
+        .pending-user-name { font-weight: 700; }
+        .pending-time { color: var(--text-light); font-size: 12px; }
+        .pending-task { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+        .pending-proof { margin: 15px 0; }
+        .pending-proof img { width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover; }
+        .pending-comment { background: var(--bg); padding: 12px; border-radius: 12px; font-style: italic; color: var(--text-light); }
+        .pending-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .pending-actions .btn { flex: 1; padding: 12px; }
+
+        .tab-bar {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; text-align: center;
+            cursor: pointer; background: var(--card-bg); border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab.active { border-color: var(--primary); color: var(--primary); }
+        .tab .badge {
+            background: var(--danger); color: white; font-size: 12px;
+            padding: 2px 8px; border-radius: 10px; margin-left: 5px;
+        }
+
+        /* ========== MODAL ========== */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal.active { display: flex; opacity: 1; }
+        
+        .modal-box {
+            background: var(--card-bg); padding: 30px; border-radius: 24px;
+            width: 90%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto;
+            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal.active .modal-box { transform: scale(1); }
+
+        .close-modal {
+            position: absolute; top: 20px; right: 20px; font-size: 28px;
+            color: var(--text-light); cursor: pointer; line-height: 1;
+        }
+
+        input[type="text"], input[type="number"], input[type="email"], input[type="password"], select, textarea {
+            width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px;
+            font-size: 16px; margin: 10px 0; background: var(--bg); color: var(--text);
+            outline: none; transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); }
+        body.dark-mode input, body.dark-mode textarea, body.dark-mode select { border-color: #37464f; }
+
+        .file-upload {
+            border: 2px dashed #e5e5e5; padding: 20px; text-align: center;
+            border-radius: 12px; margin: 15px 0; cursor: pointer; color: var(--text-light);
+            transition: all 0.2s;
+        }
+        .file-upload:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ========== LOADING ========== */
+        .loading-spinner {
+            width: 40px; height: 40px; border: 4px solid var(--bg);
+            border-top-color: var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 20px auto;
+        }
+
+        /* ========== EMPTY STATE ========== */
+        .empty-state {
+            text-align: center; padding: 40px 20px; color: var(--text-light);
+        }
+        .empty-state-icon { font-size: 60px; margin-bottom: 15px; }
+        .empty-state-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+
+        /* ========== HIDE/SHOW ========== */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- ========== LOGIN SCREEN ========== -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-logo">🎯</div>
+        <h1 class="login-title">HabitRewards</h1>
+        <p class="login-subtitle">Build habits, earn rewards!</p>
+        
+        <div class="login-box">
+            <button class="btn btn-google" onclick="signInWithGoogle()">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+            </button>
+            
+            <div class="login-divider">or</div>
+            
+            <input type="email" id="loginEmail" placeholder="Email address">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button class="btn btn-success" onclick="signInWithEmail()">Sign In</button>
+            
+            <p style="margin-top: 20px; color: var(--text-light);">
+                Don't have an account? <a href="#" onclick="showSignUp()" style="color: var(--primary); font-weight: 700;">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ========== SIGN UP SCREEN ========== -->
+    <div id="signupScreen" class="login-screen hidden">
+        <div class="login-logo">🎯</div>
+        <h1 class="login-title">Create Account</h1>
+        <p class="login-subtitle">Join HabitRewards today!</p>
+        
+        <div class="login-box">
+            <input type="text" id="signupName" placeholder="Your name">
+            <input type="email" id="signupEmail" placeholder="Email address">
+            <input type="password" id="signupPassword" placeholder="Password (6+ characters)">
+            <button class="btn btn-success" onclick="signUpWithEmail()">Create Account</button>
+            
+            <p style="margin-top: 20px; color: var(--text-light);">
+                Already have an account? <a href="#" onclick="showLogin()" style="color: var(--primary); font-weight: 700;">Sign In</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ========== ROLE SELECTOR ========== -->
+    <div id="roleSelector" class="role-selector">
+        <h1 style="font-size: 28px; font-weight: 800;">Welcome!</h1>
+        <p style="color: var(--text-light);">How would you like to use HabitRewards?</p>
+        
+        <div class="role-cards">
+            <div class="role-card" onclick="selectRole('user')">
+                <div class="role-icon">👤</div>
+                <div class="role-title">I'm Stu</div>
+                <div class="role-desc">Complete tasks, earn rewards, and build great habits!</div>
+            </div>
+            
+            <div class="role-card" onclick="selectRole('manager')">
+                <div class="role-icon">👨‍👩‍👧‍👦</div>
+                <div class="role-title">I'm a Manager</div>
+                <div class="role-desc">Review tasks, approve rewards, and support your loved one.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MAIN APP (USER VIEW) ========== -->
+    <div id="userApp" class="hidden">
+        <header>
+            <div class="brand">
+                <span>🎯</span> HabitRewards
+            </div>
+            <div class="header-actions">
+                <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+                <img id="userAvatar" class="user-avatar" src="" alt="User" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>👤</text></svg>'">
+                <button class="logout-btn" onclick="signOut()">🚪</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 id="greeting" style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: var(--text);"></h2>
+                <div class="streak-badge">
+                    <span id="streakDays">0</span> Day Streak 🔥
+                </div>
+                <div style="color: var(--text-light); font-size: 14px;" id="dateDisplay"></div>
+            </div>
+
+            <div class="balance-hero">
+                <div class="hero-emoji hero-1">⭐</div>
+                <div class="hero-emoji hero-2">🏆</div>
+                <div class="balance-title">Total Points</div>
+                <div class="balance-amount" id="todayBalance">0 pts</div>
+                <div id="cashValue" style="font-size: 16px; opacity: 0.9;"></div>
+                <div class="balance-pending" id="pendingBalance"></div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button onclick="openRedeem()" style="flex: 1; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); color: white; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer;">🎁 Redeem</button>
+                    <button onclick="openCashOut()" style="flex: 1; background: white; color: var(--primary); border: none; border-radius: 12px; padding: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">🏦 Cash Out</button>
+                </div>
+            </div>
+
+            <div class="section-title">📋 Daily Habits</div>
+            <div id="tasksContainer">
+                <!-- Tasks injected here -->
+            </div>
+            
+            <button class="btn btn-ghost" onclick="openPropose()" style="margin-top: 20px;">+ Propose New Task</button>
+
+            <div id="bonusSection" style="display: none; margin-top: 40px;">
+                <div class="card" style="background: linear-gradient(135deg, #a855f7, #ec4899); border: none; color: white; text-align: center;">
+                    <h2 style="font-size: 24px; margin-bottom: 10px;">🎉 Perfect Day!</h2>
+                    <p>You smashed all your goals! Here are your weekly bonus challenges:</p>
+                    <div id="bonusOptions" style="margin-top: 20px; display: grid; gap: 10px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MANAGER DASHBOARD ========== -->
+    <div id="managerApp" class="hidden">
+        <header>
+            <div class="brand">
+                <span>🎯</span> Manager Dashboard
+            </div>
+            <div class="header-actions">
+                <button class="theme-btn" onclick="toggleTheme()" id="themeIconManager">🌙</button>
+                <button class="logout-btn" onclick="signOut()">🚪</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="tab-bar">
+                <div class="tab active" id="tabPending" onclick="switchTab('pending')">
+                    ⏳ Pending <span class="badge" id="pendingCount">0</span>
+                </div>
+                <div class="tab" id="tabHistory" onclick="switchTab('history')">
+                    📜 History
+                </div>
+                <div class="tab" id="tabSettings" onclick="switchTab('settings')">
+                    ⚙️ Settings
+                </div>
+            </div>
+
+            <!-- Pending Tab -->
+            <div id="pendingTab">
+                <div id="pendingContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <div class="empty-state-title">All caught up!</div>
+                        <p>No pending tasks to review.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="historyTab" class="hidden">
+                <div id="historyContainer">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settingsTab" class="hidden">
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">👤 User Profile</h3>
+                    <div id="userProfileInfo">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">💰 Balance Management</h3>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+                        <span style="font-size: 24px; font-weight: 800;" id="managerBalanceView">$0.00</span>
+                        <span style="color: var(--text-light);">Current Balance</span>
+                    </div>
+                    <input type="number" id="adjustAmount" placeholder="Amount to add/subtract" step="0.01">
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-success" style="flex: 1;" onclick="adjustBalance(1)">+ Add</button>
+                        <button class="btn btn-danger" style="flex: 1;" onclick="adjustBalance(-1)">- Subtract</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">📋 Task Configuration</h3>
+                    <p style="color: var(--text-light); margin-bottom: 15px;">Edit daily tasks, values, and weekly bonuses.</p>
+                    <button class="btn btn-secondary" onclick="openTaskEditor()">Edit Tasks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TASK DETAIL MODAL ========== -->
+    <div id="taskModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('taskModal')">&times;</span>
+            <h2 id="modalTaskTitle" style="margin-bottom: 20px; font-size: 24px;">Complete Task</h2>
+            
+            <p style="margin-bottom: 10px; font-weight: 700;">📸 Proof (Optional)</p>
+            <div class="file-upload" onclick="document.getElementById('taskPhoto').click()">
+                📷 Tap to Upload Photo
+                <input type="file" id="taskPhoto" hidden accept="image/*" capture="environment" onchange="previewImage(this)">
+            </div>
+            <div id="imgPreview" style="margin-bottom: 15px; border-radius: 12px; overflow: hidden;"></div>
+
+            <p style="margin-bottom: 10px; font-weight: 700;">💬 Comment (Optional)</p>
+            <textarea id="taskComment" placeholder="Add a note about this task..." rows="3"></textarea>
+
+            <button class="btn btn-success" onclick="submitTask()" style="margin-top: 10px;">
+                📤 Submit for Approval
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== CASH OUT MODAL ========== -->
+    <div id="cashOutModal" class="modal">
+        <div class="modal-box" style="text-align: center;">
+            <span class="close-modal" onclick="closeModal('cashOutModal')">&times;</span>
+            <div style="font-size: 50px; margin-bottom: 10px;">🏦</div>
+            <h2 style="margin-bottom: 10px;">Cash Out</h2>
+            <p style="margin-bottom: 20px; color: var(--text-light);">Request a payout from your balance.</p>
+            <div style="font-size: 32px; font-weight: 800; color: var(--primary); margin-bottom: 20px;" id="cashOutAmount">$0.00</div>
+            <button class="btn btn-success" onclick="requestCashOut()">💸 Request Payout</button>
+            <p style="margin-top: 15px; font-size: 12px; color: var(--text-light);">Your manager will be notified.</p>
+        </div>
+    </div>
+
+    <!-- ========== REDEEM MODAL ========== -->
+    <div id="redeemModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('redeemModal')">&times;</span>
+            <h2>🎁 Rewards Store</h2>
+            <p style="color: var(--text-light); margin-bottom: 10px;">100 pts = $0.10</p>
+            <div style="display: grid; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-accent" onclick="redeem('Ice Cream', 5000)">🍦 Ice Cream (5,000 pts / $5)</button>
+                <button class="btn btn-purple" onclick="redeem('Movie Night', 10000)">🎬 Movie Night (10,000 pts / $10)</button>
+                <button class="btn btn-success" onclick="redeem('Dinner Out', 25000)">🍽️ Dinner Out (25,000 pts / $25)</button>
+                <button class="btn btn-ghost" onclick="redeem('Custom', 0)">✨ Custom Reward</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PROPOSE MODAL ========== -->
+    <div id="proposeModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('proposeModal')">&times;</span>
+            <h2>💡 Propose New Task</h2>
+            <input type="text" id="propName" placeholder="Task Name">
+            <input type="number" id="propValue" placeholder="Suggested Value ($)" step="0.25">
+            <textarea id="propReason" placeholder="Why should this be a task?" rows="3"></textarea>
+            <button class="btn btn-success" onclick="submitProposal()">Submit Proposal</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <script>
+        // ========== FIREBASE CONFIG ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
+            authDomain: "habitrewards-131.firebaseapp.com",
+            projectId: "habitrewards-131",
+            storageBucket: "habitrewards-131.firebasestorage.app",
+            messagingSenderId: "814515329989",
+            appId: "1:814515329989:web:cc256861680e9b67c449ac"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // ========== TASK DEFINITIONS ==========
+        // Points system: 100 points = $0.10 | Daily max: 10,000 points ($10) - weekly tasks exempt
+        const DAILY_TASKS = [
+            { id: 1, name: "Clean up kitchen table", value: 100, emoji: "🧹" },
+            { id: 2, name: "Go for a walk", value: 150, emoji: "🚶" },
+            { id: 3, name: "Play tennis / pickleball", value: 250, emoji: "🎾" },
+            { id: 4, name: "Do a lesson on Duolingo", value: 75, emoji: "🦉" },
+            { id: 5, name: "Do crossword puzzle", value: 100, emoji: "📝" },
+            { id: 6, name: "Charge devices overnight", value: 50, emoji: "🔋" },
+            { id: 7, name: "Check and sort the mail", value: 50, emoji: "📬" }
+        ];
+
+        const DAILY_MAX_POINTS = 10000; // $10 daily cap for daily tasks
+
+        const PERMANENT_WEEKLY_BONUSES = [
+            { id: 101, name: "Play tennis / pickleball 3x this week", value: 200, emoji: "🎾", isCounter: true, target: 3, isWeekly: true },
+            { id: 102, name: "Get rid of 3 items from office", value: 300, emoji: "📦", isWeekly: true },
+            { id: 103, name: "Take out the trash", value: 100, emoji: "🗑️", isWeekly: true },
+            { id: 104, name: "Clean out the car", value: 200, emoji: "🚗", isWeekly: true },
+            { id: 105, name: "Take vitamins every day this week", value: 300, emoji: "💊", isWeekly: true }
+        ];
+
+        const ROTATING_WEEKLY_BONUSES = [
+            { id: 201, name: "Sell your coins or vinyls", value: 500, emoji: "💿", isWeekly: true },
+            { id: 202, name: "Find a new show on Netflix", value: 200, emoji: "📺", isWeekly: true },
+            { id: 203, name: "Find a new show on Amazon Video", value: 200, emoji: "📺", isWeekly: true },
+            { id: 204, name: "Find a new show on Apple TV", value: 200, emoji: "📺", isWeekly: true },
+            { id: 205, name: "Use the microwave", value: 100, emoji: "🍿", isWeekly: true },
+            { id: 206, name: "Check Aisle for grocery deals", value: 150, emoji: "🛒", isWeekly: true },
+            { id: 207, name: "Take your wife out to lunch or dinner", value: 500, emoji: "💑", isWeekly: true },
+            { id: 208, name: "Try a new restaurant", value: 300, emoji: "🍽️", isWeekly: true },
+            { id: 209, name: "Tell one of your kids you're thinking of them", value: 200, emoji: "💌", isWeekly: true },
+            { id: 210, name: "Do something nice for your wife", value: 300, emoji: "❤️", isWeekly: true },
+            { id: 211, name: "Buy a new item from the grocery store", value: 150, emoji: "🛍️", isWeekly: true },
+            { id: 212, name: "Ask your tennis friends out to lunch", value: 300, emoji: "🍔", isWeekly: true },
+            { id: 213, name: "Donate 5 items of clothing that you no longer wear", value: 200, emoji: "👕", isWeekly: true },
+            { id: 214, name: "Donate a pair of sneakers", value: 200, emoji: "👟", isWeekly: true },
+            { id: 215, name: "Throw away 5 items you no longer need", value: 150, emoji: "🗑️", isWeekly: true },
+            { id: 216, name: "Use ChatGPT to solve a problem (chat.openai.com)", value: 200, emoji: "🤖", isWeekly: true },
+            { id: 217, name: "Make the bed every day this week", value: 300, emoji: "🛏️", isWeekly: true },
+            { id: 218, name: "Clean a bathroom", value: 200, emoji: "🧽", isWeekly: true },
+            { id: 219, name: "Call a friend or family member", value: 200, emoji: "📞", isWeekly: true }
+        ];
+
+        // ========== STATE ==========
+        let currentUser = null;
+        let userProfile = null;
+        let currentTaskId = null;
+        let currentPhotoData = null;
+        let unsubscribeTasks = null;
+        let unsubscribePending = null;
+
+        // ========== AUTH FUNCTIONS ==========
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(err => {
+                alert('Sign in failed: ' + err.message);
+            });
+        }
+
+        function signInWithEmail() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+            auth.signInWithEmailAndPassword(email, password).catch(err => {
+                alert('Sign in failed: ' + err.message);
+            });
+        }
+
+        function signUpWithEmail() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            if (!name || !email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(cred => cred.user.updateProfile({ displayName: name }))
+                .catch(err => alert('Sign up failed: ' + err.message));
+        }
+
+        function signOut() {
+            if (unsubscribeTasks) unsubscribeTasks();
+            if (unsubscribePending) unsubscribePending();
+            auth.signOut();
+        }
+
+        function showSignUp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('signupScreen').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('signupScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        // ========== AUTH STATE LISTENER ==========
+        auth.onAuthStateChanged(async user => {
+            currentUser = user;
+            
+            if (user) {
+                // Check if user has a profile
+                const profileDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (profileDoc.exists) {
+                    userProfile = profileDoc.data();
+                    showAppForRole(userProfile.role);
+                } else {
+                    // New user - show role selector
+                    hideAllScreens();
+                    document.getElementById('roleSelector').style.display = 'flex';
+                }
+            } else {
+                // Not logged in
+                hideAllScreens();
+                document.getElementById('loginScreen').classList.remove('hidden');
+                userProfile = null;
+            }
+        });
+
+        function hideAllScreens() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('signupScreen').classList.add('hidden');
+            document.getElementById('roleSelector').style.display = 'none';
+            document.getElementById('userApp').classList.add('hidden');
+            document.getElementById('managerApp').classList.add('hidden');
+        }
+
+        async function selectRole(role) {
+            // Create user profile
+            await db.collection('users').doc(currentUser.uid).set({
+                name: currentUser.displayName || 'User',
+                email: currentUser.email,
+                photoURL: currentUser.photoURL || '',
+                role: role,
+                balance: 0,
+                pendingBalance: 0,
+                streak: 0,
+                lastStreakDate: null,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            userProfile = { role, balance: 0, pendingBalance: 0, streak: 0 };
+            showAppForRole(role);
+        }
+
+        function showAppForRole(role) {
+            hideAllScreens();
+            
+            if (role === 'user') {
+                document.getElementById('userApp').classList.remove('hidden');
+                document.getElementById('userAvatar').src = currentUser.photoURL || '';
+                initUserApp();
+            } else {
+                document.getElementById('managerApp').classList.remove('hidden');
+                initManagerApp();
+            }
+            
+            applyTheme();
+        }
+
+        // ========== USER APP ==========
+        async function initUserApp() {
+            updateGreeting();
+            
+            // Get today's date string
+            const today = new Date().toDateString();
+            const todayId = today.replace(/\s/g, '_');
+            
+            // Listen to user's profile for balance updates
+            db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    userProfile = doc.data();
+                    const points = userProfile.balance || 0;
+                    const cashValue = (points / 1000).toFixed(2);
+                    document.getElementById('todayBalance').textContent = points.toLocaleString() + ' pts';
+                    document.getElementById('cashValue').textContent = `Worth $${cashValue}`;
+                    document.getElementById('streakDays').textContent = userProfile.streak || 0;
+                    
+                    const pending = userProfile.pendingBalance || 0;
+                    document.getElementById('pendingBalance').textContent = pending > 0 ? `(${pending.toLocaleString()} pts pending approval)` : '';
+                }
+            });
+            
+            // Listen to today's task submissions
+            unsubscribeTasks = db.collection('submissions')
+                .where('userId', '==', currentUser.uid)
+                .where('dateId', '==', todayId)
+                .onSnapshot(snapshot => {
+                    const submissions = {};
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        submissions[data.taskId] = { id: doc.id, ...data };
+                    });
+                    renderTasks(submissions);
+                });
+            
+            // Update date display
+            const opts = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', opts);
+        }
+
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const name = currentUser?.displayName?.split(' ')[0] || 'there';
+            let greeting;
+            if (hour < 12) {
+                greeting = `Good Morning, ${name}! ☀️`;
+            } else if (hour < 17) {
+                greeting = `Good Afternoon, ${name}! 🌤️`;
+            } else {
+                greeting = `Good Evening, ${name}! 🌙`;
+            }
+            document.getElementById('greeting').textContent = greeting;
+        }
+
+        function renderTasks(submissions) {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+            
+            let allDone = true;
+            DAILY_TASKS.forEach(task => {
+                const submission = submissions[task.id];
+                const status = submission?.status || 'none';
+                
+                if (status !== 'approved') allDone = false;
+                
+                const div = document.createElement('div');
+                div.className = 'task-row' + (status === 'pending' ? ' pending' : '');
+                
+                let statusBadge = '';
+                if (status === 'pending') statusBadge = '<span class="task-status pending">⏳ Pending</span>';
+                else if (status === 'approved') statusBadge = '<span class="task-status approved">✅ Approved</span>';
+                else if (status === 'rejected') statusBadge = '<span class="task-status rejected">❌ Rejected</span>';
+                
+                const isClickable = status === 'none' || status === 'rejected';
+                const checkClass = status === 'approved' ? 'completed' : (status === 'pending' ? 'pending' : '');
+                const checkIcon = status === 'approved' ? '✓' : (status === 'pending' ? '⏳' : '');
+                
+                div.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-name">
+                            <span class="task-emoji">${task.emoji}</span>
+                            <span style="${status === 'approved' ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${task.name}</span>
+                            ${statusBadge}
+                        </div>
+                        <div class="task-reward">+${task.value} pts</div>
+                    </div>
+                    <button class="task-check ${checkClass}" ${!isClickable ? 'disabled' : ''} onclick="onTaskClick(${task.id})">
+                        ${checkIcon}
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+            
+            // Show bonus section if all tasks approved
+            renderBonusSection(allDone);
+        }
+
+        function renderBonusSection(allDone) {
+            const bonusSection = document.getElementById('bonusSection');
+            if (allDone && DAILY_TASKS.length > 0) {
+                bonusSection.style.display = 'block';
+                const bonusContainer = document.getElementById('bonusOptions');
+                bonusContainer.innerHTML = '';
+                
+                const weekNum = getWeekNumber();
+                const rotatingBonus = ROTATING_WEEKLY_BONUSES[weekNum % ROTATING_WEEKLY_BONUSES.length];
+                const allBonuses = [...PERMANENT_WEEKLY_BONUSES, rotatingBonus];
+                
+                allBonuses.forEach(b => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-purple';
+                    btn.style.marginTop = '10px';
+                    btn.innerHTML = `${b.emoji} ${b.name} (+${b.value} pts)`;
+                    btn.onclick = () => submitBonusTask(b);
+                    bonusContainer.appendChild(btn);
+                });
+            } else {
+                bonusSection.style.display = 'none';
+            }
+        }
+
+        function getWeekNumber() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 1);
+            return Math.floor((now - start) / 604800000);
+        }
+
+        function onTaskClick(taskId) {
+            const task = DAILY_TASKS.find(t => t.id === taskId);
+            currentTaskId = taskId;
+            currentPhotoData = null;
+            
+            document.getElementById('modalTaskTitle').innerHTML = `${task.emoji} ${task.name}`;
+            document.getElementById('taskPhoto').value = '';
+            document.getElementById('taskComment').value = '';
+            document.getElementById('imgPreview').innerHTML = '';
+            
+            openModal('taskModal');
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentPhotoData = e.target.result;
+                    document.getElementById('imgPreview').innerHTML = `<img src="${e.target.result}" style="width: 100%; border-radius: 12px;">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function submitTask() {
+            const task = DAILY_TASKS.find(t => t.id === currentTaskId);
+            const comment = document.getElementById('taskComment').value;
+            const today = new Date().toDateString();
+            const todayId = today.replace(/\s/g, '_');
+            
+            // Create submission
+            const submission = {
+                userId: currentUser.uid,
+                userName: currentUser.displayName || 'User',
+                userPhoto: currentUser.photoURL || '',
+                taskId: task.id,
+                taskName: task.name,
+                taskEmoji: task.emoji,
+                taskValue: task.value,
+                comment: comment,
+                photoURL: currentPhotoData || null, // In production, upload to Storage
+                status: 'pending',
+                dateId: todayId,
+                submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            await db.collection('submissions').add(submission);
+            
+            // Update pending balance
+            await db.collection('users').doc(currentUser.uid).update({
+                pendingBalance: firebase.firestore.FieldValue.increment(task.value)
+            });
+            
+            closeModal('taskModal');
+            triggerConfetti();
+        }
+
+        async function submitBonusTask(bonus) {
+            const comment = prompt(`Any notes for "${bonus.name}"?`) || '';
+            const today = new Date().toDateString();
+            const todayId = today.replace(/\s/g, '_');
+            
+            const submission = {
+                userId: currentUser.uid,
+                userName: currentUser.displayName || 'User',
+                userPhoto: currentUser.photoURL || '',
+                taskId: bonus.id,
+                taskName: bonus.name,
+                taskEmoji: bonus.emoji,
+                taskValue: bonus.value,
+                comment: comment,
+                photoURL: null,
+                status: 'pending',
+                dateId: todayId,
+                isBonus: true,
+                submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            await db.collection('submissions').add(submission);
+            
+            await db.collection('users').doc(currentUser.uid).update({
+                pendingBalance: firebase.firestore.FieldValue.increment(bonus.value)
+            });
+            
+            triggerConfetti();
+        }
+
+        // ========== MANAGER APP ==========
+        async function initManagerApp() {
+            // Find the user we're managing (for now, first user role account)
+            const usersSnapshot = await db.collection('users').where('role', '==', 'user').get();
+            
+            if (usersSnapshot.empty) {
+                document.getElementById('pendingContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👤</div>
+                        <div class="empty-state-title">No users yet</div>
+                        <p>Waiting for a user to sign up...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Listen to pending submissions
+            unsubscribePending = db.collection('submissions')
+                .where('status', '==', 'pending')
+                .orderBy('submittedAt', 'desc')
+                .onSnapshot(snapshot => {
+                    renderPendingSubmissions(snapshot);
+                });
+            
+            // Load user profile for settings
+            usersSnapshot.forEach(doc => {
+                const userData = doc.data();
+                document.getElementById('userProfileInfo').innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <img src="${userData.photoURL || ''}" style="width: 60px; height: 60px; border-radius: 50%;" 
+                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>👤</text></svg>'">
+                        <div>
+                            <div style="font-weight: 700; font-size: 18px;">${userData.name}</div>
+                            <div style="color: var(--text-light);">${userData.email}</div>
+                            <div style="color: var(--primary); font-weight: 700;">🔥 ${userData.streak || 0} day streak</div>
+                        </div>
+                    </div>
+                `;
+                const pts = userData.balance || 0;
+                document.getElementById('managerBalanceView').textContent = pts.toLocaleString() + ' pts ($' + (pts/1000).toFixed(2) + ')';
+            });
+        }
+
+        function renderPendingSubmissions(snapshot) {
+            const container = document.getElementById('pendingContainer');
+            document.getElementById('pendingCount').textContent = snapshot.size;
+            
+            if (snapshot.empty) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <div class="empty-state-title">All caught up!</div>
+                        <p>No pending tasks to review.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const time = data.submittedAt?.toDate?.() || new Date();
+                const timeStr = time.toLocaleString();
+                
+                const div = document.createElement('div');
+                div.className = 'pending-item';
+                div.innerHTML = `
+                    <div class="pending-header">
+                        <div class="pending-user">
+                            <img class="pending-user-avatar" src="${data.userPhoto || ''}" 
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>👤</text></svg>'">
+                            <div>
+                                <div class="pending-user-name">${data.userName}</div>
+                                <div class="pending-time">${timeStr}</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: 800; color: var(--primary);">+${data.taskValue} pts</div>
+                    </div>
+                    <div class="pending-task">${data.taskEmoji} ${data.taskName}</div>
+                    ${data.photoURL ? `<div class="pending-proof"><img src="${data.photoURL}"></div>` : ''}
+                    ${data.comment ? `<div class="pending-comment">"${data.comment}"</div>` : ''}
+                    <div class="pending-actions">
+                        <button class="btn btn-danger" onclick="rejectSubmission('${doc.id}', '${data.userId}', ${data.taskValue})">❌ Reject</button>
+                        <button class="btn btn-success" onclick="approveSubmission('${doc.id}', '${data.userId}', ${data.taskValue})">✅ Approve</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function approveSubmission(submissionId, userId, value) {
+            // Update submission status
+            await db.collection('submissions').doc(submissionId).update({
+                status: 'approved',
+                reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                reviewedBy: currentUser.uid
+            });
+            
+            // Move from pending to approved balance
+            await db.collection('users').doc(userId).update({
+                balance: firebase.firestore.FieldValue.increment(value),
+                pendingBalance: firebase.firestore.FieldValue.increment(-value)
+            });
+        }
+
+        async function rejectSubmission(submissionId, userId, value) {
+            const reason = prompt('Reason for rejection (optional):') || '';
+            
+            await db.collection('submissions').doc(submissionId).update({
+                status: 'rejected',
+                rejectionReason: reason,
+                reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                reviewedBy: currentUser.uid
+            });
+            
+            // Remove from pending balance
+            await db.collection('users').doc(userId).update({
+                pendingBalance: firebase.firestore.FieldValue.increment(-value)
+            });
+        }
+
+        async function adjustBalance(multiplier) {
+            const amount = parseFloat(document.getElementById('adjustAmount').value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            const usersSnapshot = await db.collection('users').where('role', '==', 'user').get();
+            if (!usersSnapshot.empty) {
+                const userDoc = usersSnapshot.docs[0];
+                await db.collection('users').doc(userDoc.id).update({
+                    balance: firebase.firestore.FieldValue.increment(amount * multiplier)
+                });
+                
+                document.getElementById('adjustAmount').value = '';
+                alert(`Balance ${multiplier > 0 ? 'added' : 'subtracted'}: ${amount} points`);
+                
+                // Refresh balance display
+                const updated = await db.collection('users').doc(userDoc.id).get();
+                const updatedPts = updated.data().balance || 0;
+                document.getElementById('managerBalanceView').textContent = updatedPts.toLocaleString() + ' pts ($' + (updatedPts/1000).toFixed(2) + ')';
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            
+            document.getElementById('pendingTab').classList.add('hidden');
+            document.getElementById('historyTab').classList.add('hidden');
+            document.getElementById('settingsTab').classList.add('hidden');
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+            
+            if (tab === 'history') loadHistory();
+        }
+
+        async function loadHistory() {
+            const container = document.getElementById('historyContainer');
+            const snapshot = await db.collection('submissions')
+                .where('status', 'in', ['approved', 'rejected'])
+                .orderBy('reviewedAt', 'desc')
+                .limit(50)
+                .get();
+            
+            if (snapshot.empty) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📜</div>
+                        <div class="empty-state-title">No history yet</div>
+                        <p>Reviewed tasks will appear here.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const time = data.reviewedAt?.toDate?.() || new Date();
+                
+                const div = document.createElement('div');
+                div.className = 'task-row';
+                div.innerHTML = `
+                    <div class="task-content">
+                        <div class="task-name">
+                            <span class="task-emoji">${data.taskEmoji}</span>
+                            ${data.taskName}
+                            <span class="task-status ${data.status}">${data.status === 'approved' ? '✅' : '❌'}</span>
+                        </div>
+                        <div style="color: var(--text-light); font-size: 12px;">${time.toLocaleDateString()}</div>
+                    </div>
+                    <div class="task-reward" style="${data.status === 'rejected' ? 'opacity: 0.5; text-decoration: line-through;' : ''}">
+                        +${data.taskValue} pts
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // ========== UI UTILITIES ==========
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openRedeem() { 
+            const pts = userProfile?.balance || 0;
+            document.getElementById('cashOutAmount').textContent = pts.toLocaleString() + ' pts ($' + (pts/1000).toFixed(2) + ')';
+            openModal('redeemModal'); 
+        }
+        function openCashOut() { 
+            const pts = userProfile?.balance || 0;
+            document.getElementById('cashOutAmount').textContent = pts.toLocaleString() + ' pts ($' + (pts/1000).toFixed(2) + ')';
+            openModal('cashOutModal'); 
+        }
+        function openPropose() { openModal('proposeModal'); }
+
+        async function redeem(item, cost) {
+            if ((userProfile?.balance || 0) >= cost) {
+                if (cost > 0) {
+                    if (confirm(`Redeem ${item} for ${cost.toLocaleString()} pts ($${(cost/1000).toFixed(2)})?`)) {
+                        await db.collection('users').doc(currentUser.uid).update({
+                            balance: firebase.firestore.FieldValue.increment(-cost)
+                        });
+                        alert(`🎉 Redeemed: ${item}!`);
+                    }
+                } else {
+                    const customReward = prompt('What reward would you like?');
+                    if (customReward) alert('Request sent to your manager!');
+                }
+                closeModal('redeemModal');
+            } else {
+                alert('Not enough points!');
+            }
+        }
+
+        async function requestCashOut() {
+            const balance = userProfile?.balance || 0;
+            if (balance <= 0) {
+                alert('Nothing to cash out!');
+                return;
+            }
+            
+            // Create a payout request
+            await db.collection('payoutRequests').add({
+                userId: currentUser.uid,
+                userName: currentUser.displayName,
+                amount: balance,
+                status: 'pending',
+                requestedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            alert(`Payout request for ${balance.toLocaleString()} pts ($${(balance/1000).toFixed(2)}) sent to your manager!`);
+            closeModal('cashOutModal');
+        }
+
+        async function submitProposal() {
+            const name = document.getElementById('propName').value;
+            const value = parseFloat(document.getElementById('propValue').value);
+            const reason = document.getElementById('propReason').value;
+            
+            if (!name) {
+                alert('Please enter a task name');
+                return;
+            }
+            
+            await db.collection('proposals').add({
+                userId: currentUser.uid,
+                userName: currentUser.displayName,
+                taskName: name,
+                suggestedValue: value || 0,
+                reason: reason,
+                status: 'pending',
+                submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            alert('Proposal sent to your manager!');
+            closeModal('proposeModal');
+            document.getElementById('propName').value = '';
+            document.getElementById('propValue').value = '';
+            document.getElementById('propReason').value = '';
+        }
+
+        function toggleTheme() {
+            const mode = localStorage.getItem('theme') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', mode);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const mode = localStorage.getItem('theme') || 'light';
+            const icons = document.querySelectorAll('.theme-btn');
+            if (mode === 'dark') {
+                document.body.classList.add('dark-mode');
+                icons.forEach(i => i.textContent = '☀️');
+            } else {
+                document.body.classList.remove('dark-mode');
+                icons.forEach(i => i.textContent = '🌙');
+            }
+        }
+
+        function triggerConfetti() {
+            for (let i = 0; i < 20; i++) {
+                const el = document.createElement('div');
+                el.innerText = ['🎉', '⭐', '💰', '✨'][Math.floor(Math.random() * 4)];
+                el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-50px;font-size:30px;transition:top 2s,opacity 2s;pointer-events:none;z-index:9999;`;
+                document.body.appendChild(el);
+                setTimeout(() => { el.style.top = '110vh'; el.style.opacity = '0'; }, 100);
+                setTimeout(() => el.remove(), 2100);
+            }
+        }
+
+        // Initialize theme on load
+        applyTheme();
+    </script>
+</body>
+</html>

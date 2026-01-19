@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitRewards - Turn Good Habits Into Real Rewards</title>
+    <meta name="description" content="Help the people you care about build positive daily routines through meaningful monetary rewards. Simple, fun, and effective for any relationship.">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #58cc02;
+            --primary-shade: #46a302;
+            --secondary: #2b70c9;
+            --accent: #ffc800;
+            --purple: #ce82ff;
+            --text: #3c3c3c;
+            --text-light: #666;
+            --bg: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            padding: 20px 40px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-weight: 800;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 0 var(--primary-shade);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 var(--primary-shade);
+        }
+
+        .btn-primary:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 3px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 160px 40px 100px;
+            text-align: center;
+            background: linear-gradient(180deg, white 0%, var(--bg) 100%);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 22px;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-image {
+            max-width: 400px;
+            margin: 60px auto 0;
+            background: white;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(88, 204, 2, 0.2);
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background: white;
+            padding: 100px 40px;
+        }
+
+        .steps {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .step-content p {
+            color: var(--text-light);
+            font-size: 18px;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            padding: 100px 40px;
+            background: linear-gradient(135deg, var(--primary), #4ade80);
+            color: white;
+        }
+
+        .use-cases .section-title {
+            color: white;
+        }
+
+        .use-cases-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .use-case {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .use-case h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .use-case p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 100px 40px;
+            text-align: center;
+        }
+
+        .pricing-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .pricing-card h3 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 64px;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .price span {
+            font-size: 20px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 100px 40px;
+            text-align: center;
+            background: var(--text);
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 20px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 120px 20px 60px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-number {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            <span>🎯</span> HabitRewards
+        </a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="habitrewards.html" class="btn btn-primary">Open App</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Turn Good Habits Into <span>Real Rewards</span></h1>
+        <p>Help the people you care about build positive daily routines through meaningful monetary rewards. Simple, fun, and effective.</p>
+        <div class="hero-buttons">
+            <a href="habitrewards.html" class="btn btn-primary">Get Started Free</a>
+            <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+        </div>
+        <div class="hero-image">
+            <div style="background: linear-gradient(135deg, var(--primary), #4ade80); border-radius: 20px; padding: 30px; color: white; text-align: center;">
+                <div style="font-size: 14px; text-transform: uppercase; opacity: 0.9;">Today's Balance</div>
+                <div style="font-size: 48px; font-weight: 800;">$12.75</div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <div style="flex: 1; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px;">🎁 Redeem</div>
+                    <div style="flex: 1; background: white; color: var(--primary); padding: 10px; border-radius: 10px; font-weight: 700;">🏦 Cash Out</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <h2 class="section-title">Why HabitRewards Works</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Real Money Motivation</h3>
+                <p>Assign dollar values to daily habits. Every completed task adds to their balance, creating tangible motivation to stay consistent.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔥</div>
+                <h3>Streak Tracking</h3>
+                <p>Build momentum with daily streaks. The longer the streak, the stronger the habit becomes—and the more rewarding it feels.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>Weekly Bonus Challenges</h3>
+                <p>Unlock special bonus tasks after completing daily habits. Rotating challenges keep things fresh and exciting week after week.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📸</div>
+                <h3>Optional Proof System</h3>
+                <p>Users can attach photos and notes when completing tasks, creating accountability and a record of accomplishments.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎮</div>
+                <h3>Gamified Experience</h3>
+                <p>Fun animations, confetti celebrations, and a Duolingo-inspired design make building habits feel like a game, not a chore.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💸</div>
+                <h3>Easy Payouts via Zelle</h3>
+                <p>Cash out earnings instantly with Zelle—no fees, no hassle. Or save up for bigger goals with the virtual savings jar.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Set Up Daily Habits</h3>
+                    <p>Define the daily tasks you want to encourage—exercise, learning, chores, self-care, or anything meaningful. Assign a dollar value to each based on effort and importance.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>User Completes Tasks</h3>
+                    <p>Each day, your user opens the app and marks habits as complete. They can optionally add a photo or note as proof. Balance updates instantly with fun celebrations!</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Unlock Bonus Challenges</h3>
+                    <p>When all daily habits are done, weekly bonus challenges unlock—extra opportunities to earn more by going above and beyond.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Cash Out Rewards</h3>
+                    <p>When ready, users cash out their balance via Zelle (free, instant transfers). Managers receive a notification and send payment—simple as that!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="use-cases">
+        <h2 class="section-title">Works For Any Relationship</h2>
+        <div class="use-cases-grid">
+            <div class="use-case">
+                <h3>👨‍👩‍👧 Family</h3>
+                <p>Whether it's kids learning responsibility, parents staying active, or partners supporting each other—rewards create real motivation.</p>
+            </div>
+            <div class="use-case">
+                <h3>💪 Health & Wellness</h3>
+                <p>Support exercise routines, healthy eating habits, medication schedules, or recovery milestones with tangible incentives.</p>
+            </div>
+            <div class="use-case">
+                <h3>🎓 Learning & Growth</h3>
+                <p>Encourage language learning, brain exercises, reading habits, or skill development with consistent rewards.</p>
+            </div>
+            <div class="use-case">
+                <h3>🏠 Daily Routines</h3>
+                <p>Make everyday tasks more rewarding—from household chores to self-care habits to staying socially connected.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <h2 class="section-title">Simple Pricing</h2>
+        <div class="pricing-card">
+            <h3>Free Forever</h3>
+            <div class="price">$0 <span>/ month</span></div>
+            <ul class="pricing-features">
+                <li>Unlimited daily habits</li>
+                <li>Weekly bonus challenges</li>
+                <li>Streak tracking</li>
+                <li>Photo proof uploads</li>
+                <li>Dark mode</li>
+                <li>Works offline</li>
+                <li>No ads, ever</li>
+            </ul>
+            <a href="habitrewards.html" class="btn btn-primary" style="width: 100%;">Start Now</a>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Ready to Build Better Habits?</h2>
+        <p>Start rewarding the behaviors that matter most—it only takes a minute to get started.</p>
+        <a href="habitrewards.html" class="btn btn-primary">Open HabitRewards</a>
+    </section>
+
+    <footer>
+        <p>© 2026 HabitRewards. Made with 💚 for families everywhere.</p>
+    </footer>
+
+</body>
+</html>
