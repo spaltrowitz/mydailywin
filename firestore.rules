@@ -56,5 +56,20 @@ service cloud.firestore {
       // Allow delete
       allow delete: if true;
     }
+    
+    // User notifications collection - for payment confirmations etc
+    match /userNotifications/{notificationId} {
+      // Anyone can read notifications
+      allow read: if true;
+      
+      // Anyone can create notifications
+      allow create: if true;
+      
+      // Anyone can update (mark as read)
+      allow update: if true;
+      
+      // Allow delete
+      allow delete: if true;
+    }
   }
 }

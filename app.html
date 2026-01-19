@@ -953,6 +953,81 @@
             checkLuckyDay();
             updateGreeting();
             render();
+            
+            // Check for payment notifications
+            checkPaymentNotifications();
+        }
+        
+        // Check for payment sent notifications from Firestore
+        async function checkPaymentNotifications() {
+            const profileId = PROFILE_ID || 'stu';
+            try {
+                const snapshot = await db.collection('userNotifications')
+                    .where('profileId', '==', profileId)
+                    .where('read', '==', false)
+                    .where('type', '==', 'payout_sent')
+                    .get();
+                
+                if (!snapshot.empty) {
+                    // Show the most recent notification
+                    const doc = snapshot.docs[0];
+                    const notif = doc.data();
+                    
+                    // Show payment received modal
+                    showPaymentReceivedModal(notif.amount, doc.id);
+                }
+            } catch (err) {
+                console.error('Error checking notifications:', err);
+            }
+        }
+        
+        function showPaymentReceivedModal(amount, notifId) {
+            // Create and show modal
+            const modal = document.createElement('div');
+            modal.id = 'paymentReceivedModal';
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-box" style="text-align: center; padding: 30px;">
+                    <div style="font-size: 80px; margin-bottom: 15px;">💰</div>
+                    <h2 style="margin-bottom: 10px; color: var(--primary);">Payment Sent!</h2>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Your payout is on its way</p>
+                    
+                    <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 20px;">
+                        <div style="font-size: 14px; opacity: 0.9;">Amount</div>
+                        <div style="font-size: 42px; font-weight: 800;">$${parseFloat(amount).toFixed(2)}</div>
+                    </div>
+                    
+                    <div style="background: #f0fdf4; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
+                        <div style="color: #166534; font-size: 14px;">
+                            <strong>From:</strong> HabitRewards<br>
+                            <strong>Via:</strong> Zelle<br>
+                            <span style="font-size: 12px; opacity: 0.8;">Check your Zelle app or bank notifications!</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="dismissPaymentNotification('${notifId}')" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                        🎉 Awesome!
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            triggerConfetti();
+        }
+        
+        async function dismissPaymentNotification(notifId) {
+            try {
+                await db.collection('userNotifications').doc(notifId).update({
+                    read: true,
+                    readAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (err) {
+                console.error('Error marking notification as read:', err);
+            }
+            
+            // Remove modal
+            const modal = document.getElementById('paymentReceivedModal');
+            if (modal) modal.remove();
         }
 
         // ========== GAMBLER FEATURES ==========
@@ -2279,6 +2354,21 @@
             
             // Show success state in modal
             const modalContent = document.querySelector('#cashoutModal .modal-box');
+            
+            // Determine expected timing
+            const now = new Date();
+            const hour = now.getHours();
+            const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+            const isWeekend = day === 0 || day === 6;
+            const isAfter3PM = hour >= 15;
+            
+            let timingMessage = '';
+            if (isWeekend || isAfter3PM) {
+                timingMessage = '📅 Expected: <strong>Next business day</strong>';
+            } else {
+                timingMessage = '⚡ Expected: <strong>Today</strong> (within a few hours)';
+            }
+            
             modalContent.innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <div style="font-size: 60px; margin-bottom: 15px;">🎉</div>
@@ -2291,9 +2381,16 @@
                         <div style="font-size: 14px; opacity: 0.9; margin-top: 5px;">(${pts} pts)</div>
                     </div>
                     
-                    <div style="background: #fef3c7; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
-                        <div style="color: #92400e; font-size: 14px;">
-                            ⏳ Your admin will process this soon. Payment will arrive via Zelle.
+                    <div style="background: #e0f2fe; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                        <div style="color: #0369a1; font-size: 14px;">
+                            ${timingMessage}
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f0fdf4; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
+                        <div style="color: #166534; font-size: 14px;">
+                            💰 Payment from <strong>HabitRewards</strong> via Zelle<br>
+                            <span style="font-size: 12px; opacity: 0.8;">You'll get a notification when it's sent!</span>
                         </div>
                     </div>
                     
