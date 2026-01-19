@@ -25,7 +25,7 @@ Stu earns levels based on **total lifetime points earned**:
 | Level | Badge | Points Required | $ Equivalent | Est. Time |
 |-------|-------|-----------------|--------------|-----------|
 | 🌱 Beginner | Starting out | 0 pts | $0 | Day 1 |
-| 🌱 Starter | First milestone | 100 pts | $1 | Day 1 |
+| 🌱 Starter | First milestone | 150 pts | $1.50 | Day 1 |
 | 🌿 Regular | Getting consistent | 500 pts | $5 | ~Day 3 |
 | 🌟 Pro | Solid habits | 1,000 pts | $10 | ~Week 1 |
 | ⭐ Expert | Dedicated | 2,500 pts | $25 | ~Week 2 |
@@ -134,10 +134,11 @@ One of these rotates each week (18 total options), plus a permanent tennis count
 - Triggers coin rain animation when hit!
 
 ### 🎰 Bonus Spin Wheel
-- Unlocks when ALL daily tasks are completed
+- Unlocks **automatically** when ALL 3 daily tasks are completed (no approval needed)
 - One spin per day
 - Prizes: 10, 25, 50, 75, 100, or 150 pts
 - Jackpots are rare but exciting!
+- Points added to balance instantly
 
 ### 🏆 Achievements
 Unlock badges at milestones:

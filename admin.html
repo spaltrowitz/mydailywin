@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitRewards - Account Manager</title>
+    <style>
+        :root {
+            --primary: #22c55e;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: var(--text-light);
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h3 {
+            font-size: 16px;
+            margin: 20px 0 12px 0;
+            color: var(--text-light);
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #16a34a;
+        }
+        .btn-secondary {
+            background: #e5e7eb;
+            color: var(--text);
+        }
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: var(--bg);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-box .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .stat-box .label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .stat-box.highlight {
+            background: linear-gradient(135deg, #22c55e22, #22c55e44);
+            border: 2px solid var(--primary);
+        }
+        .report-item {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 14px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 10px;
+        }
+        .report-item .task-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .report-item .reason {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        .report-item .date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background: var(--bg);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-light);
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .task-name-cell {
+            font-weight: 600;
+        }
+        .points-cell {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .dollar-cell {
+            color: var(--text-light);
+        }
+        .level-row {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+        .level-row.current {
+            background: linear-gradient(135deg, var(--primary)22, var(--primary)44);
+            border: 2px solid var(--primary);
+        }
+        .level-row.unlocked {
+            opacity: 0.6;
+        }
+        .level-row.locked {
+            opacity: 0.4;
+        }
+        .level-name {
+            flex: 1;
+            font-weight: 600;
+        }
+        .level-pts {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 16px;
+            border-radius: 20px;
+            background: #e5e7eb;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+        }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .info-box {
+            background: #f0fdf4;
+            border-left: 4px solid var(--primary);
+            padding: 14px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .warning-box {
+            background: #fefce8;
+            border-left: 4px solid #eab308;
+            padding: 14px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        .feature-icon {
+            font-size: 24px;
+        }
+        .feature-content h4 {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .feature-content p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👔 Account Manager</h1>
+            <p>HabitRewards Admin Panel for Stu</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showTab('tasks')">📋 All Tasks</button>
+            <button class="tab" onclick="showTab('levels')">🏆 Levels</button>
+            <button class="tab" onclick="showTab('features')">🎮 Features</button>
+            <button class="tab" onclick="showTab('reports')">🚩 Reports</button>
+            <button class="tab" onclick="showTab('data')">📥 Data</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>📊 Stu's Progress</h2>
+                <div class="stat-grid">
+                    <div class="stat-box highlight">
+                        <div class="value" id="totalPts">0</div>
+                        <div class="label">Total Points Earned</div>
+                    </div>
+                    <div class="stat-box highlight">
+                        <div class="value" id="totalDollars">$0</div>
+                        <div class="label">Total $ Earned</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="currentBalance">0</div>
+                        <div class="label">Current Balance (pts)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="balanceDollars">$0</div>
+                        <div class="label">Current Balance ($)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="streak">0</div>
+                        <div class="label">Day Streak 🔥</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="currentLevel">-</div>
+                        <div class="label">Current Level</div>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💰 Point System:</strong> 100 points = $1.00<br>
+                    Payouts sent via Zelle at month end.
+                </div>
+
+                <div id="streakBonusInfo" style="display: none;" class="warning-box">
+                    <strong>🔥 Streak Bonus Active!</strong><br>
+                    <span id="streakBonusText"></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💵 Payout Estimate</h2>
+                <div class="stat-grid">
+                    <div class="stat-box">
+                        <div class="value" id="dailyAvg">~$2</div>
+                        <div class="label">Daily Average</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="value" id="monthlyEst">~$60</div>
+                        <div class="label">Monthly Estimate</div>
+                    </div>
+                </div>
+                <p style="font-size: 13px; color: var(--text-light); text-align: center;">Based on completing all daily tasks + bonuses</p>
+            </div>
+        </div>
+
+        <!-- TASKS TAB -->
+        <div id="tasks" class="tab-content">
+            <div class="card">
+                <h2>📋 Daily Tasks (Every Day)</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">These 3 tasks appear every day. Total: 150 pts ($1.50)</p>
+                <table>
+                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
+                    <tr><td class="task-name-cell">🚶 Go for a walk</td><td class="points-cell">25</td><td class="dollar-cell">$0.25</td></tr>
+                    <tr><td class="task-name-cell">🦉 Do a Duolingo lesson</td><td class="points-cell">75</td><td class="dollar-cell">$0.75</td></tr>
+                    <tr><td class="task-name-cell">📝 Do a crossword puzzle</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>⭐ Daily Bonus Tasks (Rotating)</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">One of these rotates each day (18 options)</p>
+                <table>
+                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
+                    <tr><td class="task-name-cell">📸 Take a photo of something interesting</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🧹 Organize one drawer or shelf</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🌳 Spend 10 minutes outside</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🎵 Listen to a new song</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">📞 Call or text a friend</td><td class="points-cell">100</td><td class="dollar-cell">$1.00</td></tr>
+                    <tr><td class="task-name-cell">🔋 Charge devices overnight</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🗑️ Throw away one thing you don't need</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🧽 Wipe down a counter or surface</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🛏️ Make the bed</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🧘 Do 5 minutes of stretching</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">💊 Take vitamins</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">📖 Read for 10 minutes</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🎧 Listen to a podcast</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">📺 Watch something new on streaming</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">📱 Delete an unused app</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">📧 Clear out old emails</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">📝 Make a to-do list for tomorrow</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🚗 Clean out the car</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>🏆 Weekly Challenges</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Tennis is permanent. One other rotates weekly (19 options)</p>
+                
+                <h3>🎾 Permanent Weekly Task</h3>
+                <table>
+                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
+                    <tr><td class="task-name-cell">🎾 Tennis/pickleball 3x this week</td><td class="points-cell">30</td><td class="dollar-cell">$0.30</td></tr>
+                </table>
+
+                <h3>📅 Rotating Weekly Challenges</h3>
+                <table>
+                    <tr><th>Task</th><th>Points</th><th>$</th></tr>
+                    <tr><td class="task-name-cell">💿 Sell your coins or vinyls</td><td class="points-cell">500</td><td class="dollar-cell">$5.00</td></tr>
+                    <tr><td class="task-name-cell">💑 Take your wife out to lunch or dinner</td><td class="points-cell">500</td><td class="dollar-cell">$5.00</td></tr>
+                    <tr><td class="task-name-cell">🍽️ Try a new restaurant</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
+                    <tr><td class="task-name-cell">📦 Get rid of 3 items from office</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
+                    <tr><td class="task-name-cell">❤️ Do something nice for your wife</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
+                    <tr><td class="task-name-cell">🍔 Go out to lunch with tennis friends</td><td class="points-cell">300</td><td class="dollar-cell">$3.00</td></tr>
+                    <tr><td class="task-name-cell">👕 Donate clothing items</td><td class="points-cell">250</td><td class="dollar-cell">$2.50</td></tr>
+                    <tr><td class="task-name-cell">👟 Donate sneakers</td><td class="points-cell">250</td><td class="dollar-cell">$2.50</td></tr>
+                    <tr><td class="task-name-cell">📺 Find a new show on Netflix</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                    <tr><td class="task-name-cell">📺 Find a new show on Amazon Video</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                    <tr><td class="task-name-cell">📺 Find a new show on Apple TV</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                    <tr><td class="task-name-cell">💌 Tell one of your kids you are thinking of them</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                    <tr><td class="task-name-cell">🤖 Use ChatGPT to solve a problem</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                    <tr><td class="task-name-cell">📞 Call a friend or family member</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                    <tr><td class="task-name-cell">🕵️ Apply for a Mystery Shop</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                    <tr><td class="task-name-cell">🛒 Check Aisle for grocery deals</td><td class="points-cell">150</td><td class="dollar-cell">$1.50</td></tr>
+                    <tr><td class="task-name-cell">🛍️ Buy a new item from the grocery store</td><td class="points-cell">150</td><td class="dollar-cell">$1.50</td></tr>
+                    <tr><td class="task-name-cell">🍿 Use the microwave</td><td class="points-cell">50</td><td class="dollar-cell">$0.50</td></tr>
+                    <tr><td class="task-name-cell">🗑️ Throw away 5 items you no longer need</td><td class="points-cell">200</td><td class="dollar-cell">$2.00</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- LEVELS TAB -->
+        <div id="levels" class="tab-content">
+            <div class="card">
+                <h2>🏆 Level Progression</h2>
+                <p style="color: var(--text-light); margin-bottom: 20px;">Levels are based on <strong>total lifetime points earned</strong></p>
+                <div id="levelsDisplay"></div>
+            </div>
+        </div>
+
+        <!-- FEATURES TAB -->
+        <div id="features" class="tab-content">
+            <div class="card">
+                <h2>🎮 Gamification Features</h2>
+                <p style="color: var(--text-light); margin-bottom: 20px;">Casino-style features to keep Stu engaged!</p>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">🎁</div>
+                    <div class="feature-content">
+                        <h4>Daily Login Bonus</h4>
+                        <p>+25 pts just for opening the app each day. Shows celebratory animation.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🔥</div>
+                    <div class="feature-content">
+                        <h4>Streak Multiplier</h4>
+                        <p>7+ day streak = <strong>1.5x points</strong> on all tasks<br>
+                        14+ day streak = <strong>2x points</strong> on all tasks</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🍀</div>
+                    <div class="feature-content">
+                        <h4>Lucky Day</h4>
+                        <p>10% chance each day is a "Lucky Day" - all tasks worth <strong>1.5x points</strong>. Banner shows when active.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🎲</div>
+                    <div class="feature-content">
+                        <h4>Random Bonus</h4>
+                        <p>10% chance on any task to get <strong>2x points</strong>! Triggers coin rain animation.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🎰</div>
+                    <div class="feature-content">
+                        <h4>Bonus Spin Wheel</h4>
+                        <p>Unlocks automatically when ALL 3 daily tasks done. One spin/day. Prizes: 10, 25, 50, 75, 100, or 150 pts.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🏆</div>
+                    <div class="feature-content">
+                        <h4>Achievements</h4>
+                        <p>💵 First Dollar (100 pts) • 🔥 Week Warrior (7-day streak) • 🏆 Monthly Master (30-day streak) • 💰 Big Earner (1,000 pts)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💵 Sample Earnings</h2>
+                <table>
+                    <tr><th>Scenario</th><th>Daily Pts</th><th>Daily $</th></tr>
+                    <tr><td>Typical day (no bonuses)</td><td class="points-cell">235</td><td class="dollar-cell">$2.35</td></tr>
+                    <tr><td>With 7-day streak (1.5x)</td><td class="points-cell">340</td><td class="dollar-cell">$3.40</td></tr>
+                    <tr><td>Lucky Day + Jackpot</td><td class="points-cell">500+</td><td class="dollar-cell">$5.00+</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- REPORTS TAB -->
+        <div id="reports" class="tab-content">
+            <div class="card">
+                <h2>🚩 Reported Tasks</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Tasks Stu has flagged for review</p>
+                <div id="reportsContainer">
+                    <div class="empty-state">No reported tasks yet</div>
+                </div>
+                <button class="btn btn-secondary" onclick="clearReports()" style="margin-top: 15px;">Clear All Reports</button>
+            </div>
+        </div>
+
+        <!-- DATA TAB -->
+        <div id="data" class="tab-content">
+            <div class="card">
+                <h2>📥 Download Data</h2>
+                <p style="color: var(--text-light); margin-bottom: 16px;">Export activity logs for review</p>
+                <button class="btn btn-primary" onclick="downloadTaskResponses()">📋 Task Responses (CSV)</button>
+                <button class="btn btn-primary" onclick="downloadFeedbackLog()">📝 Weekly Check-ins (CSV)</button>
+                <button class="btn btn-secondary" onclick="downloadReports()">🚩 Task Reports (CSV)</button>
+            </div>
+
+            <div class="card">
+                <h2>⚠️ Danger Zone</h2>
+                <button class="btn btn-danger" onclick="resetUserData()">🔄 Reset All User Data</button>
+                <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px;">Warning: This clears all progress permanently!</p>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to App</a>
+    </div>
+
+    <script>
+        // Tab functionality
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load user state
+        function loadState() {
+            const saved = localStorage.getItem('hr_state');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return { balance: 0, totalEarned: 0, streak: 0 };
+        }
+
+        // Get level from points
+        function getLevel(totalPoints) {
+            if (totalPoints >= 100000) return { name: "🔥 Hall of Fame", color: "#ff4500" };
+            if (totalPoints >= 50000) return { name: "🌟 Superstar", color: "#ff69b4" };
+            if (totalPoints >= 25000) return { name: "👑 Legend", color: "#9400d3" };
+            if (totalPoints >= 10000) return { name: "💎 Diamond", color: "#00bfff" };
+            if (totalPoints >= 5000) return { name: "🏆 Champion", color: "#ffd700" };
+            if (totalPoints >= 2500) return { name: "⭐ Expert", color: "#c0c0c0" };
+            if (totalPoints >= 1000) return { name: "🌟 Pro", color: "#cd7f32" };
+            if (totalPoints >= 500) return { name: "🌿 Regular", color: "#4ade80" };
+            if (totalPoints >= 150) return { name: "🌱 Starter", color: "#86efac" };
+            return { name: "🥚 Beginner", color: "#bbf7d0" };
+        }
+
+        // Display stats
+        function displayStats() {
+            const state = loadState();
+            const totalEarned = state.totalEarned || 0;
+            const balance = state.balance || 0;
+            const streak = state.streak || 0;
+            
+            document.getElementById('totalPts').textContent = Math.floor(totalEarned).toLocaleString();
+            document.getElementById('totalDollars').textContent = '$' + (totalEarned / 100).toFixed(2);
+            document.getElementById('currentBalance').textContent = Math.floor(balance).toLocaleString();
+            document.getElementById('balanceDollars').textContent = '$' + (balance / 100).toFixed(2);
+            document.getElementById('streak').textContent = streak;
+            
+            const level = getLevel(totalEarned);
+            document.getElementById('currentLevel').textContent = level.name;
+            document.getElementById('currentLevel').style.color = level.color;
+
+            // Streak bonus info
+            if (streak >= 14) {
+                document.getElementById('streakBonusInfo').style.display = 'block';
+                document.getElementById('streakBonusText').textContent = '2x points on all tasks (14+ day streak)';
+            } else if (streak >= 7) {
+                document.getElementById('streakBonusInfo').style.display = 'block';
+                document.getElementById('streakBonusText').textContent = '1.5x points on all tasks (7+ day streak)';
+            }
+        }
+
+        // Display levels
+        function displayLevels() {
+            const state = loadState();
+            const totalEarned = state.totalEarned || 0;
+            const currentLevel = getLevel(totalEarned);
+            
+            const allLevels = [
+                { name: "🥚 Beginner", pts: 0 },
+                { name: "🌱 Starter", pts: 150 },
+                { name: "🌿 Regular", pts: 500 },
+                { name: "🌟 Pro", pts: 1000 },
+                { name: "⭐ Expert", pts: 2500 },
+                { name: "🏆 Champion", pts: 5000 },
+                { name: "💎 Diamond", pts: 10000 },
+                { name: "👑 Legend", pts: 25000 },
+                { name: "🌟 Superstar", pts: 50000 },
+                { name: "🔥 Hall of Fame", pts: 100000 }
+            ];
+
+            const container = document.getElementById('levelsDisplay');
+            container.innerHTML = allLevels.map(lvl => {
+                const isCurrent = currentLevel.name === lvl.name;
+                const isUnlocked = totalEarned >= lvl.pts;
+                let className = isCurrent ? 'current' : (isUnlocked ? 'unlocked' : 'locked');
+                return `
+                    <div class="level-row ${className}">
+                        <div class="level-name">${lvl.name} ${isCurrent ? '← CURRENT' : ''}</div>
+                        <div class="level-pts">${lvl.pts.toLocaleString()} pts ($${(lvl.pts/100).toFixed(2)})</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Display reports
+        function displayReports() {
+            const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+            const container = document.getElementById('reportsContainer');
+            
+            if (reports.length === 0) {
+                container.innerHTML = '<div class="empty-state">No reported tasks yet ✅</div>';
+                return;
+            }
+
+            const reasonLabels = {
+                'too-hard': '😓 Too difficult',
+                'not-relevant': '🤷 Not relevant',
+                'dont-like': "👎 Don't like it",
+                'already-do': '✅ Already do this',
+                'other': '📝 Other'
+            };
+
+            container.innerHTML = reports.map(r => `
+                <div class="report-item">
+                    <div class="task-name">${r.taskName}</div>
+                    <div class="reason">${reasonLabels[r.reason] || r.reason}</div>
+                    ${r.comment ? `<div class="reason" style="font-style: italic;">"${r.comment}"</div>` : ''}
+                    <div class="date">${new Date(r.date).toLocaleDateString()} • ${r.taskType} task</div>
+                </div>
+            `).join('');
+        }
+
+        // Download functions
+        function downloadFeedbackLog() {
+            const feedback = JSON.parse(localStorage.getItem('hr_feedback') || '[]');
+            if (feedback.length === 0) {
+                alert('No feedback data to download');
+                return;
+            }
+            
+            let csv = 'Date,Mood,Energy,Overall,Comments\n';
+            feedback.forEach(f => {
+                const date = new Date(f.date).toLocaleDateString();
+                csv += `"${date}","${f.mood || ''}","${f.energy || ''}","${f.overall || ''}","${(f.comments || '').replace(/"/g, '""')}"\n`;
+            });
+            
+            downloadCSV(csv, 'habitrewards-feedback');
+        }
+
+        function downloadTaskResponses() {
+            const completedLog = JSON.parse(localStorage.getItem('hr_completed_log') || '[]');
+            
+            if (completedLog.length === 0) {
+                alert('No task data to download');
+                return;
+            }
+            
+            let csv = 'Date,Task Type,Task Name,Points,Comment\n';
+            completedLog.forEach(entry => {
+                csv += `"${entry.date}","${entry.type}","${entry.task}","${entry.points}","${(entry.comment || '').replace(/"/g, '""')}"\n`;
+            });
+            
+            downloadCSV(csv, 'habitrewards-tasks');
+        }
+
+        function downloadReports() {
+            const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+            if (reports.length === 0) {
+                alert('No reports to download');
+                return;
+            }
+            
+            let csv = 'Date,Task Type,Task Name,Reason,Comment\n';
+            reports.forEach(r => {
+                csv += `"${new Date(r.date).toLocaleDateString()}","${r.taskType}","${r.taskName}","${r.reason}","${(r.comment || '').replace(/"/g, '""')}"\n`;
+            });
+            
+            downloadCSV(csv, 'habitrewards-reports');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function clearReports() {
+            if (confirm('Clear all task reports?')) {
+                localStorage.removeItem('hr_reports');
+                displayReports();
+                alert('Reports cleared');
+            }
+        }
+
+        function resetUserData() {
+            if (confirm('⚠️ This will DELETE ALL user data including:\n\n• Points balance\n• Streak progress\n• Completed tasks\n• Achievements\n\nAre you sure?')) {
+                if (confirm('Really delete everything? This cannot be undone!')) {
+                    localStorage.removeItem('hr_state');
+                    localStorage.removeItem('hr_date');
+                    localStorage.removeItem('hr_week');
+                    localStorage.removeItem('hr_feedback');
+                    localStorage.removeItem('hr_completed_log');
+                    localStorage.removeItem('hr_reports');
+                    displayStats();
+                    displayReports();
+                    displayLevels();
+                    alert('All user data has been reset');
+                }
+            }
+        }
+
+        // Initialize
+        displayStats();
+        displayReports();
+        displayLevels();
+    </script>
+</body>
+</html>
