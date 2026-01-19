@@ -321,10 +321,11 @@
     <div id="proposeModal" class="modal">
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal('proposeModal')">&times;</span>
-            <h2>Suggest a Task</h2>
-            <input type="text" id="propName" placeholder="Task Name">
-            <input type="number" id="propValue" placeholder="Value ($)">
-            <button class="btn btn-success" onclick="submitProposal()">Submit</button>
+            <h2>💡 Suggest a Task</h2>
+            <p style="color: var(--text-light); margin-bottom: 15px;">Have an idea for a new task? Submit it and we'll review it!</p>
+            <input type="text" id="propName" placeholder="Task name (e.g., Water the plants)">
+            <textarea id="propReason" placeholder="Why should this be a task? (optional)" rows="3" style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; margin: 10px 0; background: var(--bg); color: var(--text); resize: none;"></textarea>
+            <button class="btn btn-success" onclick="submitProposal()">Submit Request</button>
         </div>
     </div>
 
@@ -610,10 +611,14 @@
 
         function submitProposal() {
             const name = document.getElementById('propName').value;
-            const val = parseFloat(document.getElementById('propValue').value);
-            if(name && val) {
-                alert('New task idea submitted!');
+            const reason = document.getElementById('propReason').value;
+            if(name) {
+                alert('Task suggestion submitted! We\'ll review it and let you know.');
+                document.getElementById('propName').value = '';
+                document.getElementById('propReason').value = '';
                 closeModal('proposeModal');
+            } else {
+                alert('Please enter a task name');
             }
         }
 
