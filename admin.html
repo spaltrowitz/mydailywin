@@ -1533,12 +1533,41 @@
                     localStorage.removeItem('hr_feedback' + suffix);
                     localStorage.removeItem('hr_completed_log' + suffix);
                     localStorage.removeItem('hr_reports' + suffix);
+                    
+                    // Update displays without changing tabs
                     displayStats();
                     displayReports();
                     displayLevels();
-                    alert('All user data reset');
+                    
+                    // Show success message without navigating away
+                    showToast('✅ All user data has been reset');
                 }
             }
+        }
+        
+        function showToast(message) {
+            // Remove existing toast if any
+            const existing = document.querySelector('.admin-toast');
+            if (existing) existing.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'admin-toast';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #333;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
         // ========== SETTINGS ACTIONS ==========
