@@ -39,60 +39,79 @@ The app shows "near-miss" messages when close to the next level (e.g., "Only 15 
 
 ---
 
-## Daily Tasks
+## Daily Tasks (Complete List)
 
 These 4 tasks appear every day:
 
-| Task | Points | $ Value |
-|------|--------|---------|
-| 🚶 Go for a walk | 25 pts | $0.25 |
-| 🎾 Play tennis / pickleball | 10 pts | $0.10 |
-| 🦉 Do a Duolingo lesson | 75 pts | $0.75 |
-| 📝 Do a crossword puzzle | 50 pts | $0.50 |
+| # | Task | Points | $ Value | Approved |
+|---|------|--------|---------|----------|
+| 1 | 🚶 Go for a walk | 25 pts | $0.25 | ✅ |
+| 2 | 🎾 Play tennis / pickleball | 10 pts | $0.10 | ✅ |
+| 3 | 🦉 Do a Duolingo lesson | 75 pts | $0.75 | ✅ |
+| 4 | 📝 Do a crossword puzzle | 50 pts | $0.50 | ✅ |
 
 **Daily task total: 160 pts ($1.60)**
 
 ---
 
-## Daily Bonus Task
+## Daily Bonus Tasks (Complete List)
 
-One rotating bonus task appears each day (different every day):
+One of these rotates each day (17 total options):
 
-| Sample Bonus Tasks | Points |
-|--------------------|--------|
-| 📸 Take a photo of something interesting | 50 pts |
-| 🧹 Organize one drawer or shelf | 50 pts |
-| 📞 Call or text a friend | **100 pts** |
-| 🧘 Do 5 minutes of stretching | 50 pts |
-| 📖 Read for 10 minutes | 50 pts |
-| ...and 12 more rotating options | 50 pts each |
-
-Most daily bonuses are worth **50 pts ($0.50)**. Calling a friend is worth **100 pts ($1.00)**.
+| # | Task | Points | $ Value | Approved |
+|---|------|--------|---------|----------|
+| 1 | 📸 Take a photo of something interesting | 50 pts | $0.50 | ✅ |
+| 2 | 🧹 Organize one drawer or shelf | 50 pts | $0.50 | ✅ |
+| 3 | 🌳 Spend 10 minutes outside | 50 pts | $0.50 | ✅ |
+| 4 | 🎵 Listen to a new song | 50 pts | $0.50 | ✅ |
+| 5 | 📞 Call or text a friend | 100 pts | $1.00 | ✅ |
+| 6 | 🔋 Charge devices overnight | 50 pts | $0.50 | ✅ |
+| 7 | 🗑️ Throw away one thing you don't need | 50 pts | $0.50 | ✅ |
+| 8 | 🧽 Wipe down a counter or surface | 50 pts | $0.50 | ✅ |
+| 9 | 🛏️ Make the bed | 50 pts | $0.50 | ✅ |
+| 10 | 🧘 Do 5 minutes of stretching | 50 pts | $0.50 | ✅ |
+| 11 | 💊 Take vitamins | 50 pts | $0.50 | ✅ |
+| 12 | 📖 Read for 10 minutes | 50 pts | $0.50 | ✅ |
+| 13 | 🎧 Listen to a podcast | 50 pts | $0.50 | ✅ |
+| 14 | 📺 Watch something new on streaming | 50 pts | $0.50 | ✅ |
+| 15 | 📱 Delete an unused app | 50 pts | $0.50 | ✅ |
+| 16 | 📧 Clear out old emails | 50 pts | $0.50 | ✅ |
+| 17 | 📝 Make a to-do list for tomorrow | 50 pts | $0.50 | ✅ |
 
 ---
 
-## Weekly Challenges
+## Weekly Challenges (Complete List)
 
-One rotating challenge appears each week:
+One of these rotates each week (18 total options):
 
-| Weekly Challenge | Points | $ Value |
-|------------------|--------|---------|
-| 💿 Sell your coins or vinyls | 500 pts | $5.00 |
-| 💑 Take your wife out to lunch or dinner | 500 pts | $5.00 |
-| 🍽️ Try a new restaurant | 300 pts | $3.00 |
-| 📦 Get rid of 3 items from office | 300 pts | $3.00 |
-| ❤️ Do something nice for your wife | 300 pts | $3.00 |
-| 🍔 Go out to lunch with tennis friends | 300 pts | $3.00 |
-| 👕 Donate clothing items | 250 pts | $2.50 |
-| 👟 Donate sneakers | 250 pts | $2.50 |
-| 📺 Find a new show on Netflix/Amazon/Apple TV | 200 pts | $2.00 |
-| 💌 Tell one of your kids you are thinking of them | 200 pts | $2.00 |
-| 🤖 Use ChatGPT to solve a problem | 200 pts | $2.00 |
-| 📞 Call a friend or family member | 200 pts | $2.00 |
-| 🕵️ Apply for a Mystery Shop | 200 pts | $2.00 |
-| 🛒 Check Aisle for grocery deals | 150 pts | $1.50 |
-| 🛍️ Buy a new item from the grocery store | 150 pts | $1.50 |
-| 🍿 Use the microwave | 50 pts | $0.50 |
+| # | Task | Points | $ Value | Approved |
+|---|------|--------|---------|----------|
+| 1 | 💿 Sell your coins or vinyls | 500 pts | $5.00 | ✅ |
+| 2 | 💑 Take your wife out to lunch or dinner | 500 pts | $5.00 | ✅ |
+| 3 | 🍽️ Try a new restaurant | 300 pts | $3.00 | ✅ |
+| 4 | 📦 Get rid of 3 items from office | 300 pts | $3.00 | ✅ |
+| 5 | ❤️ Do something nice for your wife | 300 pts | $3.00 | ✅ |
+| 6 | 🍔 Go out to lunch with tennis friends | 300 pts | $3.00 | ✅ |
+| 7 | 👕 Donate clothing items | 250 pts | $2.50 | ✅ |
+| 8 | 👟 Donate sneakers | 250 pts | $2.50 | ✅ |
+| 9 | 📺 Find a new show on Netflix | 200 pts | $2.00 | ✅ |
+| 10 | 📺 Find a new show on Amazon Video | 200 pts | $2.00 | ✅ |
+| 11 | 📺 Find a new show on Apple TV | 200 pts | $2.00 | ✅ |
+| 12 | 💌 Tell one of your kids you are thinking of them | 200 pts | $2.00 | ✅ |
+| 13 | 🤖 Use ChatGPT to solve a problem | 200 pts | $2.00 | ✅ |
+| 14 | 📞 Call a friend or family member | 200 pts | $2.00 | ✅ |
+| 15 | 🕵️ Apply for a Mystery Shop | 200 pts | $2.00 | ✅ |
+| 16 | 🛒 Check Aisle for grocery deals | 150 pts | $1.50 | ✅ |
+| 17 | 🛍️ Buy a new item from the grocery store | 150 pts | $1.50 | ✅ |
+| 18 | 🍿 Use the microwave | 50 pts | $0.50 | ✅ |
+
+### Backlog Tasks (Not Active - Can Add Later)
+| Task | Points | Status |
+|------|--------|--------|
+| 🚗 Clean out the car | 200 pts | ❌ Disabled |
+| 🗑️ Throw away 5 items you no longer need | 200 pts | ❌ Disabled |
+| 🛏️ Make the bed every day this week | 300 pts | ❌ Disabled |
+| 🧽 Clean a bathroom | 300 pts | ❌ Disabled |
 
 ---
 
