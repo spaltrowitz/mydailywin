@@ -502,16 +502,16 @@
             { id: 303, name: "📺 Find a new show or movie to watch on Amazon Video", value: 200, isWeekly: true },
             { id: 304, name: "📺 Find a new show or movie to watch on Apple TV", value: 200, isWeekly: true },
             { id: 305, name: "🍿 Use the microwave", value: 50, isWeekly: true },
-            { id: 306, name: "🛒 Check Aisle for grocery deals", value: 150, isWeekly: true },
+            { id: 306, name: "🛒 Check Aisle for grocery deals", value: 150, isWeekly: true, desc: "Use the Aisle app (red logo) to find grocery store deals" },
             { id: 307, name: "💑 Take your wife out to lunch or dinner", value: 500, isWeekly: true },
             { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true },
             { id: 309, name: "💌 Tell one of your kids you are thinking of them", value: 200, isWeekly: true },
             { id: 310, name: "❤️ Do something nice for your wife", value: 300, isWeekly: true },
             { id: 311, name: "🛍️ Buy a new item from the grocery store", value: 150, isWeekly: true },
             { id: 312, name: "🍔 Go out to lunch with tennis friends", value: 300, isWeekly: true },
-            { id: 313, name: "🤖 Use ChatGPT to solve a problem (chat.openai.com)", value: 200, isWeekly: true },
+            { id: 313, name: "🤖 Use ChatGPT to solve a problem", value: 200, isWeekly: true, desc: "e.g. How long to microwave a sweet potato? Is this email a scam?" },
             { id: 314, name: "📞 Call a friend or family member", value: 200, isWeekly: true },
-            { id: 315, name: "📦 Get rid of 3 items from office", value: 300, isWeekly: true },
+            { id: 315, name: "📦 Get rid of 3 items from office", value: 300, isWeekly: true, desc: "Donate or trash items you no longer need" },
             { id: 316, name: "👕 Donate clothing items", value: 250, isWeekly: true },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true },
             { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true }
@@ -883,9 +883,12 @@
             const weeklyBonuses = getWeeklyBonuses();
             weeklyBonuses.forEach(b => {
                 const isCompleted = state.weeklyBonusesCompleted.includes(b.id);
+                const btnWrapper = document.createElement('div');
+                btnWrapper.style.marginTop = '10px';
+                
                 const btn = document.createElement('button');
                 btn.className = 'btn ' + (isCompleted ? 'btn-ghost' : 'btn-purple');
-                btn.style.marginTop = '10px';
+                btn.style.width = '100%';
                 
                 if (b.isCounter) {
                     const count = state.weeklyCounters[b.counterId] || 0;
@@ -903,7 +906,17 @@
                         btn.onclick = () => completeWeeklyBonus(b);
                     }
                 }
-                bonusContainer.appendChild(btn);
+                btnWrapper.appendChild(btn);
+                
+                // Add description subtext if exists
+                if (b.desc && !isCompleted) {
+                    const descEl = document.createElement('div');
+                    descEl.style.cssText = 'font-size: 12px; opacity: 0.85; margin-top: 4px; font-style: italic; padding: 0 10px;';
+                    descEl.textContent = b.desc;
+                    btnWrapper.appendChild(descEl);
+                }
+                
+                bonusContainer.appendChild(btnWrapper);
             });
 
             // Daily bonus task
