@@ -60,19 +60,62 @@
 
         /* ========== UI COMPONENTS ========== */
         header {
-            background: var(--card-bg);
-            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #4ade80 50%, #22d3ee 100%);
+            padding: 16px 20px;
             position: sticky;
             top: 0;
             z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(88, 204, 2, 0.3);
             margin-bottom: 20px;
         }
 
-        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: var(--primary); }
+        .brand { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-weight: 800; 
+            font-size: 22px; 
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+        }
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .brand-title { font-size: 20px; font-weight: 800; }
+        .brand-tagline { font-size: 11px; font-weight: 600; opacity: 0.9; }
+        .header-btn { 
+            background: rgba(255,255,255,0.2); 
+            border: none; 
+            font-size: 20px; 
+            cursor: pointer; 
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .header-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
         .theme-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
@@ -238,11 +281,15 @@
 
     <header>
         <div class="brand">
-            <span>🎯</span> HabitRewards
+            <div class="brand-logo">🏆</div>
+            <div class="brand-text">
+                <span class="brand-title">HabitRewards</span>
+                <span class="brand-tagline">Earn while you grow</span>
+            </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <button class="theme-btn" onclick="openModal('settingsModal')" title="Settings">⚙️</button>
-            <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="header-btn" onclick="openModal('settingsModal')" title="Settings">⚙️</button>
+            <button class="header-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
         </div>
     </header>
 
@@ -413,8 +460,9 @@
         // Routine tasks = lower value, Stretch goals = higher value
         const DAILY_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 2, name: "🦉 Do a Duolingo lesson", value: 75 },
-            { id: 3, name: "📝 Do a crossword puzzle", value: 50 }
+            { id: 2, name: "🎾 Play tennis / pickleball", value: 10 },
+            { id: 3, name: "🦉 Do a Duolingo lesson", value: 75 },
+            { id: 4, name: "📝 Do a crossword puzzle", value: 50 }
         ];
 
         // Daily bonus tasks (1 rotates each day) - fun extras!
@@ -449,7 +497,6 @@
         // Weekly bonus tasks (1 selected per week) - exempt from daily cap
         // Fun/reward-focused activities (100 pts = $1.00)
         const WEEKLY_BONUSES = [
-            { id: 300, name: "🎾 Play tennis / pickleball this week", value: 30, isWeekly: true },
             { id: 301, name: "💿 Sell your coins or vinyls", value: 500, isWeekly: true },
             { id: 302, name: "📺 Find a new show or movie to watch on Netflix", value: 200, isWeekly: true },
             { id: 303, name: "📺 Find a new show or movie to watch on Amazon Video", value: 200, isWeekly: true },
@@ -732,6 +779,16 @@
             if (lastDate !== today) {
                 state.tasks = JSON.parse(JSON.stringify(DAILY_TASKS));
                 localStorage.setItem('hr_date', today);
+                saveState();
+            } else {
+                // Always sync task values from config (in case they changed)
+                state.tasks.forEach(t => {
+                    const configTask = DAILY_TASKS.find(d => d.id === t.id);
+                    if (configTask) {
+                        t.value = configTask.value;
+                        t.name = configTask.name;
+                    }
+                });
                 saveState();
             }
         }
