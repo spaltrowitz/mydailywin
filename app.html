@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitRewards</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="manifest" href="manifest.json">
@@ -58,6 +58,7 @@
         @keyframes coinDrop { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
         @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(88, 204, 2, 0.4); } 50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(88, 204, 2, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(88, 204, 2, 0); } }
 
         /* ========== UI COMPONENTS ========== */
         header {
@@ -73,8 +74,13 @@
             margin-bottom: 20px;
         }
 
-        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: white; }
-        .theme-btn { background: rgba(255,255,255,0.2); border: none; font-size: 20px; cursor: pointer; padding: 8px; border-radius: 10px; }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 24px; color: white; cursor: pointer; }
+        .theme-btn { background: rgba(255,255,255,0.2); border: none; font-size: 20px; cursor: pointer; padding: 8px; border-radius: 10px; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+        .theme-btn:focus-visible { outline: 3px solid white; outline-offset: 2px; }
+
+        /* Skip link for accessibility */
+        .skip-link { position: absolute; top: -100%; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 12px 24px; border-radius: var(--radius-btn); font-weight: 700; text-decoration: none; z-index: 9999; transition: top 0.2s; }
+        .skip-link:focus { top: 10px; }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
 
@@ -215,6 +221,7 @@
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
             align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+            overflow-y: auto; padding: 20px 0;
         }
         .modal.active { display: flex; opacity: 1; }
         
@@ -222,6 +229,8 @@
             background: var(--card-bg); padding: 30px; border-radius: 24px;
             width: 90%; max-width: 450px; position: relative;
             transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: calc(100vh - 40px); overflow-y: auto;
+            margin: auto;
         }
         .modal.active .modal-box { transform: scale(1); }
 
@@ -286,27 +295,38 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <header>
-        <div class="brand">
+        <a href="home.html" class="brand" style="text-decoration: none;">
             <span>🏆</span> HabitRewards
-        </div>
+        </a>
         <div style="display: flex; align-items: center; gap: 10px;">
-            <button class="theme-btn" onclick="openModal('settingsModal')" title="Settings">⚙️</button>
-            <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+            <button class="theme-btn" onclick="openModal('settingsModal')" title="Settings" aria-label="Open settings">⚙️</button>
+            <button class="theme-btn" onclick="toggleTheme()" id="themeIcon" aria-label="Toggle dark mode">🌙</button>
         </div>
     </header>
 
-    <div class="container">
+    <div class="container" id="main-content">
         
         <div style="text-align: center; margin-bottom: 20px;">
             <h2 id="greeting" style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: var(--text);"></h2>
             
             <!-- Daily Quote -->
-            <div id="quoteContainer" style="margin-bottom: 15px; padding: 0 10px;">
+            <div id="quoteContainer" style="margin-bottom: 15px; padding: 0 10px; position: relative;">
                 <div id="dailyQuote" style="font-style: italic; color: var(--text-light); font-size: 14px; line-height: 1.5;"></div>
                 <div id="quoteSpanish" style="display: none; font-style: italic; color: var(--primary); font-size: 14px; line-height: 1.5; margin-top: 8px;"></div>
-                <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px; align-items: center;">
+                <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px; align-items: center; position: relative;">
+                    <!-- Onboarding tooltip for first-time users -->
+                    <div id="quoteOnboarding" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                        👇 Tap to earn 5 pts for reading today's quote!
+                        <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--primary);"></div>
+                    </div>
+                    <!-- Spanish onboarding tooltip -->
+                    <div id="spanishOnboarding" style="display: none; position: absolute; bottom: 100%; right: 0; background: #f59e0b; color: white; padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                        👇 Tap to see the Spanish translation!
+                        <div style="position: absolute; bottom: -6px; right: 20px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #f59e0b;"></div>
+                    </div>
                     <button id="quoteAckBtn" onclick="acknowledgeQuote()" style="background: var(--bg); border: 2px solid var(--primary); color: var(--primary); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
                         ✨ +5 pts
                     </button>
@@ -365,7 +385,7 @@
         </div>
 
         <!-- Daily Progress -->
-        <div class="card" style="padding: 16px; margin-bottom: 20px;">
+        <div class="card" style="padding: 16px; margin-bottom: 20px; cursor: pointer;" onclick="openModal('progressModal')">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span style="font-weight: 700;">Today's Progress</span>
                 <span id="progressText" style="font-weight: 700; color: var(--primary);">0/4 tasks</span>
@@ -376,6 +396,9 @@
             </div>
             <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--primary); font-weight: 600;">
                 🎰 Complete all tasks for BONUS SPIN!
+            </div>
+            <div style="text-align: center; margin-top: 6px; font-size: 11px; color: var(--text-light);">
+                ℹ️ Tap to learn more
             </div>
         </div>
 
@@ -483,6 +506,15 @@
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal('settingsModal')">&times;</span>
             <h2 style="margin-bottom: 20px;">⚙️ Settings</h2>
+            
+            <!-- Cloud Sync Status -->
+            <div id="syncStatus" style="background: var(--bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span id="syncIcon">☁️</span>
+                <div style="flex: 1;">
+                    <div id="syncText" style="font-size: 14px; font-weight: 600;">Checking sync...</div>
+                    <div id="syncDetail" style="font-size: 12px; color: var(--text-light);">Your data is saved locally</div>
+                </div>
+            </div>
             
             <!-- Current Balance -->
             <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
@@ -642,11 +674,106 @@
         </div>
     </div>
 
+    <!-- CONFIRMATION MODAL (replaces native confirm()) -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-box" style="text-align: center; max-width: 350px;">
+            <div id="confirmIcon" style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+            <h2 id="confirmTitle" style="margin-bottom: 10px; font-size: 20px;">Are you sure?</h2>
+            <p id="confirmMessage" style="color: var(--text-light); margin-bottom: 25px; font-size: 14px;"></p>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn" onclick="handleConfirm(false)" style="flex: 1; background: #e5e7eb; color: var(--text);">Cancel</button>
+                <button id="confirmBtn" class="btn" onclick="handleConfirm(true)" style="flex: 1; background: #ef4444; color: white;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROGRESS EXPLANATION MODAL -->
+    <div id="progressModal" class="modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('progressModal')">&times;</span>
+            <h2 style="margin-bottom: 15px; font-size: 24px;">📊 How Progress Works</h2>
+            
+            <div style="background: linear-gradient(135deg, var(--primary), #4ade80); padding: 20px; border-radius: 16px; color: white; margin-bottom: 20px;">
+                <div style="font-size: 32px; text-align: center; margin-bottom: 10px;">🎯</div>
+                <div style="text-align: center; font-weight: 700;">Complete Your Daily Habits!</div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="font-size: 24px;">✅</div>
+                    <div>
+                        <div style="font-weight: 700;">Check Off Tasks</div>
+                        <div style="font-size: 13px; color: var(--text-light);">Tap the circle next to each habit when you complete it. The progress bar fills up with each task!</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="font-size: 24px;">💰</div>
+                    <div>
+                        <div style="font-weight: 700;">Earn Points</div>
+                        <div style="font-size: 13px; color: var(--text-light);">Each task earns you points. Points add up to real money (100 pts = $1)!</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="font-size: 24px;">🎰</div>
+                    <div>
+                        <div style="font-weight: 700;">Bonus Spin!</div>
+                        <div style="font-size: 13px; color: var(--text-light);">Complete ALL tasks to unlock a bonus spin for extra points!</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="font-size: 24px;">🔥</div>
+                    <div>
+                        <div style="font-weight: 700;">Build Your Streak</div>
+                        <div style="font-size: 13px; color: var(--text-light);">Complete at least one task daily to maintain your streak!</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="closeModal('progressModal')" class="btn" style="width: 100%; background: var(--primary); color: white; padding: 14px;">Got it! 👍</button>
+        </div>
+    </div>
+
+    <script>
+        // Register service worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed:', err));
+        }
+    </script>
+
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 
     <script>
+        // ========== INPUT SANITIZATION UTILITIES ==========
+        function sanitizeInput(input, maxLength = 500) {
+            if (typeof input !== 'string') return '';
+            // Trim and limit length
+            let sanitized = input.trim().slice(0, maxLength);
+            // Remove potentially dangerous HTML/script content
+            sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+            sanitized = sanitized.replace(/<[^>]*>/g, ''); // Remove HTML tags
+            sanitized = sanitized.replace(/javascript:/gi, ''); // Remove javascript: protocol
+            sanitized = sanitized.replace(/on\w+=/gi, ''); // Remove event handlers
+            return sanitized;
+        }
+        
+        function isValidTaskName(name) {
+            const sanitized = sanitizeInput(name, 100);
+            return sanitized.length >= 2 && sanitized.length <= 100;
+        }
+        
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
@@ -660,6 +787,21 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // Track current user for cloud sync
+        let currentUser = null;
+        let syncEnabled = false;
+        
+        // Listen for auth state changes
+        auth.onAuthStateChanged(user => {
+            currentUser = user;
+            if (user && PROFILE_ID) {
+                syncEnabled = true;
+                // Try to load from cloud if available
+                loadFromCloud();
+            }
+        });
 
         // ========== PROFILE DETECTION ==========
         // Get profile ID from URL parameter
@@ -672,9 +814,35 @@
         const DATE_KEY = PROFILE_ID ? 'hr_date_' + PROFILE_ID : 'hr_date';
         const REPORTS_KEY = PROFILE_ID ? 'hr_reports_' + PROFILE_ID : 'hr_reports';
 
-        // If no profile, redirect to get-started
+        // If no profile, check for existing profiles or redirect to get-started
         if (!PROFILE_ID) {
-            window.location.href = '/get-started.html';
+            // Check for existing profiles in localStorage
+            const existingProfiles = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('hr_profile_')) {
+                    const profileId = key.replace('hr_profile_', '');
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        existingProfiles.push({ id: profileId, name: data.name || profileId });
+                    } catch (e) {}
+                }
+            }
+            // Also check for legacy 'stu' profile
+            if (localStorage.getItem('hr_state_stu')) {
+                existingProfiles.push({ id: 'stu', name: 'Stu' });
+            }
+            
+            if (existingProfiles.length === 1) {
+                // Auto-redirect to the only profile
+                window.location.href = '/app.html?profile=' + existingProfiles[0].id;
+            } else if (existingProfiles.length > 1) {
+                // Show profile picker
+                window.location.href = '/login.html';
+            } else {
+                // No profiles - go to onboarding
+                window.location.href = '/get-started.html';
+            }
         }
 
         // Load profile info if available
@@ -1170,16 +1338,23 @@
             const weekNum = getWeekNumber();
             const surveyInvite = document.getElementById('surveyInvite');
             const today = new Date();
-            const isSundayOrLater = today.getDay() === 0; // Sunday = 0
+            const dayOfWeek = today.getDay(); // 0 = Sunday, 6 = Saturday
             
-            // Show survey if: not completed this week, starting from Sunday
-            // Survey persists all week until submitted
+            // Only show survey on Sunday (day 0) or later in the week
+            // And only if not already completed this week
+            // Also require at least some activity (totalEarned > 0)
             if (state.weeklyFeedbackCompleted === weekNum) {
                 // Already completed this week - hide it
                 surveyInvite.style.display = 'none';
-            } else {
-                // Show the survey (it's a new week or not yet submitted)
+            } else if (dayOfWeek === 0 && state.totalEarned > 0) {
+                // It's Sunday and user has activity - show survey
                 surveyInvite.style.display = 'block';
+            } else if (state.totalEarned > 100) {
+                // User has earned over 100 pts - show survey anytime
+                surveyInvite.style.display = 'block';
+            } else {
+                // New user or not Sunday yet - hide survey
+                surveyInvite.style.display = 'none';
             }
         }
 
@@ -1391,7 +1566,104 @@
         }
 
         function saveState() {
+            state.lastSaved = new Date().toISOString();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            // Also sync to cloud if authenticated
+            saveToCloud();
+        }
+        
+        // ========== CLOUD SYNC ==========
+        let cloudSyncTimeout = null;
+        let lastSyncError = null;
+        
+        async function saveToCloud() {
+            if (!syncEnabled || !currentUser || !PROFILE_ID) return;
+            
+            // Debounce cloud saves to avoid excessive writes
+            if (cloudSyncTimeout) clearTimeout(cloudSyncTimeout);
+            cloudSyncTimeout = setTimeout(async () => {
+                try {
+                    await db.collection('userState').doc(PROFILE_ID).set({
+                        ...state,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedBy: currentUser.email
+                    }, { merge: true });
+                    console.log('State synced to cloud');
+                    // Clear error state on success
+                    if (lastSyncError) {
+                        lastSyncError = null;
+                        showToast('☁️ Back online! Data synced.');
+                    }
+                } catch (err) {
+                    console.error('Cloud sync failed:', err);
+                    // Show error only once per session
+                    if (!lastSyncError) {
+                        lastSyncError = err;
+                        showToast('📴 Offline - saving locally');
+                    }
+                }
+            }, 2000); // Wait 2 seconds before syncing
+        }
+        
+        async function loadFromCloud() {
+            if (!syncEnabled || !currentUser || !PROFILE_ID) return;
+            
+            try {
+                const doc = await db.collection('userState').doc(PROFILE_ID).get();
+                if (doc.exists) {
+                    const cloudState = doc.data();
+                    const localState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                    
+                    // Compare timestamps - use whichever is newer
+                    const cloudTime = cloudState.lastUpdated?.toDate?.() || new Date(0);
+                    const localTime = new Date(localState.lastSaved || 0);
+                    
+                    if (cloudTime > localTime) {
+                        // Cloud is newer - use cloud data
+                        console.log('Loading newer state from cloud');
+                        delete cloudState.lastUpdated;
+                        delete cloudState.updatedBy;
+                        state = { ...state, ...cloudState };
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                        render();
+                        showToast('📱 Synced from cloud!');
+                    } else if (localTime > cloudTime && Object.keys(localState).length > 0) {
+                        // Local is newer - push to cloud
+                        console.log('Pushing newer local state to cloud');
+                        saveToCloud();
+                    }
+                } else {
+                    // No cloud data - push current local state
+                    saveToCloud();
+                }
+            } catch (err) {
+                console.error('Failed to load from cloud:', err);
+                // Continue with localStorage
+            }
+            updateSyncStatus();
+        }
+        
+        function updateSyncStatus() {
+            const syncIcon = document.getElementById('syncIcon');
+            const syncText = document.getElementById('syncText');
+            const syncDetail = document.getElementById('syncDetail');
+            
+            if (!syncIcon) return; // Element not yet loaded
+            
+            if (currentUser && syncEnabled) {
+                syncIcon.textContent = '✅';
+                syncText.textContent = 'Cloud Sync Active';
+                syncDetail.textContent = `Syncing as ${currentUser.email}`;
+                syncIcon.style.color = 'var(--primary)';
+            } else if (currentUser) {
+                syncIcon.textContent = '☁️';
+                syncText.textContent = 'Sign in for cloud sync';
+                syncDetail.textContent = 'Your data is saved locally only';
+            } else {
+                syncIcon.textContent = '💾';
+                syncText.textContent = 'Local Storage Only';
+                syncDetail.textContent = 'Sign in to sync across devices';
+            }
         }
 
         function checkNewDay() {
@@ -1430,13 +1702,38 @@
             document.getElementById('dailyQuote').textContent = '"' + getDailyQuote() + '"';
             document.getElementById('quoteSpanish').textContent = '"' + getDailyQuoteSpanish() + '"';
             
-            // Show Spanish button only for Stu's profile
-            if (PROFILE_ID === 'stu') {
-                document.getElementById('spanishBtn').style.display = 'inline-block';
-            }
+            // Show Spanish button for all profiles (learning bonus)
+            document.getElementById('spanishBtn').style.display = 'inline-block';
             
             // Check if quote was already acknowledged today
             updateQuoteButtons();
+            
+            // Show onboarding tooltip for first-time users
+            checkQuoteOnboarding();
+        }
+        
+        // ========== QUOTE ONBOARDING ==========
+        function getQuoteOnboardingKey() {
+            return PROFILE_ID ? 'hr_quote_onboarded_' + PROFILE_ID : 'hr_quote_onboarded';
+        }
+        
+        function checkQuoteOnboarding() {
+            const onboarded = localStorage.getItem(getQuoteOnboardingKey());
+            const state = getQuoteState();
+            
+            // Show onboarding if user hasn't been onboarded yet and hasn't acknowledged today
+            if (!onboarded && !state.acknowledged) {
+                document.getElementById('quoteOnboarding').style.display = 'block';
+                
+                // Add a gentle pulse animation to the button
+                const ackBtn = document.getElementById('quoteAckBtn');
+                ackBtn.style.animation = 'pulse 1.5s infinite';
+            }
+        }
+        
+        function hideQuoteOnboarding() {
+            document.getElementById('quoteOnboarding').style.display = 'none';
+            localStorage.setItem(getQuoteOnboardingKey(), 'true');
         }
         
         // ========== QUOTE INTERACTIONS ==========
@@ -1505,37 +1802,76 @@
         }
         
         function acknowledgeQuote() {
-            const state = getQuoteState();
-            if (state.acknowledged) return;
+            const quoteState = getQuoteState();
+            if (quoteState.acknowledged) return;
             
-            state.acknowledged = true;
-            saveQuoteState(state);
+            quoteState.acknowledged = true;
+            saveQuoteState(quoteState);
             
-            // Add 5 points
-            const appState = loadState();
-            appState.balance += 5;
-            appState.totalEarned += 5;
-            saveState(appState);
+            // Hide onboarding tooltip and mark as onboarded
+            hideQuoteOnboarding();
+            
+            // Add 5 points to global state
+            state.balance += 5;
+            state.totalEarned += 5;
+            saveState();
             
             updateQuoteButtons();
             updateBalanceDisplay();
             
-            // Show celebration
-            showToast('+5 pts for daily inspiration! ✨');
+            // Show celebration with helpful message for first-timers
+            const onboardedBefore = localStorage.getItem(getQuoteOnboardingKey() + '_shown');
+            if (!onboardedBefore) {
+                showToast('Great job! You read the quote! +5 pts ✨');
+                localStorage.setItem(getQuoteOnboardingKey() + '_shown', 'true');
+            } else {
+                showToast('+5 pts for daily inspiration! ✨');
+            }
+            
+            // Show Spanish onboarding after acknowledging English quote (only for Stu)
+            if (PROFILE_ID === 'stu') {
+                checkSpanishOnboarding();
+            }
+        }
+        
+        function checkSpanishOnboarding() {
+            const spanishOnboarded = localStorage.getItem(getQuoteOnboardingKey() + '_spanish');
+            const state = getQuoteState();
+            
+            // Show Spanish onboarding if not done yet and English is acknowledged but Spanish isn't
+            if (!spanishOnboarded && state.acknowledged && !state.spanish) {
+                const spanishOnboarding = document.getElementById('spanishOnboarding');
+                if (spanishOnboarding) {
+                    spanishOnboarding.style.display = 'block';
+                    // Add pulse animation to Spanish button
+                    const spanishBtn = document.getElementById('spanishBtn');
+                    spanishBtn.style.animation = 'pulse 1.5s infinite';
+                }
+            }
+        }
+        
+        function hideSpanishOnboarding() {
+            const spanishOnboarding = document.getElementById('spanishOnboarding');
+            if (spanishOnboarding) {
+                spanishOnboarding.style.display = 'none';
+            }
+            localStorage.setItem(getQuoteOnboardingKey() + '_spanish', 'true');
         }
         
         function showSpanishQuote() {
-            const state = getQuoteState();
-            if (state.spanish) return;
+            const quoteState = getQuoteState();
+            if (quoteState.spanish) return;
             
-            state.spanish = true;
-            saveQuoteState(state);
+            quoteState.spanish = true;
+            saveQuoteState(quoteState);
             
-            // Add 5 points
-            const appState = loadState();
-            appState.balance += 5;
-            appState.totalEarned += 5;
-            saveState(appState);
+            // Hide Spanish onboarding
+            hideSpanishOnboarding();
+            
+            // Add 5 points to global state
+            state.balance += 5;
+            state.totalEarned += 5;
+            saveState();
             
             updateQuoteButtons();
             updateBalanceDisplay();
@@ -1710,7 +2046,7 @@
 
             // Survey unlock (if at least one task done)
             const tasksDone = state.tasks.filter(t => t.completed).length;
-            document.getElementById('surveySection').style.display = tasksDone > 0 ? 'block' : 'none';
+            document.getElementById('surveyInvite').style.display = tasksDone > 0 ? 'block' : 'none';
             
             // Show spin section if all tasks done and not used today
             const spinSection = document.getElementById('spinSection');
@@ -1737,14 +2073,20 @@
             
             // If already completed, offer to undo
             if (task.completed) {
-                if (confirm(`Undo "${task.name}"? You'll lose ${task.value} pts.`)) {
-                    task.completed = false;
-                    task.proof = null;
-                    state.balance -= task.value;
-                    state.totalEarned -= task.value;
-                    saveState();
-                    render();
-                }
+                showConfirm(
+                    'Undo Task?',
+                    `You'll lose ${task.value} pts for "${task.name}"`,
+                    () => {
+                        task.completed = false;
+                        task.proof = null;
+                        state.balance -= task.value;
+                        state.totalEarned -= task.value;
+                        saveState();
+                        render();
+                        showToast(`Undid "${task.name}" (-${task.value} pts)`);
+                    },
+                    { icon: '↩️', confirmText: 'Undo', danger: true }
+                );
                 return;
             }
 
@@ -1798,7 +2140,7 @@
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('imgPreview').innerHTML = `<img src="${e.target.result}" style="width: 100%;">`;
+                    document.getElementById('imgPreview').innerHTML = `<img src="${e.target.result}" style="width: 100%;" alt="Task photo preview" loading="lazy">`;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -1958,13 +2300,19 @@
         
         function undoDailyBonus() {
             const bonus = getDailyBonus();
-            if (confirm(`Undo "${bonus.name}"? You'll lose ${bonus.value} pts.`)) {
-                state.dailyBonusCompleted = null;
-                state.balance -= bonus.value;
-                state.totalEarned -= bonus.value;
-                saveState();
-                render();
-            }
+            showConfirm(
+                'Undo Bonus?',
+                `You'll lose ${bonus.value} pts for "${bonus.name}"`,
+                () => {
+                    state.dailyBonusCompleted = null;
+                    state.balance -= bonus.value;
+                    state.totalEarned -= bonus.value;
+                    saveState();
+                    render();
+                    showToast(`Undid "${bonus.name}" (-${bonus.value} pts)`);
+                },
+                { icon: '↩️', confirmText: 'Undo', danger: true }
+            );
         }
 
         function addBonus(bonus) {
@@ -2030,10 +2378,17 @@
                 // Allow viewing/undoing sessions
                 const sessions = getTennisSessionsThisWeek();
                 if (sessions.length > 0) {
-                    const sessionList = sessions.map((s, i) => `${i + 1}. ${s.date} at ${s.park}`).join('\n');
-                    if (confirm(`Your sessions this week:\n\n${sessionList}\n\nWould you like to undo the last session?`)) {
-                        undoLastTennisSession();
-                    }
+                    const sessionCount = sessions.length;
+                    const lastSession = sessions[sessions.length - 1];
+                    showConfirm(
+                        'Undo Tennis Session?',
+                        `You have ${sessionCount} session(s) this week. Undo last session at ${lastSession.park}?`,
+                        () => {
+                            undoLastTennisSession();
+                            showToast('Tennis session undone');
+                        },
+                        { icon: '🎾', confirmText: 'Undo Last', danger: true }
+                    );
                 }
                 return;
             }
@@ -2148,13 +2503,19 @@
         }
 
         function undoWeeklyBonus(bonus) {
-            if (confirm(`Undo "${bonus.name}"? You'll lose ${bonus.value} pts.`)) {
-                state.weeklyBonusesCompleted = state.weeklyBonusesCompleted.filter(id => id !== bonus.id);
-                state.balance -= bonus.value;
-                state.totalEarned -= bonus.value;
-                saveState();
-                render();
-            }
+            showConfirm(
+                'Undo Weekly Bonus?',
+                `You'll lose ${bonus.value} pts for "${bonus.name}"`,
+                () => {
+                    state.weeklyBonusesCompleted = state.weeklyBonusesCompleted.filter(id => id !== bonus.id);
+                    state.balance -= bonus.value;
+                    state.totalEarned -= bonus.value;
+                    saveState();
+                    render();
+                    showToast(`Undid "${bonus.name}" (-${bonus.value} pts)`);
+                },
+                { icon: '↩️', confirmText: 'Undo', danger: true }
+            );
         }
 
         function checkStreak() {
@@ -2189,9 +2550,11 @@
         }
 
         function confirmStreakRecovery() {
-            const who = document.getElementById('streakRecoveryWho').value.trim();
-            if (!who) {
-                alert('Please enter who you called!');
+            const rawWho = document.getElementById('streakRecoveryWho').value;
+            const who = sanitizeInput(rawWho, 50);
+            
+            if (who.length < 2) {
+                showToast('⚠️ Please enter who you called');
                 return;
             }
             
@@ -2203,7 +2566,7 @@
             if (!state.streakRecoveries) state.streakRecoveries = [];
             state.streakRecoveries.push({
                 date: new Date().toISOString(),
-                who: who,
+                who: escapeHtml(who),
                 streakSaved: state.streak
             });
             
@@ -2225,17 +2588,49 @@
             }
         }
 
-        function submitProposal() {
-            const name = document.getElementById('propName').value;
-            const reason = document.getElementById('propReason').value;
-            if(name) {
-                alert('Task suggestion submitted! We\'ll review it and let you know.');
-                document.getElementById('propName').value = '';
-                document.getElementById('propReason').value = '';
-                closeModal('settingsModal');
-            } else {
-                alert('Please enter a task name');
+        async function submitProposal() {
+            const rawName = document.getElementById('propName').value;
+            const rawReason = document.getElementById('propReason').value;
+            
+            // Sanitize and validate inputs
+            const name = sanitizeInput(rawName, 100);
+            const reason = sanitizeInput(rawReason, 500);
+            
+            if (!isValidTaskName(name)) {
+                showToast('⚠️ Please enter a valid task name (2-100 characters)');
+                return;
             }
+            
+            const proposal = {
+                taskName: escapeHtml(name),
+                reason: escapeHtml(reason),
+                profileId: PROFILE_ID,
+                profileName: PROFILE_NAME,
+                submittedAt: new Date().toISOString(),
+                status: 'pending'
+            };
+            
+            // Save to localStorage first
+            const proposals = JSON.parse(localStorage.getItem('hr_proposals') || '[]');
+            proposals.push(proposal);
+            localStorage.setItem('hr_proposals', JSON.stringify(proposals));
+            
+            // Try to save to Firestore
+            try {
+                await db.collection('taskProposals').add({
+                    ...proposal,
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    submittedBy: currentUser?.email || 'anonymous'
+                });
+                showToast('✅ Task suggestion saved!');
+            } catch (err) {
+                console.error('Failed to save proposal to cloud:', err);
+                showToast('💾 Suggestion saved locally');
+            }
+            
+            document.getElementById('propName').value = '';
+            document.getElementById('propReason').value = '';
+            closeModal('settingsModal');
         }
 
         // ========== REPORT TASK ==========
@@ -2323,6 +2718,13 @@
             const dollars = (pts / 100).toFixed(2);
             
             if (pts <= 0) return;
+            
+            // Show loading state
+            const cashoutBtn = document.getElementById('cashoutBtn');
+            const originalText = cashoutBtn.textContent;
+            cashoutBtn.textContent = '⏳ Processing...';
+            cashoutBtn.disabled = true;
+            cashoutBtn.style.opacity = '0.7';
             
             const profileId = PROFILE_ID || 'stu';
             const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
@@ -2466,7 +2868,7 @@
              state.balance += 10;  // 10 pts = $0.10
              state.totalEarned += 10;
              alert('Thanks for the feedback! +10 pts');
-             document.getElementById('surveySection').style.display = 'none'; // Hide after submit
+             document.getElementById('surveyInvite').style.display = 'none'; // Hide after submit
              saveState();
              render();
         }
@@ -2492,6 +2894,12 @@
         function openModal(id) {
             if (id === 'levelsModal') {
                 populateLevelsTable();
+            }
+            if (id === 'settingsModal') {
+                updateSyncStatus();
+                // Update balance display in settings
+                document.getElementById('settingsBalance').textContent = (state.balance || 0) + ' pts';
+                document.getElementById('settingsDollars').textContent = '= $' + ((state.balance || 0) / 100).toFixed(2);
             }
             document.getElementById(id).classList.add('active');
         }
@@ -2536,6 +2944,30 @@
         
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
+        }
+        
+        // ========== CUSTOM CONFIRMATION MODAL ==========
+        let confirmCallback = null;
+        
+        function showConfirm(title, message, onConfirm, options = {}) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmIcon').textContent = options.icon || '⚠️';
+            
+            const confirmBtn = document.getElementById('confirmBtn');
+            confirmBtn.textContent = options.confirmText || 'Confirm';
+            confirmBtn.style.background = options.danger ? '#ef4444' : 'var(--primary)';
+            
+            confirmCallback = onConfirm;
+            openModal('confirmModal');
+        }
+        
+        function handleConfirm(confirmed) {
+            closeModal('confirmModal');
+            if (confirmed && confirmCallback) {
+                confirmCallback();
+            }
+            confirmCallback = null;
         }
 
         function triggerConfetti() {

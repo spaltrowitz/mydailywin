@@ -242,8 +242,10 @@
 </head>
 <body>
     <div class="login-card">
-        <div class="logo">🏆</div>
-        <h1>HabitRewards</h1>
+        <a href="home.html" style="text-decoration: none; color: inherit; cursor: pointer;">
+            <div class="logo">🏆</div>
+            <h1>HabitRewards</h1>
+        </a>
         <p class="subtitle">Sign in to access your profiles</p>
         
         <div id="errorMessage" class="error-message"></div>
@@ -264,7 +266,7 @@
         
         <div id="authButtons">
             <button class="btn btn-google" onclick="signInWithGoogle()">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" loading="lazy" width="20" height="20">
                 Continue with Google
             </button>
             
@@ -300,6 +302,14 @@
         
         <a href="home.html?v=2" class="back-link">← Back to Homepage</a>
     </div>
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed:', err));
+        }
+    </script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>

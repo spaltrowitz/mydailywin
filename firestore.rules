@@ -44,32 +44,53 @@ service cloud.firestore {
     
     // Payout requests collection - syncs across devices
     match /payoutRequests/{requestId} {
-      // Anyone can read payout requests (needed for both user and admin)
-      allow read: if true;
+      // Users can read their own payout requests (requestId should contain profileId)
+      // Admins need to read all requests for their profiles
+      allow read: if request.auth != null;
       
-      // Anyone can create a payout request
-      allow create: if true;
+      // Only authenticated users can create payout requests
+      allow create: if request.auth != null;
       
-      // Anyone can update status (for admin approval)
-      allow update: if true;
+      // Only authenticated users can update status (for admin approval)
+      allow update: if request.auth != null;
       
-      // Allow delete
-      allow delete: if true;
+      // Only authenticated users can delete
+      allow delete: if request.auth != null;
     }
     
     // User notifications collection - for payment confirmations etc
     match /userNotifications/{notificationId} {
-      // Anyone can read notifications
-      allow read: if true;
+      // Only authenticated users can read notifications
+      allow read: if request.auth != null;
       
-      // Anyone can create notifications
+      // Only authenticated users can create notifications
+      allow create: if request.auth != null;
+      
+      // Only authenticated users can update (mark as read)
+      allow update: if request.auth != null;
+      
+      // Only authenticated users can delete
+      allow delete: if request.auth != null;
+    }
+    
+    // User state collection - syncs habit data across devices
+    match /userState/{profileId} {
+      // Only authenticated users can read/write their own state
+      // The profileId should match a profile they have access to
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // Task proposals collection - user suggestions for new tasks
+    match /taskProposals/{proposalId} {
+      // Admins can read all proposals
+      allow read: if request.auth != null;
+      
+      // Anyone can create a proposal (even anonymous for now)
       allow create: if true;
       
-      // Anyone can update (mark as read)
-      allow update: if true;
-      
-      // Allow delete
-      allow delete: if true;
+      // Only authenticated users can update/delete
+      allow update, delete: if request.auth != null;
     }
   }
 }

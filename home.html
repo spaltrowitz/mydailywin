@@ -244,7 +244,7 @@
         }
         footer {
             background: #3c3c3c;
-            color: #aaa;
+            color: #ccc;
             text-align: center;
             padding: 30px 20px;
             font-size: 14px;
@@ -258,15 +258,27 @@
         }
         .nav-links {
             margin-top: 15px;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            gap: 8px;
         }
         .nav-links a {
             color: rgba(255,255,255,0.8);
             text-decoration: none;
-            margin: 0 15px;
-            font-size: 14px;
+            font-size: 13px;
+            white-space: nowrap;
         }
         .nav-links a:hover {
             color: white;
+        }
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 6px;
+            }
+            .nav-links a {
+                font-size: 12px;
+            }
         }
         /* Hamburger Menu */
         .hamburger {
@@ -994,9 +1006,6 @@
                     <p>Watch your points grow, level up, and celebrate your achievements!</p>
                 </div>
             </div>
-            <p style="text-align: center; margin-top: 30px;">
-                <a href="#faq" style="color: var(--primary); font-weight: 600; text-decoration: none;">❓ Have questions? Check out our FAQ →</a>
-            </p>
         </div>
     </div>
 
@@ -1098,11 +1107,18 @@
     </div>
 
     <footer>
-        <p>HabitRewards &copy; 2026 • <a href="get-started.html">Get Started</a> • <a href="#how-it-works">How It Works</a> • <a href="#faq">FAQ</a> • <a href="admin-guide.html">Admin Guide</a></p>
+        <p style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 8px;">HabitRewards &copy; 2026 <span style="opacity: 0.5;">•</span> <a href="get-started.html">Get Started</a> <span style="opacity: 0.5;">•</span> <a href="#how-it-works">How It Works</a> <span style="opacity: 0.5;">•</span> <a href="#faq">FAQ</a> <span style="opacity: 0.5;">•</span> <a href="admin-guide.html">Guide</a></p>
         <p style="margin-top: 10px;">Built with 💜 to make good habits stick.</p>
     </footer>
 
     <script>
+        // Register service worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed:', err));
+        }
+        
         // Hamburger menu toggle
         function toggleMenu() {
             document.querySelector('.hamburger').classList.toggle('active');

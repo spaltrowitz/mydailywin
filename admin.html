@@ -84,11 +84,11 @@
                         <div class="label">Est. Daily (base)</div>
                     </div>
                     <div class="stat-box">
-                        <div class="value">~$80-90</div>
+                        <div class="value">~$80-100</div>
                         <div class="label">Est. Monthly</div>
                     </div>
                 </div>
-                <p style="font-size: 13px; color: var(--text-light); text-align: center;">With streak bonuses (1.5x-2x), can reach $100-120+</p>
+                <p style="font-size: 13px; color: var(--text-light); text-align: center;">With streak bonuses (1.5x-2x), can reach $100-120/month</p>
             </div>
 
             <div class="card">
@@ -461,18 +461,7 @@
             <h2>💰 Record Payment</h2>
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Month</label>
             <select id="paymentMonth">
-                <option value="January 2026">January 2026</option>
-                <option value="February 2026">February 2026</option>
-                <option value="March 2026">March 2026</option>
-                <option value="April 2026">April 2026</option>
-                <option value="May 2026">May 2026</option>
-                <option value="June 2026">June 2026</option>
-                <option value="July 2026">July 2026</option>
-                <option value="August 2026">August 2026</option>
-                <option value="September 2026">September 2026</option>
-                <option value="October 2026">October 2026</option>
-                <option value="November 2026">November 2026</option>
-                <option value="December 2026">December 2026</option>
+                <!-- Options generated dynamically -->
             </select>
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Amount Paid ($)</label>
             <input type="number" id="paymentAmount" placeholder="e.g., 65.50" step="0.01">
@@ -1324,7 +1313,31 @@
         }
 
         // ========== PAYMENTS ==========
+        function populatePaymentMonths() {
+            const select = document.getElementById('paymentMonth');
+            select.innerHTML = '';
+            
+            const now = new Date();
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Show last 3 months and next 9 months (12 total)
+            for (let i = -3; i <= 8; i++) {
+                const date = new Date(now.getFullYear(), now.getMonth() + i, 1);
+                const monthName = months[date.getMonth()];
+                const year = date.getFullYear();
+                const value = `${monthName} ${year}`;
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                // Select current month by default
+                if (i === 0) option.selected = true;
+                select.appendChild(option);
+            }
+        }
+        
         function openPaymentModal() {
+            populatePaymentMonths();
             document.getElementById('paymentAmount').value = '';
             document.getElementById('paymentNotes').value = '';
             openModal('paymentModal');
