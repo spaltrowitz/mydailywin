@@ -1012,7 +1012,9 @@
                     if (adminData.customTasks && Array.isArray(adminData.customTasks.daily)) {
                         return adminData.customTasks.daily;
                     }
-                } catch (e) {}
+                } catch (e) {
+                    // Ignore JSON parsing errors or invalid admin data and fall back to default tasks.
+                }
             }
             return DEFAULT_DAILY_TASKS;
         }
@@ -1690,7 +1692,7 @@
                 localStorage.setItem(DATE_KEY, today);
                 saveState();
             } else {
-                // Sync tasks from config (handles add/edit/delete changes from admin)
+                // Sync tasks from config (handles add/edit/delete changes from admin) while preserving each task's completed state for the current day.
                 const completedTaskIds = new Set((state.tasks || []).filter(t => t.completed).map(t => t.id));
                 state.tasks = configuredDailyTasks.map(t => ({ ...t, completed: completedTaskIds.has(t.id) }));
                 saveState();
