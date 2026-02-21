@@ -2901,7 +2901,12 @@
                 document.getElementById('settingsBalance').textContent = (state.balance || 0) + ' pts';
                 document.getElementById('settingsDollars').textContent = '= $' + ((state.balance || 0) / 100).toFixed(2);
             }
-            document.getElementById(id).classList.add('active');
+            const modal = document.getElementById(id);
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
+            modal.classList.add('active');
         }
         
         function populateLevelsTable() {
@@ -2943,7 +2948,12 @@
         }
         
         function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+            const modal = document.getElementById(id);
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
+            modal.classList.remove('active');
         }
         
         // ========== CUSTOM CONFIRMATION MODAL ==========

@@ -1281,7 +1281,7 @@
 
             // Survey unlock (if at least one task done)
             const tasksDone = state.tasks.filter(t => t.completed).length;
-            document.getElementById('surveySection').style.display = tasksDone > 0 ? 'block' : 'none';
+            document.getElementById('surveyInvite').style.display = tasksDone > 0 ? 'block' : 'none';
             
             // Show spin section if all tasks done and not used today
             const spinSection = document.getElementById('spinSection');
@@ -1939,7 +1939,7 @@
              state.balance += 10;  // 10 pts = $0.10
              state.totalEarned += 10;
              alert('Thanks for the feedback! +10 pts');
-             document.getElementById('surveySection').style.display = 'none'; // Hide after submit
+             document.getElementById('surveyInvite').style.display = 'none'; // Hide after submit
              saveState();
              render();
         }
@@ -1966,7 +1966,12 @@
             if (id === 'levelsModal') {
                 populateLevelsTable();
             }
-            document.getElementById(id).classList.add('active');
+            const modal = document.getElementById(id);
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
+            modal.classList.add('active');
         }
         
         function populateLevelsTable() {
@@ -2008,7 +2013,12 @@
         }
         
         function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+            const modal = document.getElementById(id);
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
+            modal.classList.remove('active');
         }
 
         function triggerConfetti() {
