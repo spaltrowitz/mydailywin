@@ -229,9 +229,12 @@
             background: var(--card-bg); padding: 30px; border-radius: 24px;
             width: 90%; max-width: 450px; position: relative;
             transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-height: calc(100dvh - 40px); overflow-y: auto;
+            max-height: calc(100vh - 40px); overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             margin: auto;
+        }
+        @supports (height: 100dvh) {
+            .modal-box { max-height: calc(100dvh - 40px); }
         }
         .modal.active .modal-box { transform: scale(1); }
 
@@ -814,7 +817,9 @@
         const WEEK_KEY = PROFILE_ID ? 'hr_week_' + PROFILE_ID : 'hr_week';
         const DATE_KEY = PROFILE_ID ? 'hr_date_' + PROFILE_ID : 'hr_date';
         const REPORTS_KEY = PROFILE_ID ? 'hr_reports_' + PROFILE_ID : 'hr_reports';
-        const ADMIN_KEY = PROFILE_ID ? 'hr_admin_' + PROFILE_ID : 'hr_admin';
+        const ADMIN_KEY = PROFILE_ID
+            ? (PROFILE_ID === 'stu' ? 'hr_admin' : 'hr_admin_' + PROFILE_ID)
+            : 'hr_admin';
 
         // If no profile, check for existing profiles or redirect to get-started
         if (!PROFILE_ID) {

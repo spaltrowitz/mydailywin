@@ -1499,6 +1499,10 @@
             const state = loadState();
             state.balance = 0;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            const appStateKey = PROFILE_ID ? 'hr_state_' + PROFILE_ID : 'hr_state';
+            if (appStateKey !== STORAGE_KEY) {
+                localStorage.setItem(appStateKey, JSON.stringify(state));
+            }
             displayStats();
             showToast('✅ Balance reset to 0');
         }
@@ -1660,7 +1664,7 @@
             // Show other admins
             admins.forEach((admin, index) => {
                 const div = document.createElement('div');
-                const hasAccepted = admin.acceptedAt;
+                const hasAccepted = isAdminAccepted(admin);
                 const statusBg = hasAccepted ? '#dcfce7' : '#fef3c7';
                 const statusColor = hasAccepted ? '#166534' : '#92400e';
                 const statusText = hasAccepted ? '✓ Active' : '⏳ Pending';
@@ -1692,7 +1696,9 @@
             // Auto-clean: Remove any invites for admins who have already accepted
             let invites = JSON.parse(localStorage.getItem(getInvitesKey()) || '[]');
             const admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
-            const acceptedEmails = admins.filter(a => a.acceptedAt).map(a => a.email.toLowerCase());
+            const acceptedEmails = admins
+                .filter(isAdminAccepted)
+                .map(a => a.email.toLowerCase());
             const originalLength = invites.length;
             invites = invites.filter(invite => !acceptedEmails.includes(invite.email.toLowerCase()));
             
@@ -1704,6 +1710,10 @@
 
         function getNotificationsKey() {
             return IS_LEGACY_PROFILE ? 'hr_admin_notifications' : 'hr_admin_notifications_' + PROFILE_ID;
+        }
+        
+        function isAdminAccepted(admin) {
+            return !!(admin.acceptedAt || admin.firstName || admin.name);
         }
 
         async function loadAdminNotifications() {
