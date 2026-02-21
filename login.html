@@ -546,6 +546,9 @@
             const user = auth.currentUser;
             if (user) {
                 sessionStorage.setItem('hr_pending_user_uid', user.uid);
+                if (user.email) {
+                    sessionStorage.setItem('hr_pending_user_email', user.email);
+                }
             }
             window.location.href = '/get-started.html';
         }
