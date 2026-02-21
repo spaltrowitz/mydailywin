@@ -405,6 +405,7 @@
                 <h2>📥 Data Management</h2>
                 <button class="btn btn-secondary btn-block" onclick="downloadAllData()">💾 Export All Data</button>
                 <button class="btn btn-secondary btn-block" onclick="exportSurveyDataCSV()">📊 Export Survey Data (CSV)</button>
+                <button class="btn btn-secondary btn-block" onclick="resetUserBalance()">🔄 Reset Balance to 0</button>
                 <button class="btn btn-danger btn-block" onclick="resetUserData()">🔄 Reset All User Data</button>
                 <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px;">Warning: Reset clears all progress permanently!</p>
             </div>
@@ -1491,6 +1492,15 @@
                 localStorage.removeItem('hr_reports' + suffix);
                 displayReports();
             }
+        }
+        
+        function resetUserBalance() {
+            if (!confirm('Reset current balance to 0 points?')) return;
+            const state = loadState();
+            state.balance = 0;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            displayStats();
+            showToast('✅ Balance reset to 0');
         }
 
         function resetUserData() {
