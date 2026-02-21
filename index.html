@@ -633,7 +633,7 @@
         const PROFILE_ID = new URLSearchParams(window.location.search).get('profile') || localStorage.getItem('hr_current_profile');
         let USER_PROFILE = null;
         let LOW_TECH_MODE = false;
-        let IS_STU_PROFILE = false;
+        let IS_STU_PROFILE = PROFILE_ID === 'stu';
         
         if (PROFILE_ID) {
             const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
@@ -642,7 +642,7 @@
                 // Enable low-tech mode if user is "learning" with technology
                 LOW_TECH_MODE = USER_PROFILE.phoneComfort === 'learning';
                 // Check if this is Stu's profile (for Stu-specific tasks)
-                IS_STU_PROFILE = USER_PROFILE.name && USER_PROFILE.name.toLowerCase() === 'stu';
+                IS_STU_PROFILE = IS_STU_PROFILE || (USER_PROFILE.name && USER_PROFILE.name.toLowerCase() === 'stu');
             }
         }
         
@@ -866,7 +866,7 @@
         // Routine tasks = lower value, Stretch goals = higher value
         const DAILY_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75, requiresTech: true },
+            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75, requiresTech: true, excludeFromStu: true },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
             { id: 5, name: "🟩 Play Wordle", value: 10, requiresTech: true }
         ];
@@ -1384,9 +1384,11 @@
                 localStorage.setItem('hr_date', today);
                 saveState();
             } else {
+                const activeDailyTasks = filterForProfile(filterForTechComfort(DAILY_TASKS));
+                state.tasks = state.tasks.filter(t => activeDailyTasks.some(d => d.id === t.id));
                 // Always sync task values from config (in case they changed)
                 state.tasks.forEach(t => {
-                    const configTask = DAILY_TASKS.find(d => d.id === t.id);
+                    const configTask = activeDailyTasks.find(d => d.id === t.id);
                     if (configTask) {
                         t.value = configTask.value;
                         t.name = configTask.name;
