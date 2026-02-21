@@ -2299,7 +2299,9 @@
             if (id === 'levelsModal') {
                 populateLevelsTable();
             }
-            document.getElementById(id).classList.add('active');
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.add('active');
         }
         
         function populateLevelsTable() {
@@ -2341,7 +2343,9 @@
         }
         
         function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.remove('active');
         }
 
         function triggerConfetti() {
