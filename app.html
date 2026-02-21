@@ -2902,7 +2902,10 @@
                 document.getElementById('settingsDollars').textContent = '= $' + ((state.balance || 0) / 100).toFixed(2);
             }
             const modal = document.getElementById(id);
-            if (!modal) return;
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
             modal.classList.add('active');
         }
         
@@ -2946,7 +2949,10 @@
         
         function closeModal(id) {
             const modal = document.getElementById(id);
-            if (!modal) return;
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
             modal.classList.remove('active');
         }
         

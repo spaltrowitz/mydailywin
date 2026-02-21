@@ -1967,7 +1967,10 @@
                 populateLevelsTable();
             }
             const modal = document.getElementById(id);
-            if (!modal) return;
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
             modal.classList.add('active');
         }
         
@@ -2011,7 +2014,10 @@
         
         function closeModal(id) {
             const modal = document.getElementById(id);
-            if (!modal) return;
+            if (!modal) {
+                console.warn(`Modal not found: ${id}`);
+                return;
+            }
             modal.classList.remove('active');
         }
 
