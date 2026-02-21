@@ -633,7 +633,10 @@
         const PROFILE_ID = new URLSearchParams(window.location.search).get('profile') || localStorage.getItem('hr_current_profile');
         let USER_PROFILE = null;
         let LOW_TECH_MODE = false;
-        let IS_STU_PROFILE = PROFILE_ID === 'stu';
+        let IS_STU_PROFILE = false;
+        if (PROFILE_ID === 'stu') {
+            IS_STU_PROFILE = true;
+        }
         
         if (PROFILE_ID) {
             const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
@@ -1385,7 +1388,8 @@
                 saveState();
             } else {
                 const activeDailyTasks = filterForProfile(filterForTechComfort(DAILY_TASKS));
-                state.tasks = state.tasks.filter(t => activeDailyTasks.some(d => d.id === t.id));
+                const activeDailyTaskIds = new Set(activeDailyTasks.map(d => d.id));
+                state.tasks = state.tasks.filter(t => activeDailyTaskIds.has(t.id));
                 // Always sync task values from config (in case they changed)
                 state.tasks.forEach(t => {
                     const configTask = activeDailyTasks.find(d => d.id === t.id);
