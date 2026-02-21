@@ -825,6 +825,12 @@
                 createdAt: new Date().toISOString()
             };
             
+            const pendingUserEmail = sessionStorage.getItem('hr_pending_user_email');
+            if (pendingUserEmail) {
+                profileData.creatorEmail = pendingUserEmail;
+                profileData.ownerEmail = pendingUserEmail;
+            }
+            
             // Save to localStorage with profile ID
             localStorage.setItem('hr_profile_' + answers.profileId, JSON.stringify(profileData));
             
@@ -846,6 +852,7 @@
                 }
                 sessionStorage.removeItem('hr_pending_user_uid');
             }
+            sessionStorage.removeItem('hr_pending_user_email');
             
             // Also save survey data for export
             saveSurveyData(profileData);
