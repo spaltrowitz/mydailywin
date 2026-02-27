@@ -1,0 +1,14 @@
+[
+  {
+    "assignment_id": "habitrewards-001",
+    "universe": "the-incredibles",
+    "created_at": "2026-02-26T22:52:04Z",
+    "agents": [
+      { "name": "Edna", "role": "Lead" },
+      { "name": "Dash", "role": "User Dev" },
+      { "name": "Violet", "role": "Admin Dev" },
+      { "name": "Frozone", "role": "Backend Dev" },
+      { "name": "Helen", "role": "Tester" }
+    ]
+  }
+]

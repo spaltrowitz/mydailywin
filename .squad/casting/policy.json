@@ -1,0 +1,5 @@
+{
+  "universes": ["the-incredibles"],
+  "max_capacity": 15,
+  "overflow_strategy": "diegetic_expansion"
+}
