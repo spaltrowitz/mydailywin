@@ -13,11 +13,11 @@
 
 | Name | Role | Scope | Emoji |
 |------|------|-------|-------|
-| Edna | Lead | Architecture, decisions, code review | 🏗️ |
-| Dash | User Dev | User dashboard (app.html, index.html, habitrewards.html) | ⚛️ |
-| Violet | Admin Dev | Admin dashboard (admin.html, admin-guide.html) | ⚛️ |
-| Frozone | Backend Dev | Firebase, Firestore, admin↔user data flow | 🔧 |
-| Helen | Tester | Quality, edge cases, admin↔user interactions | 🧪 |
+| Hopper | Lead | Architecture, decisions, code review | 🏗️ |
+| Eleven | User Dev | User dashboard (app.html, index.html, habitrewards.html) | ⚛️ |
+| Max | Admin Dev | Admin dashboard (admin.html, admin-guide.html) | ⚛️ |
+| Dustin | Backend Dev | Firebase, Firestore, admin↔user data flow | 🔧 |
+| Robin | Tester | Quality, edge cases, admin↔user interactions | 🧪 |
 | Scribe | Session Logger | Memory, decisions, session logs | 📋 |
 | Ralph | Work Monitor | Work queue, backlog, keep-alive | 🔄 |
 

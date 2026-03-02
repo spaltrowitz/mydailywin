@@ -1,7 +1,12 @@
 [
-  { "persistent_name": "Edna", "universe": "the-incredibles", "role": "Lead", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "active" },
-  { "persistent_name": "Dash", "universe": "the-incredibles", "role": "User Dev", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "active" },
-  { "persistent_name": "Violet", "universe": "the-incredibles", "role": "Admin Dev", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "active" },
-  { "persistent_name": "Frozone", "universe": "the-incredibles", "role": "Backend Dev", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "active" },
-  { "persistent_name": "Helen", "universe": "the-incredibles", "role": "Tester", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "active" }
+  {"persistent_name": "Hopper", "universe": "stranger-things", "role": "Lead", "created_at": "2026-03-02T16:15:00Z", "legacy_named": false, "status": "active"},
+  {"persistent_name": "Eleven", "universe": "stranger-things", "role": "User Dev", "created_at": "2026-03-02T16:15:00Z", "legacy_named": false, "status": "active"},
+  {"persistent_name": "Max", "universe": "stranger-things", "role": "Admin Dev", "created_at": "2026-03-02T16:15:00Z", "legacy_named": false, "status": "active"},
+  {"persistent_name": "Dustin", "universe": "stranger-things", "role": "Backend Dev", "created_at": "2026-03-02T16:15:00Z", "legacy_named": false, "status": "active"},
+  {"persistent_name": "Robin", "universe": "stranger-things", "role": "Tester", "created_at": "2026-03-02T16:15:00Z", "legacy_named": false, "status": "active"},
+  {"persistent_name": "Edna", "universe": "the-incredibles", "role": "Lead", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "retired"},
+  {"persistent_name": "Dash", "universe": "the-incredibles", "role": "User Dev", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "retired"},
+  {"persistent_name": "Violet", "universe": "the-incredibles", "role": "Admin Dev", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "retired"},
+  {"persistent_name": "Frozone", "universe": "the-incredibles", "role": "Backend Dev", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "retired"},
+  {"persistent_name": "Helen", "universe": "the-incredibles", "role": "Tester", "created_at": "2026-02-26T22:52:04Z", "legacy_named": false, "status": "retired"}
 ]
