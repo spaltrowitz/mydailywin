@@ -13,11 +13,11 @@
 
 | Name | Role | Scope | Emoji |
 |------|------|-------|-------|
-| Hopper | Lead | Architecture, decisions, code review | 🏗️ |
-| Eleven | User Dev | User dashboard (app.html, index.html, habitrewards.html) | ⚛️ |
-| Max | Admin Dev | Admin dashboard (admin.html, admin-guide.html) | ⚛️ |
-| Dustin | Backend Dev | Firebase, Firestore, admin↔user data flow | 🔧 |
-| Robin | Tester | Quality, edge cases, admin↔user interactions | 🧪 |
+| Revali | Lead | Architecture, decisions, code review | 🏗️ |
+| Mipha | User Dev | User dashboard (app.html, index.html, habitrewards.html) | ⚛️ |
+| Urbosa | Admin Dev | Admin dashboard (admin.html, admin-guide.html) | ⚛️ |
+| Daruk | Backend Dev | Firebase, Firestore, admin↔user data flow | 🔧 |
+| Purah | Tester | Quality, edge cases, admin↔user interactions | 🧪 |
 | Scribe | Session Logger | Memory, decisions, session logs | 📋 |
 | Ralph | Work Monitor | Work queue, backlog, keep-alive | 🔄 |
 

@@ -8,7 +8,7 @@ _Canonical decision ledger. Managed by Scribe. Agents write to .squad/decisions/
 
 ### Bug 1: saveState() undefined in admin.html
 **Status:** Identified, Awaiting Fix  
-**Agents:** Max, Robin  
+**Agents:** Urbosa, Purah  
 **Severity:** 🔴 CRITICAL — Runtime crash  
 
 **Context:**
@@ -23,14 +23,14 @@ function saveState(state) { localStorage.setItem(STORAGE_KEY, JSON.stringify(sta
 ```
 Or inline: replace `saveState(state)` calls with direct `localStorage.setItem(STORAGE_KEY, JSON.stringify(state))`.
 
-**Owner:** Max (Admin Dev)  
+**Owner:** Urbosa (Admin Dev)  
 **Blockers:** None
 
 ---
 
 ### Bug 2: Admin↔User Storage Key Mismatch for "stu" Profile
 **Status:** Identified, Awaiting Fix  
-**Agents:** Hopper, Max, Robin  
+**Agents:** Revali, Urbosa, Purah  
 **Severity:** 🔴 CRITICAL — Data splits between admin/app  
 
 **Context:**
@@ -46,15 +46,15 @@ Either:
 
 Recommendation: Option B — add dual-write logic to saveState() or create saveUserState(profile, state) wrapper that handles dual-write automatically.
 
-**Owner:** Max (Admin Dev) with Hopper (Lead) sign-off  
+**Owner:** Urbosa (Admin Dev) with Revali (Lead) sign-off  
 **Blockers:** None  
-**Cross-Agent Impact:** Affects Eleven (user app data consistency) and Dustin (data contract).
+**Cross-Agent Impact:** Affects Mipha (user app data consistency) and Daruk (data contract).
 
 ---
 
 ### Bug 3: displayReports() Uses Unsuffixed Key
 **Status:** Identified, Awaiting Fix  
-**Agents:** Max, Robin  
+**Agents:** Urbosa, Purah  
 **Severity:** 🔴 CRITICAL — Wrong profile's data shown  
 
 **Context:**
@@ -70,14 +70,14 @@ let suffix = PROFILE_ID !== 'stu' && IS_LEGACY_PROFILE ? '' : '_' + PROFILE_ID;
 let reports = localStorage.getItem('hr_reports' + suffix);
 ```
 
-**Owner:** Max (Admin Dev)  
+**Owner:** Urbosa (Admin Dev)  
 **Blockers:** Bug 2 (storage key alignment)
 
 ---
 
 ### Bug 4: downloadTaskResponses() and downloadFeedbackLog() Use Unsuffixed Keys
 **Status:** Identified, Awaiting Fix  
-**Agents:** Max, Robin  
+**Agents:** Urbosa, Purah  
 **Severity:** 🔴 CRITICAL — CSV exports empty for non-stu profiles  
 
 **Context:**
@@ -89,7 +89,7 @@ let reports = localStorage.getItem('hr_reports' + suffix);
 **Decision:**
 Update both functions to match downloadAllData() pattern using profile suffix.
 
-**Owner:** Max (Admin Dev)  
+**Owner:** Urbosa (Admin Dev)  
 **Blockers:** Bug 2
 
 ---
@@ -98,7 +98,7 @@ Update both functions to match downloadAllData() pattern using profile suffix.
 
 ### Firestore Rules: Wide-Open Authentication (auth-only, not user-scoped)
 **Status:** Identified, Awaiting Fix  
-**Agents:** Hopper, Dustin  
+**Agents:** Revali, Daruk  
 **Severity:** 🔴 CRITICAL — Security F grade  
 
 **Context:**
@@ -116,7 +116,7 @@ match /userState/{profileId} {
 }
 ```
 
-**Owner:** Dustin (Backend Dev) with Hopper (Lead) sign-off  
+**Owner:** Daruk (Backend Dev) with Revali (Lead) sign-off  
 **Blockers:** None  
 **Secondary issues:** taskProposals allows unauthenticated creates (`allow create: if true`); add field validation.
 
@@ -126,7 +126,7 @@ match /userState/{profileId} {
 
 ### Code Duplication: Three Divergent User Pages Sharing ~70% Code
 **Status:** Identified, Awaiting Strategy Decision  
-**Agents:** Hopper, Eleven  
+**Agents:** Revali, Mipha  
 **Severity:** 🟡 HIGH — Duplication enables drift bugs  
 
 **Context:**
@@ -145,7 +145,7 @@ match /userState/{profileId} {
 2. **shared.css Usage:** shared.css exists but is NOT imported by any user-facing page. All accessibility utilities are unused.
    - Decision: Import shared.css into app/index/habitrewards HTML files and remove inline duplicates.
 
-**Owner:** Hopper (Lead) with Eleven (User Dev)  
+**Owner:** Revali (Lead) with Mipha (User Dev)  
 **Recommendation:** Option C (merge features into app.html, then redirect index.html and habitrewards.html).  
 **Timeline:** P1 — required for codebase maintainability.
 
@@ -153,7 +153,7 @@ match /userState/{profileId} {
 
 ### Storage Key Divergence: app.html vs index.html/habitrewards.html
 **Status:** Identified, Awaiting Fix  
-**Agents:** Hopper, Eleven  
+**Agents:** Revali, Mipha  
 **Severity:** 🟡 HIGH — User data splits between pages  
 
 **Context:**
@@ -168,14 +168,14 @@ let PROFILE_ID = 'default'; // or loaded from localStorage
 let STORAGE_KEY = PROFILE_ID === 'stu' && IS_LEGACY_PROFILE ? 'hr_state' : 'hr_state_' + PROFILE_ID;
 ```
 
-**Owner:** Eleven (User Dev)  
+**Owner:** Mipha (User Dev)  
 **Blockers:** Code consolidation strategy decision.
 
 ---
 
 ### Undefined Function: updateBalanceDisplay() in app.html
 **Status:** Identified, Awaiting Fix  
-**Agents:** Eleven  
+**Agents:** Mipha  
 **Severity:** 🔴 HIGH — Runtime crash  
 
 **Context:**
@@ -185,13 +185,13 @@ let STORAGE_KEY = PROFILE_ID === 'stu' && IS_LEGACY_PROFILE ? 'hr_state' : 'hr_s
 **Decision:**
 Either define the function (update DOM display of balance) or replace call with existing updateDisplay() or equivalent.
 
-**Owner:** Eleven (User Dev)
+**Owner:** Mipha (User Dev)
 
 ---
 
 ### Modal Accessibility: close <span> not <button>, no focus trap
 **Status:** Identified, Awaiting Fix  
-**Agents:** Eleven  
+**Agents:** Mipha  
 **Severity:** 🔴 HIGH — WCAG 2.1 AA non-compliance  
 
 **Context:**
@@ -205,13 +205,13 @@ Either define the function (update DOM display of balance) or replace call with 
 2. Add focus trap: Tab should cycle within modal only.
 3. Add aria-modal="true" to modal container.
 
-**Owner:** Eleven (User Dev)
+**Owner:** Mipha (User Dev)
 
 ---
 
 ### No Content Security Policy (CSP) Headers
 **Status:** Identified, Awaiting Fix  
-**Agents:** Hopper, Dustin  
+**Agents:** Revali, Daruk  
 **Severity:** 🟡 HIGH — XSS vulnerability  
 
 **Context:**
@@ -226,13 +226,13 @@ Add CSP headers to firebase.json:
 ]
 ```
 
-**Owner:** Dustin (Backend Dev)
+**Owner:** Daruk (Backend Dev)
 
 ---
 
 ### Service Worker Cache Never Versions
 **Status:** Identified, Awaiting Fix  
-**Agents:** Dustin, Eleven  
+**Agents:** Daruk, Mipha  
 **Severity:** 🟡 HIGH — Users get stale cached pages indefinitely  
 
 **Context:**
@@ -242,7 +242,7 @@ Add CSP headers to firebase.json:
 **Decision:**
 Bump version on each deploy (e.g., `habitrewards-v2`) or use content hashing.
 
-**Owner:** Dustin (Backend Dev)
+**Owner:** Daruk (Backend Dev)
 
 ---
 
@@ -250,7 +250,7 @@ Bump version on each deploy (e.g., `habitrewards-v2`) or use content hashing.
 
 ### Dead Cloud Function: sendAdminInvite
 **Status:** Identified, Awaiting Decision  
-**Agents:** Dustin, Max  
+**Agents:** Daruk, Urbosa  
 **Severity:** 🟡 MED — Dead code + security concern  
 
 **Context:**
@@ -261,13 +261,13 @@ Bump version on each deploy (e.g., `habitrewards-v2`) or use content hashing.
 **Decision Needed:**
 Use Cloud Function OR EmailJS? Recommendation: Migrate to Cloud Function (secure, rate-limiting capable). Delete EmailJS code and unused SendGrid function.
 
-**Owner:** Dustin (Backend Dev)
+**Owner:** Daruk (Backend Dev)
 
 ---
 
 ### Missing Caching Headers in firebase.json
 **Status:** Identified, Awaiting Fix  
-**Agents:** Dustin  
+**Agents:** Daruk  
 **Severity:** 🟡 MED — Performance hit  
 
 **Context:**
@@ -283,13 +283,13 @@ Add to firebase.json:
 ]
 ```
 
-**Owner:** Dustin (Backend Dev)
+**Owner:** Daruk (Backend Dev)
 
 ---
 
 ### Firestore Rules: No Data Validation
 **Status:** Identified, Awaiting Fix  
-**Agents:** Dustin, Hopper  
+**Agents:** Daruk, Revali  
 **Severity:** 🟡 MED — Data integrity risk  
 
 **Context:**
@@ -299,13 +299,13 @@ Add to firebase.json:
 **Decision:**
 Add field-level validation for each collection (required fields, type checks, size limits).
 
-**Owner:** Dustin (Backend Dev)
+**Owner:** Daruk (Backend Dev)
 
 ---
 
 ### Debug Logging Leaks API Keys in Production
 **Status:** Identified, Awaiting Fix  
-**Agents:** Dustin  
+**Agents:** Daruk  
 **Severity:** 🟡 MED — Credential exposure  
 
 **Context:**
@@ -314,13 +314,13 @@ Add field-level validation for each collection (required fields, type checks, si
 **Decision:**
 Remove or gate behind debug flag.
 
-**Owner:** Max (Admin Dev)
+**Owner:** Urbosa (Admin Dev)
 
 ---
 
 ### Input Validation Gaps in admin.html Payment Logic
 **Status:** Identified, Awaiting Fix  
-**Agents:** Max, Robin  
+**Agents:** Urbosa, Purah  
 **Severity:** 🟡 MED — Logic bugs  
 
 **Context:**
@@ -332,13 +332,13 @@ Remove or gate behind debug flag.
 2. Validate `amount > 0` in savePayment().
 3. Fix savePayment to deduct: `state.balance = Math.max(0, state.balance - (amount * 100))`.
 
-**Owner:** Max (Admin Dev)
+**Owner:** Urbosa (Admin Dev)
 
 ---
 
 ### XSS Risk: innerHTML with User-Controlled Data
 **Status:** Identified, Awaiting Fix  
-**Agents:** Dustin, Max, Eleven  
+**Agents:** Daruk, Urbosa, Mipha  
 **Severity:** 🟡 MED — Security  
 
 **Context:**
@@ -356,7 +356,7 @@ Use textContent for data fields or implement sanitization (escapeHtml, DOMPurify
 
 ### Dark Mode Missing: home.html and offline.html
 **Status:** Identified, Awaiting Fix  
-**Agents:** Eleven  
+**Agents:** Mipha  
 
 - home.html and offline.html have zero dark mode support.
 - app.html, index.html, habitrewards.html have good CSS variable-based dark mode.
@@ -367,7 +367,7 @@ Use textContent for data fields or implement sanitization (escapeHtml, DOMPurify
 
 ### Dead Code: Multiple Functions Unused
 **Status:** Identified, Cleanup Needed  
-**Agents:** Eleven, Max, Dustin  
+**Agents:** Mipha, Urbosa, Daruk  
 
 Functions found: rate(), submitSurvey(), isWednesday(), addBonus(), reportTask(), downloadFeedbackLog(), downloadTaskResponses(), fallbackMailto(), cancelInvite().
 
@@ -377,7 +377,7 @@ Functions found: rate(), submitSurvey(), isWednesday(), addBonus(), reportTask()
 
 ### DAILY_MAX_POINTS Constant Never Enforced
 **Status:** Identified  
-**Agents:** Eleven  
+**Agents:** Mipha  
 
 - Constant defined in app.html:921, index.html:1158, habitrewards.html:645 but never used.
 - Creates false expectations.
@@ -388,7 +388,7 @@ Functions found: rate(), submitSurvey(), isWednesday(), addBonus(), reportTask()
 
 ### index.html/habitrewards.html Not Profile-Aware
 **Status:** Identified  
-**Agents:** Robin  
+**Agents:** Purah  
 
 - Both pages always read/write `hr_state` with no suffix.
 - Use hardcoded tasks, ignore admin customizations.
@@ -399,7 +399,7 @@ Functions found: rate(), submitSurvey(), isWednesday(), addBonus(), reportTask()
 
 ### Manifest.json start_url Should Be /app.html
 **Status:** Identified  
-**Agents:** Eleven  
+**Agents:** Mipha  
 
 - PWA opens to /home.html (marketing page) instead of /app.html (app).
 - Returning users expect app, not marketing.
@@ -440,17 +440,17 @@ Functions found: rate(), submitSurvey(), isWednesday(), addBonus(), reportTask()
 
 ## 🗂️ Agent Cross-Impacts
 
-### Hopper → Eleven: Code Consolidation Strategy
-Architecture decision on 3 divergent pages affects Eleven's immediate roadmap.
+### Revali → Mipha: Code Consolidation Strategy
+Architecture decision on 3 divergent pages affects Mipha's immediate roadmap.
 
-### Hopper → Dustin: Firestore Rules & CSP
+### Revali → Daruk: Firestore Rules & CSP
 Architect-level security decisions flow to backend.
 
-### Max → Robin: Data Flow Validation
+### Urbosa → Purah: Data Flow Validation
 Admin implementations impact tester's validation suite.
 
-### Dustin → Max: Storage Key Alignment
+### Daruk → Urbosa: Storage Key Alignment
 Backend data contract affects admin payment logic.
 
-### Eleven → All: Code Quality Baseline
+### Mipha → All: Code Quality Baseline
 Shared code extraction enables all subsystems to stay in sync.

@@ -4,37 +4,37 @@
 
 | File Pattern | Primary | Secondary |
 |--------------|---------|-----------|
-| app.html | Eleven | Robin |
-| index.html | Eleven | Robin |
-| habitrewards.html | Eleven | Robin |
-| admin.html | Max | Robin |
-| admin-guide.html | Max | — |
-| home.html | Eleven | — |
-| login.html | Dustin | Eleven |
-| get-started.html | Dustin | Eleven |
-| functions/** | Dustin | — |
-| firestore.rules | Dustin | Hopper |
-| css/** | Eleven or Max | — |
-| sw.js, manifest.json | Dustin | — |
+| app.html | Mipha | Purah |
+| index.html | Mipha | Purah |
+| habitrewards.html | Mipha | Purah |
+| admin.html | Urbosa | Purah |
+| admin-guide.html | Urbosa | — |
+| home.html | Mipha | — |
+| login.html | Daruk | Mipha |
+| get-started.html | Daruk | Mipha |
+| functions/** | Daruk | — |
+| firestore.rules | Daruk | Revali |
+| css/** | Mipha or Urbosa | — |
+| sw.js, manifest.json | Daruk | — |
 
 ## By Domain
 
 | Domain | Agent |
 |--------|-------|
-| User UI, gamification, animations | Eleven |
-| Admin UI, task config, payments | Max |
-| Firebase, Firestore, auth, data sync | Dustin |
-| Admin↔user interactions, localStorage sync | Dustin + Robin |
-| Architecture decisions, code review | Hopper |
-| Test cases, edge cases, QA | Robin |
+| User UI, gamification, animations | Mipha |
+| Admin UI, task config, payments | Urbosa |
+| Firebase, Firestore, auth, data sync | Daruk |
+| Admin↔user interactions, localStorage sync | Daruk + Purah |
+| Architecture decisions, code review | Revali |
+| Test cases, edge cases, QA | Purah |
 | Session logs, decisions, memory | Scribe |
 
 ## By Keyword
 
 | Keyword/Signal | Route To |
 |----------------|----------|
-| "streak", "spin wheel", "achievements", "points", "level up" | Eleven |
-| "admin", "payments", "payout", "task config", "approve" | Max |
-| "firebase", "firestore", "auth", "localStorage", "sync", "data flow" | Dustin |
-| "test", "bug", "edge case", "interaction", "QA" | Robin |
-| "architecture", "review", "decision", "refactor" | Hopper |
+| "streak", "spin wheel", "achievements", "points", "level up" | Mipha |
+| "admin", "payments", "payout", "task config", "approve" | Urbosa |
+| "firebase", "firestore", "auth", "localStorage", "sync", "data flow" | Daruk |
+| "test", "bug", "edge case", "interaction", "QA" | Purah |
+| "architecture", "review", "decision", "refactor" | Revali |

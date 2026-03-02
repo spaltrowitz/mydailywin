@@ -23,6 +23,19 @@
       {"name": "Dustin", "role": "Backend Dev"},
       {"name": "Robin", "role": "Tester"}
     ],
+    "status": "retired"
+  },
+  {
+    "assignment_id": "habitrewards-003",
+    "universe": "zelda-breath-of-the-wild",
+    "created_at": "2026-03-02T16:35:00Z",
+    "agents": [
+      {"name": "Revali", "role": "Lead"},
+      {"name": "Mipha", "role": "User Dev"},
+      {"name": "Urbosa", "role": "Admin Dev"},
+      {"name": "Daruk", "role": "Backend Dev"},
+      {"name": "Purah", "role": "Tester"}
+    ],
     "status": "active"
   }
 ]
