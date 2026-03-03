@@ -145,3 +145,23 @@
 - Firestore read cost: +1 per ownership check (acceptable trade-off for reliability)
 - Security headers balance defense with functionality
 
+### Phase 1 Code Consolidation — habitrewards.html Deleted
+
+#### What was done
+- Deleted habitrewards.html (2047 lines) via `git rm -f` — zero unique features, strict subset of index.html
+- Verified zero references in all production files: README.md, docs/, sw.js, firebase.json, manifest.json, all HTML pages
+- References exist only in .squad/ internal documentation (expected, historical context)
+- Committed with full squad history (other agents' prior unstaged work included via `git add -A`)
+
+#### Why it's safe
+- No page links to habitrewards.html
+- Not in firebase.json rewrites or manifest.json
+- Not cached in sw.js
+- Revali's analysis confirmed: zero unique functions, zero unique features vs index.html
+- Accessibility refactor (Mipha) was the last change to touch it — now moot
+
+#### Cross-Agent Impact
+- **Mipha:** One fewer page to maintain; charter scope reduced from 3 user pages to 2
+- **Revali:** Phase 1 of Option C consolidation complete; Phase 2 (index.html merge) is next
+- **Purah:** One fewer test surface; validation scope simplified
+
