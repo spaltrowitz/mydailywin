@@ -92,6 +92,24 @@
 - Button styling maintained via CSS reset
 - Modal behavior unchanged; accessibility added non-invasively
 
+### Phase 2: index.html Feature Migration to app.html (Session: phase2-consolidation)
+
+**Orchestration:** Per Revali's approved Option C consolidation strategy.
+
+#### Features Migrated
+1. **TASK_HELP data object + showTaskHelp()**: 12-entry help content object with modal. Applied `escapeHtml()` to title in showTaskHelp. Content is static HTML (safe for innerHTML — not user input).
+2. **Profile Task Filtering (stuOnly/excludeFromStu)**: Added `filterForProfile()` using `IS_LEGACY_PROFILE` (equivalent of index.html's `IS_STU_PROFILE`). Wired into `getConfiguredDailyTasks()`, `getDailyBonus()`, and `getWeeklyBonuses()`. Added flags to: Duolingo (excludeFromStu), Clear emails (excludeFromStu), Tennis (stuOnly), Aisle app (stuOnly), Lunch with tennis friends (stuOnly), Mystery Shop (stuOnly).
+3. **Tech Comfort Filtering**: SKIPPED — app.html already handles this via `profileTemplate` mechanism which uses entirely separate task sets (LOW_TECH_TASKS vs REGULAR_TASKS). More comprehensive than index.html's `filterForTechComfort()`.
+4. **Completed-Ever Tracking**: Added `getCompletedEverTasks()` and `markTaskCompletedEver()` with profile-suffixed key (`hr_completed_ever_${PROFILE_ID}`). Wired into all 5 completion paths: `completeTaskDirectly()`, `confirmTask()`, `confirmDailyBonus()`, direct daily bonus, `confirmWeeklyBonus()`.
+5. **Help buttons in task rendering**: Added "i" buttons to daily tasks, weekly bonuses, and daily bonus in `render()`. Only shown for tasks with TASK_HELP entries. White-styled variants for colored bonus sections.
+
+#### Key Decisions
+- `escapeHtml()` applied to help title (belt-and-suspenders with textContent). Content left as raw HTML because it's a hardcoded constant, not user input — escaping would break the formatting.
+- `filterForProfile()` applied inside `getConfiguredDailyTasks()` so it covers both admin-configured and default tasks.
+- `getDailyBonus()` now returns null when all bonuses are filtered out; UI hides section gracefully.
+- `getWeeklyBonuses()` uses same Tennis check as index.html: `if (!TENNIS_WEEKLY.stuOnly || IS_LEGACY_PROFILE)`.
+- Profile-suffixed `COMPLETED_EVER_KEY` follows app.html convention, not index.html's unsuffixed pattern.
+
 ---
 
 ### Phase 1–4 Code Consolidation (2026-03-03)
