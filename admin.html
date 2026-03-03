@@ -720,18 +720,38 @@
             sessionStorage.setItem('hr_admin_tab', tabId);
         }
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('active'); }
+        function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('active'); }
 
         // ========== STATE MANAGEMENT ==========
         function loadState() {
             const saved = localStorage.getItem(STORAGE_KEY);
-            return saved ? JSON.parse(saved) : { balance: 0, totalEarned: 0, streak: 0 };
+            if (!saved) return { balance: 0, totalEarned: 0, streak: 0 };
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                console.warn('loadState: corrupted localStorage, resetting', e);
+                return { balance: 0, totalEarned: 0, streak: 0 };
+            }
+        }
+
+        function saveState(state) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            // Dual-write for stu profile — app.html reads from hr_state_stu
+            if (IS_LEGACY_PROFILE) {
+                localStorage.setItem('hr_state_stu', JSON.stringify(state));
+            }
         }
 
         function loadAdminData() {
             const saved = localStorage.getItem(ADMIN_KEY);
-            return saved ? JSON.parse(saved) : { payments: [], customTasks: {} };
+            if (!saved) return { payments: [], customTasks: {} };
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                console.warn('loadAdminData: corrupted localStorage, resetting', e);
+                return { payments: [], customTasks: {} };
+            }
         }
 
         function saveAdminData(data) {
@@ -1180,7 +1200,8 @@
         }
 
         function displayReports() {
-            const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const reports = JSON.parse(localStorage.getItem('hr_reports' + suffix) || '[]');
             const container = document.getElementById('reportsContainer');
             
             if (reports.length === 0) {
@@ -1226,8 +1247,8 @@
             const name = document.getElementById('newTaskName').value.trim();
             const points = parseInt(document.getElementById('newTaskPoints').value);
 
-            if (!name || !points) {
-                alert('Please enter task name and points');
+            if (!name || !points || points <= 0) {
+                alert('Please enter task name and points (must be greater than 0)');
                 return;
             }
 
@@ -1349,8 +1370,8 @@
             const amount = parseFloat(document.getElementById('paymentAmount').value);
             const notes = document.getElementById('paymentNotes').value;
 
-            if (!amount) {
-                alert('Please enter an amount');
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount (must be greater than 0)');
                 return;
             }
 
@@ -1359,15 +1380,15 @@
             admin.payments.push({ month, amount, notes, date: new Date().toISOString() });
             saveAdminData(admin);
 
-            // Reset user balance after payment
+            // Deduct payment from user balance (100 points = $1.00)
             const state = loadState();
-            state.balance = 0;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            state.balance = Math.max(0, state.balance - (amount * 100));
+            saveState(state);
 
             closeModal('paymentModal');
             displayPayments();
             displayStats();
-            alert('Payment recorded! User balance reset to 0.');
+            alert('Payment of $' + amount.toFixed(2) + ' recorded! Balance updated.');
         }
 
         // ========== DOWNLOADS ==========
@@ -1381,7 +1402,8 @@
         }
 
         function downloadTaskResponses() {
-            const log = JSON.parse(localStorage.getItem('hr_completed_log') || '[]');
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const log = JSON.parse(localStorage.getItem('hr_completed_log' + suffix) || '[]');
             if (log.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Points,Comment\n';
             log.forEach(e => csv += `"${e.date}","${e.type}","${e.task}","${e.points}","${(e.comment||'').replace(/"/g,'""')}"\n`);
@@ -1389,7 +1411,8 @@
         }
 
         function downloadFeedbackLog() {
-            const fb = JSON.parse(localStorage.getItem('hr_feedback') || '[]');
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const fb = JSON.parse(localStorage.getItem('hr_feedback' + suffix) || '[]');
             if (fb.length === 0) { alert('No data'); return; }
             let csv = 'Date,Mood,Energy,Overall,Comments\n';
             fb.forEach(f => csv += `"${new Date(f.date).toLocaleDateString()}","${f.mood||''}","${f.energy||''}","${f.overall||''}","${(f.comments||'').replace(/"/g,'""')}"\n`);
@@ -1397,7 +1420,8 @@
         }
 
         function downloadReports() {
-            const rpts = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const rpts = JSON.parse(localStorage.getItem('hr_reports' + suffix) || '[]');
             if (rpts.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Reason,Comment\n';
             rpts.forEach(r => csv += `"${new Date(r.date).toLocaleDateString()}","${r.taskType}","${r.taskName}","${r.reason}","${(r.comment||'').replace(/"/g,'""')}"\n`);
@@ -1870,23 +1894,7 @@
             const guideUrl = `${appUrl}/admin-guide.html`;
             const loginUrl = `${appUrl}/login.html`;
             
-            // Debug: Log EmailJS status
-            console.log('=== EmailJS Debug Info ===');
-            console.log('EmailJS SDK loaded:', typeof emailjs !== 'undefined');
-            console.log('Public Key:', EMAILJS_PUBLIC_KEY);
-            console.log('Service ID:', EMAILJS_SERVICE_ID);
-            console.log('Template ID:', EMAILJS_TEMPLATE_ID);
-            console.log('Sending to:', email);
-            console.log('Template params:', {
-                to_email: email,
-                to_name: email.split('@')[0],
-                from_name: senderName,
-                profile_name: PROFILE_NAME,
-                admin_url: adminUrl,
-                login_url: loginUrl,
-                guide_url: guideUrl,
-                app_url: appUrl
-            });
+            // EmailJS debug logging removed for production security
             
             // Check if EmailJS is configured
             if (typeof emailjs === 'undefined') {

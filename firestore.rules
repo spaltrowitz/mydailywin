@@ -1,95 +1,165 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Profiles collection - stores admin relationships
+
+    // ================================================================
+    // Ownership helpers
+    //
+    // These check the Firestore profiles collection for ownership data.
+    // isProfileOwner: ownerEmail on the profile doc matches the caller.
+    // isProfileAdmin: caller's email exists in the admins subcollection.
+    //
+    // LIMITATION: Profile docs are currently created in localStorage
+    // by get-started.html, NOT in Firestore. Until a Firestore-first
+    // profile creation flow is added, isProfileOwner() returns false
+    // for profiles that have no Firestore doc. isProfileAdmin() still
+    // works when the admins subcollection has been populated.
+    // ================================================================
+
+    function isProfileOwner(profileId) {
+      // Guard: if the profile doc doesn't exist yet (created in localStorage,
+      // not Firestore), return false instead of throwing a permission error.
+      return exists(/databases/$(database)/documents/profiles/$(profileId))
+        && request.auth.token.email ==
+          get(/databases/$(database)/documents/profiles/$(profileId)).data.ownerEmail;
+    }
+
+    function isProfileAdmin(profileId) {
+      return exists(/databases/$(database)/documents/profiles/$(profileId)/admins/$(request.auth.token.email));
+    }
+
+    function hasProfileAccess(profileId) {
+      return isProfileOwner(profileId) || isProfileAdmin(profileId);
+    }
+
+    // ================================================================
+    // Profiles collection
+    // ================================================================
     match /profiles/{profileId} {
-      // Anyone authenticated can read profile metadata
+      // Any auth user can read profile metadata.
+      // Required for the auth flow: admin.html reads the profile doc
+      // to check ownerEmail before granting dashboard access.
       allow read: if request.auth != null;
-      
-      // Only the profile owner can create/update the profile itself
-      allow write: if request.auth != null;
-      
-      // Admins subcollection
+
+      // Creator must set ownerEmail to their own email
+      allow create: if request.auth != null
+        && request.resource.data.ownerEmail is string
+        && request.resource.data.ownerEmail == request.auth.token.email;
+
+      // Only the owner or a listed admin can update
+      allow update: if request.auth != null
+        && hasProfileAccess(profileId);
+
+      // Only the owner can delete
+      allow delete: if request.auth != null
+        && isProfileOwner(profileId);
+
+      // ----- Admins subcollection -----
       match /admins/{adminEmail} {
-        // Authenticated users can read admins list
-        allow read: if request.auth != null;
-        
-        // Allow creating new admins if authenticated
-        allow create: if request.auth != null;
-        
-        // Allow updates (like marking as accepted) if the user's email matches
-        allow update: if request.auth != null && 
-          (request.auth.token.email == adminEmail || 
-           resource.data.addedBy == request.auth.token.email);
-        
-        // Allow delete by the person who added them or themselves
-        allow delete: if request.auth != null;
+        // Self-read (admin checking own invite status) or profile owner/admin
+        allow read: if request.auth != null
+          && (request.auth.token.email == adminEmail
+              || hasProfileAccess(profileId));
+
+        // Only profile owner or existing admins can invite new admins
+        allow create: if request.auth != null
+          && hasProfileAccess(profileId)
+          && request.resource.data.email is string
+          && request.resource.data.status is string;
+
+        // Admin can update own record (e.g. acceptedAt), owner/admin can update any
+        allow update: if request.auth != null
+          && (request.auth.token.email == adminEmail
+              || hasProfileAccess(profileId));
+
+        // Only profile owner or existing admins can remove
+        allow delete: if request.auth != null
+          && hasProfileAccess(profileId);
       }
-      
-      // Notifications subcollection
+
+      // ----- Notifications subcollection (admin-facing) -----
       match /notifications/{notificationId} {
-        // Admins can read notifications for this profile
-        allow read: if request.auth != null;
-        
-        // Anyone authenticated can create notifications (for invite acceptance)
-        allow create: if request.auth != null;
-        
-        // Allow marking as read
-        allow update: if request.auth != null;
-        
-        // Allow delete
-        allow delete: if request.auth != null;
+        // Only profile owner or admins can read
+        allow read: if request.auth != null
+          && hasProfileAccess(profileId);
+
+        // Any auth user can create (for invite-acceptance notifications)
+        allow create: if request.auth != null
+          && request.resource.data.type is string;
+
+        // Only profile owner or admins can update/delete
+        allow update, delete: if request.auth != null
+          && hasProfileAccess(profileId);
       }
     }
-    
-    // Payout requests collection - syncs across devices
+
+    // ================================================================
+    // Payout requests — cross-device sync
+    //
+    // TODO: Scope by ownership once profile docs are reliably created
+    // in Firestore. Replace auth-only rules with:
+    //   hasProfileAccess(resource.data.profileId)
+    // ================================================================
     match /payoutRequests/{requestId} {
-      // Users can read their own payout requests (requestId should contain profileId)
-      // Admins need to read all requests for their profiles
       allow read: if request.auth != null;
-      
-      // Only authenticated users can create payout requests
-      allow create: if request.auth != null;
-      
-      // Only authenticated users can update status (for admin approval)
-      allow update: if request.auth != null;
-      
-      // Only authenticated users can delete
+
+      allow create: if request.auth != null
+        && request.resource.data.profileId is string
+        && request.resource.data.amount is number
+        && request.resource.data.status == 'pending';
+
+      allow update: if request.auth != null
+        && request.resource.data.profileId is string;
+
       allow delete: if request.auth != null;
     }
-    
-    // User notifications collection - for payment confirmations etc
+
+    // ================================================================
+    // User notifications (user-facing — payment confirmations etc.)
+    //
+    // TODO: Scope by ownership once profile docs are reliably created
+    // in Firestore. Replace auth-only rules with:
+    //   hasProfileAccess(resource.data.profileId)
+    // ================================================================
     match /userNotifications/{notificationId} {
-      // Only authenticated users can read notifications
       allow read: if request.auth != null;
-      
-      // Only authenticated users can create notifications
-      allow create: if request.auth != null;
-      
-      // Only authenticated users can update (mark as read)
+
+      allow create: if request.auth != null
+        && request.resource.data.profileId is string
+        && request.resource.data.type is string
+        && request.resource.data.read == false;
+
       allow update: if request.auth != null;
-      
-      // Only authenticated users can delete
+
       allow delete: if request.auth != null;
     }
-    
-    // User state collection - syncs habit data across devices
+
+    // ================================================================
+    // User state — habit data sync across devices
+    //
+    // TODO: Scope by ownership once profile docs are reliably created
+    // in Firestore. Replace auth-only rules with:
+    //   hasProfileAccess(profileId)
+    // ================================================================
     match /userState/{profileId} {
-      // Only authenticated users can read/write their own state
-      // The profileId should match a profile they have access to
       allow read: if request.auth != null;
       allow write: if request.auth != null;
     }
-    
-    // Task proposals collection - user suggestions for new tasks
+
+    // ================================================================
+    // Task proposals — user suggestions for new tasks
+    //
+    // FIXED: create was 'if true' (unauthenticated writes).
+    // Now requires authentication + field validation.
+    // ================================================================
     match /taskProposals/{proposalId} {
-      // Admins can read all proposals
       allow read: if request.auth != null;
-      
-      // Anyone can create a proposal (even anonymous for now)
-      allow create: if true;
-      
-      // Only authenticated users can update/delete
+
+      allow create: if request.auth != null
+        && request.resource.data.profileId is string
+        && request.resource.data.taskName is string
+        && request.resource.data.status == 'pending';
+
       allow update, delete: if request.auth != null;
     }
   }

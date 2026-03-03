@@ -235,6 +235,7 @@
         .close-modal {
             position: absolute; top: 20px; right: 20px; font-size: 28px;
             color: var(--text-light); cursor: pointer; line-height: 1;
+            background: none; border: none; padding: 0; font-family: inherit;
         }
 
         input[type="text"], input[type="number"], select, textarea {
@@ -451,9 +452,9 @@
     </div>
 
     <!-- TASK DETAIL MODAL -->
-    <div id="taskModal" class="modal">
+    <div id="taskModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTaskTitle">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('taskModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('taskModal')" aria-label="Close">&times;</button>
             <h2 id="modalTaskTitle" style="margin-bottom: 20px; font-size: 24px;">Complete Task</h2>
             
             <div id="photoSection">
@@ -473,9 +474,9 @@
     </div>
 
     <!-- TASK HELP MODAL -->
-    <div id="taskHelpModal" class="modal">
+    <div id="taskHelpModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('taskHelpModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('taskHelpModal')" aria-label="Close">&times;</button>
             <h2 id="helpModalTitle" style="margin-bottom: 15px; font-size: 22px;">📱 How to Get Started</h2>
             <div id="helpModalContent" style="text-align: left; line-height: 1.8;"></div>
             <button class="btn btn-primary" onclick="closeModal('taskHelpModal')" style="margin-top: 20px;">Got it!</button>
@@ -483,9 +484,9 @@
     </div>
     
     <!-- TENNIS MODAL -->
-    <div id="tennisModal" class="modal">
+    <div id="tennisModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('tennisModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('tennisModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px; font-size: 24px;">🎾 Log Tennis/Pickleball</h2>
             
             <p style="margin-bottom: 10px; font-weight: 700;">When did you play?</p>
@@ -513,9 +514,9 @@
     </div>
 
     <!-- SETTINGS MODAL -->
-    <div id="settingsModal" class="modal">
+    <div id="settingsModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('settingsModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('settingsModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px;">⚙️ Settings</h2>
             
             <!-- Current Balance -->
@@ -562,9 +563,9 @@
     </div>
 
     <!-- LEVELS MODAL -->
-    <div id="levelsModal" class="modal">
+    <div id="levelsModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('levelsModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('levelsModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px;">🏆 Level Progression</h2>
             <div id="levelsTable" style="display: flex; flex-direction: column; gap: 8px;"></div>
             <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-light);">
@@ -574,9 +575,9 @@
     </div>
 
     <!-- STREAK RECOVERY MODAL -->
-    <div id="streakRecoveryModal" class="modal">
+    <div id="streakRecoveryModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('streakRecoveryModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('streakRecoveryModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 10px; font-size: 24px;">🔥 Recover Your Streak!</h2>
             <p style="color: var(--text-light); margin-bottom: 20px;">You missed a day, but you can get your streak back!</p>
             
@@ -593,9 +594,9 @@
     </div>
 
     <!-- WEEKLY FEEDBACK MODAL -->
-    <div id="feedbackModal" class="modal">
+    <div id="feedbackModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('feedbackModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('feedbackModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 5px; font-size: 24px;">📋 Weekly Check-in</h2>
             <p style="color: var(--text-light); margin-bottom: 20px;">We'd love to hear from you!</p>
             

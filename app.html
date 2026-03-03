@@ -241,6 +241,7 @@
         .close-modal {
             position: absolute; top: 20px; right: 20px; font-size: 28px;
             color: var(--text-light); cursor: pointer; line-height: 1;
+            background: none; border: none; padding: 0; font-family: inherit;
         }
 
         input[type="text"], input[type="number"], select, textarea {
@@ -295,6 +296,37 @@
         .star-rating span.active {
             filter: grayscale(0%);
             transform: scale(1.1);
+        }
+        /* Help button for tech tasks */
+        .task-help-btn {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 6px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            vertical-align: middle;
+        }
+        .task-help-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.15);
+        }
+        body.dark-mode .task-help-btn {
+            background: transparent;
+            border-color: var(--primary);
+        }
+        body.dark-mode .task-help-btn:hover {
+            background: var(--primary);
         }
     </style>
 </head>
@@ -428,7 +460,7 @@
             <div class="section-title" style="color: #f97316;">⭐ Today's Bonus</div>
             <div class="task-row" style="background: linear-gradient(135deg, #f97316, #fb923c); border: none; color: white; box-shadow: 0 4px 0 #ea580c;">
                 <div class="task-content">
-                    <div id="dailyBonusName" class="task-name" style="color: white;">Loading...</div>
+                    <div id="dailyBonusName" class="task-name" style="color: white;">Loading...</div><span id="dailyBonusHelpBtn"></span>
                     <div id="dailyBonusReward" style="display: inline-block; font-weight: 800; font-size: 14px; color: #f97316; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9);">+50 pts</div>
                 </div>
                 <button id="dailyBonusBtn" class="task-check" onclick="handleDailyBonusClick()" style="background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5);">
@@ -454,9 +486,9 @@
     </div>
 
     <!-- TASK DETAIL MODAL -->
-    <div id="taskModal" class="modal">
+    <div id="taskModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTaskTitle">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('taskModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('taskModal')" aria-label="Close">&times;</button>
             <h2 id="modalTaskTitle" style="margin-bottom: 20px; font-size: 24px;">Complete Task</h2>
             
             <div id="photoSection">
@@ -476,9 +508,9 @@
     </div>
     
     <!-- TENNIS MODAL -->
-    <div id="tennisModal" class="modal">
+    <div id="tennisModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('tennisModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('tennisModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px; font-size: 24px;">🎾 Log Tennis/Pickleball</h2>
             
             <p style="margin-bottom: 10px; font-weight: 700;">When did you play?</p>
@@ -506,9 +538,9 @@
     </div>
 
     <!-- SETTINGS MODAL -->
-    <div id="settingsModal" class="modal">
+    <div id="settingsModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('settingsModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('settingsModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px;">⚙️ Settings</h2>
             
             <!-- Cloud Sync Status -->
@@ -564,9 +596,9 @@
     </div>
 
     <!-- LEVELS MODAL -->
-    <div id="levelsModal" class="modal">
+    <div id="levelsModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('levelsModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('levelsModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px;">🏆 Level Progression</h2>
             <div id="levelsTable" style="display: flex; flex-direction: column; gap: 8px;"></div>
             <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-light);">
@@ -576,9 +608,9 @@
     </div>
 
     <!-- STREAK RECOVERY MODAL -->
-    <div id="streakRecoveryModal" class="modal">
+    <div id="streakRecoveryModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('streakRecoveryModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('streakRecoveryModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 10px; font-size: 24px;">🔥 Recover Your Streak!</h2>
             <p style="color: var(--text-light); margin-bottom: 20px;">You missed a day, but you can get your streak back!</p>
             
@@ -595,9 +627,9 @@
     </div>
 
     <!-- CASHOUT MODAL -->
-    <div id="cashoutModal" class="modal">
+    <div id="cashoutModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box" style="text-align: center;">
-            <span class="close-modal" onclick="closeModal('cashoutModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('cashoutModal')" aria-label="Close">&times;</button>
             
             <!-- Header -->
             <div style="font-size: 50px; margin-bottom: 10px;">💰</div>
@@ -644,9 +676,9 @@
     </div>
 
     <!-- WEEKLY FEEDBACK MODAL -->
-    <div id="feedbackModal" class="modal">
+    <div id="feedbackModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('feedbackModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('feedbackModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 5px; font-size: 24px;">📋 Weekly Check-in</h2>
             <p style="color: var(--text-light); margin-bottom: 20px;">We'd love to hear from you!</p>
             
@@ -679,7 +711,7 @@
     </div>
 
     <!-- CONFIRMATION MODAL (replaces native confirm()) -->
-    <div id="confirmModal" class="modal">
+    <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
         <div class="modal-box" style="text-align: center; max-width: 350px;">
             <div id="confirmIcon" style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
             <h2 id="confirmTitle" style="margin-bottom: 10px; font-size: 20px;">Are you sure?</h2>
@@ -692,9 +724,9 @@
     </div>
 
     <!-- PROGRESS EXPLANATION MODAL -->
-    <div id="progressModal" class="modal">
+    <div id="progressModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('progressModal')">&times;</span>
+            <button class="close-modal" onclick="closeModal('progressModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 15px; font-size: 24px;">📊 How Progress Works</h2>
             
             <div style="background: linear-gradient(135deg, var(--primary), #4ade80); padding: 20px; border-radius: 16px; color: white; margin-bottom: 20px;">
@@ -737,6 +769,16 @@
             </div>
             
             <button onclick="closeModal('progressModal')" class="btn" style="width: 100%; background: var(--primary); color: white; padding: 14px;">Got it! 👍</button>
+        </div>
+    </div>
+
+    <!-- TASK HELP MODAL -->
+    <div id="taskHelpModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeModal('taskHelpModal')" aria-label="Close">&times;</button>
+            <h2 id="helpModalTitle" style="margin-bottom: 15px; font-size: 22px;">📱 How to Get Started</h2>
+            <div id="helpModalContent" style="text-align: left; line-height: 1.8;"></div>
+            <button class="btn btn-primary" onclick="closeModal('taskHelpModal')" style="margin-top: 20px;">Got it!</button>
         </div>
     </div>
 
@@ -820,6 +862,7 @@
         const ADMIN_KEY = PROFILE_ID
             ? (PROFILE_ID === 'stu' ? 'hr_admin' : 'hr_admin_' + PROFILE_ID)
             : 'hr_admin';
+        const IS_LEGACY_PROFILE = PROFILE_ID === 'stu';
 
         // If no profile, check for existing profiles or redirect to get-started
         if (!PROFILE_ID) {
@@ -862,9 +905,13 @@
         } else {
             const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
             if (profileData) {
-                const profile = JSON.parse(profileData);
-                PROFILE_NAME = profile.name || 'Friend';
-                document.title = PROFILE_NAME + "'s HabitRewards";
+                try {
+                    const profile = JSON.parse(profileData);
+                    PROFILE_NAME = profile.name || 'Friend';
+                    document.title = PROFILE_NAME + "'s HabitRewards";
+                } catch (e) {
+                    console.warn('Failed to parse profile data:', e);
+                }
             }
         }
 
@@ -966,7 +1013,7 @@
         // REGULAR TEMPLATE: Standard tasks for tech-comfortable users (like Stu's current setup)
         const REGULAR_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75 },
+            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75, excludeFromStu: true },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
             { id: 5, name: "🟩 Play Wordle", value: 10 }
         ];
@@ -984,7 +1031,7 @@
             { id: 112, name: "🛏️ Make the bed", value: 50, freq: 1.5 },
             { id: 114, name: "🧘 Do 5 minutes of stretching", value: 50, freq: 1.5 },
             { id: 115, name: "💊 Take vitamins", value: 50, freq: 1.5 },
-            { id: 120, name: "📧 Clear out old emails", value: 50, freq: 1 },
+            { id: 120, name: "📧 Clear out old emails", value: 50, freq: 1, excludeFromStu: true },
             { id: 121, name: "📝 Make a to-do list for tomorrow", value: 50, freq: 1.5 },
             { id: 104, name: "🎵 Listen to a new song", value: 50, needsComment: true, commentPrompt: "What song did you listen to?", freq: 2 },
             { id: 105, name: "📞 Call or text a friend", value: 100, needsComment: true, commentPrompt: "Who did you contact?", freq: 2 },
@@ -998,10 +1045,14 @@
         let profileTemplate = 'regular'; // default
         const profileDataRaw = localStorage.getItem('hr_profile_' + PROFILE_ID);
         if (profileDataRaw) {
-            const profileInfo = JSON.parse(profileDataRaw);
-            // If phone comfort is "learning" or "moderate", use low-tech template
-            if (profileInfo.phoneComfort === 'learning') {
-                profileTemplate = 'lowtech';
+            try {
+                const profileInfo = JSON.parse(profileDataRaw);
+                // If phone comfort is "learning" or "moderate", use low-tech template
+                if (profileInfo.phoneComfort === 'learning') {
+                    profileTemplate = 'lowtech';
+                }
+            } catch (e) {
+                console.warn('Failed to parse profile data for template:', e);
             }
         }
         
@@ -1027,7 +1078,7 @@
         const DAILY_MAX_POINTS = 1000; // $10 daily cap for daily tasks
 
         // Permanent weekly task (always shown) - tennis is special, can be logged 3x
-        const TENNIS_WEEKLY = { id: 300, name: "🎾 Tennis/Pickleball", value: 30, isWeekly: true, isTennis: true, target: 3 };
+        const TENNIS_WEEKLY = { id: 300, name: "🎾 Tennis/Pickleball", value: 30, isWeekly: true, isTennis: true, target: 3, stuOnly: true };
 
         // Rotating weekly bonus tasks (1 selected per week) - exempt from daily cap
         // Fun/reward-focused activities (100 pts = $1.00)
@@ -1035,19 +1086,19 @@
             { id: 301, name: "💿 Sell coins or vinyls", value: 500, isWeekly: true, needsComment: true, commentPrompt: "What did you sell?" },
             { id: 302, name: "📺 Watch show/movie (streaming)", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you watch?" },
             { id: 305, name: "🍿 Use the microwave", value: 50, isWeekly: true },
-            { id: 306, name: "🛒 Check Aisle app for deals", value: 150, isWeekly: true, needsComment: true, commentPrompt: "Did you buy anything?" },
+            { id: 306, name: "🛒 Check Aisle app for deals", value: 150, isWeekly: true, needsComment: true, commentPrompt: "Did you buy anything?", stuOnly: true },
             { id: 307, name: "💑 Take wife to lunch/dinner", value: 500, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?" },
             { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What restaurant?" },
             { id: 309, name: "💌 Tell a kid you're thinking of them", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you reach out to?" },
             { id: 310, name: "❤️ Do something nice for wife", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you do?" },
             { id: 311, name: "🛍️ Buy a new grocery item", value: 150, isWeekly: true, needsComment: true, commentPrompt: "What did you buy?" },
-            { id: 312, name: "🍔 Lunch with tennis friends", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?" },
+            { id: 312, name: "🍔 Lunch with tennis friends", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?", stuOnly: true },
             { id: 313, name: "🤖 Use ChatGPT to solve something", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you ask?" },
             { id: 314, name: "📞 Call a friend or family", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you call?" },
             { id: 315, name: "📦 Get rid of 3 office items", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What items?" },
             { id: 316, name: "👕 Donate clothing", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What did you donate?" },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true, needsComment: true, commentPrompt: "How many pairs?" },
-            { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?" },
+            { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?", stuOnly: true },
             { id: 319, name: "🗑️ Throw away 5 items", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you throw away?" }
         ];
 
@@ -1116,19 +1167,30 @@
             return [TENNIS_WEEKLY, WEEKLY_BONUSES[index]]; // Tennis always + 1 rotating
         }
 
-        let state = {
-            tasks: [],
-            streak: 0,
-            lastStreakDate: null,
-            balance: 0,
-            totalEarned: 0,
-            history: [],
-            mode: localStorage.getItem('theme') || 'light',
-            currentTaskId: null,
-            lastLoginDate: null,
-            spinUsedToday: false,
-            achievements: []
-        };
+        function getDefaultState() {
+            return {
+                tasks: [],
+                streak: 0,
+                lastStreakDate: null,
+                balance: 0,
+                totalEarned: 0,
+                history: [],
+                mode: localStorage.getItem('theme') || 'light',
+                currentTaskId: null,
+                lastLoginDate: null,
+                spinUsedToday: false,
+                achievements: [],
+                completedToday: [],
+                weeklyCounters: {},
+                weeklyBonusesCompleted: [],
+                dailyBonusCompleted: null,
+                weeklyFeedbackCompleted: null,
+                feedbackRating: 0,
+                feedbackHistory: []
+            };
+        }
+
+        let state = getDefaultState();
 
         // ========== INIT ==========
         function init() {
@@ -1562,7 +1624,13 @@
         function loadState() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
-                state = JSON.parse(saved);
+                try {
+                    state = JSON.parse(saved);
+                } catch (e) {
+                    console.warn('Failed to parse state, resetting:', e);
+                    state = getDefaultState();
+                    state.tasks = JSON.parse(JSON.stringify(getConfiguredDailyTasks()));
+                }
             } else {
                 state.tasks = JSON.parse(JSON.stringify(getConfiguredDailyTasks()));
             }
@@ -1634,7 +1702,13 @@
                 const doc = await db.collection('userState').doc(PROFILE_ID).get();
                 if (doc.exists) {
                     const cloudState = doc.data();
-                    const localState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                    let localState;
+                    try {
+                        localState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                    } catch (e) {
+                        console.warn('Failed to parse local state for cloud sync:', e);
+                        localState = {};
+                    }
                     
                     // Compare timestamps - use whichever is newer
                     const cloudTime = cloudState.lastUpdated?.toDate?.() || new Date(0);
@@ -1791,7 +1865,13 @@
         
         function getQuoteState() {
             const saved = localStorage.getItem(getQuoteKey());
-            return saved ? JSON.parse(saved) : { acknowledged: false, spanish: false };
+            if (!saved) return { acknowledged: false, spanish: false };
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                console.warn('Failed to parse quote state:', e);
+                return { acknowledged: false, spanish: false };
+            }
         }
         
         function saveQuoteState(state) {
@@ -1835,7 +1915,7 @@
             saveState();
             
             updateQuoteButtons();
-            updateBalanceDisplay();
+            render();
             
             // Show celebration with helpful message for first-timers
             const onboardedBefore = localStorage.getItem(getQuoteOnboardingKey() + '_shown');
@@ -1892,7 +1972,7 @@
             saveState();
             
             updateQuoteButtons();
-            updateBalanceDisplay();
+            render();
             
             // Show celebration
             showToast('+5 pts for Spanish! ¡Muy bien! 🇪🇸');
@@ -2629,7 +2709,13 @@
             };
             
             // Save to localStorage first
-            const proposals = JSON.parse(localStorage.getItem('hr_proposals') || '[]');
+            let proposals;
+            try {
+                proposals = JSON.parse(localStorage.getItem('hr_proposals') || '[]');
+            } catch (e) {
+                console.warn('Failed to parse proposals:', e);
+                proposals = [];
+            }
             proposals.push(proposal);
             localStorage.setItem('hr_proposals', JSON.stringify(proposals));
             
@@ -2682,7 +2768,13 @@
             const comment = document.getElementById('reportComment').value;
             
             // Store report in localStorage for manager review
-            const reports = JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
+            let reports;
+            try {
+                reports = JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
+            } catch (e) {
+                console.warn('Failed to parse reports:', e);
+                reports = [];
+            }
             reports.push({
                 date: new Date().toISOString(),
                 taskType: reportingTask.type,
@@ -2762,7 +2854,13 @@
                 console.error('Error saving payout request to Firestore:', err);
                 // Fallback to localStorage
                 const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
-                const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+                let requests;
+                try {
+                    requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+                } catch (e) {
+                    console.warn('Failed to parse payout requests:', e);
+                    requests = [];
+                }
                 requests.push({
                     id: requestId,
                     amount: parseFloat(dollars),
