@@ -89,3 +89,35 @@
 - **Phase 1 (Merge):** 4-6 hours, Medium risk (large merge but Mipha's groundwork reduces scope)
 - **Phase 2 (Delete):** 1 hour, Low risk (no file dependencies detected)
 
+---
+
+### Phase 1–4 Code Consolidation Execution (2026-03-03)
+
+#### Revali's Lead Role — Consolidation Strategy Option C Execution
+
+**Phases Completed:**
+- **Phase 1 (Daruk, 193s):** Deleted habitrewards.html (2047 lines) — zero unique features, no references ✅
+- **Phase 2 (Mipha, 1680s):** Migrated 5 features from index.html → app.html (149 insertions) ✅
+- **Phase 3 (Daruk, 41s):** Redirected index.html to /home.html, updated firebase.json rewrite ✅
+- **Phase 4 (Purah, 78s):** Verified all 5 features pass functional QA tests ✅
+
+**Architecture Impact:**
+- Code consolidation: From 3 divergent codebases (3024 + 2380 + 2047 = 7451 lines) to 1 source of truth (app.html)
+- Eliminated ~4,400 lines of duplicated/orphaned code (habitrewards.html deleted, index.html reduced to redirect stub)
+- Unified user-facing application: app.html now the single canonical user page
+- Features migrated with proper sanitization: TASK_HELP system, profile filtering (stuOnly/excludeFromStu), persistent task history, help buttons
+- firebase.json routing updated to reflect new architecture (catch-all rewrite to /home.html instead of /index.html)
+
+**Quality Gates:**
+- ✅ Daruk Phase 1: Zero references verified across all production files
+- ✅ Mipha Phase 2: 149 insertions with full escapeHtml() sanitization, profile-aware storage keys
+- ✅ Daruk Phase 3: Redirect stub tested, firebase.json rewrite configured
+- ✅ Purah Phase 4: All 5 features verified, no regressions, backward-compatible storage keys
+
+**Strategic Outcome:**
+- Option C consolidation fully executed and verified
+- Code maintenance surface reduced: 1 primary page + 2 redirects instead of 3 full codebases
+- Security posture unified: app.html's sanitization now applies to all user features
+- Storage key pattern now consistent: profile-suffixed keys with backward-compatible fallback
+- Future feature development routes through app.html (single source of truth)
+

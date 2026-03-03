@@ -183,3 +183,30 @@
 - **Mipha:** app.html is now the sole user-facing app page; index.html no longer serves app content
 - **Purah:** Test surface reduced further; index.html only needs redirect verification
 
+---
+
+### Phase 1–4 Code Consolidation (2026-03-03)
+
+#### Session Context
+Executed full Phase 1–3 consolidation (Daruk's responsibility across 2 phases + Phase 3):
+
+**Phase 1 (Agent 16, 193s):** Deleted habitrewards.html (2047 lines)
+- Zero unique features, security downgrade, orphaned (no references)
+- Verified zero references in all production files
+- Commit: `chore: delete orphaned habitrewards.html (Phase 1 consolidation)`
+
+**Phase 3 (Agent 18, 41s):** Redirected index.html, updated firebase.json
+- index.html now 12-line redirect stub to /home.html
+- firebase.json catch-all rewrite updated: `/index.html` → `/home.html`
+- Commit: See orchestration log for details
+
+**Phase 2 (Mipha, 1680s):** Migrated 5 features from index.html → app.html (149 insertions)
+- TASK_HELP + showTaskHelp(), filterForProfile(), task flags (stuOnly/excludeFromStu)
+- getCompletedEverTasks() + markTaskCompletedEver(), help button rendering
+
+**Phase 4 (Purah, 78s):** Verified all 5 features pass QA
+- All features correctly implemented with proper escaping, profile-aware storage keys
+
+#### Quality Gate Status
+🟢 **READY FOR PRODUCTION** — All phases complete, zero regressions, full verification passed.
+

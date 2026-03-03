@@ -619,3 +619,77 @@ if (IS_LEGACY_PROFILE) { ... }
 
 **No functional change.** Just clarifies intent and removes misleading redundancy.
 
+---
+
+## 📋 Phase 1–4 Consolidation (Merged 2026-03-03)
+
+### Decision: Phase 1 Consolidation — habitrewards.html Deleted
+
+**Agent:** Daruk (Backend Dev)  
+**Date:** 2026-03-03  
+**Status:** ✅ Completed  
+**Priority:** P1  
+
+**What Changed**
+- Deleted `habitrewards.html` (2047 lines) from the repository
+- Zero references in any production file (verified: firebase.json, manifest.json, sw.js, README.md, docs/, all HTML pages)
+
+**Rationale**
+- Revali's analysis: zero unique features, zero unique functions vs index.html
+- No sanitization, no Firebase sync — strict security downgrade from app.html
+- Orphaned file: no page links to it, not cached, not routed
+
+**Impact**
+- **Mipha:** Scope reduced from 3 user pages to 2 (app.html, index.html)
+- **Revali:** Phase 1 of Option C complete; Phase 2 (merge index.html features into app.html) is next
+- **Purah:** One fewer test surface
+
+**Commit**
+`chore: delete orphaned habitrewards.html (Phase 1 consolidation)`
+
+---
+
+### Decision: Phase 2 Migration Verification — Purah QA Report
+
+**Date:** 2026-07-14  
+**Scope:** Verify 5 features migrated from index.html → app.html  
+**Verdict:** ✅ ALL PASS
+
+**Features Verified**
+1. **TASK_HELP data object + showTaskHelp()** — ✅ PASS
+   - `TASK_HELP` constant at line 1107 with 11 task help entries
+   - `showTaskHelp(taskId)` at line 1184 with proper escapeHtml() sanitization
+   - Help modal HTML at line 776 with modal title/content/close button
+   - No duplicate definitions in index.html
+
+2. **filterForProfile()** — ✅ PASS
+   - Defined at line 1156, uses IS_LEGACY_PROFILE (not IS_STU_PROFILE)
+   - Logic correctly excludes stuOnly/excludeFromStu tasks per profile
+   - Called in getConfiguredDailyTasks() and weekly bonus contexts
+
+3. **Task data flags (stuOnly / excludeFromStu)** — ✅ PASS
+   - excludeFromStu: true on tasks 3 (Duolingo), 120 (emails)
+   - stuOnly: true on tasks 300 (Tennis), 306 (Aisle), 312 (Lunch), 318 (Mystery Shop)
+   - Matches expected profile-specific task flags from design
+
+4. **getCompletedEverTasks() + markTaskCompletedEver()** — ✅ PASS
+   - COMPLETED_EVER_KEY at line 1165 with profile-suffixed key pattern
+   - Proper deduplication and JSON parse with error fallback
+   - Called in all task completion handlers (lines 2314, 2382, 2456, 2489, 2571)
+
+5. **Help buttons in task rendering** — ✅ PASS
+   - Daily tasks (line 2167) with conditional help button
+   - Weekly bonuses (line 2214) with white styling
+   - Daily bonus (lines 2241–2244) with dynamic rendering
+   - All buttons use event.stopPropagation() to prevent task completion
+   - CSS for .task-help-btn at lines 301–328 with dark mode support
+
+**Additional Quality Checks**
+- No duplicate function definitions — each migrated function defined exactly once
+- getDefaultState() intact and properly called in initial state + reset contexts
+- No unsuffixed storage key references (backward-compatible fallback verified)
+- escapeHtml() applied to TASK_HELP titles; static HTML content safe for innerHTML
+- index.html clean of all migrated functions/constants
+
+**Summary:** All 5 migrated features correctly implemented in app.html with proper escaping, profile-aware storage keys, and no orphaned references.
+

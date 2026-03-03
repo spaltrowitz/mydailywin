@@ -92,3 +92,41 @@
 - Button styling maintained via CSS reset
 - Modal behavior unchanged; accessibility added non-invasively
 
+---
+
+### Phase 1–4 Code Consolidation (2026-03-03)
+
+#### Session Context
+Executed Phases 1–4 of consolidation strategy (Mipha's responsibility in Phase 2):
+
+**Phase 1 (Daruk, 193s):** Deleted habitrewards.html (2047 lines)
+- Zero unique features, security downgrade, orphaned
+- Mipha scope reduced from 3 → 2 user pages (app.html, index.html)
+
+**Phase 2 (Agent 17, 1680s):** Migrated 5 features from index.html → app.html (149 insertions)
+- TASK_HELP constant (11 entries) + showTaskHelp() with escapeHtml() sanitization
+- filterForProfile() with profile-aware task filtering (IS_LEGACY_PROFILE pattern)
+- Task metadata flags (stuOnly, excludeFromStu) on profile-specific tasks
+- getCompletedEverTasks() + markTaskCompletedEver() for persistent task history per profile
+- Help button rendering in daily/weekly/bonus task UI with event.stopPropagation() handling
+- Total: 149 insertions, all with proper escaping and profile-suffixed storage keys
+
+**Phase 3 (Daruk, 41s):** Redirected index.html, updated firebase.json
+- index.html now thin redirect stub to /home.html (from 2375 lines → 12 lines)
+- firebase.json catch-all rewrite updated: `/index.html` → `/home.html`
+- app.html is now sole user-facing app page
+
+**Phase 4 (Purah, 78s):** Verified all 5 features pass QA
+- TASK_HELP + showTaskHelp() properly defined with all 11 entries ✅
+- filterForProfile() correctly uses IS_LEGACY_PROFILE ✅
+- Task flags properly set on all profile-specific tasks ✅
+- getCompletedEverTasks() + markTaskCompletedEver() working with profile-suffixed keys ✅
+- Help buttons render correctly with event.stopPropagation() ✅
+- No duplicate definitions, no unsuffixed storage keys, all escaping verified ✅
+
+#### Impact & Status
+- **Code consolidation:** Option C fully executed; habitrewards.html deleted, index.html redirected
+- **Mipha's deliverable:** 5 features migrated with 149 insertions, zero regressions
+- **Quality gate:** 🟢 READY FOR PRODUCTION (Purah verification passed, all features verified)
+- **Knowledge transfer:** Consolidation enables future feature development on app.html only (single source of truth)
+
