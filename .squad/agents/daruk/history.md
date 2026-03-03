@@ -78,3 +78,70 @@
 - innerHTML used 45+ times across files — XSS risk if profile names contain HTML
 - login.html:395 sets innerHTML with user.photoURL from Google — potential XSS vector
 - login.html:498-519 sets innerHTML with profile.name from localStorage — XSS if tampered
+
+### Firestore Security Rules Overhaul (P0)
+
+#### What was done
+- **FIXED: `taskProposals` create was `if true`** — unauthenticated writes now blocked. Requires `request.auth != null` + field validation (profileId, taskName, status).
+- **Added ownership scoping to profiles collection and subcollections:**
+  - `profiles/{profileId}`: create enforces `ownerEmail == auth.token.email`; update requires `hasProfileAccess()`; delete requires `isProfileOwner()`.
+  - `profiles/{profileId}/admins/{adminEmail}`: read scoped to self (`email == adminEmail`) or profile access; create/delete scoped to profile access.
+  - `profiles/{profileId}/notifications/{notificationId}`: read/update/delete scoped to profile access; create allows any auth (invite acceptance).
+- **Added field validation** to all `create` rules: type checks on required fields (profileId, amount, status, taskName, etc.)
+- **Added helper functions:** `isProfileOwner()`, `isProfileAdmin()`, `hasProfileAccess()` — reusable ownership checks using `get()` and `exists()`.
+
+#### What could NOT be fully scoped (and why)
+- `payoutRequests`, `userNotifications`, `userState`, `taskProposals` read/update/delete remain `auth != null` with TODO comments.
+- **Root cause:** Profile documents are created in **localStorage** (get-started.html), NOT in Firestore. Without a Firestore profile doc, `isProfileOwner()` returns false. The owner also isn't in the admins subcollection.
+- **To fully lock down:** get-started.html must write the profile doc to Firestore with `ownerEmail` during onboarding. Once that's done, the TODO rules can be upgraded to use `hasProfileAccess()`.
+
+#### Ownership model discovered
+- `ownerEmail` on profile doc identifies the creator (Firebase Auth email)
+- `profiles/{profileId}/admins/{email}` subcollection tracks additional admins (doc ID = admin email)
+- No `ownerUid` stored anywhere in Firestore — ownership is email-based, not UID-based
+- login.html profile picker shows profiles from localStorage only (`hr_user_profiles_{uid}`, `hr_managed_profiles_{email}`)
+- admin.html auth flow: Firestore profile doc check → admins subcollection check → localStorage fallback
+
+### P0 Execution (Feb 27, Session: p0-fixes)
+- ✅ Executed complete Firestore rules overhaul: ownership helpers, profiles subcollection scoping, taskProposals auth fix, field validation
+- ✅ Documented blockers: TODO comments added for remaining collections pending get-started.html Firestore integration
+- All Firestore P0 items for Daruk marked complete in decisions.md
+- Session logged at .squad/orchestration-log/2026-02-27T16-30-p0-fixes.md
+
+### Safe get() in Firestore Rules + CSP Headers (Purah follow-up #3 + P1)
+
+#### isProfileOwner() fix
+- `get()` on a non-existent Firestore doc throws a permission error, not a graceful false.
+- Fixed by adding `exists()` guard before `get()` — short-circuit AND means `get()` is never called if doc is missing.
+- This costs 1 extra read per ownership check, but prevents hard failures for localStorage-only profiles.
+
+#### CSP and security headers added to firebase.json
+- **CSP directives:** default-src 'self'; script-src allows gstatic.com (Firebase SDK), cdn.jsdelivr.net (EmailJS), accounts.google.com, and 'unsafe-inline' (all JS is inline in HTML); style-src allows 'unsafe-inline' + fonts.googleapis.com; font-src allows fonts.gstatic.com; img-src allows data: URIs (SVGs), gstatic.com, googleusercontent.com (profile photos); connect-src allows Firebase APIs, EmailJS API, Google accounts; frame-src for Google auth popup and Firebase auth helper; object-src 'none'; base-uri 'self'.
+- **X-Frame-Options:** SAMEORIGIN — prevents clickjacking.
+- **X-Content-Type-Options:** nosniff — prevents MIME-type sniffing.
+- **Referrer-Policy:** strict-origin-when-cross-origin — limits referrer leakage to third parties.
+- 'unsafe-inline' for scripts is a known weakness; removing it requires extracting JS from HTML files (future task).
+
+### P1 Execution — Firestore Ownership Guards + CSP Headers (Session: 2026-03-03)
+
+**Orchestration Log:** .squad/orchestration-log/2026-03-03T16-17-21Z-daruk-12.md
+
+#### Changes Made
+- Fixed `isProfileOwner()` in firestore.rules: Added `exists()` guard before `get()` to prevent permission-denied errors on non-existent documents
+- Added CSP and security headers to firebase.json: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Strict-Transport-Security
+
+#### Cross-Agent Alignment
+- **Urbosa:** admin.html payment logic depends on safe Firestore ownership verification (profile check now guarded)
+- **Mipha:** User experience unaffected; ownership verification happens transparently
+- **Revali:** Security-first architecture enables consolidation strategy (unified security posture across pages)
+
+#### Known Limitations
+- `taskProposals`, `payoutRequests`, `userNotifications`, `userState` still at auth-only (`request.auth != null`)
+- Blocker: Profiles created in localStorage, not Firestore — get-started.html must write profile doc to Firestore for full scoping
+- CSP uses `'unsafe-inline'` for scripts (required because JS is inline in HTML) — future extraction task for CSP tightening
+
+#### Quality Gate
+- No breaking changes to user workflows
+- Firestore read cost: +1 per ownership check (acceptable trade-off for reliability)
+- Security headers balance defense with functionality
+

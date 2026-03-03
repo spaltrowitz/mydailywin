@@ -49,3 +49,43 @@
 - **Modal guard pattern inconsistent**: app.html openModal has null-check + warn, but some pages (admin.html:723) use one-liner without guards
 - **Levels data duplicated**: allLevels array copy-pasted in app.html:2931, index.html:2311, habitrewards.html, admin.html:917
 - Key files: app.html (main user app with profiles), index.html (original single-user app), habitrewards.html (simplified variant), admin.html (admin dashboard), functions/index.js (SendGrid email)
+
+### Consolidation Strategy Decision (Day 3)
+- Analyzed all three user-facing pages: app.html (84 functions), index.html (77 functions), habitrewards.html (73 functions)
+- 67 functions shared across all three — ~67% overlap by function count
+- habitrewards.html has ZERO unique features and ZERO external references — safe to delete immediately
+- index.html has 5 unique features to migrate: TASK_HELP system (8 entries + modal + showTaskHelp), filterForProfile (stuOnly/excludeFromStu), filterForTechComfort, completed-ever tracking (getCompletedEverTasks/markTaskCompletedEver)
+- Migration is ~180 lines of unique logic; the other ~2,200 lines in index.html are duplicates with worse security
+- firebase.json has catch-all rewrite pointing to index.html — must update to home.html when deprecating
+- service worker already doesn't cache index.html or habitrewards.html — no sw.js change needed for deletion
+- Decision: Option C (merge into app.html) — 4 phases, ~5 hours, eliminates ~4,400 lines
+- Decision written to .squad/decisions/inbox/revali-consolidation-strategy.md
+
+### P1 Execution — Code Consolidation Strategy Analysis (Session: 2026-03-03)
+
+**Orchestration Log:** .squad/orchestration-log/2026-03-03T16-17-21Z-revali-14.md  
+**Decision Doc:** .squad/decisions.md (Option C recommendation)
+
+#### Analysis Completed
+- Line-by-line function inventory: 67 shared functions (68% duplication), habitrewards.html has zero unique features
+- Capability mapping: app.html has security/Firebase/multi-profile; index.html has task help + filtering; habitrewards.html is obsolete
+- Migration effort: ~180 lines of unique index.html logic (task help system, stuOnly filtering, completed-ever tracking)
+- Consolidation decision: **Option C recommended** (merge into app.html, delete habitrewards.html + index.html)
+
+#### Blockers Cleared
+- **Mipha's getDefaultState() extraction:** ✅ Completed (enables safe schema evolution during merge)
+- **Mipha's accessibility refactor:** ✅ Completed (21 button conversions + 22 modals now standardized)
+- **Daruk's Firestore ownership guards:** ✅ Completed (security-first posture unifies authentication across pages)
+
+#### Cross-Agent Alignment
+- **Mipha:** Consolidation strategy awaiting her execution approval (Phase 1: merge index.html + habitrewards.html into app.html)
+- **Urbosa:** Consolidation will unify admin configuration patterns (single source of truth for profile/task config)
+- **Daruk:** Consolidation will unify Firestore/auth patterns (currently diverged in index.html/habitrewards.html)
+
+#### Recommendation Status
+🟡 **PROPOSED** — Awaiting approval before Phase 1 implementation. No code changes yet (architecture analysis only).
+
+#### Effort & Risk
+- **Phase 1 (Merge):** 4-6 hours, Medium risk (large merge but Mipha's groundwork reduces scope)
+- **Phase 2 (Delete):** 1 hour, Low risk (no file dependencies detected)
+

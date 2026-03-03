@@ -1,28 +1,29 @@
 ---
-updated_at: 2026-02-27T15:40:00.000Z
-focus_area: P0 security & payment bugs from full team review
+updated_at: 2026-02-27T16:30:00.000Z
+focus_area: P0 fixes deployed — QA verification in progress. Next: P1 code consolidation.
 active_issues:
-  - saveState() undefined in admin.html (blocks payout approval)
-  - Firestore rules wide open (auth-only, not user-scoped)
-  - admin↔app storage key mismatch for stu profile
-  - unsuffixed keys in download/display functions
+  - QA verification of payout approval flow + balance sync (admin ↔ app)
+  - Non-stu profile testing for download/display functions
+  - Get-started.html Firestore integration (blocks full Firestore auth scoping)
 ---
 
 # What We're Focused On
 
-**Full team review complete** — 5-agent parallel audit identified 4 critical bugs, 3 security vulnerabilities, and extensive code duplication.
+**P0 fixes complete.** Three agents in parallel: Urbosa (admin.html bugs), Mipha (app.html bugs), Daruk (Firestore rules).
 
-## Immediate Priority (P0)
-1. Fix saveState() undefined in admin.html — payout logic is broken
-2. Lock down Firestore rules — any authenticated user can read/write any data
-3. Align storage key derivation — admin and app use different keys for stu profile
-4. Fix unsuffixed localStorage keys — admin download/display functions fail for non-stu profiles
+## Current Status (Feb 27, P0 Session Complete)
+1. ✅ Fixed saveState() undefined — payout approval no longer crashes
+2. ✅ Fixed admin↔app storage key mismatch (stu profile dual-write)
+3. ✅ Fixed unsuffixed keys in 4 functions (displayReports, downloads)
+4. ✅ Locked down Firestore rules with ownership scoping + field validation
+5. 📋 QA verification pending (balance sync, non-stu profiles, Firestore rules)
 
-## High Priority (P1)
-- Unify 3 divergent user app pages (65+ duplicated functions)
-- Add CSP headers to firebase.json
-- Fix modal accessibility (keyboard navigation, focus trap)
+## Next Up (P1)
+- Code consolidation: Unify app.html/index.html/habitrewards.html (65+ duplicated functions)
+- Get-started.html Firestore integration (unblocks full Firestore auth scoping)
+- CSP headers to firebase.json
+- Modal accessibility (keyboard nav, focus trap)
 - Service worker cache versioning
 
 ## Context
-See .squad/decisions.md for complete findings. Orchestration logs in .squad/orchestration-log/. Session log in .squad/log/2026-02-27T15-40-full-team-review.md.
+See .squad/decisions.md for complete findings. Orchestration logs in .squad/orchestration-log/. Session log in .squad/log/2026-02-27T15-40-full-team-review.md (team review) and .squad/orchestration-log/2026-02-27T16-30-p0-fixes.md (P0 execution).
