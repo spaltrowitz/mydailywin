@@ -165,3 +165,21 @@
 - **Revali:** Phase 1 of Option C consolidation complete; Phase 2 (index.html merge) is next
 - **Purah:** One fewer test surface; validation scope simplified
 
+### Phase 3 Code Consolidation — index.html Redirect + Firebase Rewrite
+
+#### What was done
+- Replaced index.html (114KB, 2375 lines) with a 12-line redirect stub that sends visitors to /home.html via `<meta http-equiv="refresh">`
+- Updated firebase.json catch-all rewrite: `"destination": "/index.html"` → `"destination": "/home.html"`
+- Commit: 9e53296
+
+#### Why it's safe
+- All unique features from index.html were already migrated to app.html in Phase 2
+- index.html redirect stub preserves the file for bookmarked URLs — users get seamlessly sent to home.html
+- Firebase rewrite now sends unmatched routes to home.html (the landing/marketing page) instead of the old monolith
+- No other rewrite rules exist in firebase.json to conflict
+
+#### Cross-Agent Impact
+- **Revali:** Phase 3 of Option C consolidation complete; index.html is now a thin redirect, not a code surface
+- **Mipha:** app.html is now the sole user-facing app page; index.html no longer serves app content
+- **Purah:** Test surface reduced further; index.html only needs redirect verification
+
