@@ -279,3 +279,10 @@ All findings documented in `.squad/agents/daruk/bugbash-findings.md` with file p
 - Firebase config project ID unchanged (habitrewards-131 is correct — custom domain is alias)
 - SendGrid removal clean
 - localStorage key audit complete with all 30+ keys documented
+
+## Learnings (2025-07-24)
+
+- **XSS fix applied**: login.html line 414 — replaced `innerHTML` with DOM methods (`createElement`/`appendChild`) for user.photoURL avatar rendering. This pattern should be used for all future user-supplied content.
+- **sessionStorage → localStorage migration**: Onboarding keys (`hr_pending_user_uid`/`hr_pending_user_email`) migrated to localStorage as `hr_onboarding_uid`/`hr_onboarding_email`. Backward compat maintained — get-started.html falls back to old sessionStorage keys. Both old+new keys are cleaned up after profile creation.
+- **CSP updated**: Added `https://mydailywin.firebaseapp.com` to `frame-src` in firebase.json alongside the legacy `habitrewards-131` domain.
+- **email-templates/ deleted**: Orphaned directory (admin-invite.html) removed since SendGrid Cloud Function was already removed.
