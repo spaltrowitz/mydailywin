@@ -440,8 +440,8 @@
         <!-- Lucky Day Banner -->
         <div id="luckyDayBanner" style="display: none; margin-bottom: 20px;">
             <div class="card" style="background: linear-gradient(135deg, #7c3aed, #a855f7); border: 2px solid #ffd700; color: white; text-align: center; padding: 15px;">
-                <div style="font-size: 24px;">🍀✨ LUCKY DAY! ✨🍀</div>
-                <div style="font-size: 14px; margin-top: 5px;">All tasks worth <strong>1.5x points</strong> today!</div>
+                <div style="font-size: 24px;">🍀✨ Bonus Day! ✨🍀</div>
+                <div style="font-size: 16px; margin-top: 5px;">All tasks worth <strong>1.5x points</strong> today!</div>
             </div>
         </div>
 
@@ -456,7 +456,7 @@
                 </div>
             </div>
             <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 15px; color: var(--primary); font-weight: 600;">
-                🎰 Complete all tasks for BONUS SPIN!
+                🎁 Complete all tasks for a BONUS REWARD!
             </div>
             <div style="text-align: center; margin-top: 6px; font-size: 14px; color: var(--text-light);">
                 ℹ️ Tap to learn more
@@ -466,10 +466,10 @@
         <!-- Lucky Spin -->
         <div id="spinSection" style="display: none; margin-bottom: 25px;">
             <div class="card" style="background: linear-gradient(135deg, var(--primary), #4ade80); border: none; color: white; text-align: center; padding: 25px;">
-                <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">🎰 BONUS SPIN UNLOCKED!</div>
-                <div style="font-size: 80px; margin: 15px 0; transition: transform 0.5s;" id="spinEmoji">🎰</div>
+                <div style="font-size: 16px; letter-spacing: 1px; opacity: 0.9;">🎁 Bonus Reward Unlocked!</div>
+                <div style="font-size: 80px; margin: 15px 0; transition: transform 0.5s;" id="spinEmoji">🎁</div>
                 <button onclick="spinWheel()" id="spinBtn" style="background: white; color: var(--primary); border: none; border-radius: 16px; padding: 16px 40px; font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: all 0.1s;">
-                    🎲 SPIN TO WIN!
+                    🎁 Claim Your Bonus!
                 </button>
                 <div id="spinResult" style="margin-top: 15px; font-size: 24px; font-weight: 800;"></div>
             </div>
@@ -780,7 +780,7 @@
                     <div style="font-size: 24px;">🎰</div>
                     <div>
                         <div style="font-weight: 700;">Bonus Spin!</div>
-                        <div style="font-size: 15px; color: var(--text-light);">Complete ALL tasks to unlock a bonus spin for extra points!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Complete ALL tasks to unlock a bonus reward for extra points!</div>
                     </div>
                 </div>
                 
@@ -1465,16 +1465,15 @@
             const spinBtn = document.getElementById('spinBtn');
             
             spinBtn.disabled = true;
-            spinBtn.textContent = '🎲 Spinning...';
+            spinBtn.textContent = '✨ Revealing...';
             
-            // Spin animation
             const prizes = [
-                { emoji: '💰', pts: 50, text: '+50 pts!' },
-                { emoji: '⭐', pts: 25, text: '+25 pts!' },
-                { emoji: '🎉', pts: 100, text: 'JACKPOT! +100 pts!' },
-                { emoji: '✨', pts: 10, text: '+10 pts!' },
-                { emoji: '🍀', pts: 75, text: 'Lucky! +75 pts!' },
-                { emoji: '💎', pts: 150, text: 'MEGA WIN! +150 pts!' }
+                { emoji: '💰', pts: 50, text: '+50 bonus pts!' },
+                { emoji: '⭐', pts: 25, text: '+25 bonus pts!' },
+                { emoji: '🎉', pts: 100, text: 'Big bonus! +100 pts!' },
+                { emoji: '✨', pts: 10, text: '+10 bonus pts!' },
+                { emoji: '🍀', pts: 75, text: 'Great bonus! +75 pts!' },
+                { emoji: '💎', pts: 150, text: 'Amazing! +150 pts!' }
             ];
             
             let spins = 0;
@@ -2349,7 +2348,7 @@
             const randomMult = getRandomBonus();
             if (randomMult > 1) {
                 pts = Math.floor(pts * randomMult);
-                bonusMsg += '🎲 LUCKY 2x BONUS! ';
+                bonusMsg += '🎉 You got a random 2x bonus! ';
             }
             
             state.balance += pts;
@@ -2417,7 +2416,7 @@
                 const randomMult = getRandomBonus();
                 if (randomMult > 1) {
                     pts = Math.floor(pts * randomMult);
-                    bonusMsg += '🎲 LUCKY 2x BONUS! ';
+                    bonusMsg += '🎉 You got a random 2x bonus! ';
                 }
                 
                 state.balance += pts;
