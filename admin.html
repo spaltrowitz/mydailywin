@@ -581,16 +581,23 @@
                     console.log('Firestore check failed, using localStorage fallback:', error.message);
                     
                     // Fallback: Check localStorage for admin status
-                    const adminsKey = profileParam === 'stu' ? 'hr_additional_admins' : 'hr_additional_admins_' + profileParam;
-                    const admins = JSON.parse(localStorage.getItem(adminsKey) || '[]');
-                    const existingAdmin = admins.find(a => a.email?.toLowerCase() === userEmail);
+                    // Check both legacy and current key formats
+                    const legacyKey = profileParam === 'stu' ? 'hr_additional_admins' : 'hr_additional_admins_' + profileParam;
+                    const currentKey = 'hr_profile_admins_' + profileParam;
+                    const legacyAdmins = JSON.parse(localStorage.getItem(legacyKey) || '[]');
+                    const currentAdmins = JSON.parse(localStorage.getItem(currentKey) || '[]');
+                    const allAdmins = [...currentAdmins, ...legacyAdmins];
+                    const existingAdmin = allAdmins.find(a => a.email?.toLowerCase() === userEmail);
                     
                     if (existingAdmin) {
                         isAuthorized = true;
                         if (!existingAdmin.acceptedAt) {
                             existingAdmin.acceptedAt = new Date().toISOString();
                             existingAdmin.name = user.displayName;
-                            localStorage.setItem(adminsKey, JSON.stringify(admins));
+                            existingAdmin.firstName = user.displayName ? user.displayName.split(' ')[0] : null;
+                            // Update both keys to stay in sync
+                            localStorage.setItem(legacyKey, JSON.stringify(legacyAdmins));
+                            localStorage.setItem(currentKey, JSON.stringify(currentAdmins));
                         }
                     }
                 }
@@ -1677,9 +1684,26 @@
             try {
                 const adminsSnapshot = await db.collection('profiles').doc(PROFILE_ID).collection('admins').get();
                 adminsSnapshot.forEach(doc => {
-                    admins.push({ id: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    admins.push({
+                        id: doc.id,
+                        ...data,
+                        // Normalize Firestore Timestamp to ISO string for consistent checks
+                        acceptedAt: data.acceptedAt?.toDate?.() ? data.acceptedAt.toDate().toISOString() : data.acceptedAt
+                    });
                 });
                 console.log('✅ Loaded admins from Firestore:', admins.length);
+                
+                // Keep localStorage in sync so fallback always has fresh data
+                const localAdmins = admins.map(a => ({
+                    email: a.email,
+                    addedAt: a.addedAt?.toDate?.() ? a.addedAt.toDate().toISOString() : (a.addedAt || new Date().toISOString()),
+                    addedBy: a.addedBy || null,
+                    acceptedAt: a.acceptedAt || null,
+                    name: a.name || null,
+                    firstName: a.firstName || null
+                }));
+                localStorage.setItem(getAdminsKey(), JSON.stringify(localAdmins));
             } catch (error) {
                 console.log('Firestore not available, using localStorage:', error.message);
                 admins = JSON.parse(localStorage.getItem(getAdminsKey()) || '[]');
