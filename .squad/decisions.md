@@ -693,3 +693,190 @@ if (IS_LEGACY_PROFILE) { ... }
 
 **Summary:** All 5 migrated features correctly implemented in app.html with proper escaping, profile-aware storage keys, and no orphaned references.
 
+---
+
+## 🐛 BUG BASH SESSION (2026-04-14)
+
+### Decision: Firebase Config Consistency (Purah + Daruk)
+
+**Agent:** Purah (Tester), Daruk (Backend Dev)  
+**Date:** 2026-04-14  
+**Status:** 🔴 Pending  
+**Priority:** P0 Critical  
+
+**Issue:**
+All three files (app.html:851-853, admin.html:513-515, login.html:341-343) reference old Firebase project ID `habitrewards-131` instead of new domain `mydailywin`.
+
+```javascript
+// Current (all 3 files):
+authDomain: "habitrewards-131.firebaseapp.com"
+projectId: "habitrewards-131"
+
+// Should Be:
+authDomain: "mydailywin.firebaseapp.com"
+projectId: "mydailywin"
+```
+
+**Impact:**
+- Production consistency — site is hosted at mydailywin.web.app
+- CSP frame-src policy may reject auth redirects if authDomain doesn't match hosting domain
+- Google Sign-In helper iframe may fail to load from correct domain
+
+**Decision Needed:**
+1. Are we keeping old Firebase project ID for transition, or migrating fully?
+2. Should we add comment explaining intentional backwards compatibility?
+3. If migrating, all 3 files + firebase.json CSP need updates + redeploy
+
+**Owner:** Revali (Lead) — needs approval  
+**Assigned to:** Daruk for implementation once approved  
+
+---
+
+### Decision: P0 Blocker — get-started.html Must Write to Firestore (Daruk)
+
+**Agent:** Daruk (Backend Dev)  
+**Date:** 2026-04-14  
+**Status:** 🔴 Pending Implementation  
+**Priority:** P0 Blocker  
+
+**Issue:**
+Onboarding flow (get-started.html) writes profile to localStorage only. This blocks:
+- Full Firestore ownership-based security rules (lines 99-147 in Firestore rules have TODO comments waiting for this)
+- Cloud sync across devices
+- Profile persistence beyond cache clear
+
+**Solution:**
+1. Add Firebase SDK imports to get-started.html (firebase-app-compat.js, firebase-firestore-compat.js)
+2. Initialize Firebase with same config as other pages
+3. Update `saveProfileSetup()` to dual-write:
+   ```javascript
+   await db.collection('profiles').doc(answers.profileId).set({
+       ownerEmail: pendingUserEmail,
+       name: answers.userName,
+       createdAt: firebase.firestore.FieldValue.serverTimestamp()
+   });
+   ```
+4. Keep localStorage for offline fallback and backwards compatibility
+
+**Impact:**
+- Enables full Firestore security scoping (ownership-based access control)
+- Unblocks future cloud sync features
+- Profiles persist across devices for authenticated users
+
+**Owner:** Daruk (Backend Dev)  
+**Blockers:** None  
+
+**Cross-Agent Impact:**
+- **Mipha:** Verify app.html reads from Firestore fallback correctly after update
+- **Purah:** Add test cases for Firestore profile creation + refresh during onboarding
+
+---
+
+### Decision: CSP + authDomain Domain Update (Daruk)
+
+**Agent:** Daruk (Backend Dev)  
+**Date:** 2026-04-14  
+**Status:** 🔴 Pending Implementation  
+**Priority:** P1 Security  
+
+**Issue:**
+Site is now hosted at mydailywin.web.app but CSP only allows habitrewards-131.firebaseapp.com.
+
+**Solution:**
+1. firebase.json line 19: Add `https://mydailywin.firebaseapp.com` to `frame-src`
+2. login.html, app.html, admin.html: Update `authDomain: "mydailywin.firebaseapp.com"`
+3. Keep `habitrewards-131` references for backwards compatibility during transition
+
+**Owner:** Daruk (Backend Dev)  
+
+---
+
+### Decision: Onboarding State — sessionStorage to localStorage (Daruk)
+
+**Agent:** Daruk (Backend Dev)  
+**Date:** 2026-04-14  
+**Status:** 🔴 Pending Implementation  
+**Priority:** P2 Data Consistency  
+
+**Issue:**
+sessionStorage is lost on page refresh → orphaned profiles if user refreshes get-started.html mid-onboarding.
+
+**Solution:**
+Replace:
+- `sessionStorage.setItem('hr_pending_user_uid', ...)` → `localStorage.setItem('hr_onboarding_uid', ...)`
+- `sessionStorage.setItem('hr_pending_user_email', ...)` → `localStorage.setItem('hr_onboarding_email', ...)`
+- Explicit cleanup in get-started.html after profile creation completes
+
+**Owner:** Daruk (Backend Dev)  
+
+---
+
+### Issue: get-started.html Step 7b Navigation Bug (Purah)
+
+**Agent:** Purah (Tester)  
+**Date:** 2026-04-14  
+**Status:** 🟡 Medium  
+**Priority:** P2  
+**File:** get-started.html:752, 971-992
+
+**Issue:**
+Step 7b (admin goals) uses string `currentStep = '7b'` but `goBack()` function only handles numeric comparisons. Back button will not work from step 7b.
+
+**Fix:**
+```javascript
+else if (currentStep === '7b') {
+    currentStep = 7;
+}
+```
+
+**Owner:** Mipha (User Dev) — onboarding flow  
+
+---
+
+### Issue: Missing Event Parameter Guards (Purah)
+
+**Agent:** Purah (Tester)  
+**Date:** 2026-04-14  
+**Status:** 🟡 Medium  
+**Priority:** P2  
+**Files:** get-started.html:666, 744, 776
+
+**Issue:**
+Functions `selectOption()`, `selectPayoutPref()`, `selectHelpOption()` call `event.currentTarget` without declaring event parameter. Works from onclick but will crash if called programmatically.
+
+**Fix:**
+```javascript
+function selectOption(step, value, event) {
+    const target = event?.currentTarget;
+    if (!target) return;
+    // ... rest of logic
+}
+```
+
+**Owner:** Mipha (User Dev)  
+
+---
+
+### Issue: Branding Comment Cleanup (Purah)
+
+**Agent:** Purah (Tester)  
+**Date:** 2026-04-14  
+**Status:** 🟢 Cosmetic  
+**Priority:** P3  
+**File:** home.html:915
+
+**Issue:**
+HTML comment says `<!-- WHY HABITREWARDS -->` instead of `<!-- WHY MYDAILYWIN -->`.
+
+**Owner:** Mipha (User Dev) — quick branding pass  
+
+---
+
+## ✅ Verified Clean (Bug Bash 2026-04-14)
+
+1. **SendGrid Removal** — No references to sendAdminInvite cloud function. EmailJS fully operational.
+2. **Admin "Pending" Bug** — isAdminAccepted() properly checks acceptedAt/firstName/name. localStorage sync working.
+3. **Payout Flow** — End-to-end tested. Firestore + localStorage fallback both operational.
+4. **Profile-Suffixed Storage Keys** — All CSV downloads, reports, data exports correctly using profile-suffixed keys.
+5. **localStorage Key Audit** — Comprehensive audit by Daruk: all keys documented, pattern consistent.
+

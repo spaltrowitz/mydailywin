@@ -210,3 +210,72 @@ Executed full Phase 1–3 consolidation (Daruk's responsibility across 2 phases 
 #### Quality Gate Status
 🟢 **READY FOR PRODUCTION** — All phases complete, zero regressions, full verification passed.
 
+---
+
+### Bug Bash — Auth, Onboarding & Data Flow (2025-04-14)
+
+#### Session Context
+Comprehensive backend/data layer review covering login.html, get-started.html, firebase.json, firestore.rules, localStorage contracts, and removed SendGrid references.
+
+#### Findings Summary
+**Total bugs identified:** 10 (1 P0, 3 P1, 3 P2, 3 P3)
+**Safe patterns verified:** 3
+
+#### Critical Discovery (P0)
+- **get-started.html does NOT write to Firestore** — profiles saved ONLY to localStorage (`hr_profile_{id}`), never to Firestore
+- **Root cause:** No Firebase SDK imports in get-started.html (missing firebase-app-compat.js and firebase-firestore-compat.js)
+- **Impact:** Firestore ownership rules cannot enforce access control; profiles are device-only; no cloud sync
+- **Blocker for:** Firestore rules TODO comments (lines 99-147) cannot be fully implemented until profile docs are written to Firestore
+
+#### High-Priority Security Issues (P1)
+- **XSS in login.html (line 414):** `avatar.innerHTML` directly interpolates `user.photoURL` without sanitization
+- **CSP frame-src mismatch:** References old domain `habitrewards-131.firebaseapp.com` but site now hosted at `mydailywin.web.app`
+- **authDomain hardcoded:** All Firebase configs still use `habitrewards-131.firebaseapp.com` instead of `mydailywin.firebaseapp.com`
+
+#### Data Consistency Issues (P2)
+- **localStorage key mismatch:** app.html line 907 checks `hr_state_stu` but actual key for legacy profile is `hr_state` (no suffix)
+- **Session storage race condition:** Refresh on get-started.html loses `hr_pending_user_*` → orphaned profile without `creatorEmail`
+- **No error handling:** saveProfileSetup() has no try/catch → silent failure if localStorage quota exceeded
+
+#### Verified Safe
+- SessionStorage handoff pattern (login → get-started) is correct for temporary auth state
+- Firebase config still referencing `habitrewards-131` is correct — project ID is unchanged, custom domain is an alias
+- SendGrid function removal is clean — zero orphaned calls in production code
+
+#### localStorage Key Audit Complete
+Mapped ALL 30+ localStorage keys across all pages:
+- Profile metadata: `hr_profile_{id}`, `hr_profiles_index`, `hr_user_profiles_{uid}`, `hr_managed_profiles_{email}`
+- State data: `hr_state_{id}`, `hr_admin_{id}`, `hr_week_{id}`, `hr_date_{id}`, `hr_reports_{id}`, etc.
+- Admin management: `hr_profile_admins_{id}` (current), `hr_additional_admins` (legacy, still read for migration)
+- Onboarding: `hr_pending_user_uid`, `hr_pending_user_email` (sessionStorage, cleared after use)
+- Global: `hr_proposals`, `hr_survey_log`, `theme`
+
+#### Detailed Report
+All findings documented in `.squad/agents/daruk/bugbash-findings.md` with file paths, line numbers, consequences, and suggested fixes.
+
+
+---
+
+## Bug Bash Team Update (2026-04-14)
+
+**Merged Decisions:**
+- P0 Blocker: get-started.html must write to Firestore (now in decisions.md)
+- P1 Security: CSP + authDomain updates for mydailywin domain
+- P2 Data Consistency: onboarding state migration from sessionStorage → localStorage
+- Medium P2 issues: step 7b nav, event parameter guards, localStorage key consistency
+
+**Implementation Status:**
+- Awaiting Revali decision on Firebase config migration strategy (habitrewards-131 vs mydailywin)
+- Once approved: Daruk to implement P0 Firestore write + CSP updates + sessionStorage → localStorage
+- Mipha to fix onboarding nav/guard issues
+
+**Cross-Agent Alignment:**
+- Mipha: May need to handle Firestore fallback reads if get-started.html P0 implemented
+- Urbosa: Admin auth simplification possible once profiles move to Firestore
+- Purah: New test cases for Firestore profile + onboarding refresh scenarios
+
+**All Verified Safe Items Locked:**
+- SessionStorage handoff pattern correct (login → get-started)
+- Firebase config project ID unchanged (habitrewards-131 is correct — custom domain is alias)
+- SendGrid removal clean
+- localStorage key audit complete with all 30+ keys documented
