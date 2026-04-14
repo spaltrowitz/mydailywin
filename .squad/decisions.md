@@ -880,3 +880,248 @@ HTML comment says `<!-- WHY HABITREWARDS -->` instead of `<!-- WHY MYDAILYWIN --
 4. **Profile-Suffixed Storage Keys** — All CSV downloads, reports, data exports correctly using profile-suffixed keys.
 5. **localStorage Key Audit** — Comprehensive audit by Daruk: all keys documented, pattern consistent.
 
+
+---
+
+## 🟡 MEDIUM BUGS (P1 — Next Sprint)
+
+### Bug: get-started.html Step 7b Navigation
+**Status:** ✅ FIXED (Mipha, 2026-04-14)  
+**Severity:** 🟡 MEDIUM — UX regression  
+
+**Context:**
+Step 7b (admin goals) uses string `'7b'` for currentStep, but `goBack()` function only handles numeric comparisons. Back button does not work from step 7b.
+
+**Solution Implemented:**
+Added case to goBack(): `else if (currentStep === '7b') { currentStep = 7; }`
+
+**Owner:** Mipha (User Dev)
+
+---
+
+### Bug: Missing Event Parameter Guards in Onboarding
+**Status:** ✅ FIXED (Mipha, 2026-04-14)  
+**Severity:** 🟡 MEDIUM — Defensive coding  
+
+**Context:**
+Functions `selectOption()`, `selectPayoutPref()`, `selectHelpOption()` (get-started.html lines 666, 744, 776) call `event.currentTarget` without declaring event parameter. Works from onclick but will crash if called programmatically.
+
+**Solution Implemented:**
+Added optional event parameter and optional chaining: `event?.currentTarget`
+
+**Owner:** Mipha (User Dev)
+
+**Decision:** Event parameter convention — Functions from onclick="" should accept `event` as last parameter with optional chaining for safety.
+
+---
+
+### Bug: Missing Error Handling in saveProfileSetup()
+**Status:** ✅ FIXED (Daruk, 2026-04-14)  
+**Severity:** 🟡 MEDIUM — Error transparency  
+
+**Context:**
+saveProfileSetup() in get-started.html now writes to Firestore but had no error handling for write failures.
+
+**Solution Implemented:**
+Added try/catch around Firestore write with user-facing error messages. localStorage write retained for fallback.
+
+**Owner:** Daruk (Backend/Security)
+
+---
+
+## ✅ FIXED SECURITY DECISIONS
+
+### Decision: XSS Prevention — innerHTML → createElement Pattern
+**Status:** ✅ FIXED (Daruk, 2026-04-14)  
+**Severity:** 🔴 CRITICAL  
+
+**Decision:**
+User-supplied URLs (like photoURL) must never be interpolated into innerHTML. Use createElement + property assignment instead.
+
+**Rationale:**
+XSS prevention. This is the standard pattern going forward for all user-supplied content.
+
+**Implementation:**
+login.html updated to remove innerHTML interpolation; now uses `img.src = photoURL;` pattern.
+
+**Owner:** Daruk (Backend/Security)
+
+---
+
+### Decision: Data Persistence — sessionStorage → localStorage for Onboarding
+**Status:** ✅ FIXED (Daruk, 2026-04-14)  
+**Severity:** 🟡 MEDIUM  
+
+**Decision:**
+Onboarding state migrated from sessionStorage to localStorage with explicit cleanup.
+
+**Rationale:**
+sessionStorage is lost on page refresh, breaking mid-onboarding users. localStorage persists through refresh, ensuring profile ownership is captured.
+
+**Implementation:**
+- `sessionStorage.setItem('hr_pending_user_uid', ...)` → `localStorage.setItem('hr_onboarding_uid', ...)`
+- `sessionStorage.setItem('hr_pending_user_email', ...)` → `localStorage.setItem('hr_onboarding_email', ...)`
+- Old keys retained as fallback reads in get-started.html for transition safety
+- Both old and new keys cleaned up after profile creation
+
+**Impact:** Any agent reading onboarding state should check the new localStorage keys first.
+
+**Owner:** Daruk (Backend/Security)
+
+---
+
+### Decision: CSP and authDomain Update for mydailywin Domain
+**Status:** ✅ FIXED (Daruk, 2026-04-14)  
+**Severity:** 🔴 CRITICAL  
+
+**Decision:**
+Update CSP frame-src and Firebase authDomain to include `https://mydailywin.firebaseapp.com`.
+
+**Rationale:**
+Site is now hosted at `mydailywin.web.app` but CSP only allowed `habitrewards-131.firebaseapp.com`. If Firebase auth helper iframe switches to new domain, Google Sign-In breaks.
+
+**Implementation:**
+firebase.json line 19: Added `https://mydailywin.firebaseapp.com` to `frame-src`. Kept habitrewards-131 references for backwards compatibility during transition.
+
+**Owner:** Daruk (Backend/Security)
+
+---
+
+## 🟢 PRODUCT DECISIONS
+
+### Decision: Tagline Update
+**Status:** ✅ FIXED (Mipha, 2026-04-14)  
+
+**Decision:**
+Tagline updated to "Turn Daily Habits into Daily Wins".
+
+**Rationale:**
+Old tagline "Build Better Habits, Earn Real Rewards" no longer reflects product positioning.
+
+**Implementation:**
+Updated across home.html, app.html (og-image.svg), and marketing materials.
+
+**Owner:** Mipha (User Dev)
+
+**Impact:** Any new marketing materials must use new tagline.
+
+---
+
+### Decision: Phase 2 — index.html Features Migrated to app.html
+**Status:** ✅ COMPLETED (Mipha, 2026-03-03)  
+**Priority:** P1  
+
+**Context:**
+Per Revali's approved Option C consolidation strategy, Phase 2 migrates all 5 features unique to index.html into app.html, eliminating the need to maintain index.html as a user-facing page.
+
+**Features Migrated:**
+1. **Task Help System** — Added TASK_HELP constant (12 entries), showTaskHelp() function, modal HTML, CSS
+2. **Profile Task Filtering** — Added filterForProfile() using IS_LEGACY_PROFILE; wired into task configuration
+3. **Completed-Ever Tracking** — Added getCompletedEverTasks() and markTaskCompletedEver() with profile-suffixed keys
+4. **Help Buttons in Rendering** — Added "i" buttons to daily tasks and bonuses
+
+**Key Design Decision:** Storage keys use `hr_*_${PROFILE_ID}` convention (not unsuffixed). filterForProfile() applied inside getConfiguredDailyTasks() return path.
+
+**Result:** app.html now has feature parity with index.html; index.html can safely redirect to app.html (Phase 3).
+
+**Owner:** Mipha (User Dev)
+
+---
+
+### Decision: Branding Cleanup
+**Status:** ✅ FIXED (Mipha, 2026-04-14)  
+
+**Context:**
+HTML comments still referenced "HABITREWARDS" branding.
+
+**Implementation:**
+Updated home.html comment from `<!-- WHY HABITREWARDS -->` → `<!-- WHY MYDAILYWIN -->`.
+
+**Owner:** Mipha (User Dev)
+
+---
+
+## 🔗 CROSS-AGENT IMPACT SUMMARY
+
+### Mipha (User Dev) — Onboarding & Frontend
+- ✅ Step 7b navigation fixed
+- ✅ Event parameter guards added (selectOption, selectPayoutPref, selectHelpOption)
+- ✅ Error handling in saveProfileSetup()
+- ✅ hr_state key corrected (storage key mismatch fixed)
+- ✅ Tagline updated
+- ✅ HABITREWARDS comment cleaned
+- ⚠️ If Firestore write to get-started.html is enabled, app.html must correctly read from Firestore with localStorage fallback
+
+### Daruk (Backend/Security)
+- ✅ XSS in login.html fixed (innerHTML → createElement)
+- ✅ sessionStorage → localStorage migration completed
+- ✅ CSP update for mydailywin domain
+- ✅ email-templates/ documented (kept for reference, not in use)
+- ⚠️ Firestore profile creation now enabled; admin.html can simplify auth logic
+
+### Urbosa (Admin Dev)
+- 📋 Admin page authorization flow depends on Firestore profile doc
+- �� Once profiles are in Firestore, admin.html can simplify auth checks from localStorage fallback
+
+### Purah (QA/Tester)
+- ✅ All identified bugs fixed or documented
+- 📋 New test cases: Firestore profile creation on onboarding
+- 📋 Test refresh during onboarding to verify localStorage persistence
+- 📋 Verify CSP doesn't block Google Sign-In after domain updates
+
+---
+
+## 📋 PENDING DECISIONS (Awaiting Prioritization)
+
+### Firebase Project ID: Keep habitrewards-131 or Migrate to mydailywin?
+**Status:** 📋 DECISION NEEDED  
+**Finder:** Purah (QA Sweep)  
+
+**Context:**
+Files app.html, admin.html, login.html still use `projectId: "habitrewards-131"` and `authDomain: "habitrewards-131.firebaseapp.com"`. Site is deployed to `mydailywin.web.app`.
+
+**Options:**
+1. Keep habitrewards-131 project (current choice — backwards compat)
+2. Migrate to mydailywin project (requires Firestore data migration)
+
+**Decision:** Keep habitrewards-131 for now. Add comment explaining transition state.
+
+**Owner:** Revali (Lead decision) / Daruk (implementation)
+
+---
+
+## 📖 TEAM CONVENTIONS (Extracted)
+
+### Storage Key Naming
+Pattern: `hr_{feature}` (stu profile, unsuffixed) or `hr_{feature}_{PROFILE_ID}` (other profiles)
+
+**Examples:**
+- `hr_state` — legacy stu profile state
+- `hr_state_example` — example profile state
+- `hr_completed_log_example` — example profile completed log
+
+**Decision:** Always use suffixed keys for non-stu profiles. app.html and admin.html dual-write for stu profile when needed.
+
+---
+
+### Event Parameters in onclick Handlers
+Functions bound to `onclick=""` should accept `event` as optional last parameter with optional chaining.
+
+**Pattern:**
+```javascript
+function selectOption(step, value, event) {
+    const target = event?.currentTarget;
+    if (!target) return;
+    // ... logic
+}
+```
+
+**Rationale:** Allows both onclick-bound calls and programmatic calls without crashing.
+
+---
+
+### User Content and Security
+- Never interpolate user-supplied data (URLs, text) into innerHTML
+- Use createElement + property assignment instead
+- Example: `img.src = photoURL;` instead of `innerHTML = '<img src="' + photoURL + '"/>'`
+

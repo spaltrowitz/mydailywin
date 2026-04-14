@@ -148,3 +148,41 @@ Executed Phases 1–4 of consolidation strategy (Mipha's responsibility in Phase
 - **Quality gate:** 🟢 READY FOR PRODUCTION (Purah verification passed, all features verified)
 - **Knowledge transfer:** Consolidation enables future feature development on app.html only (single source of truth)
 
+### Bug Bash Fixes (2026-03-04)
+
+#### Changes Made (get-started.html, app.html, home.html, og-image.svg)
+1. **Step 7b back button**: `goBack()` now handles string `'7b'` step — returns to step 7
+2. **Event parameter guards**: `selectOption()`, `selectPayoutPref()`, `selectHelpOption()` now accept `event` param with optional chaining (`event?.currentTarget`). All onclick handlers updated to pass `event`.
+3. **saveProfileSetup() error handling**: All localStorage writes wrapped in try/catch. On failure, user sees alert and function returns early (no silent data loss).
+4. **hr_state_stu key mismatch**: Legacy profile detection in app.html line 907 now checks `hr_state` (correct key) instead of `hr_state_stu` (never existed).
+5. **Tagline update**: "Build Better Habits, Earn Real Rewards" → "Turn Daily Habits into Daily Wins" in home.html (title, og:title, twitter:title) and og-image.svg.
+6. **Branding comment**: "WHY HABITREWARDS" → "WHY MYDAILYWIN" in home.html.
+
+#### Key Patterns
+- For inline onclick handlers that pass `event`, the browser's implicit `event` variable works but the function signature must accept it as a parameter for programmatic calls.
+- `saveProfileSetup()` is called during `goToSummary()` — the try/catch prevents redirect if storage fails.
+
+
+---
+
+### Bug Bash Session (2026-04-14)
+
+**Status:** ✅ 6 fixes completed and committed
+
+#### Fixes Delivered
+1. **Step 7b Navigation** — goBack() now handles string `'7b'` step
+2. **Event Parameter Guards** — selectOption(), selectPayoutPref(), selectHelpOption() accept optional event param
+3. **saveProfileSetup Error Handling** — Added try/catch; localStorage writes protected
+4. **hr_state Key Correction** — Fixed legacy profile check from `hr_state_stu` → `hr_state`
+5. **Tagline Update** — "Build Better Habits, Earn Real Rewards" → "Turn Daily Habits into Daily Wins"
+6. **Branding Cleanup** — Comment updated to MYDAILYWIN
+
+#### Cross-Agent Notes
+- Daruk fixed Firestore write to get-started.html; app.html must read from Firestore with localStorage fallback
+- localStorage → Firestore migration in onboarding now enabled; verify app.html reads correctly
+- CSP update from Daruk includes mydailywin domain; no further auth changes needed on user-facing pages
+
+#### Key Convention Extracted
+- Event parameters in onclick handlers should use optional chaining pattern: `event?.currentTarget`
+- Storage keys must always be profile-suffixed for non-stu profiles: `hr_{feature}_{PROFILE_ID}`
+

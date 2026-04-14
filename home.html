@@ -9,6 +9,9 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/favicon.svg">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- SEO Meta Tags -->
     <meta name="description" content="Turn daily habits into a rewarding game. Track activities, build streaks, earn real money. Perfect for staying active, sharp, and motivated.">
     <meta name="keywords" content="habit tracker, rewards, gamification, daily tasks, streak, motivation, wellness">
@@ -40,7 +43,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
@@ -52,7 +55,8 @@
             text-align: center;
         }
         .hero-logo {
-            font-size: 80px;
+            width: 100px;
+            height: 100px;
             margin-bottom: 20px;
         }
         .hero h1 {
@@ -226,6 +230,10 @@
             font-size: 14px;
             font-weight: 600;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .badge-item:nth-child(even) {
+            background: #faf5ff;
+            border: 1px solid #e9d5ff;
         }
         .cta-section {
             background: var(--primary);
@@ -831,8 +839,8 @@
     </div>
 
     <div class="hero">
-        <div class="hero-logo">🏆</div>
-        <h1>MyDailyWin</h1>
+        <div class="hero-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#FFA500"/><stop offset="100%" style="stop-color:#FF8C00"/></linearGradient><linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#58cc02"/><stop offset="100%" style="stop-color:#58a700"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="url(#green)"/><path d="M30 30 L70 30 L65 55 Q50 70 35 55 Z" fill="url(#gold)"/><path d="M25 35 Q15 35 15 45 Q15 55 28 52" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/><path d="M75 35 Q85 35 85 45 Q85 55 72 52" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/><rect x="40" y="62" width="20" height="8" rx="2" fill="url(#gold)"/><rect x="35" y="70" width="30" height="6" rx="2" fill="url(#gold)"/><polygon points="50,38 52,44 58,44 53,48 55,54 50,50 45,54 47,48 42,44 48,44" fill="white"/></svg></div>
+        <h1>MyDaily<span style="color: var(--orange);">Win</span></h1>
         <p>Turn daily habits into a rewarding game. Stay active, stay sharp, and celebrate your wins!</p>
         <div class="hero-buttons">
             <a href="get-started.html" class="btn btn-white">🚀 Get Started</a>
@@ -913,7 +921,7 @@
     </div>
 
     <!-- WHY MYDAILYWIN -->
-    <div id="why" class="container" style="text-align: center;">
+    <div id="why" class="container" style="text-align: center; background: linear-gradient(135deg, #faf5ff, #f3e8ff); border-radius: 24px; padding: 40px 20px; margin-top: 30px;">
         <h2 class="section-title">💜 Why MyDailyWin?</h2>
         <p style="max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-light); line-height: 1.8;">
             You know what's good for you—staying active, keeping your mind sharp, connecting with people who matter. The hard part is making it a daily habit.
@@ -1015,7 +1023,7 @@
             <h2 class="section-title">❓ Frequently Asked Questions</h2>
             
             <!-- Quick Reference -->
-            <div style="background: linear-gradient(135deg, #22c55e22, #22c55e44); border: 2px solid var(--primary); border-radius: 16px; padding: 20px; margin-bottom: 25px;">
+            <div style="background: linear-gradient(135deg, #ce82ff11, #ce82ff22); border: 2px solid var(--secondary); border-radius: 16px; padding: 20px; margin-bottom: 25px;">
                 <h3 style="margin: 0 0 15px 0; font-size: 18px;">📊 Quick Reference</h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 14px;">
                     <div><strong>🎉 Cost:</strong> 100% Free</div>

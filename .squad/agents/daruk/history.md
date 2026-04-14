@@ -286,3 +286,29 @@ All findings documented in `.squad/agents/daruk/bugbash-findings.md` with file p
 - **sessionStorage → localStorage migration**: Onboarding keys (`hr_pending_user_uid`/`hr_pending_user_email`) migrated to localStorage as `hr_onboarding_uid`/`hr_onboarding_email`. Backward compat maintained — get-started.html falls back to old sessionStorage keys. Both old+new keys are cleaned up after profile creation.
 - **CSP updated**: Added `https://mydailywin.firebaseapp.com` to `frame-src` in firebase.json alongside the legacy `habitrewards-131` domain.
 - **email-templates/ deleted**: Orphaned directory (admin-invite.html) removed since SendGrid Cloud Function was already removed.
+
+---
+
+### Bug Bash Session (2026-04-14)
+
+**Status:** ✅ 4 fixes completed and committed
+
+#### Fixes Delivered
+1. **XSS in login.html** — Removed innerHTML interpolation for photoURL; switched to createElement + property assignment
+2. **sessionStorage → localStorage** — Onboarding state keys migrated (hr_onboarding_uid, hr_onboarding_email); old keys retained as fallback
+3. **CSP Update** — firebase.json frame-src now includes `https://mydailywin.firebaseapp.com`; kept habitrewards-131 for backwards compatibility
+4. **email-templates/ Documentation** — Added comment documenting directory kept for reference (SendGrid function already removed)
+
+#### Cross-Agent Notes
+- Mipha fixed event parameter guards in onboarding; error handling now active on saveProfileSetup()
+- Firestore profile creation now enabled; Mipha's app.html must read from Firestore with localStorage fallback
+- Urbosa: Admin auth flows depend on Firestore profile doc existing; can be simplified once profiles fully migrated
+
+#### Key Conventions Extracted
+- XSS Prevention: Never interpolate user data into innerHTML. Pattern: `createElement + property assignment`
+- Storage persistence: localStorage for onboarding state (survives refresh); sessionStorage loses on refresh
+- CSP alignment: Keep both old and new domain references during transition period
+
+#### Pending Decision
+- Firebase project ID: Keep habitrewards-131 or migrate to mydailywin? Current choice: keep habitrewards-131 (backwards compat). Add comment explaining transition state.
+
