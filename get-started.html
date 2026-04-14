@@ -831,33 +831,38 @@
                 profileData.ownerEmail = pendingUserEmail;
             }
             
-            // Save to localStorage with profile ID
-            localStorage.setItem('hr_profile_' + answers.profileId, JSON.stringify(profileData));
-            
-            // Also save to a profiles index
-            let profiles = JSON.parse(localStorage.getItem('hr_profiles_index') || '[]');
-            if (!profiles.find(p => p.id === answers.profileId)) {
-                profiles.push({ id: answers.profileId, name: answers.userName, createdAt: profileData.createdAt });
-                localStorage.setItem('hr_profiles_index', JSON.stringify(profiles));
-            }
-            
-            // Link to authenticated user if available
-            const pendingUserUid = localStorage.getItem('hr_onboarding_uid') || sessionStorage.getItem('hr_pending_user_uid');
-            if (pendingUserUid) {
-                const userProfilesKey = 'hr_user_profiles_' + pendingUserUid;
-                let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
-                if (!userProfiles.find(p => p.id === answers.profileId)) {
-                    userProfiles.push({ id: answers.profileId, name: answers.userName });
-                    localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
+            try {
+                // Save to localStorage with profile ID
+                localStorage.setItem('hr_profile_' + answers.profileId, JSON.stringify(profileData));
+                
+                // Also save to a profiles index
+                let profiles = JSON.parse(localStorage.getItem('hr_profiles_index') || '[]');
+                if (!profiles.find(p => p.id === answers.profileId)) {
+                    profiles.push({ id: answers.profileId, name: answers.userName, createdAt: profileData.createdAt });
+                    localStorage.setItem('hr_profiles_index', JSON.stringify(profiles));
                 }
-                localStorage.removeItem('hr_onboarding_uid');
-                sessionStorage.removeItem('hr_pending_user_uid');
+                
+                // Link to authenticated user if available
+                const pendingUserUid = localStorage.getItem('hr_onboarding_uid') || sessionStorage.getItem('hr_pending_user_uid');
+                if (pendingUserUid) {
+                    const userProfilesKey = 'hr_user_profiles_' + pendingUserUid;
+                    let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
+                    if (!userProfiles.find(p => p.id === answers.profileId)) {
+                        userProfiles.push({ id: answers.profileId, name: answers.userName });
+                        localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
+                    }
+                    localStorage.removeItem('hr_onboarding_uid');
+                    sessionStorage.removeItem('hr_pending_user_uid');
+                }
+                localStorage.removeItem('hr_onboarding_email');
+                sessionStorage.removeItem('hr_pending_user_email');
+                
+                // Also save survey data for export
+                saveSurveyData(profileData);
+            } catch (e) {
+                alert('Unable to save your profile. Your browser storage may be full or unavailable. Please try again or use a different browser.');
+                return;
             }
-            localStorage.removeItem('hr_onboarding_email');
-            sessionStorage.removeItem('hr_pending_user_email');
-            
-            // Also save survey data for export
-            saveSurveyData(profileData);
         }
         
         function saveSurveyData(profileData) {
