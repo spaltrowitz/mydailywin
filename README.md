@@ -1,4 +1,4 @@
-# MyDailyWin
+# HabitBuilder
 
 A gamified habit-tracking app designed to encourage daily positive behaviors through rewards and recognition. Built with a fun, Duolingo-inspired interface.
 
@@ -10,7 +10,7 @@ A gamified habit-tracking app designed to encourage daily positive behaviors thr
 
 ## Admin Mode Guide
 
-This guide explains how MyDailyWin works so you can customize and manage the experience.
+This guide explains how HabitBuilder works so you can customize and manage the experience.
 
 ### Point System
 

@@ -25,7 +25,7 @@
 ## Learnings
 
 ### Project Context (Day 1)
-- MyDailyWin: gamified habit-tracking web app with admin and user surfaces
+- HabitBuilder: gamified habit-tracking web app with admin and user surfaces
 - Stack: Vanilla HTML/CSS/JS, Firebase, PWA
 - User: Shari Paltrowitz
 - Critical test areas: admin↔user sync (localStorage keys), streak multipliers, spin wheel unlock logic, profile filtering

@@ -24,7 +24,7 @@
 ## Learnings
 
 ### Project Context (Day 1)
-- MyDailyWin: Firebase project habitrewards-131, hosted at habitrewards-131.web.app
+- HabitBuilder: Firebase project habitrewards-131, hosted at habitrewards-131.web.app
 - Stack: Vanilla HTML/CSS/JS, Firebase (Hosting + Auth + Firestore), EmailJS
 - User: Shari Paltrowitz
 - Auth: Google Sign-In + email/password, onboarding stores hr_pending_user_email → creatorEmail/ownerEmail
