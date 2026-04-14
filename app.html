@@ -1468,12 +1468,12 @@
             spinBtn.textContent = '✨ Revealing...';
             
             const prizes = [
-                { emoji: '💰', pts: 50, text: '+50 bonus pts!' },
-                { emoji: '⭐', pts: 25, text: '+25 bonus pts!' },
-                { emoji: '🎉', pts: 100, text: 'Big bonus! +100 pts!' },
-                { emoji: '✨', pts: 10, text: '+10 bonus pts!' },
-                { emoji: '🍀', pts: 75, text: 'Great bonus! +75 pts!' },
-                { emoji: '💎', pts: 150, text: 'Amazing! +150 pts!' }
+                { emoji: '💰', pts: 50, text: '+50 pts ($0.50)!' },
+                { emoji: '⭐', pts: 25, text: '+25 pts ($0.25)!' },
+                { emoji: '🎉', pts: 100, text: 'Big bonus! +100 pts ($1.00)!' },
+                { emoji: '✨', pts: 10, text: '+10 pts ($0.10)!' },
+                { emoji: '🍀', pts: 75, text: 'Great bonus! +75 pts ($0.75)!' },
+                { emoji: '💎', pts: 150, text: 'Amazing! +150 pts ($1.50)!' }
             ];
             
             let spins = 0;
@@ -2185,7 +2185,7 @@
                 div.innerHTML = `
                     <div class="task-content">
                         <div class="task-name" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.name}${helpBtn}</div>
-                        <div class="task-reward">+${task.value} pts</div>
+                        <div class="task-reward">+${task.value} pts ($${(task.value/100).toFixed(2)})</div>
                     </div>
                     <button class="task-check ${task.completed ? 'completed' : ''}" onclick="onTaskClick(${task.id})">
                         ${task.completed ? '✓' : ''}
@@ -2216,7 +2216,7 @@
                     row.innerHTML = `
                         <div style="flex: 1; margin-right: 15px; text-align: left;">
                             <div style="font-weight: 700; font-size: 18px; ${completed ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${b.name} <span style="font-weight: 600; font-size: 14px; opacity: 0.9;">${count}/${b.target} sessions</span></div>
-                            <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${completed ? '✅ Done!' : `+${b.value} pts`}</div>
+                            <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${completed ? '✅ Done!' : `+${b.value} pts ($${(b.value/100).toFixed(2)})`}</div>
                         </div>
                         <button class="task-check ${completed ? 'completed' : ''}" style="background: ${completed ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" onclick="openTennisModal(${completed})">
                             ${completed ? '✓' : count > 0 ? count : '+'}
@@ -2232,7 +2232,7 @@
                     row.innerHTML = `
                         <div style="flex: 1; margin-right: 15px; text-align: left;">
                             <div style="font-weight: 700; font-size: 18px; ${isCompleted ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${b.name}${helpBtn}</div>
-                            <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${isCompleted ? '✅ Done!' : `+${b.value} pts`}</div>
+                            <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${isCompleted ? '✅ Done!' : `+${b.value} pts ($${(b.value/100).toFixed(2)})`}</div>
                         </div>
                         <button class="task-check ${isCompleted ? 'completed' : ''}" style="background: ${isCompleted ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" onclick="handleWeeklyClick(${idx}, ${isCompleted})">
                             ${isCompleted ? '✓' : ''}
@@ -2249,7 +2249,7 @@
                 dailyBonusSection.style.display = 'block';
                 const dailyBonusCompleted = state.dailyBonusCompleted === getDayNumber();
                 document.getElementById('dailyBonusName').textContent = dailyBonus.name;
-                document.getElementById('dailyBonusReward').textContent = `+${dailyBonus.value} pts`;
+                document.getElementById('dailyBonusReward').textContent = `+${dailyBonus.value} pts ($${(dailyBonus.value/100).toFixed(2)})`;
                 
                 // Show help icon for daily bonus if it has help info
                 const showDailyHelp = TASK_HELP[dailyBonus.id];
