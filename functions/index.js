@@ -1,11 +1,11 @@
 /**
  * MyDailyWin Cloud Functions
- * 
+ *
  * Handles email sending for admin invitations
  */
 
-const { setGlobalOptions, defineString } = require("firebase-functions/params");
-const { onRequest } = require("firebase-functions/v2/https");
+const {setGlobalOptions, defineString} = require("firebase-functions/params");
+const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const sgMail = require("@sendgrid/mail");
 
@@ -14,11 +14,11 @@ const sendgridApiKey = defineString("SENDGRID_API_KEY");
 const senderEmail = defineString("SENDER_EMAIL");
 
 // Cost control - limit concurrent instances
-setGlobalOptions({ maxInstances: 10 });
+setGlobalOptions({maxInstances: 10});
 
 /**
  * Send admin invitation email
- * 
+ *
  * Expects POST body:
  * {
  *   recipientEmail: string,
@@ -30,40 +30,43 @@ setGlobalOptions({ maxInstances: 10 });
  * }
  */
 exports.sendAdminInvite = onRequest(
-  { cors: true },
-  async (request, response) => {
+    {cors: true},
+    async (request, response) => {
     // Only allow POST
-    if (request.method !== "POST") {
-      response.status(405).json({ error: "Method not allowed" });
-      return;
-    }
-
-    try {
-      const {
-        recipientEmail,
-        recipientName,
-        profileName,
-        profileId,
-        senderName,
-        appUrl,
-      } = request.body;
-
-      // Validate required fields
-      if (!recipientEmail || !profileName || !profileId || !senderName) {
-        response.status(400).json({ error: "Missing required fields" });
+      if (request.method !== "POST") {
+        response.status(405).json({error: "Method not allowed"});
         return;
       }
 
-      // Initialize SendGrid
-      sgMail.setApiKey(sendgridApiKey.value());
+      try {
+        const {
+          recipientEmail,
+          recipientName, // eslint-disable-line no-unused-vars
+          profileName,
+          profileId,
+          senderName,
+          appUrl,
+        } = request.body;
 
-      // Build the URLs
-      const baseUrl = appUrl || "https://habitrewards-131.web.app";
-      const adminUrl = `${baseUrl}/admin.html?profile=${encodeURIComponent(profileId)}`;
-      const guideUrl = `${baseUrl}/admin-guide.html`;
+        // Validate required fields
+        if (!recipientEmail || !profileName || !profileId || !senderName) {
+          response.status(400).json({error: "Missing required fields"});
+          return;
+        }
 
-      // Create email HTML
-      const emailHtml = `
+        // Initialize SendGrid
+        sgMail.setApiKey(sendgridApiKey.value());
+
+        // Build the URLs
+        const baseUrl = appUrl || "https://habitrewards-131.web.app";
+        const profileParam = encodeURIComponent(profileId);
+        const adminUrl =
+            `${baseUrl}/admin.html?profile=${profileParam}`;
+        const guideUrl = `${baseUrl}/admin-guide.html`;
+
+        // Create email HTML
+        /* eslint-disable max-len */
+        const emailHtml = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #4f46e5; margin: 0;">
@@ -109,9 +112,11 @@ exports.sendAdminInvite = onRequest(
           </p>
         </div>
       `;
+        /* eslint-enable max-len */
 
-      // Create plain text version
-      const emailText = `
+        // Create plain text version
+        /* eslint-disable max-len */
+        const emailText = `
 You're Invited to MyDailyWin!
 
 ${senderName} has invited you to become an admin for ${profileName}'s MyDailyWin profile.
@@ -130,36 +135,37 @@ New to MyDailyWin? Read our Admin Guide: ${guideUrl}
 This invitation was sent by ${senderName} via MyDailyWin (${baseUrl}).
 If you weren't expecting this, you can safely ignore this email.
       `.trim();
+        /* eslint-enable max-len */
 
-      // Send the email
-      const msg = {
-        to: recipientEmail,
-        from: senderEmail.value(),
-        subject: `${senderName} invited you to manage ${profileName}'s MyDailyWin`,
-        text: emailText,
-        html: emailHtml,
-      };
+        // Send the email
+        const msg = {
+          to: recipientEmail,
+          from: senderEmail.value(),
+          subject: `${senderName} invited you to manage` +
+              ` ${profileName}'s MyDailyWin`,
+          text: emailText,
+          html: emailHtml,
+        };
 
-      await sgMail.send(msg);
+        await sgMail.send(msg);
 
-      logger.info("Admin invitation sent successfully", {
-        to: recipientEmail,
-        profileId,
-        senderName,
-      });
+        logger.info("Admin invitation sent successfully", {
+          to: recipientEmail,
+          profileId,
+          senderName,
+        });
 
-      response.status(200).json({ 
-        success: true, 
-        message: "Invitation sent successfully" 
-      });
+        response.status(200).json({
+          success: true,
+          message: "Invitation sent successfully",
+        });
+      } catch (error) {
+        logger.error("Error sending admin invitation", {error: error.message});
 
-    } catch (error) {
-      logger.error("Error sending admin invitation", { error: error.message });
-      
-      response.status(500).json({ 
-        success: false, 
-        error: "Failed to send invitation email" 
-      });
-    }
-  }
+        response.status(500).json({
+          success: false,
+          error: "Failed to send invitation email",
+        });
+      }
+    },
 );
