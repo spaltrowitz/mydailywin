@@ -25,7 +25,7 @@
 ## Learnings
 
 ### Project Context (Day 1)
-- HabitBuilder: gamified habit-tracking web app
+- MyDailyWin: gamified habit-tracking web app
 - Stack: Vanilla HTML/CSS/JS, Firebase, PWA
 - User: Shari Paltrowitz
 - Admin page: admin.html (2026 lines) with tabs: Elevenboard, Tasks, Payments, Levels, Admins, FAQ, Settings

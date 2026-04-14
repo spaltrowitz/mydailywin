@@ -17,7 +17,7 @@ Frontend Developer — owns the admin dashboard experience.
 - Writes admin config to hr_admin_{profile} — user pages read from it
 
 ## Key Context
-- HabitBuilder: gamified habit tracker, admin manages tasks/points/payouts
+- MyDailyWin: gamified habit tracker, admin manages tasks/points/payouts
 - Admin configures daily tasks that sync to user's app on page load
 - Balance reset writes to both STORAGE_KEY and hr_state_stu when keys differ
 - Admin tabs: Elevenboard, Tasks, Payments, Levels, Admins, FAQ, Settings

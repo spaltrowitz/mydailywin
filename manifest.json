@@ -1,6 +1,6 @@
 {
-  "name": "HabitBuilder",
-  "short_name": "HabitBuilder",
+  "name": "MyDailyWin",
+  "short_name": "MyDailyWin",
   "description": "Turn daily habits into a rewarding game. Stay active, stay sharp, and celebrate your wins!",
   "start_url": "/app.html",
   "display": "standalone",
