@@ -24,7 +24,7 @@
   </g>
   
   <!-- Title -->
-  <text x="320" y="260" font-family="system-ui, -apple-system, sans-serif" font-size="80" font-weight="800" fill="white">HabitRewards</text>
+  <text x="320" y="260" font-family="system-ui, -apple-system, sans-serif" font-size="80" font-weight="800" fill="white">MyDailyWin</text>
   
   <!-- Subtitle -->
   <text x="320" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="white" opacity="0.95">Build Better Habits, Earn Real Rewards</text>

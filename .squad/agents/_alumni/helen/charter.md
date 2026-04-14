@@ -18,7 +18,7 @@ Tester / QA — owns quality assurance with special focus on admin↔user intera
 - Reviewer role: can approve or reject agent work with specific feedback
 
 ## Key Context
-- HabitRewards: gamified habit tracker with admin and user surfaces
+- MyDailyWin: gamified habit tracker with admin and user surfaces
 - Critical sync: admin writes hr_admin_{profile}, user reads via getConfiguredDailyTasks()
 - Balance reset dual-write: STORAGE_KEY and hr_state_stu
 - Profile filtering: stuOnly/excludeFromStu flags with IS_STU_PROFILE

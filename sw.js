@@ -1,9 +1,9 @@
 /**
- * HabitRewards Service Worker
+ * MyDailyWin Service Worker
  * Provides offline support and caching for the PWA
  */
 
-const CACHE_NAME = 'habitrewards-v2';
+const CACHE_NAME = 'mydailywin-v2';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache on install

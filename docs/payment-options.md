@@ -1,23 +1,23 @@
-# HabitRewards Payment Options
+# MyDailyWin Payment Options
 
-## Current Model: Manual Processing via HabitRewards Account
+## Current Model: Manual Processing via MyDailyWin Account
 
 ### Overview
-- Admin funds are transferred to a central HabitRewards bank account
-- Payouts are sent from "HabitRewards" via Zelle
+- Admin funds are transferred to a central MyDailyWin bank account
+- Payouts are sent from "MyDailyWin" via Zelle
 - User sees branded payment, not family member's name
 - **Fees: $0**
 
 ### Setup Requirements
-1. Open a business checking account (DBA "HabitRewards")
+1. Open a business checking account (DBA "MyDailyWin")
 2. Enable Zelle on the account
-3. Configure account to display as "HabitRewards"
+3. Configure account to display as "MyDailyWin"
 
 ### Payment Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  USER                     ADMIN                    HABITREWARDS    │
+│  USER                     ADMIN                    MYDAILYWIN    │
 ├─────────────────────────────────────────────────────────────────────┤
 │  1. Requests $5.00        │                        │               │
 │         ↓                 │                        │               │
@@ -25,7 +25,7 @@
 │         │                 │    "Stu requested $5"  │               │
 │         │                 │         ↓              │               │
 │         │                 │ 3. Transfers $5 to     │               │
-│         │                 │    HabitRewards acct   │               │
+│         │                 │    MyDailyWin acct   │               │
 │         │                 │         ↓              │               │
 │         │                 │         ├──────────────→ 4. Receives $5│
 │         │                 │         │              │      ↓        │
@@ -33,7 +33,7 @@
 │         │                 │         │              │    via Zelle  │
 │         │                 │         │              │      ↓        │
 │  6. Receives $5.00 ←──────┼─────────┼──────────────┼──────┘        │
-│     FROM: HabitRewards    │         │              │               │
+│     FROM: MyDailyWin    │         │              │               │
 │         ↓                 │         │              │               │
 │  7. Gets notification:    │         │              │               │
 │     "Your $5 is on        │         │              │               │
@@ -84,9 +84,9 @@ During onboarding or payout, ask:
 ### When a Payout Request Comes In:
 
 1. **Check email** for notification
-2. **Transfer funds** to HabitRewards account (if not pre-funded)
+2. **Transfer funds** to MyDailyWin account (if not pre-funded)
    - Use Zelle (free) or ACH transfer (free)
-3. **Wait for confirmation** that HabitRewards sent the payout
+3. **Wait for confirmation** that MyDailyWin sent the payout
 4. **Mark as paid** in Admin dashboard (auto-updates for Firestore payouts)
 
 ### Setting Up Funding
@@ -96,7 +96,7 @@ During onboarding or payout, ask:
 - Best for infrequent payouts
 
 **Option B: Pre-funding (recommended)**
-- Keep a balance in HabitRewards account
+- Keep a balance in MyDailyWin account
 - Example: Fund $50, payouts deducted automatically
 - Get alerted when balance is low
 

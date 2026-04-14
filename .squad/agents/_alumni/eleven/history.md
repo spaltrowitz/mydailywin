@@ -25,7 +25,7 @@
 ## Learnings
 
 ### Project Context (Day 1)
-- HabitRewards: gamified habit-tracking web app, Duolingo-inspired UI
+- MyDailyWin: gamified habit-tracking web app, Duolingo-inspired UI
 - Stack: Vanilla HTML/CSS/JS, Firebase, PWA
 - User: Shari Paltrowitz
 - User-facing pages: app.html (3024 lines), index.html (2380 lines), habitrewards.html (2047 lines)

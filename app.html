@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HabitRewards</title>
+    <title>MyDailyWin</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#58cc02">
@@ -360,7 +360,7 @@
 
     <header>
         <a href="home.html" class="brand" style="text-decoration: none;">
-            <span>🏆</span> HabitRewards
+            <span>🏆</span> MyDailyWin
         </a>
         <div style="display: flex; align-items: center; gap: 10px;">
             <button class="theme-btn" onclick="openModal('settingsModal')" title="Settings" aria-label="Open settings">⚙️</button>
@@ -608,7 +608,7 @@
             
             <!-- Refer a Friend -->
             <h3 style="margin-bottom: 10px;">👥 Refer a Friend</h3>
-            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Know someone who'd enjoy HabitRewards?</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Know someone who'd enjoy MyDailyWin?</p>
             <button class="btn btn-purple" onclick="shareApp()" style="margin-bottom: 0;">📤 Share App Link</button>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
@@ -926,14 +926,14 @@
         // Legacy profile: Stu
         if (PROFILE_ID === 'stu') {
             PROFILE_NAME = 'Stu';
-            document.title = "Stu's HabitRewards";
+            document.title = "Stu's MyDailyWin";
         } else {
             const profileData = localStorage.getItem('hr_profile_' + PROFILE_ID);
             if (profileData) {
                 try {
                     const profile = JSON.parse(profileData);
                     PROFILE_NAME = profile.name || 'Friend';
-                    document.title = PROFILE_NAME + "'s HabitRewards";
+                    document.title = PROFILE_NAME + "'s MyDailyWin";
                 } catch (e) {
                     console.warn('Failed to parse profile data:', e);
                 }
@@ -1372,7 +1372,7 @@
                     
                     <div style="background: #f0fdf4; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
                         <div style="color: #166534; font-size: 14px;">
-                            <strong>From:</strong> HabitRewards<br>
+                            <strong>From:</strong> MyDailyWin<br>
                             <strong>Via:</strong> Zelle<br>
                             <span style="font-size: 14px; opacity: 0.8;">Check your Zelle app or bank notifications!</span>
                         </div>
@@ -1630,7 +1630,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `habitrewards-feedback-${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = `mydailywin-feedback-${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -1695,7 +1695,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `habitrewards-task-responses-${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = `mydailywin-task-responses-${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -3042,7 +3042,7 @@
                     
                     <div style="background: #f0fdf4; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
                         <div style="color: #166534; font-size: 14px;">
-                            💰 Payment from <strong>HabitRewards</strong> via Zelle<br>
+                            💰 Payment from <strong>MyDailyWin</strong> via Zelle<br>
                             <span style="font-size: 14px; opacity: 0.8;">You'll get a notification when it's sent!</span>
                         </div>
                     </div>
@@ -3056,11 +3056,11 @@
 
         function shareApp() {
             const shareUrl = 'https://habitrewards-131.web.app';
-            const shareText = 'Check out HabitRewards - a fun app that pays you to build good habits! 🏆';
+            const shareText = 'Check out MyDailyWin - a fun app that pays you to build good habits! 🏆';
             
             if (navigator.share) {
                 navigator.share({
-                    title: 'HabitRewards',
+                    title: 'MyDailyWin',
                     text: shareText,
                     url: shareUrl
                 }).catch(() => {});
@@ -3079,7 +3079,7 @@
             const streak = state.streak;
             const pts = Math.floor(state.balance);
             
-            const shareText = `🏆 HabitRewards Update!\n\n` +
+            const shareText = `🏆 MyDailyWin Update!\n\n` +
                 `✅ ${tasksCompleted} tasks completed today\n` +
                 `🔥 ${streak} day streak\n` +
                 `💰 ${pts} pts earned\n\n` +
@@ -3087,7 +3087,7 @@
             
             if (navigator.share) {
                 navigator.share({
-                    title: 'My HabitRewards Progress',
+                    title: 'My MyDailyWin Progress',
                     text: shareText
                 }).catch(() => {});
             } else {
@@ -3100,8 +3100,8 @@
         }
 
         function contactDeveloper() {
-            const subject = encodeURIComponent('HabitRewards Feedback');
-            const body = encodeURIComponent('Hi!\n\nI have some feedback about HabitRewards:\n\n');
+            const subject = encodeURIComponent('MyDailyWin Feedback');
+            const body = encodeURIComponent('Hi!\n\nI have some feedback about MyDailyWin:\n\n');
             window.location.href = `mailto:sharipaltrowitz@gmail.com?subject=${subject}&body=${body}`;
         }
 
