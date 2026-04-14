@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Started - MyDailyWin</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #58cc02;
@@ -17,7 +20,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Quicksand', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
@@ -268,7 +271,7 @@
 </head>
 <body>
     <div class="top-bar">
-        <a href="home.html" style="text-decoration: none; color: inherit;"><h1>🏆 MyDailyWin</h1></a>
+        <a href="home.html" style="text-decoration: none; color: inherit;"><h1>🏆 MyDaily<span style="color: #ff9600;">Win</span></h1></a>
     </div>
 
     <!-- Sign in link for existing users -->
@@ -293,7 +296,7 @@
         <div class="step active" id="step1">
             <div class="card">
                 <h2>👋 Who is this for?</h2>
-                <p>Are you setting up MyDailyWin for yourself or someone else?</p>
+                <p>Are you setting up MyDaily<span style="color: #ff9600;">Win</span> for yourself or someone else?</p>
                 <div class="options">
                     <div class="option" onclick="selectOption(1, 'self', event)">
                         <div class="option-icon">🙋</div>
@@ -580,7 +583,7 @@
         <!-- STEP 9: Summary -->
         <div class="step" id="step9">
             <div class="card">
-                <h2>🎉 <span id="userNameDisplay">Your</span> MyDailyWin is ready!</h2>
+                <h2>🎉 <span id="userNameDisplay">Your</span> MyDaily<span style="color: #ff9600;">Win</span> is ready!</h2>
                 <p>Here's the personalized setup:</p>
                 
                 <div class="summary-section">
