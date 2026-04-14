@@ -16,7 +16,7 @@ Lead / Architect — owns architecture decisions, code review, and technical dir
 - Gates merges via review approval
 
 ## Key Context
-- HabitRewards: gamified habit tracker, vanilla HTML/CSS/JS + Firebase
+- MyDailyWin: gamified habit tracker, vanilla HTML/CSS/JS + Firebase
 - Admin (admin.html) and User (app.html, index.html, habitrewards.html) share state via localStorage keys
 - Critical sync patterns: hr_admin_{profile}, hr_state_stu, STORAGE_KEY
 - ~12,700 lines across 9 HTML pages — monolithic per-page architecture

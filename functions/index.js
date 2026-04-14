@@ -1,5 +1,5 @@
 /**
- * HabitRewards Cloud Functions
+ * MyDailyWin Cloud Functions
  * 
  * Handles email sending for admin invitations
  */
@@ -67,7 +67,7 @@ exports.sendAdminInvite = onRequest(
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
             <h1 style="color: #4f46e5; margin: 0;">
-              <a href="${baseUrl}" style="color: #4f46e5; text-decoration: none;">HabitRewards</a>
+              <a href="${baseUrl}" style="color: #4f46e5; text-decoration: none;">MyDailyWin</a>
             </h1>
             <p style="color: #6b7280; margin-top: 5px;">Gamified Habit Tracking</p>
           </div>
@@ -75,7 +75,7 @@ exports.sendAdminInvite = onRequest(
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 30px; color: white; margin-bottom: 20px;">
             <h2 style="margin: 0 0 15px 0;">You're Invited! 🎉</h2>
             <p style="margin: 0; font-size: 16px; line-height: 1.6;">
-              <strong>${senderName}</strong> has invited you to become an admin for <strong>${profileName}</strong>'s HabitRewards profile.
+              <strong>${senderName}</strong> has invited you to become an admin for <strong>${profileName}</strong>'s MyDailyWin profile.
             </p>
           </div>
           
@@ -97,14 +97,14 @@ exports.sendAdminInvite = onRequest(
           </div>
           
           <p style="color: #6b7280; font-size: 14px; text-align: center;">
-            New to HabitRewards? <a href="${guideUrl}" style="color: #4f46e5;">Read our Admin Guide</a> to get started.
+            New to MyDailyWin? <a href="${guideUrl}" style="color: #4f46e5;">Read our Admin Guide</a> to get started.
           </p>
           
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
           
           <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
             This invitation was sent by ${senderName} via 
-            <a href="${baseUrl}" style="color: #4f46e5;">HabitRewards</a>.
+            <a href="${baseUrl}" style="color: #4f46e5;">MyDailyWin</a>.
             <br>If you weren't expecting this, you can safely ignore this email.
           </p>
         </div>
@@ -112,9 +112,9 @@ exports.sendAdminInvite = onRequest(
 
       // Create plain text version
       const emailText = `
-You're Invited to HabitRewards!
+You're Invited to MyDailyWin!
 
-${senderName} has invited you to become an admin for ${profileName}'s HabitRewards profile.
+${senderName} has invited you to become an admin for ${profileName}'s MyDailyWin profile.
 
 As an admin, you can:
 - Create and manage habits
@@ -124,10 +124,10 @@ As an admin, you can:
 
 Accept the invitation here: ${adminUrl}
 
-New to HabitRewards? Read our Admin Guide: ${guideUrl}
+New to MyDailyWin? Read our Admin Guide: ${guideUrl}
 
 ---
-This invitation was sent by ${senderName} via HabitRewards (${baseUrl}).
+This invitation was sent by ${senderName} via MyDailyWin (${baseUrl}).
 If you weren't expecting this, you can safely ignore this email.
       `.trim();
 
@@ -135,7 +135,7 @@ If you weren't expecting this, you can safely ignore this email.
       const msg = {
         to: recipientEmail,
         from: senderEmail.value(),
-        subject: `${senderName} invited you to manage ${profileName}'s HabitRewards`,
+        subject: `${senderName} invited you to manage ${profileName}'s MyDailyWin`,
         text: emailText,
         html: emailHtml,
       };

@@ -17,7 +17,7 @@ Frontend Developer — owns the user-facing experience.
 - Reads admin-configured data but doesn't change admin config format
 
 ## Key Context
-- HabitRewards: gamified habit tracker, Duolingo-inspired UI
+- MyDailyWin: gamified habit tracker, Duolingo-inspired UI
 - User reads daily tasks from hr_admin_{profile} via getConfiguredDailyTasks()
 - Task visibility: filterForProfile uses stuOnly/excludeFromStu flags with IS_STU_PROFILE
 - Survey invite uses element id `surveyInvite` (NOT `surveySection`)

@@ -18,7 +18,7 @@ Backend Developer — owns Firebase, Firestore, authentication, and admin↔user
 - Owns auth flow — login, signup, profile creation, onboarding
 
 ## Key Context
-- HabitRewards: Firebase project habitrewards-131
+- MyDailyWin: Firebase project habitrewards-131
 - Hosting at habitrewards-131.web.app
 - Auth: Google Sign-In + email/password via Firebase Auth
 - localStorage keys: hr_admin_{profile}, hr_state_stu, STORAGE_KEY, hr_profile_{id}
