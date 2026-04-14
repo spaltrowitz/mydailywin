@@ -200,3 +200,28 @@ Executed Phases 1–4 of consolidation strategy (Mipha's responsibility in Phase
 - Event parameters in onclick handlers should use optional chaining pattern: `event?.currentTarget`
 - Storage keys must always be profile-suffixed for non-stu profiles: `hr_{feature}_{PROFILE_ID}`
 
+### Logo & Font Revert (2026-07-18)
+
+#### Changes Made
+1. **Logo reverted**: Removed inline SVG trophy from hero. Replaced with 🏆 emoji at 72px — clean, universal, polished. CSS `.hero-logo` changed from width/height to font-size/line-height.
+2. **Font swap**: Nunito → **Quicksand** (400/500/600/700). Quicksand is rounder, friendlier, and better suited for a gamified app. Google Fonts import updated.
+3. **Removed "Win" gold styling**: Hero h1 changed from `MyDaily<span style="color: var(--orange);">Win</span>` to plain `MyDailyWin`. Clean, unified, no Word Art effect.
+4. **Purple accents preserved**: No changes to `--secondary` usage. They still look good.
+
+#### User Preference (Shari)
+- Prefers emoji-based logo over custom SVG — simpler is better
+- Dislikes split-color wordmark styling (gold "Win") — wants unified title
+- Font should feel playful but professional — Quicksand fits this brief
+- Key file: `home.html` lines 13 (font import), 46 (body font), 57-61 (hero-logo CSS), 842-843 (hero markup)
+
+
+### CTA Section Background Fix (2026-07-18)
+
+#### Change
+- `.cta-section` background changed from `var(--primary)` (#58cc02, bright green) to `linear-gradient(135deg, #2d6e01, #3d8a02)` — the same dark green palette as the hero section, reversed.
+
+#### Reason
+- Hero gradient was updated to dark greens (#3d8a02 → #2d6e01) in earlier design work, but CTA section still used the bright `--primary`. The contrast was jarring — bright neon block at the bottom against a muted top.
+
+#### Pattern
+- When updating hero/header colors, check CTA/footer sections for palette consistency. The page should feel like one continuous design, not mismatched blocks.
