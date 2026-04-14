@@ -1,7 +1,7 @@
-# TODO: Set Up HabitBuilder Business Bank Account
+# TODO: Set Up MyDailyWin Business Bank Account
 
 ## Goal
-Enable payments to show "HabitBuilder" as the sender instead of your personal name.
+Enable payments to show "MyDailyWin" as the sender instead of your personal name.
 
 ---
 
@@ -12,7 +12,7 @@ You're a Chase Private Client - use that leverage!
 ### Action: Call Your Private Client Banker
 
 **What to say:**
-> "I'm starting a small side project called HabitBuilder. I'd like to open a business checking account under that name so Zelle payments show 'HabitBuilder' instead of my personal name. Can you help me set this up? Do I need to file a DBA, or can Chase register the trade name for me?"
+> "I'm starting a small side project called MyDailyWin. I'd like to open a business checking account under that name so Zelle payments show 'MyDailyWin' instead of my personal name. Can you help me set this up? Do I need to file a DBA, or can Chase register the trade name for me?"
 
 **Likely outcomes:**
 - They handle the DBA filing for you
@@ -23,10 +23,10 @@ You're a Chase Private Client - use that leverage!
 ### Steps:
 
 - [ ] **Call your Chase Private Client banker**
-- [ ] **Ask if they can set up "HabitBuilder" trade name without you filing DBA**
+- [ ] **Ask if they can set up "MyDailyWin" trade name without you filing DBA**
 - [ ] **If DBA needed, ask if Chase can file it for you or waive fees**
 - [ ] **Open business checking account**
-- [ ] **Enable Zelle with "HabitBuilder" display name**
+- [ ] **Enable Zelle with "MyDailyWin" display name**
 - [ ] **Test with $1 transfer to yourself**
 
 ---
@@ -47,11 +47,11 @@ If Chase needs you to file the DBA yourself:
 ## Option 1: Sole Proprietorship with DBA (Easiest - No LLC needed)
 
 ### What is a DBA?
-"Doing Business As" - lets you operate under "HabitBuilder" without forming an LLC. Your personal assets aren't protected, but for a non-profit hobby project with minimal liability, this is fine.
+"Doing Business As" - lets you operate under "MyDailyWin" without forming an LLC. Your personal assets aren't protected, but for a non-profit hobby project with minimal liability, this is fine.
 
 ### Steps:
 
-- [ ] **Step 1: Register DBA "HabitBuilder" with your state**
+- [ ] **Step 1: Register DBA "MyDailyWin" with your state**
   - In New York: File with your County Clerk's office
   - Cost: ~$25-100 depending on county
   - Online: https://www.dos.ny.gov/ (or search "[Your County] DBA filing")
@@ -78,7 +78,7 @@ If Chase needs you to file the DBA yourself:
 
 - [ ] **Step 3: Enable Zelle on the Business Account**
   - Usually automatic with Chase/BofA
-  - Set display name to "HabitBuilder"
+  - Set display name to "MyDailyWin"
   - Test by sending $1 to yourself
 
 ---
@@ -104,13 +104,13 @@ User requests $5.00
        ↓
 You get email notification (already implemented in app)
        ↓
-Admin (family member) transfers $5 to your HabitBuilder account
+Admin (family member) transfers $5 to your MyDailyWin account
   - Via Zelle (free, instant)
   - Or ACH bank transfer (free, 1-3 days)
        ↓
-You send $5 to user via Zelle from HabitBuilder account
+You send $5 to user via Zelle from MyDailyWin account
        ↓
-User receives money from "HabitBuilder" 🎉
+User receives money from "MyDailyWin" 🎉
        ↓
 Click "Mark as Sent" in admin dashboard
        ↓
@@ -140,11 +140,11 @@ User sees celebration notification in app
 
 ## Action Items Summary
 
-1. [ ] Register DBA "HabitBuilder" with county clerk
+1. [ ] Register DBA "MyDailyWin" with county clerk
 2. [ ] Receive DBA certificate (1-2 weeks)
 3. [ ] Go to Chase/BofA with DBA + ID
 4. [ ] Open business checking account
-5. [ ] Enable Zelle, set name to "HabitBuilder"
+5. [ ] Enable Zelle, set name to "MyDailyWin"
 6. [ ] Test with $1 transfer to yourself
 7. [ ] Start processing payouts! 🎉
 

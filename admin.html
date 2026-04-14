@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HabitBuilder - Admin Mode</title>
+    <title>MyDailyWin - Admin Mode</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="css/admin.css">
 </head>
@@ -12,7 +12,7 @@
         <a href="home.html?v=2" class="top-bar-left" style="text-decoration: none; color: inherit;">
             <div class="logo">🏆</div>
             <div class="top-bar-title">
-                <h1>HabitBuilder</h1>
+                <h1>MyDailyWin</h1>
                 <p>Admin Dashboard</p>
             </div>
         </a>
@@ -335,11 +335,11 @@
                             <li>Points accumulate as tasks are completed (100 pts = $1.00)</li>
                             <li><span class="user-name">User</span> requests a payout via the <strong>Cash Out</strong> button</li>
                             <li>Request appears in your <strong>Payments tab</strong> with a notification</li>
-                            <li>Transfer funds to HabitBuilder → Payment sent via Zelle</li>
+                            <li>Transfer funds to MyDailyWin → Payment sent via Zelle</li>
                             <li>Click <strong>"Mark as Sent"</strong> when complete</li>
                             <li><span class="user-name">User</span> gets a celebration notification in their app!</li>
                         </ul>
-                        <p style="margin-top: 8px; color: var(--primary);">💡 Tip: No monthly deadline — they cash out when they're ready! Payments show as "from HabitBuilder" via Zelle.</p>
+                        <p style="margin-top: 8px; color: var(--primary);">💡 Tip: No monthly deadline — they cash out when they're ready! Payments show as "from MyDailyWin" via Zelle.</p>
                     </div>
                 </div>
 
@@ -396,8 +396,8 @@
             </div>
 
             <div class="card">
-                <h2>🔗 Share HabitBuilder</h2>
-                <p style="color: var(--text-light); margin-bottom: 15px;">Know someone who could benefit from HabitBuilder? Share the app with them!</p>
+                <h2>🔗 Share MyDailyWin</h2>
+                <p style="color: var(--text-light); margin-bottom: 15px;">Know someone who could benefit from MyDailyWin? Share the app with them!</p>
                 <button class="btn btn-primary btn-block" onclick="referFriend()">👥 Refer a Friend</button>
             </div>
 
@@ -413,7 +413,7 @@
             <div class="card">
                 <h2>ℹ️ About</h2>
                 <p style="font-size: 14px; color: var(--text-light); line-height: 1.6;">
-                    <strong>HabitBuilder</strong> v1.0<br><br>
+                    <strong>MyDailyWin</strong> v1.0<br><br>
                     A gamified habit-tracking app designed to encourage daily positive behaviors through monetary rewards. Uses proven gamification mechanics like streaks, levels, and spin-to-win.
                 </p>
             </div>
@@ -480,7 +480,7 @@
             <p style="color: #777; margin-bottom: 20px;">Sign in to become an admin and start managing this profile</p>
             <a id="signInLink" href="login.html" class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 14px 30px; background: #58cc02; color: white; border-radius: 12px; font-weight: 600;">Sign In to Accept</a>
             <p style="color: #999; font-size: 12px; margin-top: 15px;">
-                <a href="admin-guide.html" style="color: #58cc02;">New to HabitBuilder? Read the Admin Guide →</a>
+                <a href="admin-guide.html" style="color: #58cc02;">New to MyDailyWin? Read the Admin Guide →</a>
             </p>
         </div>
     </div>
@@ -1033,8 +1033,8 @@
                                 <div style="font-size: 12px; color: #b45309; margin-bottom: 8px;">Requested ${requestedDate.toLocaleDateString()} at ${requestedDate.toLocaleTimeString()}</div>
                                 <div style="font-size: 13px; color: #78350f; background: #fef9c3; padding: 8px 12px; border-radius: 6px; margin-top: 8px;">
                                     <strong>📋 Steps:</strong><br>
-                                    1. Transfer $${parseFloat(r.amount).toFixed(2)} to HabitBuilder account<br>
-                                    2. HabitBuilder sends via Zelle to ${userName}<br>
+                                    1. Transfer $${parseFloat(r.amount).toFixed(2)} to MyDailyWin account<br>
+                                    2. MyDailyWin sends via Zelle to ${userName}<br>
                                     3. Click "Mark as Sent" below
                                 </div>
                             </div>
@@ -1084,7 +1084,7 @@
                 await db.collection('payoutRequests').doc(requestId).update({
                     status: 'completed',
                     completedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    sentBy: 'HabitBuilder'
+                    sentBy: 'MyDailyWin'
                 });
                 
                 // Record the payment locally
@@ -1093,7 +1093,7 @@
                 admin.payments.unshift({
                     month: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
                     amount: amount,
-                    notes: 'Sent via HabitBuilder Zelle',
+                    notes: 'Sent via MyDailyWin Zelle',
                     date: new Date().toISOString(),
                     recipient: userName
                 });
@@ -1124,7 +1124,7 @@
                     profileId: profileId,
                     type: 'payout_sent',
                     title: '💰 Payment Sent!',
-                    message: `$${parseFloat(amount).toFixed(2)} from HabitBuilder is on its way via Zelle!`,
+                    message: `$${parseFloat(amount).toFixed(2)} from MyDailyWin is on its way via Zelle!`,
                     amount: amount,
                     read: false,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1407,7 +1407,7 @@
             if (log.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Points,Comment\n';
             log.forEach(e => csv += `"${e.date}","${e.type}","${e.task}","${e.points}","${(e.comment||'').replace(/"/g,'""')}"\n`);
-            downloadCSV(csv, 'habitbuilder-tasks');
+            downloadCSV(csv, 'mydailywin-tasks');
         }
 
         function downloadFeedbackLog() {
@@ -1416,7 +1416,7 @@
             if (fb.length === 0) { alert('No data'); return; }
             let csv = 'Date,Mood,Energy,Overall,Comments\n';
             fb.forEach(f => csv += `"${new Date(f.date).toLocaleDateString()}","${f.mood||''}","${f.energy||''}","${f.overall||''}","${(f.comments||'').replace(/"/g,'""')}"\n`);
-            downloadCSV(csv, 'habitbuilder-feedback');
+            downloadCSV(csv, 'mydailywin-feedback');
         }
 
         function downloadReports() {
@@ -1425,7 +1425,7 @@
             if (rpts.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Reason,Comment\n';
             rpts.forEach(r => csv += `"${new Date(r.date).toLocaleDateString()}","${r.taskType}","${r.taskName}","${r.reason}","${(r.comment||'').replace(/"/g,'""')}"\n`);
-            downloadCSV(csv, 'habitbuilder-reports');
+            downloadCSV(csv, 'mydailywin-reports');
         }
 
         function downloadAllData() {
@@ -1497,7 +1497,7 @@
                 csv += row.join(',') + '\n';
             });
             
-            downloadCSV(csv, 'habitbuilder-survey-data');
+            downloadCSV(csv, 'mydailywin-survey-data');
         }
         
         function escapeCSV(value) {
@@ -1580,15 +1580,15 @@
 
         // ========== SETTINGS ACTIONS ==========
         function contactDeveloper() {
-            const subject = encodeURIComponent('HabitBuilder - Support Request');
-            const body = encodeURIComponent('Hi,\n\nI have a question about HabitBuilder:\n\n');
+            const subject = encodeURIComponent('MyDailyWin - Support Request');
+            const body = encodeURIComponent('Hi,\n\nI have a question about MyDailyWin:\n\n');
             window.location.href = `mailto:developer@habitrewards.app?subject=${subject}&body=${body}`;
         }
 
         function shareApp() {
             const url = 'https://habitrewards-131.web.app';
             if (navigator.share) {
-                navigator.share({ title: 'HabitBuilder', text: 'Check out this habit tracking app!', url });
+                navigator.share({ title: 'MyDailyWin', text: 'Check out this habit tracking app!', url });
             } else {
                 navigator.clipboard.writeText(url);
                 alert('Link copied to clipboard!\n\n' + url);
@@ -1596,9 +1596,9 @@
         }
 
         function referFriend() {
-            const msg = encodeURIComponent('Hey! Check out HabitBuilder - a fun app that pays you for building good habits. https://habitrewards-131.web.app');
+            const msg = encodeURIComponent('Hey! Check out MyDailyWin - a fun app that pays you for building good habits. https://habitrewards-131.web.app');
             if (navigator.share) {
-                navigator.share({ title: 'HabitBuilder', text: msg });
+                navigator.share({ title: 'MyDailyWin', text: msg });
             } else {
                 window.location.href = `sms:?body=${msg}`;
             }
@@ -1888,7 +1888,7 @@
         
         async function sendInviteEmail(email) {
             const currentUser = auth.currentUser;
-            const senderName = currentUser?.displayName || currentUser?.email || 'A HabitBuilder user';
+            const senderName = currentUser?.displayName || currentUser?.email || 'A MyDailyWin user';
             const appUrl = window.location.origin;
             const adminUrl = `${appUrl}/admin.html?profile=${encodeURIComponent(PROFILE_ID)}`;
             const guideUrl = `${appUrl}/admin-guide.html`;
@@ -1933,18 +1933,18 @@
         function fallbackMailto(email, senderName) {
             const appUrl = window.location.origin + '/login.html';
             const guideUrl = window.location.origin + '/admin-guide.html';
-            const subject = encodeURIComponent(`You've been added as an admin for ${PROFILE_NAME} on HabitBuilder`);
+            const subject = encodeURIComponent(`You've been added as an admin for ${PROFILE_NAME} on MyDailyWin`);
             const body = encodeURIComponent(
                 `Hi!\n\n` +
-                `${senderName} has invited you to be an admin for ${PROFILE_NAME}'s HabitBuilder profile.\n\n` +
+                `${senderName} has invited you to be an admin for ${PROFILE_NAME}'s MyDailyWin profile.\n\n` +
                 `As an admin, you can:\n` +
                 `• View ${PROFILE_NAME}'s progress and streaks\n` +
                 `• Customize daily tasks\n` +
                 `• Record payments\n` +
                 `• Download reports\n\n` +
                 `Sign in here to get started:\n${appUrl}\n\n` +
-                `New to HabitBuilder? Read the admin guide:\n${guideUrl}\n\n` +
-                `— The HabitBuilder Team`
+                `New to MyDailyWin? Read the admin guide:\n${guideUrl}\n\n` +
+                `— The MyDailyWin Team`
             );
             
             // Create a temporary link and click it (more reliable than location.href)
