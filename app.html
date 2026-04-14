@@ -722,7 +722,7 @@
             <!-- Question 2: Favorite Task -->
             <div style="margin-bottom: 20px;">
                 <p style="font-weight: 700; margin-bottom: 5px;">💬 What's your favorite task?</p>
-                <input type="text" id="favoriteTask" placeholder="e.g., Duolingo, walking, crossword...">
+                <input type="text" id="favoriteTask" placeholder="e.g., walking, crossword, Wordle...">
             </div>
             
             <!-- Question 3: Suggestions -->
@@ -1038,7 +1038,6 @@
         // REGULAR TEMPLATE: Standard tasks for tech-comfortable users (like Stu's current setup)
         const REGULAR_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75, excludeFromStu: true },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
             { id: 5, name: "🟩 Play Wordle", value: 10 }
         ];
@@ -1128,10 +1127,6 @@
         // ========== TASK HELP INSTRUCTIONS ==========
         // Instructions for tasks (shown via "i" icon)
         const TASK_HELP = {
-            3: {
-                title: "🦉 Duolingo Setup",
-                content: '<p><strong>What is it?</strong> A free app to learn languages in short, fun lessons.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Open the <strong>App Store</strong> (iPhone) or <strong>Play Store</strong> (Android)</li><li>Search for <strong>"Duolingo"</strong></li><li>Tap <strong>Download/Install</strong> (it\'s free!)</li><li>Open the app and create an account</li><li>Pick a language you\'d like to learn</li><li>Complete one lesson (takes about 5 minutes)</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with Spanish or French - they\'re popular and well-made!</p>'
-            },
             5: {
                 title: "🟩 Wordle Setup",
                 content: '<p><strong>What is it?</strong> A daily word puzzle where you guess a 5-letter word in 6 tries.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/wordle</strong> in your web browser</li><li>Or download the <strong>NY Times Games</strong> app</li><li>Guess any 5-letter word to start</li><li>Green = right letter, right spot</li><li>Yellow = right letter, wrong spot</li><li>Gray = letter not in word</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with words that have common letters like "CRANE" or "STARE"</p>'
@@ -2319,7 +2314,7 @@
                 return;
             }
 
-            // Daily tasks (walk, duolingo, crossword) - simple checkbox, no modal
+            // Daily tasks (walk, crossword, wordle) - simple checkbox, no modal
             completeTaskDirectly(task);
         }
         
