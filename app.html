@@ -1456,7 +1456,7 @@
 
         function spinWheel() {
             if (state.spinUsedToday) {
-                alert('You already spun today! Come back tomorrow.');
+                showToast('You already spun today! Come back tomorrow 🎰');
                 return;
             }
             
@@ -1575,7 +1575,7 @@
             const suggestions = document.getElementById('feedbackSuggestions').value.trim();
             
             if (rating === 0) {
-                alert('Please select a star rating!');
+                showToast('⚠️ Please select a star rating');
                 return;
             }
             
@@ -1609,13 +1609,13 @@
             
             // Show confirmation
             triggerConfetti();
-            alert('Thanks for the feedback! +15 pts earned! 🎉');
+            showToast('Thanks for the feedback! +15 pts earned! 🎉', 5000);
             render();
         }
         
         function downloadFeedbackLog() {
             if (!state.feedbackHistory || state.feedbackHistory.length === 0) {
-                alert('No feedback entries yet!');
+                showToast('No feedback entries yet');
                 return;
             }
             
@@ -1681,7 +1681,7 @@
             }
             
             if (allResponses.length === 0) {
-                alert('No task responses yet!');
+                showToast('No task responses yet');
                 return;
             }
             
@@ -1728,7 +1728,7 @@
             
             newAchievements.forEach(a => {
                 setTimeout(() => {
-                    alert(`🏆 ACHIEVEMENT UNLOCKED!\n\n${a.name}\n${a.desc}`);
+                    showToast(`🏆 Achievement: ${a.name} — ${a.desc}`, 6000);
                     triggerCoinRain();
                 }, 500);
             });
@@ -1944,8 +1944,7 @@
         }
         
         // ========== QUOTE INTERACTIONS ==========
-        function showToast(message) {
-            // Create toast element
+        function showToast(message, duration = 4000) {
             const toast = document.createElement('div');
             toast.textContent = message;
             toast.style.cssText = `
@@ -1953,24 +1952,26 @@
                 bottom: 100px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: var(--primary);
-                color: white;
-                padding: 12px 24px;
-                border-radius: 30px;
+                background: var(--card-bg);
+                color: var(--text);
+                border: 2px solid var(--primary);
+                padding: 16px 24px;
+                border-radius: 16px;
                 font-weight: 600;
-                font-size: 14px;
+                font-size: 16px;
                 z-index: 9999;
+                max-width: 90vw;
+                text-align: center;
                 animation: slideInUp 0.3s ease-out;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             `;
             document.body.appendChild(toast);
             
-            // Remove after 2.5 seconds
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transition = 'opacity 0.3s';
                 setTimeout(() => toast.remove(), 300);
-            }, 2500);
+            }, duration);
         }
         
         function getQuoteKey() {
@@ -2362,7 +2363,7 @@
             // Show bonus message if any
             if (bonusMsg) {
                 triggerConfetti();
-                setTimeout(() => alert(`${bonusMsg}\n+${pts} pts!`), 100);
+                setTimeout(() => showToast(`${bonusMsg} +${pts} pts!`, 5000), 100);
             }
         }
 
@@ -2429,7 +2430,7 @@
                 closeModal('taskModal');
                 
                 if (bonusMsg) {
-                    setTimeout(() => alert(`+${pts} pts! ${bonusMsg}`), 300);
+                    setTimeout(() => showToast(`+${pts} pts! ${bonusMsg}`, 5000), 300);
                 }
                 
                 if (randomMult > 1) {
@@ -2661,17 +2662,17 @@
             const park = document.getElementById('tennisPark').value;
             
             if (!date) {
-                alert('Please select when you played!');
+                showToast('⚠️ Please select when you played');
                 return;
             }
             if (!park) {
-                alert('Please select where you played!');
+                showToast('⚠️ Please select where you played');
                 return;
             }
             
             const sessions = getTennisSessionsThisWeek();
             if (sessions.length >= 3) {
-                alert('You\'ve already logged 3 sessions this week!');
+                showToast('You\'ve already logged 3 sessions this week');
                 closeModal('tennisModal');
                 return;
             }
@@ -2679,7 +2680,7 @@
             // Check if this date was already logged
             const dateStr = new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
             if (sessions.some(s => s.date === dateStr)) {
-                alert('You\'ve already logged a session for this day!');
+                showToast('You\'ve already logged a session for this day');
                 return;
             }
             
@@ -2701,12 +2702,12 @@
                 saveState();
                 render();
                 triggerConfetti();
-                alert(`Great job! 🎾 You've completed 3 sessions this week! +${TENNIS_WEEKLY.value} pts`);
+                showToast(`Great job! 🎾 3 sessions this week! +${TENNIS_WEEKLY.value} pts`, 5000);
             } else {
                 closeModal('tennisModal');
                 saveState();
                 render();
-                alert(`Session logged! ${newCount}/3 this week.`);
+                showToast(`Session logged! ${newCount}/3 this week`);
             }
         }
         
@@ -2812,7 +2813,7 @@
             document.getElementById('streakRecoveryHint').style.display = 'none';
             
             triggerConfetti();
-            alert(`🔥 Streak saved! Great job calling ${who}!`);
+            showToast(`🔥 Streak saved! Great job calling ${who}!`, 5000);
             render();
         }
 
@@ -2900,7 +2901,7 @@
         function submitReport() {
             const reason = document.getElementById('reportReason').value;
             if (!reason) {
-                alert('Please select a reason');
+                showToast('⚠️ Please select a reason');
                 return;
             }
             
@@ -2924,7 +2925,7 @@
             });
             localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
             
-            alert('Thanks for the feedback! We\'ll review this task.');
+            showToast('Thanks for the feedback! We\'ll review this task.');
             closeModal('reportModal');
         }
 
@@ -3072,9 +3073,9 @@
             } else {
                 // Fallback: copy to clipboard
                 navigator.clipboard.writeText(shareUrl).then(() => {
-                    alert('Link copied to clipboard! 📋\n\nShare it with friends and family!');
+                    showToast('Link copied to clipboard! 📋');
                 }).catch(() => {
-                    alert('Share this link:\n\n' + shareUrl);
+                    showToast('Share this link: ' + shareUrl, 6000);
                 });
             }
         }
@@ -3097,9 +3098,9 @@
                 }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(shareText).then(() => {
-                    alert('Progress copied to clipboard! 📋\n\nPaste it anywhere to share!');
+                    showToast('Progress copied to clipboard! 📋');
                 }).catch(() => {
-                    alert(shareText);
+                    showToast(shareText, 6000);
                 });
             }
         }
@@ -3119,10 +3120,10 @@
         }
 
         function submitSurvey() {
-             if (!currentRating) { alert('Please tap a rating emoji!'); return; }
+             if (!currentRating) { showToast('⚠️ Please tap a rating emoji'); return; }
              state.balance += 10;  // 10 pts = $0.10
              state.totalEarned += 10;
-             alert('Thanks for the feedback! +10 pts');
+             showToast('Thanks for the feedback! +10 pts');
              document.getElementById('surveyInvite').style.display = 'none'; // Hide after submit
              saveState();
              render();
