@@ -411,7 +411,11 @@
             
             const avatar = document.getElementById('userAvatar');
             if (user.photoURL) {
-                avatar.innerHTML = `<img src="${user.photoURL}" alt="Avatar">`;
+                const img = document.createElement('img');
+                img.src = user.photoURL || '';
+                img.alt = 'Avatar';
+                avatar.innerHTML = '';
+                avatar.appendChild(img);
             } else {
                 avatar.textContent = (user.displayName || user.email || 'U')[0].toUpperCase();
             }
@@ -564,9 +568,9 @@
             // Store user ID for linking after survey
             const user = auth.currentUser;
             if (user) {
-                sessionStorage.setItem('hr_pending_user_uid', user.uid);
+                localStorage.setItem('hr_onboarding_uid', user.uid);
                 if (user.email) {
-                    sessionStorage.setItem('hr_pending_user_email', user.email);
+                    localStorage.setItem('hr_onboarding_email', user.email);
                 }
             }
             window.location.href = '/get-started.html';

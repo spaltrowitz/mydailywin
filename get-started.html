@@ -825,7 +825,7 @@
                 createdAt: new Date().toISOString()
             };
             
-            const pendingUserEmail = sessionStorage.getItem('hr_pending_user_email');
+            const pendingUserEmail = localStorage.getItem('hr_onboarding_email') || sessionStorage.getItem('hr_pending_user_email');
             if (pendingUserEmail) {
                 profileData.creatorEmail = pendingUserEmail;
                 profileData.ownerEmail = pendingUserEmail;
@@ -842,7 +842,7 @@
             }
             
             // Link to authenticated user if available
-            const pendingUserUid = sessionStorage.getItem('hr_pending_user_uid');
+            const pendingUserUid = localStorage.getItem('hr_onboarding_uid') || sessionStorage.getItem('hr_pending_user_uid');
             if (pendingUserUid) {
                 const userProfilesKey = 'hr_user_profiles_' + pendingUserUid;
                 let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
@@ -850,8 +850,10 @@
                     userProfiles.push({ id: answers.profileId, name: answers.userName });
                     localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
                 }
+                localStorage.removeItem('hr_onboarding_uid');
                 sessionStorage.removeItem('hr_pending_user_uid');
             }
+            localStorage.removeItem('hr_onboarding_email');
             sessionStorage.removeItem('hr_pending_user_email');
             
             // Also save survey data for export
