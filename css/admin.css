@@ -189,7 +189,7 @@ body {
 }
 
 .tab {
-    padding: 10px 14px;
+    padding: 12px 18px;
     border-radius: 12px;
     background: transparent;
     cursor: pointer;
@@ -198,6 +198,7 @@ body {
     border: none;
     color: var(--text-light);
     transition: all 0.2s;
+    min-height: 44px;
 }
 
 .tab:hover { background: var(--bg); }
