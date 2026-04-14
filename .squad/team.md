@@ -1,8 +1,8 @@
-# MyDailyWin — Squad
+# HabitBuilder — Squad
 
 ## Project Context
 
-**Project:** MyDailyWin — gamified habit-tracking web app  
+**Project:** HabitBuilder — gamified habit-tracking web app  
 **Stack:** Vanilla HTML/CSS/JS, Firebase (Hosting + Auth + Firestore), EmailJS, PWA  
 **User:** Shari Paltrowitz  
 **Repo:** habitrewards  

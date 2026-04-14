@@ -27,7 +27,7 @@
 ## Learnings
 
 ### Project Context (Day 1)
-- MyDailyWin: gamified habit-tracking web app
+- HabitBuilder: gamified habit-tracking web app
 - Stack: Vanilla HTML/CSS/JS, Firebase (Hosting + Auth + Firestore), EmailJS, PWA
 - User: Shari Paltrowitz
 - Key architecture: monolithic per-page HTML with inline JS, localStorage for state, Firebase for auth/hosting

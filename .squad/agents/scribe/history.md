@@ -1,7 +1,7 @@
 ## Learnings
 
 ### Project Context (Day 1)
-- MyDailyWin: gamified habit-tracking web app
+- HabitBuilder: gamified habit-tracking web app
 - User: Shari Paltrowitz
 - Team: Edna (Lead), Dash (User Dev), Violet (Admin Dev), Frozone (Backend), Helen (Tester)
 
