@@ -2,9 +2,9 @@
 
 A gamified habit-tracking app designed to encourage daily positive behaviors through rewards and recognition. Built with a fun, Duolingo-inspired interface.
 
-**Live App:** https://habitrewards-131.web.app  
-**Homepage:** https://habitrewards-131.web.app/home.html  
-**Admin Mode:** https://habitrewards-131.web.app/admin.html
+**Live App:** https://mydailywin.web.app  
+**Homepage:** https://mydailywin.web.app/home.html  
+**Admin Mode:** https://mydailywin.web.app/admin.html
 
 ---
 
@@ -211,7 +211,7 @@ Accessed via gear icon in top right:
 
 | Service | Purpose | When to Use |
 |---------|---------|-------------|
-| **Hosting** | Serves the app at habitrewards-131.web.app | Deploy with `firebase deploy --only hosting` |
+| **Hosting** | Serves the app at mydailywin.web.app | Deploy with `firebase deploy --only hosting` |
 | **Authentication** | Google Sign-In & email/password login | Manage users in Firebase Console → Authentication |
 
 **Deploying Updates:**

@@ -1448,7 +1448,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `habitrewards-${PROFILE_NAME}-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `mydailywin-${PROFILE_NAME}-backup-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
 
@@ -1589,11 +1589,11 @@
         function contactDeveloper() {
             const subject = encodeURIComponent('MyDailyWin - Support Request');
             const body = encodeURIComponent('Hi,\n\nI have a question about MyDailyWin:\n\n');
-            window.location.href = `mailto:developer@habitrewards.app?subject=${subject}&body=${body}`;
+            window.location.href = `mailto:developer@mydailywin.app?subject=${subject}&body=${body}`;
         }
 
         function shareApp() {
-            const url = 'https://habitrewards-131.web.app';
+            const url = 'https://mydailywin.web.app';
             if (navigator.share) {
                 navigator.share({ title: 'MyDailyWin', text: 'Check out this habit tracking app!', url });
             } else {
@@ -1603,7 +1603,7 @@
         }
 
         function referFriend() {
-            const msg = encodeURIComponent('Hey! Check out MyDailyWin - a fun app that pays you for building good habits. https://habitrewards-131.web.app');
+            const msg = encodeURIComponent('Hey! Check out MyDailyWin - a fun app that pays you for building good habits. https://mydailywin.web.app');
             if (navigator.share) {
                 navigator.share({ title: 'MyDailyWin', text: msg });
             } else {

@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "mydailywin",
     "public": ".",
     "ignore": [
       "firebase.json",
