@@ -162,6 +162,20 @@ Executed Phases 1–4 of consolidation strategy (Mipha's responsibility in Phase
 - For inline onclick handlers that pass `event`, the browser's implicit `event` variable works but the function signature must accept it as a parameter for programmatic calls.
 - `saveProfileSetup()` is called during `goToSummary()` — the try/catch prevents redirect if storage fails.
 
+### Home Page Design Polish (2026-04-14)
+
+#### Changes Made
+1. **Inline SVG favicon in hero**: Replaced 🏆 emoji (renders inconsistently) with the actual `favicon.svg` inlined directly. Sized at 100×100px. CSS `.hero-logo` updated from font-size to width/height.
+2. **Nunito font**: Added Google Fonts import (400/600/700/800) and set as primary font-family on body, matching app.html's typography.
+3. **Secondary purple accents**: Applied `--secondary` (#ce82ff) in three places: "Why MyDailyWin?" section gets purple-tinted gradient background, alternating gamification badges get light purple background, FAQ Quick Reference box border changed from green to purple with purple gradient background.
+4. **"Win" wordmark**: Hero h1 now renders "MyDaily" in white and "Win" in gold (`var(--orange)`) via inline span.
+5. **og-image.png**: Neither `rsvg-convert` nor ImageMagick `convert` available on this machine. Logged as TODO in decisions inbox.
+
+#### Key Patterns
+- Inline SVG avoids an extra network request and ensures consistent rendering vs emoji.
+- Purple accents are subtle (light tints like `#faf5ff`, `#f3e8ff`, `#e9d5ff`) — not competing with primary green.
+- Nunito import uses `display=swap` for good CLS scores.
+
 
 ---
 
