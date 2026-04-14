@@ -23,7 +23,7 @@
             --bg: #f0f2f5;
             --card-bg: #ffffff;
             --text: #3c3c3c;
-            --text-light: #777;
+            --text-light: #595959;
             --radius-box: 20px;
             --radius-btn: 16px;
         }
@@ -42,7 +42,7 @@
             --bg: #131f24;
             --card-bg: #202f36;
             --text: #e5e5e5;
-            --text-light: #888;
+            --text-light: #a3a3a3;
         }
 
         /* ========== ANIMATIONS ========== */
@@ -62,7 +62,7 @@
 
         /* ========== UI COMPONENTS ========== */
         header {
-            background: linear-gradient(135deg, #58cc02, #46a302);
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
             padding: 15px 20px;
             position: sticky;
             top: 0;
@@ -102,7 +102,7 @@
 
         .section-title {
             font-size: 20px; font-weight: 800; margin: 30px 0 15px;
-            color: var(--text-light); text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-light); letter-spacing: normal;
         }
 
         .btn {
@@ -141,7 +141,7 @@
         }
         
         .balance-hero {
-            background: linear-gradient(135deg, #58cc02, #46a302);
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
             color: white; padding: 24px; text-align: center; border-radius: 24px;
             margin-bottom: 30px; box-shadow: 0 8px 0 #3d8a02;
             position: relative; overflow: hidden;
@@ -151,7 +151,7 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
             animation: shimmer 3s infinite;
         }
-        .balance-title { font-size: 14px; text-transform: uppercase; opacity: 0.9; font-weight: 700; margin-bottom: 5px; letter-spacing: 2px; }
+        .balance-title { font-size: 16px; opacity: 0.9; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
         .balance-amount { 
             font-size: 48px; font-weight: 800; 
             text-shadow: 0 3px 0 rgba(0,0,0,0.1);
@@ -239,10 +239,14 @@
         .modal.active .modal-box { transform: scale(1); }
 
         .close-modal {
-            position: absolute; top: 20px; right: 20px; font-size: 28px;
+            position: absolute; top: 16px; right: 16px; font-size: 28px;
             color: var(--text-light); cursor: pointer; line-height: 1;
             background: none; border: none; padding: 0; font-family: inherit;
+            min-width: 44px; min-height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
         }
+        .close-modal:hover { background: rgba(0,0,0,0.05); }
 
         input[type="text"], input[type="number"], select, textarea {
             width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px;
@@ -285,10 +289,16 @@
             margin: 15px 0;
         }
         .star-rating span {
-            font-size: 36px;
+            font-size: 40px;
             cursor: pointer;
             transition: transform 0.2s, filter 0.2s;
             filter: grayscale(80%);
+            padding: 4px;
+            min-width: 48px;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .star-rating span:hover {
             transform: scale(1.2);
@@ -299,19 +309,19 @@
         }
         /* Help button for tech tasks */
         .task-help-btn {
-            width: 18px;
-            height: 18px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            border: 1.5px solid var(--primary);
+            border: 2px solid var(--primary);
             background: transparent;
             color: var(--primary);
             font-weight: 700;
-            font-size: 11px;
+            font-size: 15px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-left: 6px;
+            margin-left: 8px;
             flex-shrink: 0;
             transition: all 0.2s;
             vertical-align: middle;
@@ -327,6 +337,21 @@
         }
         body.dark-mode .task-help-btn:hover {
             background: var(--primary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .card:hover { transform: none; }
+            .task-row:hover { transform: none; }
+        }
+
+        @media (hover: none) {
+            .card:hover { transform: none; }
+            .task-row:hover { transform: none; border-color: rgba(0,0,0,0.05); }
         }
     </style>
 </head>
@@ -350,23 +375,23 @@
             
             <!-- Daily Quote -->
             <div id="quoteContainer" style="margin-bottom: 15px; padding: 0 10px; position: relative;">
-                <div id="dailyQuote" style="font-style: italic; color: var(--text-light); font-size: 14px; line-height: 1.5;"></div>
-                <div id="quoteSpanish" style="display: none; font-style: italic; color: var(--primary); font-size: 14px; line-height: 1.5; margin-top: 8px;"></div>
+                <div id="dailyQuote" style="font-style: italic; color: var(--text-light); font-size: 16px; line-height: 1.5;"></div>
+                <div id="quoteSpanish" style="display: none; font-style: italic; color: var(--primary); font-size: 16px; line-height: 1.5; margin-top: 8px;"></div>
                 <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px; align-items: center; position: relative;">
                     <!-- Onboarding tooltip for first-time users -->
-                    <div id="quoteOnboarding" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                    <div id="quoteOnboarding" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
                         👇 Tap to earn 5 pts for reading today's quote!
                         <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--primary);"></div>
                     </div>
                     <!-- Spanish onboarding tooltip -->
-                    <div id="spanishOnboarding" style="display: none; position: absolute; bottom: 100%; right: 0; background: #f59e0b; color: white; padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                    <div id="spanishOnboarding" style="display: none; position: absolute; bottom: 100%; right: 0; background: #f59e0b; color: white; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
                         👇 Tap to see the Spanish translation!
                         <div style="position: absolute; bottom: -6px; right: 20px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #f59e0b;"></div>
                     </div>
-                    <button id="quoteAckBtn" onclick="acknowledgeQuote()" style="background: var(--bg); border: 2px solid var(--primary); color: var(--primary); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                    <button id="quoteAckBtn" onclick="acknowledgeQuote()" style="background: var(--bg); border: 2px solid var(--primary); color: var(--primary); font-size: 14px; font-weight: 600; padding: 10px 18px; border-radius: 20px; cursor: pointer; transition: all 0.2s; min-height: 44px;">
                         ✨ +5 pts
                     </button>
-                    <button id="spanishBtn" onclick="showSpanishQuote()" style="display: none; background: var(--bg); border: 2px solid #f59e0b; color: #f59e0b; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                    <button id="spanishBtn" onclick="showSpanishQuote()" style="display: none; background: var(--bg); border: 2px solid #f59e0b; color: #f59e0b; font-size: 14px; font-weight: 600; padding: 10px 18px; border-radius: 20px; cursor: pointer; transition: all 0.2s; min-height: 44px;">
                         🇪🇸 +5 pts
                     </button>
                 </div>
@@ -375,10 +400,10 @@
             <div class="streak-badge" onclick="checkStreakRecovery()" style="cursor: pointer;">
                 🔥 <span id="streakDays">0</span> Day Streak
             </div>
-            <div id="streakRecoveryHint" style="display: none; color: #f59e0b; font-size: 12px; margin-top: 5px; font-weight: 600;">
+            <div id="streakRecoveryHint" style="display: none; color: #f59e0b; font-size: 14px; margin-top: 5px; font-weight: 600;">
                 ⚠️ Streak at risk! Tap to recover
             </div>
-            <div style="color: var(--text-light); font-size: 14px;" id="dateDisplay"></div>
+            <div style="color: var(--text-light); font-size: 16px;" id="dateDisplay"></div>
         </div>
 
         <div class="balance-hero">
@@ -395,11 +420,11 @@
             <div class="level-progress-bar">
                 <div class="level-progress-fill" id="levelProgressFill" style="width: 0%;"></div>
             </div>
-            <div id="levelProgressText" style="font-size: 11px; opacity: 0.85; margin-top: 6px;"></div>
+            <div id="levelProgressText" style="font-size: 14px; opacity: 0.85; margin-top: 6px;"></div>
             
             <!-- Payout Info -->
             <div style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 12px;">
-                <button onclick="requestPayout()" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 20px; cursor: pointer;">💸 Cash Out via Zelle</button>
+                <button onclick="requestPayout()" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 15px; font-weight: 600; padding: 8px 16px; border-radius: 20px; cursor: pointer;">💸 Cash Out via Zelle</button>
             </div>
         </div>
 
@@ -415,8 +440,8 @@
         <!-- Lucky Day Banner -->
         <div id="luckyDayBanner" style="display: none; margin-bottom: 20px;">
             <div class="card" style="background: linear-gradient(135deg, #7c3aed, #a855f7); border: 2px solid #ffd700; color: white; text-align: center; padding: 15px;">
-                <div style="font-size: 24px;">🍀✨ LUCKY DAY! ✨🍀</div>
-                <div style="font-size: 14px; margin-top: 5px;">All tasks worth <strong>1.5x points</strong> today!</div>
+                <div style="font-size: 24px;">🍀✨ Bonus Day! ✨🍀</div>
+                <div style="font-size: 16px; margin-top: 5px;">All tasks worth <strong>1.5x points</strong> today!</div>
             </div>
         </div>
 
@@ -430,10 +455,10 @@
                 <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--primary), #4ade80); width: 0%; transition: width 0.5s ease; position: relative;">
                 </div>
             </div>
-            <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--primary); font-weight: 600;">
-                🎰 Complete all tasks for BONUS SPIN!
+            <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 15px; color: var(--primary); font-weight: 600;">
+                🎁 Complete all tasks for a BONUS REWARD!
             </div>
-            <div style="text-align: center; margin-top: 6px; font-size: 11px; color: var(--text-light);">
+            <div style="text-align: center; margin-top: 6px; font-size: 14px; color: var(--text-light);">
                 ℹ️ Tap to learn more
             </div>
         </div>
@@ -441,10 +466,10 @@
         <!-- Lucky Spin -->
         <div id="spinSection" style="display: none; margin-bottom: 25px;">
             <div class="card" style="background: linear-gradient(135deg, var(--primary), #4ade80); border: none; color: white; text-align: center; padding: 25px;">
-                <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">🎰 BONUS SPIN UNLOCKED!</div>
-                <div style="font-size: 80px; margin: 15px 0; transition: transform 0.5s;" id="spinEmoji">🎰</div>
+                <div style="font-size: 16px; letter-spacing: 1px; opacity: 0.9;">🎁 Bonus Reward Unlocked!</div>
+                <div style="font-size: 80px; margin: 15px 0; transition: transform 0.5s;" id="spinEmoji">🎁</div>
                 <button onclick="spinWheel()" id="spinBtn" style="background: white; color: var(--primary); border: none; border-radius: 16px; padding: 16px 40px; font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: all 0.1s;">
-                    🎲 SPIN TO WIN!
+                    🎁 Claim Your Bonus!
                 </button>
                 <div id="spinResult" style="margin-top: 15px; font-size: 24px; font-weight: 800;"></div>
             </div>
@@ -479,7 +504,7 @@
         <div id="surveyInvite" class="survey-invite" onclick="openModal('feedbackModal')">
             <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
             <div style="font-size: 18px; font-weight: 800;">Weekly Check-in</div>
-            <div style="font-size: 14px; margin-top: 4px;"><span style="display: inline-block; font-weight: 800; font-size: 13px; color: #a855f7; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,0.9);">+15 pts</span></div>
+            <div style="font-size: 15px; margin-top: 4px;"><span style="display: inline-block; font-weight: 800; font-size: 15px; color: #a855f7; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,0.9);">+15 pts</span></div>
             <div style="margin-top: 12px; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 12px; display: inline-block; font-weight: 700;">Complete Survey →</div>
         </div>
 
@@ -531,7 +556,7 @@
                 <option value="Other">Other</option>
             </select>
             
-            <div id="tennisProgress" style="text-align: center; margin-bottom: 15px; font-size: 14px; color: var(--text-light);"></div>
+            <div id="tennisProgress" style="text-align: center; margin-bottom: 15px; font-size: 16px; color: var(--text-light);"></div>
             
             <button class="btn btn-success" onclick="submitTennisSession()" style="margin-top: 10px;">✓ Log Session</button>
         </div>
@@ -548,20 +573,20 @@
                 <span id="syncIcon">☁️</span>
                 <div style="flex: 1;">
                     <div id="syncText" style="font-size: 14px; font-weight: 600;">Checking sync...</div>
-                    <div id="syncDetail" style="font-size: 12px; color: var(--text-light);">Your data is saved locally</div>
+                    <div id="syncDetail" style="font-size: 14px; color: var(--text-light);">Your data is saved locally</div>
                 </div>
             </div>
             
             <!-- Current Balance -->
             <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
-                <div style="font-size: 14px; color: var(--text-light); margin-bottom: 5px;">Your Balance</div>
+                <div style="font-size: 16px; color: var(--text-light); margin-bottom: 5px;">Your Balance</div>
                 <div style="font-size: 32px; color: var(--primary); font-weight: 800;" id="settingsBalance">0 pts</div>
                 <div style="font-size: 18px; color: var(--text-light); margin-top: 5px;" id="settingsDollars">= $0.00</div>
             </div>
             
             <!-- Admin Mode -->
             <h3 style="margin-bottom: 10px;">🔧 Admin Mode</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Customize tasks, record payments, view reports</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Customize tasks, record payments, view reports</p>
             <a id="adminLink" href="admin.html" class="btn" style="display: inline-block; text-decoration: none; text-align: center;">⚙️ Open Admin Mode</a>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
@@ -576,21 +601,21 @@
             
             <!-- Share Progress -->
             <h3 style="margin-bottom: 10px;">📊 Share Your Progress</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Brag about your streak!</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Brag about your streak!</p>
             <button class="btn btn-accent" onclick="shareProgress()" style="margin-bottom: 0;">🎯 Share Progress</button>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
             <!-- Refer a Friend -->
             <h3 style="margin-bottom: 10px;">👥 Refer a Friend</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Know someone who'd enjoy HabitRewards?</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Know someone who'd enjoy HabitRewards?</p>
             <button class="btn btn-purple" onclick="shareApp()" style="margin-bottom: 0;">📤 Share App Link</button>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
             <!-- Contact Developer -->
             <h3 style="margin-bottom: 10px;">💬 Contact Developer</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Have feedback, questions, or issues?</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Have feedback, questions, or issues?</p>
             <button class="btn" onclick="contactDeveloper()">✉️ Send Message</button>
         </div>
     </div>
@@ -601,7 +626,7 @@
             <button class="close-modal" onclick="closeModal('levelsModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px;">🏆 Level Progression</h2>
             <div id="levelsTable" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-light);">
+            <div style="margin-top: 20px; text-align: center; font-size: 15px; color: var(--text-light);">
                 Keep earning points to unlock higher levels!
             </div>
         </div>
@@ -616,7 +641,7 @@
             
             <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); padding: 20px; border-radius: 16px; color: #1a1a2e; margin-bottom: 20px;">
                 <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">📞 Call a Family Member</div>
-                <div style="font-size: 14px; opacity: 0.9;">Call a family member to check in and tell them what you've been up to. This restores your streak!</div>
+                <div style="font-size: 16px; opacity: 0.9;">Call a family member to check in and tell them what you've been up to. This restores your streak!</div>
             </div>
             
             <p style="margin-bottom: 10px; font-weight: 700;">💬 Who did you call?</p>
@@ -637,7 +662,7 @@
             <p style="color: var(--text-light); margin-bottom: 25px;">Request your earnings via Zelle</p>
             
             <!-- Balance Display -->
-            <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
+            <div style="background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
                 <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">Available Balance</div>
                 <div id="cashoutPoints" style="font-size: 36px; font-weight: 800;">0 pts</div>
                 <div id="cashoutDollars" style="font-size: 24px; opacity: 0.9; margin-top: 5px;">= $0.00</div>
@@ -648,20 +673,20 @@
                 <div style="font-weight: 700; margin-bottom: 12px; color: var(--text);">💡 How it works</div>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">1</span>
-                    <span style="color: var(--text-light); font-size: 14px;">Tap "Request Payout" below</span>
+                    <span style="color: var(--text-light); font-size: 16px;">Tap "Request Payout" below</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">2</span>
-                    <span style="color: var(--text-light); font-size: 14px;">Your admin will be notified</span>
+                    <span style="color: var(--text-light); font-size: 16px;">Your admin will be notified</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">3</span>
-                    <span style="color: var(--text-light); font-size: 14px;">Receive payment via Zelle</span>
+                    <span style="color: var(--text-light); font-size: 16px;">Receive payment via Zelle</span>
                 </div>
             </div>
             
             <!-- Exchange Rate Note -->
-            <div style="font-size: 12px; color: var(--text-light); margin-bottom: 20px;">
+            <div style="font-size: 14px; color: var(--text-light); margin-bottom: 20px;">
                 📊 Exchange rate: <strong>100 pts = $1.00</strong>
             </div>
             
@@ -669,7 +694,7 @@
             <button id="cashoutBtn" onclick="confirmCashout()" class="btn btn-success" style="width: 100%; padding: 16px; font-size: 16px; margin-bottom: 10px;">
                 💸 Request Payout
             </button>
-            <button onclick="closeModal('cashoutModal')" style="background: none; border: none; color: var(--text-light); font-size: 14px; cursor: pointer; padding: 10px;">
+            <button onclick="closeModal('cashoutModal')" style="background: none; border: none; color: var(--text-light); font-size: 16px; cursor: pointer; padding: 10px;">
                 Maybe Later
             </button>
         </div>
@@ -697,7 +722,7 @@
             <!-- Question 2: Favorite Task -->
             <div style="margin-bottom: 20px;">
                 <p style="font-weight: 700; margin-bottom: 5px;">💬 What's your favorite task?</p>
-                <input type="text" id="favoriteTask" placeholder="e.g., Duolingo, walking, crossword...">
+                <input type="text" id="favoriteTask" placeholder="e.g., walking, crossword, Wordle...">
             </div>
             
             <!-- Question 3: Suggestions -->
@@ -715,7 +740,7 @@
         <div class="modal-box" style="text-align: center; max-width: 350px;">
             <div id="confirmIcon" style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
             <h2 id="confirmTitle" style="margin-bottom: 10px; font-size: 20px;">Are you sure?</h2>
-            <p id="confirmMessage" style="color: var(--text-light); margin-bottom: 25px; font-size: 14px;"></p>
+            <p id="confirmMessage" style="color: var(--text-light); margin-bottom: 25px; font-size: 16px;"></p>
             <div style="display: flex; gap: 12px;">
                 <button class="btn" onclick="handleConfirm(false)" style="flex: 1; background: #e5e7eb; color: var(--text);">Cancel</button>
                 <button id="confirmBtn" class="btn" onclick="handleConfirm(true)" style="flex: 1; background: #ef4444; color: white;">Confirm</button>
@@ -739,7 +764,7 @@
                     <div style="font-size: 24px;">✅</div>
                     <div>
                         <div style="font-weight: 700;">Check Off Tasks</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Tap the circle next to each habit when you complete it. The progress bar fills up with each task!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Tap the circle next to each habit when you complete it. The progress bar fills up with each task!</div>
                     </div>
                 </div>
                 
@@ -747,7 +772,7 @@
                     <div style="font-size: 24px;">💰</div>
                     <div>
                         <div style="font-weight: 700;">Earn Points</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Each task earns you points. Points add up to real money (100 pts = $1)!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Each task earns you points. Points add up to real money (100 pts = $1)!</div>
                     </div>
                 </div>
                 
@@ -755,7 +780,7 @@
                     <div style="font-size: 24px;">🎰</div>
                     <div>
                         <div style="font-weight: 700;">Bonus Spin!</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Complete ALL tasks to unlock a bonus spin for extra points!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Complete ALL tasks to unlock a bonus reward for extra points!</div>
                     </div>
                 </div>
                 
@@ -763,7 +788,7 @@
                     <div style="font-size: 24px;">🔥</div>
                     <div>
                         <div style="font-weight: 700;">Build Your Streak</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Complete at least one task daily to maintain your streak!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Complete at least one task daily to maintain your streak!</div>
                     </div>
                 </div>
             </div>
@@ -1013,7 +1038,6 @@
         // REGULAR TEMPLATE: Standard tasks for tech-comfortable users (like Stu's current setup)
         const REGULAR_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 25 },
-            { id: 3, name: "🦉 Complete a Duolingo lesson", value: 75, excludeFromStu: true },
             { id: 4, name: "📝 Do a crossword puzzle", value: 50 },
             { id: 5, name: "🟩 Play Wordle", value: 10 }
         ];
@@ -1103,10 +1127,6 @@
         // ========== TASK HELP INSTRUCTIONS ==========
         // Instructions for tasks (shown via "i" icon)
         const TASK_HELP = {
-            3: {
-                title: "🦉 Duolingo Setup",
-                content: '<p><strong>What is it?</strong> A free app to learn languages in short, fun lessons.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Open the <strong>App Store</strong> (iPhone) or <strong>Play Store</strong> (Android)</li><li>Search for <strong>"Duolingo"</strong></li><li>Tap <strong>Download/Install</strong> (it\'s free!)</li><li>Open the app and create an account</li><li>Pick a language you\'d like to learn</li><li>Complete one lesson (takes about 5 minutes)</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with Spanish or French - they\'re popular and well-made!</p>'
-            },
             5: {
                 title: "🟩 Wordle Setup",
                 content: '<p><strong>What is it?</strong> A daily word puzzle where you guess a 5-letter word in 6 tries.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/wordle</strong> in your web browser</li><li>Or download the <strong>NY Times Games</strong> app</li><li>Guess any 5-letter word to start</li><li>Green = right letter, right spot</li><li>Yellow = right letter, wrong spot</li><li>Gray = letter not in word</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with words that have common letters like "CRANE" or "STARE"</p>'
@@ -1345,7 +1365,7 @@
                     <h2 style="margin-bottom: 10px; color: var(--primary);">Payment Sent!</h2>
                     <p style="color: var(--text-light); margin-bottom: 20px;">Your payout is on its way</p>
                     
-                    <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 20px;">
+                    <div style="background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 20px;">
                         <div style="font-size: 14px; opacity: 0.9;">Amount</div>
                         <div style="font-size: 42px; font-weight: 800;">$${parseFloat(amount).toFixed(2)}</div>
                     </div>
@@ -1354,7 +1374,7 @@
                         <div style="color: #166534; font-size: 14px;">
                             <strong>From:</strong> HabitRewards<br>
                             <strong>Via:</strong> Zelle<br>
-                            <span style="font-size: 12px; opacity: 0.8;">Check your Zelle app or bank notifications!</span>
+                            <span style="font-size: 14px; opacity: 0.8;">Check your Zelle app or bank notifications!</span>
                         </div>
                     </div>
                     
@@ -1415,7 +1435,6 @@
                 setTimeout(() => {
                     document.getElementById('loginBonusSection').style.display = 'none';
                 }, 3000);
-                triggerConfetti();
             }
         }
 
@@ -1432,7 +1451,7 @@
 
         function spinWheel() {
             if (state.spinUsedToday) {
-                alert('You already spun today! Come back tomorrow.');
+                showToast('You already spun today! Come back tomorrow 🎰');
                 return;
             }
             
@@ -1441,16 +1460,15 @@
             const spinBtn = document.getElementById('spinBtn');
             
             spinBtn.disabled = true;
-            spinBtn.textContent = '🎲 Spinning...';
+            spinBtn.textContent = '✨ Revealing...';
             
-            // Spin animation
             const prizes = [
                 { emoji: '💰', pts: 50, text: '+50 pts!' },
                 { emoji: '⭐', pts: 25, text: '+25 pts!' },
-                { emoji: '🎉', pts: 100, text: 'JACKPOT! +100 pts!' },
+                { emoji: '🎉', pts: 100, text: 'Big bonus! +100 pts!' },
                 { emoji: '✨', pts: 10, text: '+10 pts!' },
-                { emoji: '🍀', pts: 75, text: 'Lucky! +75 pts!' },
-                { emoji: '💎', pts: 150, text: 'MEGA WIN! +150 pts!' }
+                { emoji: '🍀', pts: 75, text: 'Great bonus! +75 pts!' },
+                { emoji: '💎', pts: 150, text: 'Amazing! +150 pts!' }
             ];
             
             let spins = 0;
@@ -1494,25 +1512,17 @@
         }
 
         function triggerCoinRain() {
-            for(let i = 0; i < 30; i++) {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const count = 8;
+            for(let i = 0; i < count; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
-                    el.innerText = ['💰', '💵', '🪙', '💲'][Math.floor(Math.random()*4)];
-                    el.style.position = 'fixed';
-                    el.style.left = Math.random() * 100 + 'vw';
-                    el.style.top = '-50px';
-                    el.style.fontSize = '40px';
-                    el.style.transition = 'top 1.5s ease-in, opacity 1.5s ease-in';
-                    el.style.zIndex = '9999';
+                    el.innerText = ['💰', '🪙'][Math.floor(Math.random()*2)];
+                    el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-50px;font-size:32px;transition:top 1s ease-in,opacity 1s;z-index:9999;pointer-events:none;`;
                     document.body.appendChild(el);
-                    
-                    setTimeout(() => {
-                        el.style.top = '110vh';
-                        el.style.opacity = '0';
-                    }, 50);
-                    
-                    setTimeout(() => el.remove(), 1600);
-                }, i * 50);
+                    requestAnimationFrame(() => { el.style.top = '110vh'; el.style.opacity = '0'; });
+                    setTimeout(() => el.remove(), 1100);
+                }, i * 80);
             }
         }
 
@@ -1559,7 +1569,7 @@
             const suggestions = document.getElementById('feedbackSuggestions').value.trim();
             
             if (rating === 0) {
-                alert('Please select a star rating!');
+                showToast('⚠️ Please select a star rating');
                 return;
             }
             
@@ -1593,13 +1603,13 @@
             
             // Show confirmation
             triggerConfetti();
-            alert('Thanks for the feedback! +15 pts earned! 🎉');
+            showToast('Thanks for the feedback! +15 pts earned! 🎉', 5000);
             render();
         }
         
         function downloadFeedbackLog() {
             if (!state.feedbackHistory || state.feedbackHistory.length === 0) {
-                alert('No feedback entries yet!');
+                showToast('No feedback entries yet');
                 return;
             }
             
@@ -1665,7 +1675,7 @@
             }
             
             if (allResponses.length === 0) {
-                alert('No task responses yet!');
+                showToast('No task responses yet');
                 return;
             }
             
@@ -1712,7 +1722,7 @@
             
             newAchievements.forEach(a => {
                 setTimeout(() => {
-                    alert(`🏆 ACHIEVEMENT UNLOCKED!\n\n${a.name}\n${a.desc}`);
+                    showToast(`🏆 Achievement: ${a.name} — ${a.desc}`, 6000);
                     triggerCoinRain();
                 }, 500);
             });
@@ -1928,8 +1938,7 @@
         }
         
         // ========== QUOTE INTERACTIONS ==========
-        function showToast(message) {
-            // Create toast element
+        function showToast(message, duration = 4000) {
             const toast = document.createElement('div');
             toast.textContent = message;
             toast.style.cssText = `
@@ -1937,24 +1946,26 @@
                 bottom: 100px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: var(--primary);
-                color: white;
-                padding: 12px 24px;
-                border-radius: 30px;
+                background: var(--card-bg);
+                color: var(--text);
+                border: 2px solid var(--primary);
+                padding: 16px 24px;
+                border-radius: 16px;
                 font-weight: 600;
-                font-size: 14px;
+                font-size: 16px;
                 z-index: 9999;
+                max-width: 90vw;
+                text-align: center;
                 animation: slideInUp 0.3s ease-out;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             `;
             document.body.appendChild(toast);
             
-            // Remove after 2.5 seconds
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transition = 'opacity 0.3s';
                 setTimeout(() => toast.remove(), 300);
-            }, 2500);
+            }, duration);
         }
         
         function getQuoteKey() {
@@ -2162,7 +2173,7 @@
             state.tasks.forEach(task => {
                 if (!task.completed) allDone = false;
                 
-                const helpBtn = TASK_HELP[task.id] ? `<button class="task-help-btn" onclick="event.stopPropagation(); showTaskHelp(${task.id})" title="How to get started">i</button>` : '';
+                const helpBtn = TASK_HELP[task.id] ? `<button class="task-help-btn" onclick="event.stopPropagation(); showTaskHelp(${task.id})" title="How to get started">?</button>` : '';
                 
                 const div = document.createElement('div');
                 div.className = 'task-row';
@@ -2209,7 +2220,7 @@
                     bonusContainer.appendChild(row);
                 } else {
                     const isCompleted = state.weeklyBonusesCompleted.includes(b.id);
-                    const helpBtn = TASK_HELP[b.id] ? `<button class="task-help-btn" style="border-color: white; color: white;" onclick="event.stopPropagation(); showTaskHelp(${b.id})" title="How to get started">i</button>` : '';
+                    const helpBtn = TASK_HELP[b.id] ? `<button class="task-help-btn" style="border-color: white; color: white;" onclick="event.stopPropagation(); showTaskHelp(${b.id})" title="How to get started">?</button>` : '';
                     
                     const row = document.createElement('div');
                     row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.15); padding: 14px 16px; border-radius: 20px; width: 100%;';
@@ -2238,7 +2249,7 @@
                 // Show help icon for daily bonus if it has help info
                 const showDailyHelp = TASK_HELP[dailyBonus.id];
                 document.getElementById('dailyBonusHelpBtn').innerHTML = showDailyHelp 
-                    ? `<button class="task-help-btn" style="border-color: white; color: white;" onclick="event.stopPropagation(); showTaskHelp(${dailyBonus.id})" title="How to get started">i</button>` 
+                    ? `<button class="task-help-btn" style="border-color: white; color: white;" onclick="event.stopPropagation(); showTaskHelp(${dailyBonus.id})" title="How to get started">?</button>` 
                     : '';
                 
                 const dailyBtn = document.getElementById('dailyBonusBtn');
@@ -2303,7 +2314,7 @@
                 return;
             }
 
-            // Daily tasks (walk, duolingo, crossword) - simple checkbox, no modal
+            // Daily tasks (walk, crossword, wordle) - simple checkbox, no modal
             completeTaskDirectly(task);
         }
         
@@ -2332,7 +2343,7 @@
             const randomMult = getRandomBonus();
             if (randomMult > 1) {
                 pts = Math.floor(pts * randomMult);
-                bonusMsg += '🎲 LUCKY 2x BONUS! ';
+                bonusMsg += '🎉 You got a random 2x bonus! ';
             }
             
             state.balance += pts;
@@ -2346,7 +2357,7 @@
             // Show bonus message if any
             if (bonusMsg) {
                 triggerConfetti();
-                setTimeout(() => alert(`${bonusMsg}\n+${pts} pts!`), 100);
+                setTimeout(() => showToast(`${bonusMsg} +${pts} pts!`, 5000), 100);
             }
         }
 
@@ -2400,7 +2411,7 @@
                 const randomMult = getRandomBonus();
                 if (randomMult > 1) {
                     pts = Math.floor(pts * randomMult);
-                    bonusMsg += '🎲 LUCKY 2x BONUS! ';
+                    bonusMsg += '🎉 You got a random 2x bonus! ';
                 }
                 
                 state.balance += pts;
@@ -2413,7 +2424,7 @@
                 closeModal('taskModal');
                 
                 if (bonusMsg) {
-                    setTimeout(() => alert(`+${pts} pts! ${bonusMsg}`), 300);
+                    setTimeout(() => showToast(`+${pts} pts! ${bonusMsg}`, 5000), 300);
                 }
                 
                 if (randomMult > 1) {
@@ -2645,17 +2656,17 @@
             const park = document.getElementById('tennisPark').value;
             
             if (!date) {
-                alert('Please select when you played!');
+                showToast('⚠️ Please select when you played');
                 return;
             }
             if (!park) {
-                alert('Please select where you played!');
+                showToast('⚠️ Please select where you played');
                 return;
             }
             
             const sessions = getTennisSessionsThisWeek();
             if (sessions.length >= 3) {
-                alert('You\'ve already logged 3 sessions this week!');
+                showToast('You\'ve already logged 3 sessions this week');
                 closeModal('tennisModal');
                 return;
             }
@@ -2663,7 +2674,7 @@
             // Check if this date was already logged
             const dateStr = new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
             if (sessions.some(s => s.date === dateStr)) {
-                alert('You\'ve already logged a session for this day!');
+                showToast('You\'ve already logged a session for this day');
                 return;
             }
             
@@ -2685,12 +2696,12 @@
                 saveState();
                 render();
                 triggerConfetti();
-                alert(`Great job! 🎾 You've completed 3 sessions this week! +${TENNIS_WEEKLY.value} pts`);
+                showToast(`Great job! 🎾 3 sessions this week! +${TENNIS_WEEKLY.value} pts`, 5000);
             } else {
                 closeModal('tennisModal');
                 saveState();
                 render();
-                alert(`Session logged! ${newCount}/3 this week.`);
+                showToast(`Session logged! ${newCount}/3 this week`);
             }
         }
         
@@ -2796,7 +2807,7 @@
             document.getElementById('streakRecoveryHint').style.display = 'none';
             
             triggerConfetti();
-            alert(`🔥 Streak saved! Great job calling ${who}!`);
+            showToast(`🔥 Streak saved! Great job calling ${who}!`, 5000);
             render();
         }
 
@@ -2884,7 +2895,7 @@
         function submitReport() {
             const reason = document.getElementById('reportReason').value;
             if (!reason) {
-                alert('Please select a reason');
+                showToast('⚠️ Please select a reason');
                 return;
             }
             
@@ -2908,7 +2919,7 @@
             });
             localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
             
-            alert('Thanks for the feedback! We\'ll review this task.');
+            showToast('Thanks for the feedback! We\'ll review this task.');
             closeModal('reportModal');
         }
 
@@ -3017,7 +3028,7 @@
                     <h2 style="margin-bottom: 10px; color: var(--primary);">Payout Requested!</h2>
                     <p style="color: var(--text-light); margin-bottom: 25px;">Your request has been submitted</p>
                     
-                    <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
+                    <div style="background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
                         <div style="font-size: 14px; opacity: 0.9;">Amount Requested</div>
                         <div style="font-size: 36px; font-weight: 800;">$${dollars}</div>
                         <div style="font-size: 14px; opacity: 0.9; margin-top: 5px;">(${pts} pts)</div>
@@ -3032,7 +3043,7 @@
                     <div style="background: #f0fdf4; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
                         <div style="color: #166534; font-size: 14px;">
                             💰 Payment from <strong>HabitRewards</strong> via Zelle<br>
-                            <span style="font-size: 12px; opacity: 0.8;">You'll get a notification when it's sent!</span>
+                            <span style="font-size: 14px; opacity: 0.8;">You'll get a notification when it's sent!</span>
                         </div>
                     </div>
                     
@@ -3056,9 +3067,9 @@
             } else {
                 // Fallback: copy to clipboard
                 navigator.clipboard.writeText(shareUrl).then(() => {
-                    alert('Link copied to clipboard! 📋\n\nShare it with friends and family!');
+                    showToast('Link copied to clipboard! 📋');
                 }).catch(() => {
-                    alert('Share this link:\n\n' + shareUrl);
+                    showToast('Share this link: ' + shareUrl, 6000);
                 });
             }
         }
@@ -3081,9 +3092,9 @@
                 }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(shareText).then(() => {
-                    alert('Progress copied to clipboard! 📋\n\nPaste it anywhere to share!');
+                    showToast('Progress copied to clipboard! 📋');
                 }).catch(() => {
-                    alert(shareText);
+                    showToast(shareText, 6000);
                 });
             }
         }
@@ -3103,10 +3114,10 @@
         }
 
         function submitSurvey() {
-             if (!currentRating) { alert('Please tap a rating emoji!'); return; }
+             if (!currentRating) { showToast('⚠️ Please tap a rating emoji'); return; }
              state.balance += 10;  // 10 pts = $0.10
              state.totalEarned += 10;
-             alert('Thanks for the feedback! +10 pts');
+             showToast('Thanks for the feedback! +10 pts');
              document.getElementById('surveyInvite').style.display = 'none'; // Hide after submit
              saveState();
              render();
@@ -3175,7 +3186,7 @@
                             <div style="font-weight: ${isCurrent ? '700' : '600'}; color: ${isUnlocked ? lvl.color : 'var(--text-light)'};">
                                 ${lvl.name} ${isCurrent ? '← You' : ''}
                             </div>
-                            <div style="font-size: 12px; color: var(--text-light);">
+                            <div style="font-size: 14px; color: var(--text-light);">
                                 ${lvl.pts.toLocaleString()} pts ($${(lvl.pts/100).toFixed(2)})
                             </div>
                         </div>
@@ -3220,22 +3231,15 @@
         }
 
         function triggerConfetti() {
-            for(let i=0; i<20; i++) {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const count = 10;
+            for(let i=0; i<count; i++) {
                 const el = document.createElement('div');
-                el.innerText = ['🎉', '⭐', '💰', '✨'][Math.floor(Math.random()*4)];
-                el.style.position = 'fixed';
-                el.style.left = Math.random() * 100 + 'vw';
-                el.style.top = '-50px';
-                el.style.fontSize = '30px';
-                el.style.transition = 'top 2s ease-in, opacity 2s ease-in';
+                el.innerText = ['🎉', '⭐', '✨'][Math.floor(Math.random()*3)];
+                el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-50px;font-size:28px;transition:top 1.5s ease-in,opacity 1.5s;z-index:9999;pointer-events:none;`;
                 document.body.appendChild(el);
-                
-                setTimeout(() => {
-                    el.style.top = '110vh';
-                    el.style.opacity = '0';
-                }, 100);
-                
-                setTimeout(() => el.remove(), 2000);
+                requestAnimationFrame(() => { el.style.top = '110vh'; el.style.opacity = '0'; });
+                setTimeout(() => el.remove(), 1600);
             }
         }
 

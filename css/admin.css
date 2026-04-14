@@ -7,7 +7,7 @@
     --orange: #ff9600;
     --bg: #f7f7f7;
     --text: #3c3c3c;
-    --text-light: #777777;
+    --text-light: #595959;
     --card-bg: white;
 }
 
@@ -53,7 +53,7 @@ body {
 
 .top-bar p {
     opacity: 0.9;
-    font-size: 12px;
+    font-size: 14px;
     margin: 0;
 }
 
@@ -68,7 +68,7 @@ body {
     padding: 8px 14px;
     border-radius: 8px;
     text-decoration: none;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     white-space: nowrap;
     transition: background 0.2s;
@@ -165,7 +165,7 @@ body {
 }
 
 .stat-box .label {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text-light);
     margin-top: 4px;
 }
@@ -189,15 +189,16 @@ body {
 }
 
 .tab {
-    padding: 10px 14px;
+    padding: 12px 18px;
     border-radius: 12px;
     background: transparent;
     cursor: pointer;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 15px;
     border: none;
     color: var(--text-light);
     transition: all 0.2s;
+    min-height: 44px;
 }
 
 .tab:hover { background: var(--bg); }
@@ -226,7 +227,7 @@ th, td {
 th {
     background: var(--bg);
     font-weight: 700;
-    font-size: 11px;
+    font-size: 14px;
     text-transform: uppercase;
     color: var(--text-light);
 }
@@ -254,7 +255,7 @@ th {
 
 .level-row.locked { opacity: 0.4; }
 .level-name { flex: 1; font-weight: 600; }
-.level-pts { font-size: 13px; color: var(--text-light); }
+.level-pts { font-size: 15px; color: var(--text-light); }
 
 /* Info & Warning Boxes */
 .info-box {
@@ -286,7 +287,7 @@ th {
 
 .report-item .task-name { font-weight: 700; margin-bottom: 4px; }
 .report-item .reason { font-size: 14px; color: var(--text-light); }
-.report-item .date { font-size: 12px; color: var(--text-light); margin-top: 6px; }
+.report-item .date { font-size: 14px; color: var(--text-light); margin-top: 6px; }
 
 /* Empty State */
 .empty-state {
@@ -307,7 +308,7 @@ th {
 .feature-item:last-child { border-bottom: none; }
 .feature-icon { font-size: 24px; }
 .feature-content h4 { font-weight: 700; margin-bottom: 4px; }
-.feature-content p { font-size: 13px; color: var(--text-light); }
+.feature-content p { font-size: 15px; color: var(--text-light); }
 
 /* Payment Rows */
 .payment-row {
@@ -410,7 +411,7 @@ input:focus, select:focus, textarea:focus {
     display: inline-block;
     padding: 4px 10px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
 }
 
