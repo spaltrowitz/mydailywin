@@ -23,7 +23,7 @@
             --bg: #f0f2f5;
             --card-bg: #ffffff;
             --text: #3c3c3c;
-            --text-light: #777;
+            --text-light: #595959;
             --radius-box: 20px;
             --radius-btn: 16px;
         }
@@ -42,7 +42,7 @@
             --bg: #131f24;
             --card-bg: #202f36;
             --text: #e5e5e5;
-            --text-light: #888;
+            --text-light: #a3a3a3;
         }
 
         /* ========== ANIMATIONS ========== */
@@ -62,7 +62,7 @@
 
         /* ========== UI COMPONENTS ========== */
         header {
-            background: linear-gradient(135deg, #58cc02, #46a302);
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
             padding: 15px 20px;
             position: sticky;
             top: 0;
@@ -102,7 +102,7 @@
 
         .section-title {
             font-size: 20px; font-weight: 800; margin: 30px 0 15px;
-            color: var(--text-light); text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-light); letter-spacing: normal;
         }
 
         .btn {
@@ -141,7 +141,7 @@
         }
         
         .balance-hero {
-            background: linear-gradient(135deg, #58cc02, #46a302);
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
             color: white; padding: 24px; text-align: center; border-radius: 24px;
             margin-bottom: 30px; box-shadow: 0 8px 0 #3d8a02;
             position: relative; overflow: hidden;
@@ -151,7 +151,7 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
             animation: shimmer 3s infinite;
         }
-        .balance-title { font-size: 14px; text-transform: uppercase; opacity: 0.9; font-weight: 700; margin-bottom: 5px; letter-spacing: 2px; }
+        .balance-title { font-size: 16px; opacity: 0.9; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
         .balance-amount { 
             font-size: 48px; font-weight: 800; 
             text-shadow: 0 3px 0 rgba(0,0,0,0.1);
@@ -350,23 +350,23 @@
             
             <!-- Daily Quote -->
             <div id="quoteContainer" style="margin-bottom: 15px; padding: 0 10px; position: relative;">
-                <div id="dailyQuote" style="font-style: italic; color: var(--text-light); font-size: 14px; line-height: 1.5;"></div>
-                <div id="quoteSpanish" style="display: none; font-style: italic; color: var(--primary); font-size: 14px; line-height: 1.5; margin-top: 8px;"></div>
+                <div id="dailyQuote" style="font-style: italic; color: var(--text-light); font-size: 16px; line-height: 1.5;"></div>
+                <div id="quoteSpanish" style="display: none; font-style: italic; color: var(--primary); font-size: 16px; line-height: 1.5; margin-top: 8px;"></div>
                 <div style="margin-top: 10px; display: flex; justify-content: center; gap: 10px; align-items: center; position: relative;">
                     <!-- Onboarding tooltip for first-time users -->
-                    <div id="quoteOnboarding" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                    <div id="quoteOnboarding" style="display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
                         👇 Tap to earn 5 pts for reading today's quote!
                         <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--primary);"></div>
                     </div>
                     <!-- Spanish onboarding tooltip -->
-                    <div id="spanishOnboarding" style="display: none; position: absolute; bottom: 100%; right: 0; background: #f59e0b; color: white; padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                    <div id="spanishOnboarding" style="display: none; position: absolute; bottom: 100%; right: 0; background: #f59e0b; color: white; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; white-space: nowrap; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
                         👇 Tap to see the Spanish translation!
                         <div style="position: absolute; bottom: -6px; right: 20px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #f59e0b;"></div>
                     </div>
-                    <button id="quoteAckBtn" onclick="acknowledgeQuote()" style="background: var(--bg); border: 2px solid var(--primary); color: var(--primary); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                    <button id="quoteAckBtn" onclick="acknowledgeQuote()" style="background: var(--bg); border: 2px solid var(--primary); color: var(--primary); font-size: 14px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
                         ✨ +5 pts
                     </button>
-                    <button id="spanishBtn" onclick="showSpanishQuote()" style="display: none; background: var(--bg); border: 2px solid #f59e0b; color: #f59e0b; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                    <button id="spanishBtn" onclick="showSpanishQuote()" style="display: none; background: var(--bg); border: 2px solid #f59e0b; color: #f59e0b; font-size: 14px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
                         🇪🇸 +5 pts
                     </button>
                 </div>
@@ -375,10 +375,10 @@
             <div class="streak-badge" onclick="checkStreakRecovery()" style="cursor: pointer;">
                 🔥 <span id="streakDays">0</span> Day Streak
             </div>
-            <div id="streakRecoveryHint" style="display: none; color: #f59e0b; font-size: 12px; margin-top: 5px; font-weight: 600;">
+            <div id="streakRecoveryHint" style="display: none; color: #f59e0b; font-size: 14px; margin-top: 5px; font-weight: 600;">
                 ⚠️ Streak at risk! Tap to recover
             </div>
-            <div style="color: var(--text-light); font-size: 14px;" id="dateDisplay"></div>
+            <div style="color: var(--text-light); font-size: 16px;" id="dateDisplay"></div>
         </div>
 
         <div class="balance-hero">
@@ -395,11 +395,11 @@
             <div class="level-progress-bar">
                 <div class="level-progress-fill" id="levelProgressFill" style="width: 0%;"></div>
             </div>
-            <div id="levelProgressText" style="font-size: 11px; opacity: 0.85; margin-top: 6px;"></div>
+            <div id="levelProgressText" style="font-size: 14px; opacity: 0.85; margin-top: 6px;"></div>
             
             <!-- Payout Info -->
             <div style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 12px;">
-                <button onclick="requestPayout()" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 20px; cursor: pointer;">💸 Cash Out via Zelle</button>
+                <button onclick="requestPayout()" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 15px; font-weight: 600; padding: 8px 16px; border-radius: 20px; cursor: pointer;">💸 Cash Out via Zelle</button>
             </div>
         </div>
 
@@ -430,10 +430,10 @@
                 <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--primary), #4ade80); width: 0%; transition: width 0.5s ease; position: relative;">
                 </div>
             </div>
-            <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--primary); font-weight: 600;">
+            <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 15px; color: var(--primary); font-weight: 600;">
                 🎰 Complete all tasks for BONUS SPIN!
             </div>
-            <div style="text-align: center; margin-top: 6px; font-size: 11px; color: var(--text-light);">
+            <div style="text-align: center; margin-top: 6px; font-size: 14px; color: var(--text-light);">
                 ℹ️ Tap to learn more
             </div>
         </div>
@@ -479,7 +479,7 @@
         <div id="surveyInvite" class="survey-invite" onclick="openModal('feedbackModal')">
             <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
             <div style="font-size: 18px; font-weight: 800;">Weekly Check-in</div>
-            <div style="font-size: 14px; margin-top: 4px;"><span style="display: inline-block; font-weight: 800; font-size: 13px; color: #a855f7; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,0.9);">+15 pts</span></div>
+            <div style="font-size: 15px; margin-top: 4px;"><span style="display: inline-block; font-weight: 800; font-size: 15px; color: #a855f7; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,0.9);">+15 pts</span></div>
             <div style="margin-top: 12px; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 12px; display: inline-block; font-weight: 700;">Complete Survey →</div>
         </div>
 
@@ -531,7 +531,7 @@
                 <option value="Other">Other</option>
             </select>
             
-            <div id="tennisProgress" style="text-align: center; margin-bottom: 15px; font-size: 14px; color: var(--text-light);"></div>
+            <div id="tennisProgress" style="text-align: center; margin-bottom: 15px; font-size: 16px; color: var(--text-light);"></div>
             
             <button class="btn btn-success" onclick="submitTennisSession()" style="margin-top: 10px;">✓ Log Session</button>
         </div>
@@ -548,20 +548,20 @@
                 <span id="syncIcon">☁️</span>
                 <div style="flex: 1;">
                     <div id="syncText" style="font-size: 14px; font-weight: 600;">Checking sync...</div>
-                    <div id="syncDetail" style="font-size: 12px; color: var(--text-light);">Your data is saved locally</div>
+                    <div id="syncDetail" style="font-size: 14px; color: var(--text-light);">Your data is saved locally</div>
                 </div>
             </div>
             
             <!-- Current Balance -->
             <div style="background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
-                <div style="font-size: 14px; color: var(--text-light); margin-bottom: 5px;">Your Balance</div>
+                <div style="font-size: 16px; color: var(--text-light); margin-bottom: 5px;">Your Balance</div>
                 <div style="font-size: 32px; color: var(--primary); font-weight: 800;" id="settingsBalance">0 pts</div>
                 <div style="font-size: 18px; color: var(--text-light); margin-top: 5px;" id="settingsDollars">= $0.00</div>
             </div>
             
             <!-- Admin Mode -->
             <h3 style="margin-bottom: 10px;">🔧 Admin Mode</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Customize tasks, record payments, view reports</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Customize tasks, record payments, view reports</p>
             <a id="adminLink" href="admin.html" class="btn" style="display: inline-block; text-decoration: none; text-align: center;">⚙️ Open Admin Mode</a>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
@@ -576,21 +576,21 @@
             
             <!-- Share Progress -->
             <h3 style="margin-bottom: 10px;">📊 Share Your Progress</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Brag about your streak!</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Brag about your streak!</p>
             <button class="btn btn-accent" onclick="shareProgress()" style="margin-bottom: 0;">🎯 Share Progress</button>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
             <!-- Refer a Friend -->
             <h3 style="margin-bottom: 10px;">👥 Refer a Friend</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Know someone who'd enjoy HabitRewards?</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Know someone who'd enjoy HabitRewards?</p>
             <button class="btn btn-purple" onclick="shareApp()" style="margin-bottom: 0;">📤 Share App Link</button>
             
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
             <!-- Contact Developer -->
             <h3 style="margin-bottom: 10px;">💬 Contact Developer</h3>
-            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Have feedback, questions, or issues?</p>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Have feedback, questions, or issues?</p>
             <button class="btn" onclick="contactDeveloper()">✉️ Send Message</button>
         </div>
     </div>
@@ -601,7 +601,7 @@
             <button class="close-modal" onclick="closeModal('levelsModal')" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 20px;">🏆 Level Progression</h2>
             <div id="levelsTable" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-light);">
+            <div style="margin-top: 20px; text-align: center; font-size: 15px; color: var(--text-light);">
                 Keep earning points to unlock higher levels!
             </div>
         </div>
@@ -616,7 +616,7 @@
             
             <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); padding: 20px; border-radius: 16px; color: #1a1a2e; margin-bottom: 20px;">
                 <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">📞 Call a Family Member</div>
-                <div style="font-size: 14px; opacity: 0.9;">Call a family member to check in and tell them what you've been up to. This restores your streak!</div>
+                <div style="font-size: 16px; opacity: 0.9;">Call a family member to check in and tell them what you've been up to. This restores your streak!</div>
             </div>
             
             <p style="margin-bottom: 10px; font-weight: 700;">💬 Who did you call?</p>
@@ -637,7 +637,7 @@
             <p style="color: var(--text-light); margin-bottom: 25px;">Request your earnings via Zelle</p>
             
             <!-- Balance Display -->
-            <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
+            <div style="background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
                 <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">Available Balance</div>
                 <div id="cashoutPoints" style="font-size: 36px; font-weight: 800;">0 pts</div>
                 <div id="cashoutDollars" style="font-size: 24px; opacity: 0.9; margin-top: 5px;">= $0.00</div>
@@ -648,20 +648,20 @@
                 <div style="font-weight: 700; margin-bottom: 12px; color: var(--text);">💡 How it works</div>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">1</span>
-                    <span style="color: var(--text-light); font-size: 14px;">Tap "Request Payout" below</span>
+                    <span style="color: var(--text-light); font-size: 16px;">Tap "Request Payout" below</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">2</span>
-                    <span style="color: var(--text-light); font-size: 14px;">Your admin will be notified</span>
+                    <span style="color: var(--text-light); font-size: 16px;">Your admin will be notified</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">3</span>
-                    <span style="color: var(--text-light); font-size: 14px;">Receive payment via Zelle</span>
+                    <span style="color: var(--text-light); font-size: 16px;">Receive payment via Zelle</span>
                 </div>
             </div>
             
             <!-- Exchange Rate Note -->
-            <div style="font-size: 12px; color: var(--text-light); margin-bottom: 20px;">
+            <div style="font-size: 14px; color: var(--text-light); margin-bottom: 20px;">
                 📊 Exchange rate: <strong>100 pts = $1.00</strong>
             </div>
             
@@ -669,7 +669,7 @@
             <button id="cashoutBtn" onclick="confirmCashout()" class="btn btn-success" style="width: 100%; padding: 16px; font-size: 16px; margin-bottom: 10px;">
                 💸 Request Payout
             </button>
-            <button onclick="closeModal('cashoutModal')" style="background: none; border: none; color: var(--text-light); font-size: 14px; cursor: pointer; padding: 10px;">
+            <button onclick="closeModal('cashoutModal')" style="background: none; border: none; color: var(--text-light); font-size: 16px; cursor: pointer; padding: 10px;">
                 Maybe Later
             </button>
         </div>
@@ -715,7 +715,7 @@
         <div class="modal-box" style="text-align: center; max-width: 350px;">
             <div id="confirmIcon" style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
             <h2 id="confirmTitle" style="margin-bottom: 10px; font-size: 20px;">Are you sure?</h2>
-            <p id="confirmMessage" style="color: var(--text-light); margin-bottom: 25px; font-size: 14px;"></p>
+            <p id="confirmMessage" style="color: var(--text-light); margin-bottom: 25px; font-size: 16px;"></p>
             <div style="display: flex; gap: 12px;">
                 <button class="btn" onclick="handleConfirm(false)" style="flex: 1; background: #e5e7eb; color: var(--text);">Cancel</button>
                 <button id="confirmBtn" class="btn" onclick="handleConfirm(true)" style="flex: 1; background: #ef4444; color: white;">Confirm</button>
@@ -739,7 +739,7 @@
                     <div style="font-size: 24px;">✅</div>
                     <div>
                         <div style="font-weight: 700;">Check Off Tasks</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Tap the circle next to each habit when you complete it. The progress bar fills up with each task!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Tap the circle next to each habit when you complete it. The progress bar fills up with each task!</div>
                     </div>
                 </div>
                 
@@ -747,7 +747,7 @@
                     <div style="font-size: 24px;">💰</div>
                     <div>
                         <div style="font-weight: 700;">Earn Points</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Each task earns you points. Points add up to real money (100 pts = $1)!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Each task earns you points. Points add up to real money (100 pts = $1)!</div>
                     </div>
                 </div>
                 
@@ -755,7 +755,7 @@
                     <div style="font-size: 24px;">🎰</div>
                     <div>
                         <div style="font-weight: 700;">Bonus Spin!</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Complete ALL tasks to unlock a bonus spin for extra points!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Complete ALL tasks to unlock a bonus spin for extra points!</div>
                     </div>
                 </div>
                 
@@ -763,7 +763,7 @@
                     <div style="font-size: 24px;">🔥</div>
                     <div>
                         <div style="font-weight: 700;">Build Your Streak</div>
-                        <div style="font-size: 13px; color: var(--text-light);">Complete at least one task daily to maintain your streak!</div>
+                        <div style="font-size: 15px; color: var(--text-light);">Complete at least one task daily to maintain your streak!</div>
                     </div>
                 </div>
             </div>
@@ -1345,7 +1345,7 @@
                     <h2 style="margin-bottom: 10px; color: var(--primary);">Payment Sent!</h2>
                     <p style="color: var(--text-light); margin-bottom: 20px;">Your payout is on its way</p>
                     
-                    <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 20px;">
+                    <div style="background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 20px;">
                         <div style="font-size: 14px; opacity: 0.9;">Amount</div>
                         <div style="font-size: 42px; font-weight: 800;">$${parseFloat(amount).toFixed(2)}</div>
                     </div>
@@ -1354,7 +1354,7 @@
                         <div style="color: #166534; font-size: 14px;">
                             <strong>From:</strong> HabitRewards<br>
                             <strong>Via:</strong> Zelle<br>
-                            <span style="font-size: 12px; opacity: 0.8;">Check your Zelle app or bank notifications!</span>
+                            <span style="font-size: 14px; opacity: 0.8;">Check your Zelle app or bank notifications!</span>
                         </div>
                     </div>
                     
@@ -3017,7 +3017,7 @@
                     <h2 style="margin-bottom: 10px; color: var(--primary);">Payout Requested!</h2>
                     <p style="color: var(--text-light); margin-bottom: 25px;">Your request has been submitted</p>
                     
-                    <div style="background: linear-gradient(135deg, #58cc02 0%, #46a302 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
+                    <div style="background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 100%); border-radius: 16px; padding: 25px; color: white; margin-bottom: 25px;">
                         <div style="font-size: 14px; opacity: 0.9;">Amount Requested</div>
                         <div style="font-size: 36px; font-weight: 800;">$${dollars}</div>
                         <div style="font-size: 14px; opacity: 0.9; margin-top: 5px;">(${pts} pts)</div>
@@ -3032,7 +3032,7 @@
                     <div style="background: #f0fdf4; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
                         <div style="color: #166534; font-size: 14px;">
                             💰 Payment from <strong>HabitRewards</strong> via Zelle<br>
-                            <span style="font-size: 12px; opacity: 0.8;">You'll get a notification when it's sent!</span>
+                            <span style="font-size: 14px; opacity: 0.8;">You'll get a notification when it's sent!</span>
                         </div>
                     </div>
                     
@@ -3175,7 +3175,7 @@
                             <div style="font-weight: ${isCurrent ? '700' : '600'}; color: ${isUnlocked ? lvl.color : 'var(--text-light)'};">
                                 ${lvl.name} ${isCurrent ? '← You' : ''}
                             </div>
-                            <div style="font-size: 12px; color: var(--text-light);">
+                            <div style="font-size: 14px; color: var(--text-light);">
                                 ${lvl.pts.toLocaleString()} pts ($${(lvl.pts/100).toFixed(2)})
                             </div>
                         </div>
