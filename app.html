@@ -338,6 +338,21 @@
         body.dark-mode .task-help-btn:hover {
             background: var(--primary);
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .card:hover { transform: none; }
+            .task-row:hover { transform: none; }
+        }
+
+        @media (hover: none) {
+            .card:hover { transform: none; }
+            .task-row:hover { transform: none; border-color: rgba(0,0,0,0.05); }
+        }
     </style>
 </head>
 <body>
@@ -1425,7 +1440,6 @@
                 setTimeout(() => {
                     document.getElementById('loginBonusSection').style.display = 'none';
                 }, 3000);
-                triggerConfetti();
             }
         }
 
@@ -1504,25 +1518,17 @@
         }
 
         function triggerCoinRain() {
-            for(let i = 0; i < 30; i++) {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const count = 8;
+            for(let i = 0; i < count; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
-                    el.innerText = ['💰', '💵', '🪙', '💲'][Math.floor(Math.random()*4)];
-                    el.style.position = 'fixed';
-                    el.style.left = Math.random() * 100 + 'vw';
-                    el.style.top = '-50px';
-                    el.style.fontSize = '40px';
-                    el.style.transition = 'top 1.5s ease-in, opacity 1.5s ease-in';
-                    el.style.zIndex = '9999';
+                    el.innerText = ['💰', '🪙'][Math.floor(Math.random()*2)];
+                    el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-50px;font-size:32px;transition:top 1s ease-in,opacity 1s;z-index:9999;pointer-events:none;`;
                     document.body.appendChild(el);
-                    
-                    setTimeout(() => {
-                        el.style.top = '110vh';
-                        el.style.opacity = '0';
-                    }, 50);
-                    
-                    setTimeout(() => el.remove(), 1600);
-                }, i * 50);
+                    requestAnimationFrame(() => { el.style.top = '110vh'; el.style.opacity = '0'; });
+                    setTimeout(() => el.remove(), 1100);
+                }, i * 80);
             }
         }
 
@@ -3230,22 +3236,15 @@
         }
 
         function triggerConfetti() {
-            for(let i=0; i<20; i++) {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const count = 10;
+            for(let i=0; i<count; i++) {
                 const el = document.createElement('div');
-                el.innerText = ['🎉', '⭐', '💰', '✨'][Math.floor(Math.random()*4)];
-                el.style.position = 'fixed';
-                el.style.left = Math.random() * 100 + 'vw';
-                el.style.top = '-50px';
-                el.style.fontSize = '30px';
-                el.style.transition = 'top 2s ease-in, opacity 2s ease-in';
+                el.innerText = ['🎉', '⭐', '✨'][Math.floor(Math.random()*3)];
+                el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-50px;font-size:28px;transition:top 1.5s ease-in,opacity 1.5s;z-index:9999;pointer-events:none;`;
                 document.body.appendChild(el);
-                
-                setTimeout(() => {
-                    el.style.top = '110vh';
-                    el.style.opacity = '0';
-                }, 100);
-                
-                setTimeout(() => el.remove(), 2000);
+                requestAnimationFrame(() => { el.style.top = '110vh'; el.style.opacity = '0'; });
+                setTimeout(() => el.remove(), 1600);
             }
         }
 
