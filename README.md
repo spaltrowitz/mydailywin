@@ -236,3 +236,8 @@ firebase deploy --only hosting
 - Monitor usage: Dashboard → Account (shows emails sent this month)
 
 **Template Source:** See [email-templates/admin-invite.html](email-templates/admin-invite.html)
+
+---
+
+🏆 [Support the person behind the app](https://spaltrowitz.github.io/#support)
+
