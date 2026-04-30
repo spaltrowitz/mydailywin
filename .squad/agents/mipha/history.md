@@ -225,3 +225,22 @@ Executed Phases 1–4 of consolidation strategy (Mipha's responsibility in Phase
 
 #### Pattern
 - When updating hero/header colors, check CTA/footer sections for palette consistency. The page should feel like one continuous design, not mismatched blocks.
+
+### UX/Design Audit — Gamification & Responsive (2026-04-30, Sidon)
+
+📌 Team update (2026-04-30): UX audit identified 8 priority decisions spanning gamification, visual consistency, responsive design — decided by Sidon
+
+**P1 Decisions (Your Scope — app.html):**
+1. Sound effects for reward moments (Web Audio API, mute toggle) — owns implementation
+2. Celebration modals for level-ups/streaks/achievements (40-50 particle confetti) — works with Decision 8
+3. Responsive breakpoints (375px, 768px, 1024px) — app.html needs layout queries
+4. Unify font stack to Nunito (currently app.html has Nunito, good starting point)
+5. Enhance confetti system (40-50 particles, rotation, spread, activate unused keyframes: jackpot, coinDrop, goldShine)
+
+**P2 Decisions (Shared with Urbosa):**
+6. Import shared.css everywhere (enables consistent dark mode, CSS vars)
+7. Extend dark mode to all pages (currently only app.html)
+
+**Owner Notes:** Sidon created `gamification` skill with sound effect patterns and particle physics guidance.
+
+**Cross-Agent:** Works with Urbosa on Decision 6–7 (shared.css import, dark mode extension, font unification, responsive breakpoints for admin).

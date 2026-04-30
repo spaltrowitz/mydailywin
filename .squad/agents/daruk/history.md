@@ -312,3 +312,15 @@ All findings documented in `.squad/agents/daruk/bugbash-findings.md` with file p
 #### Pending Decision
 - Firebase project ID: Keep habitrewards-131 or migrate to mydailywin? Current choice: keep habitrewards-131 (backwards compat). Add comment explaining transition state.
 
+
+### Security Audit Findings (2026-04-30, Riju)
+
+📌 Team update (2026-04-30): Security audit identified critical Firestore ownership scoping gaps and high-priority redirect validation issue — decided by Riju
+
+**Key Findings Relevant to Backend:**
+- Firestore rules still have 4 collections at auth-only (TODO comments): `payoutRequests`, `userNotifications`, `userState`, `taskProposals`
+- Your P0 ownership helpers (`isProfileOwner`, `hasProfileAccess`) are ready but blocked by get-started.html Firestore write (awaiting your P0 implementation)
+- Open redirect in login.html needs same-origin validation (coordinate with security review)
+- localStorage fallback in admin auth is bypassable — part of auth consolidation when profiles move to Firestore
+
+**Next Steps:** Once get-started.html writes profile docs to Firestore, the TODO rules can be fully implemented using existing helpers.

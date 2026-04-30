@@ -18,6 +18,9 @@
 | Urbosa | Admin Dev | Admin dashboard (admin.html, admin-guide.html) | ⚛️ |
 | Daruk | Backend Dev | Firebase, Firestore, admin↔user data flow | 🔧 |
 | Purah | Tester | Quality, edge cases, admin↔user interactions | 🧪 |
+| Impa | Optimizer | Code bloat, redundancy, token cost, performance | ⚡ |
+| Sidon | UX/Design | Gamification feel, animations, visual polish | 🎨 |
+| Riju | Security | Firestore rules, auth, data isolation, trust boundaries | 🔒 |
 | Scribe | Session Logger | Memory, decisions, session logs | 📋 |
 | Ralph | Work Monitor | Work queue, backlog, keep-alive | 🔄 |
 

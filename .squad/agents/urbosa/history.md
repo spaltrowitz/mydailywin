@@ -86,3 +86,22 @@
 - Pattern consistency with Mipha's app.html defensive coding
 - Maintains backward compatibility with stu profile legacy storage (hr_state / hr_state_stu dual-write)
 
+
+### UX/Design Audit — Admin Responsive & Consistency (2026-04-30, Sidon)
+
+📌 Team update (2026-04-30): UX audit identified 8 priority decisions — 3 directly affect admin.html — decided by Sidon
+
+**P2 Decisions (Your Scope — admin.html):**
+1. Responsive breakpoints (375px, 768px, 1024px) — admin tab bar needs horizontal scroll/collapse on mobile
+2. Import shared.css everywhere (enables consistent CSS vars, dark mode, accessibility utilities)
+3. Unify font stack to Nunito (currently admin uses system fonts)
+4. Extend dark mode to all pages (currently only app.html; admin.html breaks on dark mode toggle)
+
+**Cross-Agent with Mipha:**
+- Decision 6 (shared.css import) unifies visual consistency across platform
+- Decision 7 (dark mode extension) requires coordinated CSS variable standardization
+- Decision 3 (font unification) applies to both user and admin pages
+
+**Security Context:** Riju audit also flagged localStorage fallback in admin auth as bypassable; auth consolidation awaiting Firestore profile creation (Daruk P0).
+
+**Owner Notes:** Sidon created gamification skill; your admin.html responsive work aligns with user-facing gamification UI patterns (celebration modals, enhanced confetti).
