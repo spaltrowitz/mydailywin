@@ -324,6 +324,12 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     
     <script>
+        function escapeHtml(str) {
+            if (!str) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+            return String(str).replace(/[&<>"']/g, m => map[m]);
+        }
+
         function togglePassword() {
             const pw = document.getElementById('password');
             const btn = document.getElementById('togglePwBtn');
@@ -356,6 +362,17 @@
         const urlParams = new URLSearchParams(window.location.search);
         const redirectUrl = urlParams.get('redirect');
 
+        // Prevent open-redirect attacks: only allow relative paths or same-origin URLs
+        function isSafeRedirect(url) {
+            if (!url) return false;
+            if (url.startsWith('/') && !url.startsWith('//')) return true;
+            try {
+                return new URL(url).origin === window.location.origin;
+            } catch {
+                return false;
+            }
+        }
+
         // Check auth state on load
         auth.onAuthStateChanged(user => {
             if (user) {
@@ -372,8 +389,8 @@
                     sessionStorage.removeItem('hr_pending_profile');
                     sessionStorage.removeItem('hr_pending_profile_name');
                     
-                    // If there's a redirect URL, go there immediately
-                    if (redirectUrl) {
+                    // If there's a redirect URL, go there (origin-validated)
+                    if (redirectUrl && isSafeRedirect(redirectUrl)) {
                         window.location.href = redirectUrl;
                         return;
                     }
@@ -492,6 +509,15 @@
 
         async function signOut() {
             await auth.signOut();
+            // Clear sensitive profile/admin data from localStorage (shared device safety)
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('hr_profile_') || key.startsWith('hr_state') || key.startsWith('hr_admin') || key.startsWith('hr_pending_') || key.startsWith('hr_user_profiles_') || key.startsWith('hr_additional_admins'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(k => localStorage.removeItem(k));
         }
 
         function loadUserProfiles(user) {
@@ -523,14 +549,16 @@
                     div.style.cssText = 'flex-direction: column; align-items: stretch; cursor: default;';
                     div.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span class="profile-name" style="font-size: 16px;">👤 ${profile.name}</span>
+                            <span class="profile-name" style="font-size: 16px;">👤 ${escapeHtml(profile.name)}</span>
                             <span style="background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 12px; font-size: 11px;">Owner</span>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <button onclick="openProfile('${profile.id}')" style="flex: 1; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Open App</button>
-                            <button onclick="openAdmin('${profile.id}')" style="flex: 1; padding: 10px 16px; background: #e0e7ff; color: #4338ca; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">⚙️ Admin</button>
+                            <button data-profile-id="${escapeHtml(profile.id)}" data-action="open" style="flex: 1; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Open App</button>
+                            <button data-profile-id="${escapeHtml(profile.id)}" data-action="admin" style="flex: 1; padding: 10px 16px; background: #e0e7ff; color: #4338ca; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">⚙️ Admin</button>
                         </div>
                     `;
+                    div.querySelector('[data-action="open"]').addEventListener('click', () => openProfile(profile.id));
+                    div.querySelector('[data-action="admin"]').addEventListener('click', () => openAdmin(profile.id));
                     profileList.appendChild(div);
                 });
             }
@@ -544,14 +572,16 @@
                     div.style.cssText = 'flex-direction: column; align-items: stretch; cursor: default;';
                     div.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span class="profile-name" style="font-size: 16px;">👥 ${profile.name}</span>
+                            <span class="profile-name" style="font-size: 16px;">👥 ${escapeHtml(profile.name)}</span>
                             <span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 12px; font-size: 11px;">Admin</span>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <button onclick="openProfile('${profile.id}')" style="flex: 1; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Open App</button>
-                            <button onclick="openAdmin('${profile.id}')" style="flex: 1; padding: 10px 16px; background: #e0e7ff; color: #4338ca; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">⚙️ Admin</button>
+                            <button data-profile-id="${escapeHtml(profile.id)}" data-action="open" style="flex: 1; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">📱 Open App</button>
+                            <button data-profile-id="${escapeHtml(profile.id)}" data-action="admin" style="flex: 1; padding: 10px 16px; background: #e0e7ff; color: #4338ca; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">⚙️ Admin</button>
                         </div>
                     `;
+                    div.querySelector('[data-action="open"]').addEventListener('click', () => openProfile(profile.id));
+                    div.querySelector('[data-action="admin"]').addEventListener('click', () => openAdmin(profile.id));
                     managedList.appendChild(div);
                 });
             } else {

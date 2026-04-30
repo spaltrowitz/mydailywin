@@ -875,9 +875,12 @@
         });
 
         // ========== PROFILE DETECTION ==========
-        // Get profile ID from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const PROFILE_ID = urlParams.get('profile');
+        const rawProfileId = urlParams.get('profile');
+        const PROFILE_ID = (rawProfileId && /^[a-zA-Z0-9_-]+$/.test(rawProfileId)) ? rawProfileId : null;
+        if (rawProfileId && !PROFILE_ID) {
+            console.warn('⚠️ Invalid profile ID rejected:', rawProfileId);
+        }
         
         // Storage key prefix based on profile
         const STORAGE_KEY = PROFILE_ID ? 'hr_state_' + PROFILE_ID : 'hr_state';
@@ -1378,7 +1381,7 @@
                         </div>
                     </div>
                     
-                    <button onclick="dismissPaymentNotification('${notifId}')" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                    <button onclick="dismissPaymentNotification('${escapeHtml(String(notifId))}')" class="btn btn-primary" style="width: 100%; padding: 14px;">
                         🎉 Awesome!
                     </button>
                 </div>
@@ -2179,7 +2182,7 @@
                 div.className = 'task-row';
                 div.innerHTML = `
                     <div class="task-content">
-                        <div class="task-name" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.name}${helpBtn}</div>
+                        <div class="task-name" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${escapeHtml(task.name)}${helpBtn}</div>
                         <div class="task-reward">+${task.value} pts</div>
                     </div>
                     <button class="task-check ${task.completed ? 'completed' : ''}" onclick="onTaskClick(${task.id})">
@@ -2210,7 +2213,7 @@
                     row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.15); padding: 14px 16px; border-radius: 20px; width: 100%;';
                     row.innerHTML = `
                         <div style="flex: 1; margin-right: 15px; text-align: left;">
-                            <div style="font-weight: 700; font-size: 18px; ${completed ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${b.name} <span style="font-weight: 600; font-size: 14px; opacity: 0.9;">${count}/${b.target} sessions</span></div>
+                            <div style="font-weight: 700; font-size: 18px; ${completed ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${escapeHtml(b.name)} <span style="font-weight: 600; font-size: 14px; opacity: 0.9;">${count}/${b.target} sessions</span></div>
                             <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${completed ? '✅ Done!' : `+${b.value} pts`}</div>
                         </div>
                         <button class="task-check ${completed ? 'completed' : ''}" style="background: ${completed ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" onclick="openTennisModal(${completed})">
@@ -2226,7 +2229,7 @@
                     row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.15); padding: 14px 16px; border-radius: 20px; width: 100%;';
                     row.innerHTML = `
                         <div style="flex: 1; margin-right: 15px; text-align: left;">
-                            <div style="font-weight: 700; font-size: 18px; ${isCompleted ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${b.name}${helpBtn}</div>
+                            <div style="font-weight: 700; font-size: 18px; ${isCompleted ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${escapeHtml(b.name)}${helpBtn}</div>
                             <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${isCompleted ? '✅ Done!' : `+${b.value} pts`}</div>
                         </div>
                         <button class="task-check ${isCompleted ? 'completed' : ''}" style="background: ${isCompleted ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" onclick="handleWeeklyClick(${idx}, ${isCompleted})">

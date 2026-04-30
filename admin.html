@@ -578,55 +578,10 @@
                         }
                     }
                 } catch (error) {
-                    console.log('Firestore check failed, using localStorage fallback:', error.message);
-                    
-                    // Fallback: Check localStorage for admin status
-                    // Check both legacy and current key formats
-                    const legacyKey = profileParam === 'stu' ? 'hr_additional_admins' : 'hr_additional_admins_' + profileParam;
-                    const currentKey = 'hr_profile_admins_' + profileParam;
-                    const legacyAdmins = JSON.parse(localStorage.getItem(legacyKey) || '[]');
-                    const currentAdmins = JSON.parse(localStorage.getItem(currentKey) || '[]');
-                    const allAdmins = [...currentAdmins, ...legacyAdmins];
-                    const existingAdmin = allAdmins.find(a => a.email?.toLowerCase() === userEmail);
-                    
-                    if (existingAdmin) {
-                        isAuthorized = true;
-                        if (!existingAdmin.acceptedAt) {
-                            existingAdmin.acceptedAt = new Date().toISOString();
-                            existingAdmin.name = user.displayName;
-                            existingAdmin.firstName = user.displayName ? user.displayName.split(' ')[0] : null;
-                            // Update both keys to stay in sync
-                            localStorage.setItem(legacyKey, JSON.stringify(legacyAdmins));
-                            localStorage.setItem(currentKey, JSON.stringify(currentAdmins));
-                        }
-                    }
-                }
-                
-                // Always check localStorage for profile ownership (works for all profiles)
-                if (!isAuthorized) {
-                    const profileData = localStorage.getItem('hr_profile_' + profileParam);
-                    if (profileData) {
-                        const profile = JSON.parse(profileData);
-                        if (profile.creatorEmail?.toLowerCase() === userEmail || profile.ownerEmail?.toLowerCase() === userEmail) {
-                            isAuthorized = true;
-                            console.log('✅ User is profile owner in localStorage');
-                        }
-                    }
-                }
-                
-                // For legacy 'stu' profile, check known owner and anyone who was previously using it
-                if (!isAuthorized && profileParam === 'stu') {
-                    // Known owner of the Stu profile
-                    if (userEmail === 'sharipaltrowitz@gmail.com') {
-                        isAuthorized = true;
-                        console.log('✅ User is known owner of stu profile');
-                    }
-                    // Legacy compatibility - anyone with existing data
-                    const stuState = localStorage.getItem('hr_state');
-                    if (stuState) {
-                        isAuthorized = true;
-                        console.log('✅ User has legacy hr_state data');
-                    }
+                    console.warn('⚠️ Firestore unavailable — admin access denied (offline):', error.message);
+                    // Never fall back to localStorage for authorization — it's user-writable.
+                    // Show an offline message instead.
+                    isAuthorized = false;
                 }
                 
                 console.log('🔐 Final authorization:', isAuthorized);
@@ -670,9 +625,11 @@
     <script>
         // ========== PROFILE DETECTION ==========
         const urlParams = new URLSearchParams(window.location.search);
-        const PROFILE_ID = urlParams.get('profile');
-        
-        // Special case: "stu" profile uses legacy (no suffix) storage keys for backwards compatibility
+        const rawProfileId = urlParams.get('profile');
+        const PROFILE_ID = (rawProfileId && /^[a-zA-Z0-9_-]+$/.test(rawProfileId)) ? rawProfileId : null;
+        if (rawProfileId && !PROFILE_ID) {
+            console.warn('⚠️ Invalid profile ID rejected:', rawProfileId);
+        }
         const IS_LEGACY_PROFILE = PROFILE_ID === 'stu';
         
         // Storage key prefix based on profile
@@ -709,6 +666,12 @@
         updateUserNames();
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', updateUserNames);
+        }
+
+        // ========== HTML ESCAPING ==========
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
         }
 
         // ========== TAB FUNCTIONALITY ==========
@@ -887,7 +850,7 @@
             dailyTasks.forEach(t => {
                 dailyTable.innerHTML += `
                     <tr class="editable-row" onclick="openEditTask('daily', ${t.id})">
-                        <td class="task-name-cell">${t.name}</td>
+                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
@@ -902,7 +865,7 @@
             bonusTasks.forEach(t => {
                 bonusTable.innerHTML += `
                     <tr class="editable-row" onclick="openEditTask('dailyBonus', ${t.id})">
-                        <td class="task-name-cell">${t.name}</td>
+                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
@@ -917,7 +880,7 @@
             permWeeklyTasks.forEach(t => {
                 permWeeklyTable.innerHTML += `
                     <tr class="editable-row" onclick="openEditTask('permanentWeekly', ${t.id})">
-                        <td class="task-name-cell">${t.name}</td>
+                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
@@ -932,7 +895,7 @@
             weeklyTasks.forEach(t => {
                 weeklyTable.innerHTML += `
                     <tr class="editable-row" onclick="openEditTask('weekly', ${t.id})">
-                        <td class="task-name-cell">${t.name}</td>
+                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
@@ -966,7 +929,7 @@
                 let className = isCurrent ? 'current' : (isUnlocked ? '' : 'locked');
                 return `
                     <div class="level-row ${className}">
-                        <div class="level-name">${lvl.name} ${isCurrent ? '<span class="badge badge-success">CURRENT</span>' : ''}</div>
+                        <div class="level-name">${escapeHtml(lvl.name)} ${isCurrent ? '<span class="badge badge-success">CURRENT</span>' : ''}</div>
                         <div class="level-pts">${lvl.pts.toLocaleString()} pts</div>
                     </div>
                 `;
@@ -988,8 +951,8 @@
                     return `
                         <div class="payment-row paid">
                             <div>
-                                <div style="font-weight: 700;">${p.month}</div>
-                                <div style="font-size: 12px; color: var(--text-light);">${p.notes || 'Via Zelle'}</div>
+                                <div style="font-weight: 700;">${escapeHtml(p.month)}</div>
+                                <div style="font-size: 12px; color: var(--text-light);">${escapeHtml(p.notes) || 'Via Zelle'}</div>
                             </div>
                             <div class="payment-amount">$${parseFloat(p.amount).toFixed(2)}</div>
                         </div>
@@ -1041,13 +1004,13 @@
                                 <div style="font-size: 13px; color: #78350f; background: #fef9c3; padding: 8px 12px; border-radius: 6px; margin-top: 8px;">
                                     <strong>📋 Steps:</strong><br>
                                     1. Transfer $${parseFloat(r.amount).toFixed(2)} to MyDailyWin account<br>
-                                    2. MyDailyWin sends via Zelle to ${userName}<br>
+                                    2. MyDailyWin sends via Zelle to ${escapeHtml(userName)}<br>
                                     3. Click "Mark as Sent" below
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 8px; min-width: 130px;">
-                                <button class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;" onclick="markPayoutSent('${doc.id}', ${r.amount}, ${r.points}, '${userName}')">✓ Mark as Sent</button>
-                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="dismissPayoutRequest('${doc.id}')">✕ Dismiss</button>
+                                <button class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;" onclick="markPayoutSent('${escapeHtml(doc.id)}', ${r.amount}, ${r.points}, '${escapeHtml(userName)}')">✓ Mark as Sent</button>
+                                <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="dismissPayoutRequest('${escapeHtml(doc.id)}')">✕ Dismiss</button>
                             </div>
                         </div>
                     `;
@@ -1072,8 +1035,8 @@
                             <div style="font-size: 12px; color: #b45309;">Requested ${new Date(r.requestedAt).toLocaleDateString()} at ${new Date(r.requestedAt).toLocaleTimeString()}</div>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="approvePayoutRequestLocal('${r.id}')">✓ Paid</button>
-                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="dismissPayoutRequestLocal('${r.id}')">✕</button>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="approvePayoutRequestLocal('${escapeHtml(r.id)}')">✓ Paid</button>
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="dismissPayoutRequestLocal('${escapeHtml(r.id)}')">✕</button>
                         </div>
                     </div>
                 `).join('');
@@ -1226,10 +1189,10 @@
 
             container.innerHTML = reports.map(r => `
                 <div class="report-item">
-                    <div class="task-name">${r.taskName}</div>
-                    <div class="reason">${reasonLabels[r.reason] || r.reason}</div>
-                    ${r.comment ? `<div class="reason" style="font-style: italic;">"${r.comment}"</div>` : ''}
-                    <div class="date">${new Date(r.date).toLocaleDateString()} • ${r.taskType} task</div>
+                    <div class="task-name">${escapeHtml(r.taskName)}</div>
+                    <div class="reason">${reasonLabels[r.reason] || escapeHtml(r.reason)}</div>
+                    ${r.comment ? `<div class="reason" style="font-style: italic;">"${escapeHtml(r.comment)}"</div>` : ''}
+                    <div class="date">${new Date(r.date).toLocaleDateString()} • ${escapeHtml(r.taskType)} task</div>
                 </div>
             `).join('');
         }
@@ -1672,8 +1635,8 @@
             ownerDiv.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-radius: 10px; margin-bottom: 8px;';
             ownerDiv.innerHTML = `
                 <div>
-                    <strong>${ownerName}</strong>
-                    ${currentUser && currentUser.displayName ? `<span style="color: var(--text-light); font-size: 12px; margin-left: 5px;">(${currentUser.email})</span>` : ''}
+                    <strong>${escapeHtml(ownerName)}</strong>
+                    ${currentUser && currentUser.displayName ? `<span style="color: var(--text-light); font-size: 12px; margin-left: 5px;">(${escapeHtml(currentUser.email)})</span>` : ''}
                     <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; margin-left: 8px;">Owner</span>
                 </div>
             `;
@@ -1723,11 +1686,11 @@
                 div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg); border-radius: 10px; margin-bottom: 8px;';
                 div.innerHTML = `
                     <div>
-                        <strong>${displayName}</strong>
-                        ${admin.firstName ? `<span style="color: var(--text-light); font-size: 12px;"> (${admin.email})</span>` : ''}
+                        <strong>${escapeHtml(displayName)}</strong>
+                        ${admin.firstName ? `<span style="color: var(--text-light); font-size: 12px;"> (${escapeHtml(admin.email)})</span>` : ''}
                         <span style="background: ${statusBg}; color: ${statusColor}; padding: 2px 8px; border-radius: 20px; font-size: 11px; margin-left: 8px;">${statusText}</span>
                     </div>
-                    <button onclick="removeAdmin('${admin.email || index}')" style="background: #fee2e2; border: none; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Remove</button>
+                    <button onclick="removeAdmin('${escapeHtml(admin.email || index)}')" style="background: #fee2e2; border: none; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Remove</button>
                 `;
                 container.appendChild(div);
             });
@@ -1800,10 +1763,10 @@
                     div.style.cssText = 'background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 2px solid #22c55e; border-radius: 12px; padding: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;';
                     div.innerHTML = `
                         <div>
-                            <strong style="color: #166534;">🎉 ${displayName} has accepted the invitation!</strong>
-                            <div style="font-size: 13px; color: #166534; margin-top: 4px;">They can now help manage ${PROFILE_NAME}'s profile.</div>
+                            <strong style="color: #166534;">🎉 ${escapeHtml(displayName)} has accepted the invitation!</strong>
+                            <div style="font-size: 13px; color: #166534; margin-top: 4px;">They can now help manage ${escapeHtml(PROFILE_NAME)}'s profile.</div>
                         </div>
-                        <button onclick="dismissNotification('${notification.id || notification.email}')" style="background: white; border: 1px solid #22c55e; color: #166534; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Dismiss</button>
+                        <button onclick="dismissNotification('${escapeHtml(notification.id || notification.email)}')" style="background: white; border: 1px solid #22c55e; color: #166534; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Dismiss</button>
                     `;
                     container.appendChild(div);
                 }
