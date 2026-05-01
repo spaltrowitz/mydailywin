@@ -114,15 +114,9 @@
         .btn {
             display: block;
             width: 100%;
-            padding: 16px 24px;
-            border: none;
             border-radius: 14px;
             font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
             text-align: center;
-            transition: all 0.2s;
-            text-decoration: none;
         }
         .btn-primary {
             background: var(--primary);

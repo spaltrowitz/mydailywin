@@ -35,17 +35,9 @@
             margin-bottom: 10px;
         }
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             padding: 18px 36px;
-            border: none;
             border-radius: 50px;
             font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
             transition: all 0.3s ease;
         }
         .btn-white {
@@ -729,7 +721,6 @@
             .hero h1 { font-size: 32px; }
             .hero p { font-size: 16px; }
             .btn { display: block; margin: 10px auto; }
-            .btn-outline { margin-left: 0; }
             .steps { grid-template-columns: repeat(2, 1fr); gap: 20px; }
             .why-tiles { grid-template-columns: repeat(2, 1fr) !important; }
             .features { 
