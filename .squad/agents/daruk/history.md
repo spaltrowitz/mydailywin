@@ -514,3 +514,15 @@ Any PR that adds/removes/renames a file must update sw.js STATIC_ASSETS and bump
 - Uses same `signInWithPopup` pattern as Google — auth state listener handles redirect
 - Button styled per Apple guidelines: black bg, white text, inline SVG Apple logo
 - No additional Firebase SDK scripts needed — OAuthProvider is part of firebase-auth.js
+
+## Learnings — EmailJS → Cloud Function Migration
+
+- Migrated EmailJS email sending from client-side to a Firebase Cloud Function (`sendInviteEmail`)
+- Function uses Firebase Functions v2 (`onCall` from `firebase-functions/v2/https`)
+- EmailJS REST API (`https://api.emailjs.com/api/v1.0/email/send`) works server-side with same credentials
+- Auth validation via `request.auth` check — unauthenticated callers get rejected
+- Client calls function via `firebase.functions().httpsCallable('sendInviteEmail')`
+- Added `firebase-functions-compat.js` SDK to admin.html for callable function support
+- CSP updated: replaced `https://api.emailjs.com` with `https://*.cloudfunctions.net`
+- Functions config in firebase.json: `"functions": { "source": "functions", "runtime": "nodejs18" }`
+- Node 18 runtime, dependencies: firebase-admin, firebase-functions, node-fetch (v2 for CJS compat)
