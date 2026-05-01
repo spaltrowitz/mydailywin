@@ -892,31 +892,24 @@
         </div>
     </div>
 
-    <script>
-        // Register service worker for offline support
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed:', err));
-        }
-    </script>
+    <script src="js/sw-init.js"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
 
     <script>
         // ========== INPUT SANITIZATION UTILITIES ==========
         function sanitizeInput(input, maxLength = 500) {
             if (typeof input !== 'string') return '';
-            // Trim and limit length
             let sanitized = input.trim().slice(0, maxLength);
-            // Remove potentially dangerous HTML/script content
             sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-            sanitized = sanitized.replace(/<[^>]*>/g, ''); // Remove HTML tags
-            sanitized = sanitized.replace(/javascript:/gi, ''); // Remove javascript: protocol
-            sanitized = sanitized.replace(/on\w+=/gi, ''); // Remove event handlers
+            sanitized = sanitized.replace(/<[^>]*>/g, '');
+            sanitized = sanitized.replace(/javascript:/gi, '');
+            sanitized = sanitized.replace(/on\w+=/gi, '');
             return sanitized;
         }
         
@@ -924,24 +917,7 @@
             const sanitized = sanitizeInput(name, 100);
             return sanitized.length >= 2 && sanitized.length <= 100;
         }
-        
-        function escapeHtml(text) {
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
-            authDomain: "habitrewards-131.firebaseapp.com",
-            projectId: "habitrewards-131",
-            storageBucket: "habitrewards-131.firebasestorage.app",
-            messagingSenderId: "814515329989",
-            appId: "1:814515329989:web:cc256861680e9b67c449ac"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         

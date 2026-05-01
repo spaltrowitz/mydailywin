@@ -1110,14 +1110,8 @@
         <p style="margin-top: 10px;">Built with 💜 to make good habits stick.</p>
     </footer>
 
+    <script src="js/sw-init.js"></script>
     <script>
-        // Register service worker for offline support
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed:', err));
-        }
-        
         // Hamburger menu toggle
         function toggleMenu() {
             document.querySelector('.hamburger').classList.toggle('active');

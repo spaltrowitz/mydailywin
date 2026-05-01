@@ -303,26 +303,15 @@
         
         <a href="home.html?v=2" class="back-link">← Back to Homepage</a>
     </div>
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed:', err));
-        }
-    </script>
+    <script src="js/sw-init.js"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
     
     <script>
-        function escapeHtml(str) {
-            if (!str) return '';
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-            return String(str).replace(/[&<>"']/g, m => map[m]);
-        }
-
         function togglePassword() {
             const pw = document.getElementById('password');
             const btn = document.getElementById('togglePwBtn');
@@ -337,18 +326,6 @@
             }
         }
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
-            authDomain: "habitrewards-131.firebaseapp.com",
-            projectId: "habitrewards-131",
-            storageBucket: "habitrewards-131.firebasestorage.app",
-            messagingSenderId: "814515329989",
-            appId: "1:814515329989:web:cc256861680e9b67c449ac"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         
         // Check for redirect URL parameter

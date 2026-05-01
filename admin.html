@@ -509,20 +509,10 @@
     
     <!-- EmailJS SDK (free tier: 200 emails/month) -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/utils.js"></script>
 
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBj9LzvuYl-x15K2iyoS7bIsZIk810Num8",
-            authDomain: "habitrewards-131.firebaseapp.com",
-            projectId: "habitrewards-131",
-            storageBucket: "habitrewards-131.firebasestorage.app",
-            messagingSenderId: "814515329989",
-            appId: "1:814515329989:web:cc256861680e9b67c449ac"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
@@ -670,12 +660,6 @@
         updateUserNames();
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', updateUserNames);
-        }
-
-        // ========== HTML ESCAPING ==========
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
         }
 
         // ========== TAB FUNCTIONALITY ==========

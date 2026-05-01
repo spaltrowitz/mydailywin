@@ -620,14 +620,8 @@
         </div>
     </div>
 
+    <script src="js/sw-init.js"></script>
     <script>
-        // Register service worker for offline support
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed:', err));
-        }
-        
         let currentStep = 1;
         let answers = {
             forWho: null,
