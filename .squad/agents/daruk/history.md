@@ -432,3 +432,32 @@ Prevents data inheritance on shared devices (kid's tablet, school computer).
 **Script load order pattern:** sw-init.js → Firebase SDK CDNs → firebase-config.js → utils.js → page-specific scripts
 
 **Key detail:** The escapeHtml implementations had subtle differences — app.html used `&#039;` for single quotes while login/admin used `&#39;`. Unified to `&#39;` (the standard HTML entity). Both are valid but `&#39;` is shorter.
+
+---
+
+## Cross-Agent Context (2026-05-01 Optimization Cleanup)
+
+### Mipha's Phase 1 Execution (app.html)
+- Deleted 3 dead functions (rate, submitSurvey, currentRating) — 88 lines removed
+- Extracted `calculatePointsWithBonuses()` — consolidates streak × lucky × random bonus logic (used in 2 sites)
+- Extracted `addPoints()` — consolidates balance + totalEarned updates (11 sites, prevents drift)
+- Net: 46 lines saved, 3 duplication points eliminated
+
+**Impact on Daruk:** No direct impact. Shared utils (escapeHtml) now in js/utils.js; Mipha's Firebase calls still present in-page.
+
+### Urbosa's Phase 1 Execution (admin.html)
+- Deleted 2 dead functions (approvePayoutRequest, shareApp) — 13 lines removed
+- Extracted `getProfileSuffix()` — consolidates '_' + PROFILE_ID pattern (10 sites)
+- Extracted `formatDollar()` — consolidates parseFloat().toFixed(2) pattern (7 sites)
+- Optimized 4 loops in displayTasks() — innerHTML += O(n²) → array-join O(n)
+
+**Impact on Daruk:** formatDollar() is candidate for shared.js if Mipha uses same pattern. getProfileSuffix() uses PROFILE_ID variable — consistent with Daruk's validation pattern in escapeHtml context.
+
+### Shared JS Contract (now active)
+- `js/firebase-config.js` — Load order: AFTER Firebase SDK CDNs
+- `js/sw-init.js` — Load order: FIRST (no deps)
+- `js/utils.js` — Exports escapeHtml(). Load order: BEFORE page scripts that call it. Mipha/Urbosa both now depend on this.
+- **CSP:** All scripts use 'self' origin, allowed by existing policy
+- **SW cache:** May need to add js/*.js to offline cache list
+
+**Next consideration:** If Phase 2 (deduplication) extracts more helpers (calculatePointsWithBonuses, formatDollar, getProfileSuffix), consider whether they belong in js/utils.js or remain page-specific.

@@ -446,3 +446,46 @@ Parallel execution with Urbosa (admin) and Impa (audit). Unified font stack and 
 #### Net Impact
 - 42 insertions, 88 deletions = **-46 net lines**
 - 3 fewer duplication points for future maintenance
+
+---
+
+## Cross-Agent Context (2026-05-01 Optimization Cleanup)
+
+### Daruk's Phase 1 Execution (Shared JS)
+- Created `js/firebase-config.js` — extracted identical initialization from login.html, app.html, admin.html (~24 lines saved)
+- Created `js/sw-init.js` — extracted service worker registration from 4 files (~15 lines saved)
+- Created `js/utils.js` — extracted escapeHtml() helper (was implemented slightly differently in each file, now unified)
+- Deleted `functions/` directory — dead Cloud Functions stub (~200KB saved)
+- **Load order:** sw-init.js → Firebase SDK → firebase-config.js → utils.js → page scripts
+
+**Impact on Mipha:** 
+- escapeHtml now loaded from js/utils.js (previously inline in app.html). Must ensure js/utils.js loads before app.html scripts that call it.
+- CSP policy allows 'self' origin for scripts — no policy changes needed.
+
+### Urbosa's Phase 1 Execution (admin.html Dedup)
+- Deleted 2 dead functions (approvePayoutRequest, shareApp) — 13 lines removed
+- Extracted `getProfileSuffix()` — consolidates '_' + PROFILE_ID pattern (10 sites)
+- Extracted `formatDollar()` — consolidates parseFloat().toFixed(2) pattern (7 sites)
+- Optimized 4 loops in displayTasks() — innerHTML += O(n²) → array-join O(n)
+
+**Impact on Mipha:** 
+- getProfileSuffix() and formatDollar() candidates for shared.js (Phase 2) if app.html uses similar patterns.
+- Urbosa now manages same deduplication patterns as Mipha (helper extraction pattern established across team).
+
+### Phase 1 Aggregate (All Agents)
+| Metric | Value |
+|--------|-------|
+| Code removed | 101 lines |
+| Code added | 42 lines |
+| Net reduction | 59 lines |
+| Size savings | ~200KB |
+| Duplication points eliminated | 7 |
+| Performance improvements | 1 (O(n²) → O(n)) |
+| Functions deleted | 5 |
+
+**Shared JS now active:**
+- All pages should load js/firebase-config.js, js/sw-init.js before Firebase SDK calls
+- All pages should load js/utils.js before calling escapeHtml()
+- Phase 2 may move calculatePointsWithBonuses, addPoints, formatDollar, getProfileSuffix to shared.js
+
+**Next consideration:** Track whether Phase 2 deduplication items belong in js/utils.js (shared across app+admin) or remain page-specific.

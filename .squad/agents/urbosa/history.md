@@ -256,3 +256,74 @@ Parallel execution with Mipha (user dev) and Impa (audit). Unified font stack an
 - Impa: Execute Phase 1 optimization (dead code removal)
 - Daruk: Lead Phase 1 JS extraction (firebase-config.js, sw-init.js, utils.js)
 - Revali: Prioritize Phases 2-3 (deduplication, CSS extraction)
+
+---
+
+## Phase 1 Optimization Execution (2026-05-01)
+
+### Urbosa's Phase 1 Deduplication + Performance (admin.html)
+
+**Session:** Executed Impa's DL3, DL6, D2, D3, RO4 optimization findings for admin.html.
+
+#### DL3: getProfileSuffix() Helper Extraction
+- Pattern: Return `'_' + PROFILE_ID` or `''` based on `IS_LEGACY_PROFILE`
+- Scope: 10 call sites throughout admin.html
+- Benefit: Any change to profile suffix logic now requires 1 edit instead of 10
+- Implementation: Pure function, no side effects
+- Example: `getProfileSuffix()` returns `'_stu'` for modern profiles, `''` for legacy profiles
+
+#### DL6: formatDollar() Helper Extraction
+- Pattern: Return `parseFloat(amount).toFixed(2)`
+- Scope: 7 call sites throughout admin.html
+- Benefit: Centralized number formatting for dollar amounts
+- Note: Did NOT consolidate `(value/100).toFixed(2)` patterns — those do division first, semantically different
+- Implementation: Simple wrapper, no side effects
+
+#### D2: approvePayoutRequest() Dead Code Deletion
+- What: 4-line wrapper function that called `markPayoutSent()`
+- Evidence: Comment says "use markPayoutSent instead"; confirmed zero references in HTML onclick handlers
+- Removed safely: No callers exist
+
+#### D3: shareApp() Dead Code Deletion
+- What: 9-line share/clipboard function
+- Evidence: Defined but never referenced in any button, link, or onclick handler in admin.html
+- Removed safely: Zero references
+
+#### RO4: innerHTML += Loop Optimization
+- Problem: 4 forEach loops in `displayTasks()` used `innerHTML +=` (O(n²) DOM reparsing)
+- Solution: Array.push() in loop, then join and assign once (O(n) DOM parse)
+- Scope: displayTasks() function, affects payout request display
+- Improvement: Performance scales linearly instead of quadratically
+
+#### Net Impact (Phase 1)
+- 13 lines removed (dead code)
+- 2 duplication points eliminated (formatDollar, getProfileSuffix)
+- 1 performance improvement (displayTasks O(n²) → O(n))
+- 0 behavioral changes (pure refactor)
+
+### Cross-Agent Context
+
+#### Daruk's Phase 1 Work
+- Created `js/firebase-config.js`, `js/sw-init.js`, `js/utils.js` (shared modules)
+- Deleted `functions/` directory (~200KB)
+- **Impact on Urbosa:** No direct impact; shared utils (escapeHtml) available in js/utils.js for admin.html
+
+#### Mipha's Phase 1 Work
+- Deleted 3 dead functions from app.html (rate, submitSurvey, currentRating)
+- Extracted `calculatePointsWithBonuses()` and `addPoints()` helpers
+- Net: -46 lines
+- **Impact on Urbosa:** getProfileSuffix() and formatDollar() are candidates for shared.js (Phase 2) if app.html uses similar patterns
+
+### Phase 2 Consideration
+- If app.html implements getProfileSuffix() or formatDollar() patterns, move both to js/utils.js
+- If app.html implements calculatePointsWithBonuses() or addPoints(), consider utility layer for shared business logic
+- Revali to prioritize scope
+
+### Load Order (js/utils.js now active)
+- sw-init.js (first, no deps)
+- Firebase SDK CDNs (prerequisite)
+- firebase-config.js (after SDK)
+- utils.js (before page scripts that call escapeHtml, and future formatDollar, getProfileSuffix if shared)
+- page-specific scripts
+
+**CSP:** All js/ scripts use 'self' origin, already allowed
