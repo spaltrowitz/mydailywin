@@ -1,3 +1,32 @@
+# Daruk — Backend Dev
+
+## Core Context
+
+**Tech Stack:** Backend auth, Firestore rules, Cloud Functions, server-side security
+
+**Key Responsibilities:**
+- Firestore rules (ownership, data validation, auth checks)
+- Cloud Function security (email delivery, payment logic)
+- Authentication flows (Firebase Auth integration)
+- Backend data integrity and rate limiting
+
+**Critical Decisions (Historical):**
+1. **Ownership Model:** `ownerEmail` on profile doc identifies creator. `profiles/{profileId}/admins/{email}` subcollection tracks additional admins.
+2. **Email Delivery:** Migrated from dual EmailJS+Cloud Function to EmailJS-only (Cloud Function now unused, should be deleted).
+3. **PROFILE_ID Pattern:** Validation via `/^[a-zA-Z0-9_-]+$/` prevents localStorage/Firestore path injection.
+4. **Admin Auth:** Firestore-only authority for admin status. localStorage never trusted for authorization (Wave 2 fix).
+
+**Known Prerequisite:** get-started.html must write profile docs to Firestore during onboarding (currently localStorage-only). Until fixed, Firestore ownership checks on `payoutRequests`, `userNotifications`, `userState`, `taskProposals` will fail for localStorage-only profiles.
+
+**Ongoing Concerns:**
+- Firebase API key not restricted (expected for client SDK)
+- No explicit rate limiting on EmailJS sends
+- debug console.log statements previously leaked API keys (check if fully removed)
+
+---
+
+## Full History
+
 ## Cross-Agent Context from Full Team Review (2026-02-27)
 
 ### From Revali (Lead/Architect)

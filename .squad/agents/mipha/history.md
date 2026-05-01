@@ -1,3 +1,35 @@
+# Mipha — User Dev
+
+## Core Context
+
+**Tech Stack:** Frontend UI (app.html, login.html, home.html), CSS styling, UX patterns, dark mode
+
+**Key Responsibilities:**
+- User-facing HTML/CSS (app.html daily interface, task management UI)
+- Login flow and onboarding (login.html, get-started.html styling)
+- Landing page (home.html, marketing site)
+- Dark mode implementation
+- Modal dialogs and gamification UI (celebration screens, notifications)
+
+**Critical Decisions (Historical):**
+1. **Escaping Strategy:** User-controlled data → `escapeHtml()`. Values in JS execution context → `data-*` attributes + `addEventListener()`.
+2. **Dark Mode Pattern:** CSS variables (`--primary`, `--secondary`, theme colors). Toggle via `document.documentElement.setAttribute('data-theme', ...)`.
+3. **Gamification UI:** Celebration modals, confetti animations (10 particles, straight-down). Unused keyframes (jackpot, coinDrop, goldShine) available for enhancement.
+4. **Typography:** Quicksand font for home.html (playful), app.html/login.html should align (currently system fonts on login/get-started).
+
+**Known Issues:**
+- home.html and offline.html lack dark mode support
+- login.html and get-started.html still use system font (should add Quicksand or Nunito)
+- Service worker CACHE_NAME never versioned (stale page risk)
+- localStorage sync gap: admin changes tasks, app doesn't see until reload
+
+**Design Feedback (Shari, 2026-04-30):**
+- Sound effects downgraded to P3 (nice-to-have, not required)
+
+---
+
+## Full History
+
 ## Cross-Agent Context from Full Team Review (2026-02-27)
 
 ### From Revali (Lead/Architect)

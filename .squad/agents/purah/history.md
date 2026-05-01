@@ -1,3 +1,36 @@
+# Purah — Tester
+
+## Core Context
+
+**Role:** QA, test strategy, bug discovery, data validation testing
+
+**Key Responsibilities:**
+- Test all three codebases (app.html, admin.html, index.html/habitrewards.html)
+- Profile-aware testing (multi-user scenarios, profile inheritance)
+- Cloud Function testing (payments, emails, invites)
+- Edge case discovery and race condition testing
+
+**Critical Findings (Historical):**
+1. **Data Validation Gap:** Firestore rules lack type checks (now addressed by Daruk)
+2. **Race Conditions:** sessionStorage items lost between navigation (auth edge case)
+3. **Code Duplication:** Three divergent codebases (app/admin/index) increase test burden
+4. **localStorage Sync Gap:** Admin changes tasks, app doesn't see until reload
+5. **Index.html/habitrewards.html Not Profile-Aware:** Can't select profile, defaults to legacy behavior
+
+**Blocker (previously):**
+- saveState undefined broke payout flow testing (admin.html) — should be verified as fixed
+
+**Test Strategies to Explore:**
+- Multi-profile inheritance and fallback behavior
+- Offline scenario testing (admin dashboard with no Firestore)
+- Shared device sign-out (ensure localStorage cleanup works)
+- Cloud Function timeout/retry logic
+- Email delivery success metrics
+
+---
+
+## Full History
+
 ## Cross-Agent Context from Full Team Review (2026-02-27)
 
 ### From Revali (Lead/Architect)
