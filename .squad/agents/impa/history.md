@@ -6,8 +6,19 @@
 **User:** Shari Paltrowitz
 **Repo:** mydailywin (spaltrowitz/mydailywin)
 
-Key files: app.html (3024 lines), index.html (2380 lines), habitrewards.html (2047 lines), admin.html (2026 lines), home.html (1319 lines), get-started.html (995 lines), login.html (557 lines), plus Firebase Cloud Functions, CSS, and service worker.
+Key files (updated 2025-07-18): app.html (3405 lines), admin.html (2021 lines), home.html (1327 lines), get-started.html (1009 lines), login.html (613 lines). index.html is now a redirect stub (11 lines). habitrewards.html no longer exists — functionality merged into app.html. CSS: admin.css (679 lines), shared.css (243 lines). functions/index.js is a stub (10 lines, exports nothing).
 
 Admin↔user data flows via localStorage keys and Firestore. Profile-based task filtering uses stuOnly/excludeFromStu flags.
 
 ## Learnings
+
+### 2025-07-18 — Full Codebase Optimization Audit
+- **Codebase has significant inline CSS bloat**: app.html alone has 425 lines of inline `<style>`. home.html uses 104 inline `style=""` attributes. Total inline CSS across all pages: ~700+ lines extractable.
+- **Cross-file duplication is the #1 token cost driver**: Firebase config (3 copies), SW registration (4 copies), escapeHtml (2 copies), `.btn` CSS (3 copies). Each page served to AI includes all of this redundantly.
+- **functions/index.js is a dead stub**: Imports Firebase Functions but exports nothing. Can be deleted entirely — saves build overhead and ~200KB node_modules.
+- **app.html has dead feedback code**: `rate()`, `submitSurvey()`, `currentRating` (lines 3227-3242) are remnants of old feedback system, replaced by `submitFeedback()`.
+- **admin.html suffix pattern repeated 10 times**: `const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';` should be a single `getSuffix()` helper.
+- **Points calculation duplicated 3× in app.html**: Streak × lucky × random bonus logic is copy-pasted across `completeTaskDirectly()`, `confirmTask()`, and other flows.
+- **admin.html has deprecated function still present**: `approvePayoutRequest()` (line 1050-1053) is marked deprecated but not removed.
+- **Total estimated savings from audit: ~1,150-1,350 lines (11-13% reduction), 30-40% AI token cost reduction** when working across multiple files.
+- **Decision written to**: `.squad/decisions/inbox/impa-optimization-audit.md`
