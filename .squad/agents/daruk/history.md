@@ -505,3 +505,12 @@ Any PR that adds/removes/renames a file must update sw.js STATIC_ASSETS and bump
 - .squad/decisions/inbox/daruk-forgot-password.md → merged to decisions.md
 - .squad/decisions/inbox/daruk-sw-cache.md → merged to decisions.md
 
+
+## Learnings
+
+### Apple Sign-In (login.html)
+- Apple Sign-In uses `firebase.auth.OAuthProvider('apple.com')` with v8 compat SDK
+- Scopes added: 'email' and 'name'
+- Uses same `signInWithPopup` pattern as Google — auth state listener handles redirect
+- Button styled per Apple guidelines: black bg, white text, inline SVG Apple logo
+- No additional Firebase SDK scripts needed — OAuthProvider is part of firebase-auth.js

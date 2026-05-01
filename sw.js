@@ -3,12 +3,13 @@
  * Provides offline support and caching for the PWA
  */
 
-const CACHE_NAME = 'mydailywin-v2';
+const CACHE_NAME = 'mydailywin-v3';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
   '/',
+  '/index.html',
   '/home.html',
   '/app.html',
   '/login.html',
@@ -20,6 +21,10 @@ const STATIC_ASSETS = [
   '/icon-192.svg',
   '/icon-512.svg',
   '/css/admin.css',
+  '/css/shared.css',
+  '/js/firebase-config.js',
+  '/js/sw-init.js',
+  '/js/utils.js',
   '/offline.html'
 ];
 
