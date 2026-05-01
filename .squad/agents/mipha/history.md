@@ -360,3 +360,28 @@ Added `escapeHtml()` function to login.html (did not previously exist).
 - Celebration modals have `role="dialog"`, `aria-modal="true"`, close button with `aria-label`
 - Confetti respects `prefers-reduced-motion: reduce`
 - All new touch targets meet 44px minimum
+
+---
+
+## Learnings
+
+### Font Unification (Sidon UX Audit Response)
+
+**Date:** $(date +%Y-%m-%d)
+
+**Context:** Sidon's UX audit flagged three different font stacks (Nunito, Quicksand, system fonts), shared.css never imported, ~45 hardcoded hex values, and background color mismatches.
+
+**What I Did:**
+1. Imported `css/shared.css` before page-specific `<style>` blocks in all 5 user-facing pages (app.html, index.html, home.html, login.html, get-started.html)
+2. Replaced Quicksand with Nunito in home.html, login.html, get-started.html
+3. Removed duplicate `:root` CSS variable blocks — now inherited from shared.css
+4. Replaced ~12 hardcoded hex values with CSS variables (`--bg`, `--text`)
+5. Standardized background to `var(--bg)` (#f7f7f7) everywhere (app.html was using #f0f2f5)
+
+**Key Decisions:**
+- Left JS data color references in app.html untouched (line 2190, 3264) — these are JavaScript data objects for gamification levels, not CSS
+- Left `<meta name="theme-color" content="#58cc02">` as-is — meta tags can't use CSS variables
+- Kept dark mode overrides in app.html inline styles — they override shared.css vars correctly
+- habitrewards.html does not exist in the repo — skipped
+
+**Pattern Established:** shared.css is the single source of truth for CSS variables. Pages should NOT redeclare `:root` vars unless overriding for dark mode or page-specific theming.
