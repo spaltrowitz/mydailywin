@@ -10,7 +10,8 @@
     <link rel="apple-touch-icon" href="/favicon.svg">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css">
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Turn daily habits into a rewarding game. Track activities, build streaks, earn real money. Perfect for staying active, sharp, and motivated.">
@@ -32,18 +33,8 @@
     <meta property="twitter:image" content="https://mydailywin.web.app/og-image.png">
     
     <style>
-        :root {
-            --primary: #58cc02;
-            --primary-dark: #58a700;
-            --secondary: #ce82ff;
-            --orange: #ff9600;
-            --bg: #f7f7f7;
-            --text: #3c3c3c;
-            --text-light: #595959;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Nunito', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
@@ -251,7 +242,7 @@
             margin-bottom: 30px;
         }
         footer {
-            background: #3c3c3c;
+            background: var(--text);
             color: #ccc;
             text-align: center;
             padding: 30px 20px;
@@ -580,7 +571,7 @@
             font-size: 12px;
             font-weight: 600;
             color: #1a1a1a;
-            background: #f0f2f5;
+            background: var(--bg);
         }
         .demo-task {
             background: white;
@@ -1037,7 +1028,7 @@
 
             <!-- FAQ Items -->
             <div style="display: flex; flex-direction: column; gap: 15px;">
-                <details style="background: #f7f7f7; border-radius: 12px; padding: 15px;">
+                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
                     <summary style="font-weight: 700; cursor: pointer; list-style: none;">💰 How does the point system work?</summary>
                     <div style="margin-top: 12px; color: #555; line-height: 1.6;">
                         <strong>100 points = $1.00</strong><br><br>
@@ -1045,7 +1036,7 @@
                     </div>
                 </details>
 
-                <details style="background: #f7f7f7; border-radius: 12px; padding: 15px;">
+                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
                     <summary style="font-weight: 700; cursor: pointer; list-style: none;">🔥 How do streaks work?</summary>
                     <div style="margin-top: 12px; color: #555; line-height: 1.6;">
                         Complete at least one task per day to build a streak:<br><br>
@@ -1056,28 +1047,28 @@
                     </div>
                 </details>
 
-                <details style="background: #f7f7f7; border-radius: 12px; padding: 15px;">
+                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
                     <summary style="font-weight: 700; cursor: pointer; list-style: none;">🎰 What is the spin wheel?</summary>
                     <div style="margin-top: 12px; color: #555; line-height: 1.6;">
                         Complete all your daily tasks to unlock a bonus spin! Prizes range from 10 to 150 points. One free spin per day, no approval needed.
                     </div>
                 </details>
 
-                <details style="background: #f7f7f7; border-radius: 12px; padding: 15px;">
+                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
                     <summary style="font-weight: 700; cursor: pointer; list-style: none;">💵 How do payouts work?</summary>
                     <div style="margin-top: 12px; color: #555; line-height: 1.6;">
                         Points accumulate as tasks are completed. Cash out anytime via <strong>Settings → Redeem Points</strong>. No monthly deadline — redeem when you're ready!
                     </div>
                 </details>
 
-                <details style="background: #f7f7f7; border-radius: 12px; padding: 15px;">
+                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
                     <summary style="font-weight: 700; cursor: pointer; list-style: none;">🔄 Can I recover a lost streak?</summary>
                     <div style="margin-top: 12px; color: #555; line-height: 1.6;">
                         Yes! If you miss a day, tap the streak badge. To recover, call a family member and log the call. This keeps you connected while being forgiving about missed days.
                     </div>
                 </details>
 
-                <details style="background: #f7f7f7; border-radius: 12px; padding: 15px;">
+                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
                     <summary style="font-weight: 700; cursor: pointer; list-style: none;">🏆 How do levels work?</summary>
                     <div style="margin-top: 12px; color: #555; line-height: 1.6;">
                         Levels are based on total lifetime points earned (not current balance). There are 10 levels from Beginner to Hall of Fame. Levels never go down, even after payouts!
@@ -1229,7 +1220,7 @@
                 </div>
                 
                 <!-- Content Area -->
-                <div style="padding: 16px; background: #f0f2f5;">
+                <div style="padding: 16px; background: var(--bg);">
                     <!-- Greeting & Streak -->
                     <div style="text-align: center; margin-bottom: 16px;">
                         <div style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Good morning! ☀️</div>
