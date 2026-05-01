@@ -697,6 +697,15 @@
         function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('active'); }
         function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('active'); }
 
+        // ========== HELPERS ==========
+        function getProfileSuffix() {
+            return (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+        }
+
+        function formatDollar(amount) {
+            return parseFloat(amount).toFixed(2);
+        }
+
         // ========== STATE MANAGEMENT ==========
         function loadState() {
             const saved = localStorage.getItem(STORAGE_KEY);
@@ -850,62 +859,66 @@
             // Daily tasks
             const dailyTable = document.getElementById('dailyTasksTable');
             const dailyTasks = getTasks('daily');
-            dailyTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            let html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
             dailyTasks.forEach(t => {
-                dailyTable.innerHTML += `
+                html.push(`
                     <tr class="editable-row" onclick="openEditTask('daily', ${t.id})">
                         <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
                     </tr>
-                `;
+                `);
             });
+            dailyTable.innerHTML = html.join('');
 
             // Daily bonus tasks
             const bonusTable = document.getElementById('dailyBonusTable');
             const bonusTasks = getTasks('dailyBonus');
-            bonusTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
             bonusTasks.forEach(t => {
-                bonusTable.innerHTML += `
+                html.push(`
                     <tr class="editable-row" onclick="openEditTask('dailyBonus', ${t.id})">
                         <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
                     </tr>
-                `;
+                `);
             });
+            bonusTable.innerHTML = html.join('');
 
             // Permanent weekly tasks
             const permWeeklyTable = document.getElementById('permanentWeeklyTable');
             const permWeeklyTasks = getTasks('permanentWeekly');
-            permWeeklyTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
             permWeeklyTasks.forEach(t => {
-                permWeeklyTable.innerHTML += `
+                html.push(`
                     <tr class="editable-row" onclick="openEditTask('permanentWeekly', ${t.id})">
                         <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
                     </tr>
-                `;
+                `);
             });
+            permWeeklyTable.innerHTML = html.join('');
 
             // Weekly bonus tasks
             const weeklyTable = document.getElementById('weeklyBonusTable');
             const weeklyTasks = getTasks('weekly');
-            weeklyTable.innerHTML = '<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>';
+            html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
             weeklyTasks.forEach(t => {
-                weeklyTable.innerHTML += `
+                html.push(`
                     <tr class="editable-row" onclick="openEditTask('weekly', ${t.id})">
                         <td class="task-name-cell">${escapeHtml(t.name)}</td>
                         <td class="points-cell">${t.value}</td>
                         <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
                         <td>✏️</td>
                     </tr>
-                `;
+                `);
             });
+            weeklyTable.innerHTML = html.join('');
         }
 
         function displayLevels() {
@@ -958,7 +971,7 @@
                                 <div style="font-weight: 700;">${escapeHtml(p.month)}</div>
                                 <div style="font-size: 12px; color: var(--text-light);">${escapeHtml(p.notes) || 'Via Zelle'}</div>
                             </div>
-                            <div class="payment-amount">$${parseFloat(p.amount).toFixed(2)}</div>
+                            <div class="payment-amount">$${formatDollar(p.amount)}</div>
                         </div>
                     `;
                 }).join('');
@@ -1003,11 +1016,11 @@
                     return `
                         <div class="payment-row" style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
                             <div style="flex: 1;">
-                                <div style="font-weight: 700; font-size: 20px; color: #92400e;">$${parseFloat(r.amount).toFixed(2)}</div>
+                                <div style="font-weight: 700; font-size: 20px; color: #92400e;">$${formatDollar(r.amount)}</div>
                                 <div style="font-size: 12px; color: #b45309; margin-bottom: 8px;">Requested ${requestedDate.toLocaleDateString()} at ${requestedDate.toLocaleTimeString()}</div>
                                 <div style="font-size: 13px; color: #78350f; background: #fef9c3; padding: 8px 12px; border-radius: 6px; margin-top: 8px;">
                                     <strong>📋 Steps:</strong><br>
-                                    1. Transfer $${parseFloat(r.amount).toFixed(2)} to MyDailyWin account<br>
+                                    1. Transfer $${formatDollar(r.amount)} to MyDailyWin account<br>
                                     2. MyDailyWin sends via Zelle to ${escapeHtml(userName)}<br>
                                     3. Click "Mark as Sent" below
                                 </div>
@@ -1022,7 +1035,7 @@
             } catch (err) {
                 console.error('Error loading payout requests:', err);
                 // Fallback to localStorage
-                const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+                const suffix = getProfileSuffix();
                 const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
                 const pendingRequests = requests.filter(r => r.status === 'pending');
                 
@@ -1035,7 +1048,7 @@
                 container.innerHTML = pendingRequests.map(r => `
                     <div class="payment-row" style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
                         <div style="flex: 1;">
-                            <div style="font-weight: 700; font-size: 18px; color: #92400e;">$${parseFloat(r.amount).toFixed(2)}</div>
+                            <div style="font-weight: 700; font-size: 18px; color: #92400e;">$${formatDollar(r.amount)}</div>
                             <div style="font-size: 12px; color: #b45309;">Requested ${new Date(r.requestedAt).toLocaleDateString()} at ${new Date(r.requestedAt).toLocaleTimeString()}</div>
                         </div>
                         <div style="display: flex; gap: 8px;">
@@ -1045,11 +1058,6 @@
                     </div>
                 `).join('');
             }
-        }
-        
-        async function approvePayoutRequest(requestId, amount, points) {
-            // Deprecated - use markPayoutSent instead
-            await markPayoutSent(requestId, amount, points, PROFILE_NAME);
         }
         
         async function markPayoutSent(requestId, amount, points, userName) {
@@ -1081,7 +1089,7 @@
                 // Save notification for user to see when they open the app
                 await saveUserNotification(userName, amount);
                 
-                showToast('✅ $' + parseFloat(amount).toFixed(2) + ' sent to ' + userName + '!');
+                showToast('✅ $' + formatDollar(amount) + ' sent to ' + userName + '!');
                 displayPayments();
                 displayStats();
             } catch (err) {
@@ -1098,7 +1106,7 @@
                     profileId: profileId,
                     type: 'payout_sent',
                     title: '💰 Payment Sent!',
-                    message: `$${parseFloat(amount).toFixed(2)} from MyDailyWin is on its way via Zelle!`,
+                    message: `$${formatDollar(amount)} from MyDailyWin is on its way via Zelle!`,
                     amount: amount,
                     read: false,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1127,7 +1135,7 @@
         
         // Fallback functions for localStorage
         function approvePayoutRequestLocal(requestId) {
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
             const request = requests.find(r => r.id === requestId);
             
@@ -1151,7 +1159,7 @@
             state.balance = Math.max(0, state.balance - request.points);
             saveState(state);
             
-            showToast('✅ Payment of $' + parseFloat(request.amount).toFixed(2) + ' recorded');
+            showToast('✅ Payment of $' + formatDollar(request.amount) + ' recorded');
             displayPayments();
             displayStats();
         }
@@ -1159,7 +1167,7 @@
         function dismissPayoutRequestLocal(requestId) {
             if (!confirm('Dismiss this payout request without paying?')) return;
             
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
             const index = requests.findIndex(r => r.id === requestId);
             
@@ -1174,7 +1182,7 @@
         }
 
         function displayReports() {
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             const reports = JSON.parse(localStorage.getItem('hr_reports' + suffix) || '[]');
             const container = document.getElementById('reportsContainer');
             
@@ -1376,7 +1384,7 @@
         }
 
         function downloadTaskResponses() {
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             const log = JSON.parse(localStorage.getItem('hr_completed_log' + suffix) || '[]');
             if (log.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Points,Comment\n';
@@ -1385,7 +1393,7 @@
         }
 
         function downloadFeedbackLog() {
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             const fb = JSON.parse(localStorage.getItem('hr_feedback' + suffix) || '[]');
             if (fb.length === 0) { alert('No data'); return; }
             let csv = 'Date,Mood,Energy,Overall,Comments\n';
@@ -1394,7 +1402,7 @@
         }
 
         function downloadReports() {
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             const rpts = JSON.parse(localStorage.getItem('hr_reports' + suffix) || '[]');
             if (rpts.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Reason,Comment\n';
@@ -1403,7 +1411,7 @@
         }
 
         function downloadAllData() {
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             const data = {
                 state: loadState(),
                 admin: loadAdminData(),
@@ -1485,7 +1493,7 @@
         }
 
         function clearReports() {
-            const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+            const suffix = getProfileSuffix();
             if (confirm('Clear all reports?')) {
                 localStorage.removeItem('hr_reports' + suffix);
                 displayReports();
@@ -1508,7 +1516,7 @@
         function resetUserData() {
             if (confirm('⚠️ DELETE ALL user data?\n\nThis removes:\n• Points & balance\n• Streak\n• Completed tasks\n• Achievements')) {
                 if (confirm('Are you absolutely sure?')) {
-                    const suffix = (PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : '';
+                    const suffix = getProfileSuffix();
                     localStorage.removeItem('hr_state' + suffix);
                     localStorage.removeItem('hr_date' + suffix);
                     localStorage.removeItem('hr_week' + suffix);
@@ -1557,16 +1565,6 @@
             const subject = encodeURIComponent('MyDailyWin - Support Request');
             const body = encodeURIComponent('Hi,\n\nI have a question about MyDailyWin:\n\n');
             window.location.href = `mailto:developer@mydailywin.app?subject=${subject}&body=${body}`;
-        }
-
-        function shareApp() {
-            const url = 'https://mydailywin.web.app';
-            if (navigator.share) {
-                navigator.share({ title: 'MyDailyWin', text: 'Check out this habit tracking app!', url });
-            } else {
-                navigator.clipboard.writeText(url);
-                alert('Link copied to clipboard!\n\n' + url);
-            }
         }
 
         function referFriend() {
