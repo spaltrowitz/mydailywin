@@ -86,3 +86,22 @@ The app is Duolingo-inspired: daily tasks earn points (100 pts = $1), streaks bu
 
 **Notes:** 15 findings provide comprehensive roadmap for next phase. Top 5 should be prioritized for next sprint.
 
+
+### 2025-07-24 — Remaining UX Sweep Implementation (4 items)
+
+**Session:** Implemented F3, F10, F11, F13 from sweep findings
+
+**Changes:**
+1. **Spin wheel easing (F3, P2):** Replaced 100ms `setInterval` with recursive `setTimeout` using exponential deceleration curve (`60ms * e^(1.8 * progress)`). Wheel now starts fast (~60ms), slows dramatically (~360ms at end), creating genuine suspense before reveal. Pre-determines winner so final emoji is correct.
+
+2. **Escape key handler (F10, P3):** Added global `keydown` listener in app.js that finds the topmost `.modal.active` and calls `closeModal()` on it. Handles all 10+ modals without modification to each one.
+
+3. **Dark mode for login/home/get-started (F11, P3):** Created `js/dark-mode.js` — a tiny init script that reads `localStorage.getItem('theme')` falling back to `prefers-color-scheme: dark`. Added dark mode CSS overrides to `css/login.css`, `css/home.css`, `css/get-started.css`. Colors use the same palette as app.html dark mode (#131f24 bg, #202f36 cards, #37464f borders, #e5e5e5 text).
+
+4. **get-started.html alert() replacement (F13, P3):** Added `showToast()` function to `js/get-started.js` and replaced both native `alert()` calls with styled toast notifications. Added `.toast` dark mode styles and `@keyframes slideUp` animation.
+
+**Supporting changes:**
+- SW cache bumped to v5, added `js/dark-mode.js` to precache list
+- All JS passes `node -c` syntax validation
+
+**Remaining from sweep:** F4 (achievements modal), F5 (touch target), F6 (checkbox size), F14 (dead keyframes)

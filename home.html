@@ -32,777 +32,20 @@
     <meta property="twitter:description" content="Turn daily habits into a rewarding game. Track activities, build streaks, earn real money.">
     <meta property="twitter:image" content="https://mydailywin.web.app/og-image.png">
     
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-        .hero {
-            background: linear-gradient(135deg, #3d8a02, #2d6e01);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .hero-logo {
-            font-size: 72px;
-            line-height: 1;
-            margin-bottom: 16px;
-        }
-        .hero h1 {
-            font-size: 42px;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-        .hero p {
-            font-size: 20px;
-            opacity: 0.95;
-            max-width: 500px;
-            margin: 0 auto 30px;
-        }
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 18px 36px;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .btn-white {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-        .btn-white:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-        }
-        .btn-ghost {
-            background: rgba(255,255,255,0.15);
-            color: white;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.4);
-        }
-        .btn-ghost:hover {
-            background: rgba(255,255,255,0.25);
-            border-color: rgba(255,255,255,0.6);
-            transform: translateY(-2px);
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
-        .section-title {
-            text-align: center;
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 40px;
-            color: var(--text);
-        }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-        .feature-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        .feature-icon {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-        .feature-card h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: var(--text);
-        }
-        .feature-card p {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        .how-it-works {
-            background: white;
-        }
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .step {
-            text-align: center;
-        }
-        .step-number {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 800;
-            margin: 0 auto 15px;
-        }
-        .step h4 {
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-        .step p {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        .earnings-section {
-            background: linear-gradient(135deg, #fff9e6, #fff3cc);
-            text-align: center;
-        }
-        .earnings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .earning-card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        .earning-card .amount {
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--primary);
-        }
-        .earning-card .label {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        .gamification {
-            text-align: center;
-        }
-        .badges {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        .badge-item {
-            background: white;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .badge-item:nth-child(even) {
-            background: #faf5ff;
-            border: 1px solid #e9d5ff;
-        }
-        .cta-section {
-            background: linear-gradient(135deg, #2d6e01, #3d8a02);
-            text-align: center;
-            color: white;
-            padding: 60px 20px;
-        }
-        .cta-section h2 {
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-        .cta-section p {
-            font-size: 18px;
-            opacity: 0.9;
-            margin-bottom: 30px;
-        }
-        footer {
-            background: var(--text);
-            color: #ccc;
-            text-align: center;
-            padding: 30px 20px;
-            font-size: 14px;
-        }
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
-        .nav-links {
-            margin-top: 15px;
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: center;
-            gap: 8px;
-        }
-        .nav-links a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            font-size: 15px;
-            white-space: nowrap;
-        }
-        .nav-links a:hover {
-            color: white;
-        }
-        @media (max-width: 480px) {
-            .nav-links {
-                gap: 4px;
-            }
-            .nav-links a {
-                font-size: 14px;
-            }
-        }
-        /* Hamburger Menu */
-        .hamburger {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            width: 44px;
-            height: 44px;
-            background: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            transition: transform 0.2s;
-        }
-        .hamburger:hover {
-            transform: scale(1.05);
-        }
-        .hamburger span {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
-            transition: all 0.3s;
-        }
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-        .menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .slide-menu {
-            position: fixed;
-            top: 0;
-            left: -320px;
-            width: 300px;
-            max-width: 85vw;
-            height: 100%;
-            background: white;
-            z-index: 1000;
-            padding: 80px 25px 25px;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
-            transition: left 0.3s ease;
-            overflow-y: auto;
-        }
-        .slide-menu.active {
-            left: 0;
-        }
-        .menu-section {
-            margin-bottom: 25px;
-        }
-        .menu-section-title {
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-light);
-            margin-bottom: 10px;
-            padding-left: 5px;
-        }
-        .menu-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 15px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 600;
-            font-size: 15px;
-            transition: background 0.2s;
-        }
-        .menu-link:hover {
-            background: var(--bg);
-        }
-        .menu-link.primary {
-            background: var(--primary);
-            color: white;
-        }
-        .menu-link.primary:hover {
-            background: var(--primary-dark);
-        }
-        .menu-divider {
-            height: 1px;
-            background: #e5e7eb;
-            margin: 20px 0;
-        }
-        .profile-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-            border-radius: 12px;
-            margin-bottom: 8px;
-            text-decoration: none;
-            color: var(--text);
-            transition: transform 0.2s;
-        }
-        .profile-card:hover {
-            transform: translateX(5px);
-        }
-        .profile-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 16px;
-        }
-        .profile-info {
-            flex: 1;
-        }
-        .profile-name {
-            font-weight: 700;
-            font-size: 15px;
-        }
-        .profile-role {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        /* App Mockup Styles */
-        .app-preview {
-            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .phone-frame {
-            display: inline-block;
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border-radius: 54px;
-            padding: 12px;
-            box-shadow: 
-                0 0 0 1px rgba(255,255,255,0.1),
-                0 0 0 3px #3a3a3a,
-                0 25px 50px rgba(0,0,0,0.4),
-                inset 0 1px 1px rgba(255,255,255,0.05);
-            width: 270px;
-            margin: 0 auto;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .phone-frame:hover {
-            transform: scale(1.02) translateY(-5px);
-            box-shadow: 
-                0 0 0 1px rgba(255,255,255,0.15),
-                0 0 0 3px #3a3a3a,
-                0 35px 70px rgba(0,0,0,0.5),
-                inset 0 1px 1px rgba(255,255,255,0.05);
-        }
-        .phone-tap-hint {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 20px;
-            padding: 8px 16px;
-            background: white;
-            border-radius: 20px;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-light);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            animation: pulse 2s infinite;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-        }
-        .phone-tap-hint:hover {
-            transform: scale(1.05);
-            background: var(--primary);
-            color: white;
-        }
-        .app-preview .phone-frame {
-            display: block;
-            margin: 0 auto;
-        }
-        .app-preview {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        /* Demo Modal */
-        .demo-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        .demo-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .demo-modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
-            background: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
-        }
-        .demo-modal-close:hover {
-            transform: scale(1.1);
-        }
-        .demo-phone {
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border-radius: 58px;
-            padding: 14px;
-            box-shadow: 
-                0 0 0 1px rgba(255,255,255,0.1),
-                0 0 0 4px #3a3a3a,
-                0 30px 80px rgba(0,0,0,0.6),
-                inset 0 1px 1px rgba(255,255,255,0.05);
-            width: 320px;
-            max-width: 90vw;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-        .demo-modal.active .demo-phone {
-            transform: scale(1);
-        }
-        .demo-screen {
-            background: var(--bg);
-            border-radius: 46px;
-            overflow: hidden;
-            height: 680px;
-            max-height: 85vh;
-        }
-        .demo-dynamic-island {
-            background: #000;
-            height: 26px;
-            width: 90px;
-            margin: 12px auto 0;
-            border-radius: 16px;
-            box-shadow: inset 0 0 2px rgba(255,255,255,0.1);
-        }
-        .demo-status-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 24px 6px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #1a1a1a;
-            background: var(--bg);
-        }
-        .demo-task {
-            background: white;
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 2px solid rgba(0,0,0,0.05);
-            box-shadow: 0 2px 0 rgba(0,0,0,0.04);
-        }
-        .demo-task-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .demo-task-name {
-            font-size: 14px;
-            font-weight: 700;
-        }
-        .demo-task-pts {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--primary);
-            background: rgba(88, 204, 2, 0.1);
-            padding: 2px 6px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        .demo-task-check {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            background: #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 10px;
-            box-shadow: 0 2px 0 #d1d5db;
-        }
-        .demo-task-check.done {
-            background: var(--primary);
-            color: white;
-            font-size: 14px;
-            box-shadow: 0 2px 0 #46a302;
-        }
-        .demo-task-name.done {
-            text-decoration: line-through;
-            opacity: 0.5;
-        }
-        .phone-screen {
-            background: var(--bg);
-            border-radius: 44px;
-            overflow: hidden;
-            text-align: left;
-            height: 530px;
-        }
-        .phone-status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 20px 4px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #1a1a1a;
-            background: var(--bg);
-        }
-        .phone-status-bar .time {
-            font-weight: 700;
-        }
-        .phone-status-bar .icons {
-            display: flex;
-            gap: 4px;
-            font-size: 10px;
-        }
-        .phone-dynamic-island {
-            background: #000;
-            height: 22px;
-            margin: 10px auto 0;
-            width: 72px;
-            border-radius: 14px;
-            position: relative;
-            box-shadow: inset 0 0 2px rgba(255,255,255,0.1);
-        }
-        .mock-header {
-            background: linear-gradient(135deg, #3d8a02, #2d6e01);
-            color: white;
-            padding: 14px 14px;
-            text-align: center;
-        }
-        .mock-header h3 {
-            font-size: 17px;
-            margin: 0;
-            font-weight: 800;
-        }
-        .mock-header p {
-            font-size: 12px;
-            opacity: 0.95;
-            margin: 4px 0 0;
-        }
-        .mock-stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 10px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .mock-stat {
-            text-align: center;
-        }
-        .mock-stat-value {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--primary);
-        }
-        .mock-stat-label {
-            font-size: 10px;
-            color: var(--text-light);
-            margin-top: 2px;
-        }
-        .mock-tasks {
-            padding: 12px;
-        }
-        .mock-task {
-            background: white;
-            border-radius: 12px;
-            padding: 10px 10px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 0 rgba(0,0,0,0.04);
-            border: 1.5px solid rgba(0,0,0,0.06);
-        }
-        .mock-task-content {
-            flex: 1;
-            margin-right: 10px;
-        }
-        .mock-task-check {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            background: #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            box-shadow: 0 2px 0 #d1d5db;
-        }
-        .mock-task-check.done {
-            background: var(--primary);
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
-            box-shadow: 0 2px 0 #46a302;
-        }
-        .mock-task-name {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
-        .mock-task-name.done {
-            text-decoration: line-through;
-            opacity: 0.5;
-        }
-        .mock-task-pts {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--primary);
-            background: rgba(88, 204, 2, 0.1);
-            padding: 2px 6px;
-            border-radius: 6px;
-        }
-        @media (max-width: 600px) {
-            .phone-frame {
-                width: 240px;
-                border-radius: 48px;
-                padding: 10px;
-            }
-            .phone-screen {
-                height: 470px;
-                border-radius: 40px;
-            }
-        }
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 32px; }
-            .hero p { font-size: 16px; }
-            .btn { display: block; margin: 10px auto; }
-            .btn-outline { margin-left: 0; }
-            .steps { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-            .why-tiles { grid-template-columns: repeat(2, 1fr) !important; }
-            .features { 
-                grid-template-columns: repeat(2, 1fr); 
-                gap: 8px; 
-            }
-            .feature-card {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                padding: 12px 8px;
-                gap: 4px;
-            }
-            .feature-icon {
-                font-size: 24px;
-                margin-bottom: 0;
-            }
-            .feature-card h3 {
-                font-size: 14px;
-                margin-bottom: 0;
-            }
-            .feature-card p {
-                display: none;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/home.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: blob: https:; frame-src 'none';">
 </head>
 <body>
+    <script src="js/dark-mode.js"></script>
     <!-- Hamburger Menu Button -->
-    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <button class="hamburger" data-action="toggleMenu" aria-label="Menu">
         <span></span>
         <span></span>
         <span></span>
     </button>
 
     <!-- Menu Overlay -->
-    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="menu-overlay" data-action="toggleMenu"></div>
 
     <!-- Slide-out Menu -->
     <div class="slide-menu">
@@ -821,17 +64,17 @@
 
         <div class="menu-section">
             <div class="menu-section-title">Learn More</div>
-            <a href="#why" class="menu-link" onclick="toggleMenu()">💜 Why MyDaily<span style="color: #ff9600;">Win</span></a>
-            <a href="#features" class="menu-link" onclick="toggleMenu()">✨ Features</a>
-            <a href="#how-it-works" class="menu-link" onclick="toggleMenu()">📋 How It Works</a>
-            <a href="#faq" class="menu-link" onclick="toggleMenu()">❓ FAQ</a>
+            <a href="#why" class="menu-link" data-action="toggleMenu">💜 Why MyDaily<span class="accent-orange">Win</span></a>
+            <a href="#features" class="menu-link" data-action="toggleMenu">✨ Features</a>
+            <a href="#how-it-works" class="menu-link" data-action="toggleMenu">📋 How It Works</a>
+            <a href="#faq" class="menu-link" data-action="toggleMenu">❓ FAQ</a>
             <a href="admin-guide.html" class="menu-link">👥 Admin Guide</a>
         </div>
     </div>
 
     <div class="hero">
         <div class="hero-logo">🏆</div>
-        <h1>MyDaily<span style="color: #ff9600;">Win</span></h1>
+        <h1>MyDaily<span class="accent-orange">Win</span></h1>
         <p>Turn daily habits into a rewarding game. Stay active, stay sharp, and celebrate your wins!</p>
         <div class="hero-buttons">
             <a href="get-started.html" class="btn btn-white">🚀 Get Started</a>
@@ -839,10 +82,10 @@
         </div>
         <!-- PWA Install Button (hidden until beforeinstallprompt fires) -->
         <div id="pwaInstallBannerHome" style="display: none; margin-top: 16px;">
-            <button id="pwaInstallBtnHome" onclick="triggerInstallPrompt()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.5); backdrop-filter: blur(10px); font-size: 16px; padding: 14px 28px;">📱 Add to Home Screen</button>
+            <button id="pwaInstallBtnHome" data-action="triggerInstallPrompt" class="btn btn-pwa-install">📱 Add to Home Screen</button>
         </div>
         <div class="nav-links">
-            <a href="#why">Why MyDaily<span style="color: #ff9600;">Win</span></a>
+            <a href="#why">Why MyDaily<span class="accent-orange">Win</span></a>
             <a href="#features">Features</a>
             <a href="#how-it-works">How It Works</a>
             <a href="#faq">FAQ</a>
@@ -851,9 +94,9 @@
 
     <!-- APP PREVIEW MOCKUP -->
     <div class="app-preview">
-        <h2 class="section-title" style="margin-bottom: 20px;">📱 See It In Action</h2>
-        <p style="color: var(--text-light); max-width: 500px; margin: 0 auto 30px;">A simple, beautiful app that makes building habits feel like a game</p>
-        <div class="phone-frame" onclick="openDemo()">
+        <h2 class="section-title section-title-tight">📱 See It In Action</h2>
+        <p class="section-subtitle">A simple, beautiful app that makes building habits feel like a game</p>
+        <div class="phone-frame" data-action="openDemo">
             <div class="phone-screen">
                 <div class="phone-dynamic-island"></div>
                 <div class="phone-status-bar">
@@ -861,7 +104,7 @@
                     <span class="icons">📶 🔋</span>
                 </div>
                 <div class="mock-header">
-                    <h3>🏆 MyDaily<span style="color: #ff9600;">Win</span></h3>
+                    <h3>🏆 MyDaily<span class="accent-orange">Win</span></h3>
                     <p>🔥 7 Day Streak!</p>
                 </div>
                 <div class="mock-stats">
@@ -879,7 +122,7 @@
                     </div>
                 </div>
                 <div class="mock-tasks">
-                    <div style="font-size: 11px; font-weight: 700; color: var(--text-light); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Daily Habits</div>
+                    <div class="mock-section-label">📋 Daily Habits</div>
                     <div class="mock-task">
                         <div class="mock-task-content">
                             <div class="mock-task-name done">🚶 Go for a walk</div>
@@ -901,49 +144,49 @@
                         </div>
                         <div class="mock-task-check"></div>
                     </div>
-                    <div class="mock-task" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b;">
+                    <div class="mock-task mock-task-bonus">
                         <div class="mock-task-content">
                             <div class="mock-task-name">🏃 Exercise today</div>
-                            <div class="mock-task-pts" style="color: #f59e0b; background: rgba(245,158,11,0.15);">+75 pts ⭐</div>
+                            <div class="mock-task-pts">+75 pts ⭐</div>
                         </div>
-                        <div class="mock-task-check" style="background: rgba(245,158,11,0.2); box-shadow: 0 2px 0 rgba(245,158,11,0.3);"></div>
+                        <div class="mock-task-check"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="phone-tap-hint" onclick="openDemo()">👆 Tap to explore</div>
-        <p style="margin-top: 15px; font-size: 14px; color: var(--text-light);">Complete tasks → Earn points → Get paid via Zelle</p>
+        <div class="phone-tap-hint" data-action="openDemo">👆 Tap to explore</div>
+        <p class="app-preview-caption">Complete tasks → Earn points → Get paid via Zelle</p>
     </div>
 
     <!-- WHY MYDAILYWIN -->
-    <div id="why" class="container" style="text-align: center; background: linear-gradient(135deg, #faf5ff, #f3e8ff); border-radius: 24px; padding: 40px 20px; margin-top: 30px;">
-        <h2 class="section-title">💜 Why MyDaily<span style="color: #ff9600;">Win</span>?</h2>
-        <p style="max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-light); line-height: 1.8;">
+    <div id="why" class="container why-section">
+        <h2 class="section-title">💜 Why MyDaily<span class="accent-orange">Win</span>?</h2>
+        <p class="why-description">
             You know what's good for you—staying active, keeping your mind sharp, connecting with people who matter. The hard part is making it a daily habit.
         </p>
-        <p style="max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-light); line-height: 1.8;">
-            <strong>MyDaily<span style="color: #ff9600;">Win</span></strong> makes it fun. Track your activities, build streaks, earn points, and watch your progress grow. It's like a personal coach that celebrates every&nbsp;win.
+        <p class="why-description">
+            <strong>MyDaily<span class="accent-orange">Win</span></strong> makes it fun. Track your activities, build streaks, earn points, and watch your progress grow. It's like a personal coach that celebrates every&nbsp;win.
         </p>
-        <div class="why-tiles" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 30px; max-width: 850px; margin-left: auto; margin-right: auto;">
-            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 8px;">🚶</div>
-                <div style="font-weight: 700;">Stay Active</div>
-                <div style="font-size: 15px; color: var(--text-light);">Walks, sports, exercise</div>
+        <div class="why-tiles">
+            <div class="why-tile">
+                <div class="why-tile-icon">🚶</div>
+                <div class="why-tile-title">Stay Active</div>
+                <div class="why-tile-desc">Walks, sports, exercise</div>
             </div>
-            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 8px;">🧠</div>
-                <div style="font-weight: 700;">Stay Sharp</div>
-                <div style="font-size: 15px; color: var(--text-light);">Puzzles, games, learning</div>
+            <div class="why-tile">
+                <div class="why-tile-icon">🧠</div>
+                <div class="why-tile-title">Stay Sharp</div>
+                <div class="why-tile-desc">Puzzles, games, learning</div>
             </div>
-            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 8px;">💬</div>
-                <div style="font-weight: 700;">Stay Connected</div>
-                <div style="font-size: 15px; color: var(--text-light); white-space: normal;">Friends, family, community</div>
+            <div class="why-tile">
+                <div class="why-tile-icon">💬</div>
+                <div class="why-tile-title">Stay Connected</div>
+                <div class="why-tile-desc">Friends, family, community</div>
             </div>
-            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 8px;">🎯</div>
-                <div style="font-weight: 700;">Stay Motivated</div>
-                <div style="font-size: 15px; color: var(--text-light);">Streaks, levels, rewards</div>
+            <div class="why-tile">
+                <div class="why-tile-icon">🎯</div>
+                <div class="why-tile-title">Stay Motivated</div>
+                <div class="why-tile-desc">Streaks, levels, rewards</div>
             </div>
         </div>
     </div>
@@ -1013,14 +256,14 @@
     </div>
 
     <!-- FAQ SECTION -->
-    <div id="faq" style="background: white; padding: 60px 20px;">
-        <div style="max-width: 800px; margin: 0 auto;">
+    <div id="faq" class="faq-section">
+        <div class="faq-container">
             <h2 class="section-title">❓ Frequently Asked Questions</h2>
             
             <!-- Quick Reference -->
-            <div style="background: linear-gradient(135deg, #ce82ff11, #ce82ff22); border: 2px solid var(--secondary); border-radius: 16px; padding: 20px; margin-bottom: 25px;">
-                <h3 style="margin: 0 0 15px 0; font-size: 18px;">📊 Quick Reference</h3>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 14px;">
+            <div class="faq-quick-ref">
+                <h3>📊 Quick Reference</h3>
+                <div class="faq-quick-ref-grid">
                     <div><strong>🎉 Cost:</strong> 100% Free</div>
                     <div><strong>💰 Points:</strong> 100 pts = $1.00</div>
                     <div><strong>📅 Payouts:</strong> On-demand</div>
@@ -1031,57 +274,57 @@
             </div>
 
             <!-- FAQ Items -->
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
-                    <summary style="font-weight: 700; cursor: pointer; list-style: none;">💰 How does the point system work?</summary>
-                    <div style="margin-top: 12px; color: #555; line-height: 1.6;">
+            <div class="faq-list">
+                <details>
+                    <summary>💰 How does the point system work?</summary>
+                    <div class="faq-answer">
                         <strong>100 points = $1.00</strong><br><br>
                         Earn points from daily tasks, bonus challenges, weekly goals, and the spin wheel after completing your daily habits.
                     </div>
                 </details>
 
-                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
-                    <summary style="font-weight: 700; cursor: pointer; list-style: none;">🔥 How do streaks work?</summary>
-                    <div style="margin-top: 12px; color: #555; line-height: 1.6;">
+                <details>
+                    <summary>🔥 How do streaks work?</summary>
+                    <div class="faq-answer">
                         Complete at least one task per day to build a streak:<br><br>
                         • <strong>Days 1-6:</strong> Normal points (1x)<br>
                         • <strong>Days 7-13:</strong> 🔥 1.5x multiplier<br>
                         • <strong>Days 14+:</strong> 🔥🔥 2x multiplier<br><br>
-                        <span style="color: #ef4444;">⚠️ Missing a day resets the streak to 0!</span>
+                        <span class="faq-warning">⚠️ Missing a day resets the streak to 0!</span>
                     </div>
                 </details>
 
-                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
-                    <summary style="font-weight: 700; cursor: pointer; list-style: none;">🎰 What is the spin wheel?</summary>
-                    <div style="margin-top: 12px; color: #555; line-height: 1.6;">
+                <details>
+                    <summary>🎰 What is the spin wheel?</summary>
+                    <div class="faq-answer">
                         Complete all your daily tasks to unlock a bonus spin! Prizes range from 10 to 150 points. One free spin per day, no approval needed.
                     </div>
                 </details>
 
-                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
-                    <summary style="font-weight: 700; cursor: pointer; list-style: none;">💵 How do payouts work?</summary>
-                    <div style="margin-top: 12px; color: #555; line-height: 1.6;">
+                <details>
+                    <summary>💵 How do payouts work?</summary>
+                    <div class="faq-answer">
                         Points accumulate as tasks are completed. Cash out anytime via <strong>Settings → Redeem Points</strong>. No monthly deadline — redeem when you're ready!
                     </div>
                 </details>
 
-                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
-                    <summary style="font-weight: 700; cursor: pointer; list-style: none;">🔄 Can I recover a lost streak?</summary>
-                    <div style="margin-top: 12px; color: #555; line-height: 1.6;">
+                <details>
+                    <summary>🔄 Can I recover a lost streak?</summary>
+                    <div class="faq-answer">
                         Yes! If you miss a day, tap the streak badge. To recover, call a family member and log the call. This keeps you connected while being forgiving about missed days.
                     </div>
                 </details>
 
-                <details style="background: var(--bg); border-radius: 12px; padding: 15px;">
-                    <summary style="font-weight: 700; cursor: pointer; list-style: none;">🏆 How do levels work?</summary>
-                    <div style="margin-top: 12px; color: #555; line-height: 1.6;">
+                <details>
+                    <summary>🏆 How do levels work?</summary>
+                    <div class="faq-answer">
                         Levels are based on total lifetime points earned (not current balance). There are 10 levels from Beginner to Hall of Fame. Levels never go down, even after payouts!
                     </div>
                 </details>
             </div>
 
-            <p style="text-align: center; margin-top: 30px;">
-                <a href="admin-guide.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">👥 Read the full Admin Guide →</a>
+            <p class="faq-footer">
+                <a href="admin-guide.html">👥 Read the full Admin Guide →</a>
             </p>
         </div>
     </div>
@@ -1089,7 +332,7 @@
     <div class="gamification">
         <div class="container">
             <h2 class="section-title">🎮 Built on What Works</h2>
-            <p style="color: var(--text-light); max-width: 600px; margin: 0 auto;">MyDaily<span style="color: #ff9600;">Win</span> uses proven gamification mechanics like streaks, levels, and rewards to make daily habits feel rewarding and fun.</p>
+            <p class="gamification-desc">MyDaily<span class="accent-orange">Win</span> uses proven gamification mechanics like streaks, levels, and rewards to make daily habits feel rewarding and fun.</p>
             <div class="badges">
                 <div class="badge-item">🔥 Streak Counter</div>
                 <div class="badge-item">🎰 Daily Spin</div>
@@ -1110,120 +353,18 @@
     </div>
 
     <footer>
-        <p style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 8px;">MyDaily<span style="color: #ff9600;">Win</span> &copy; 2026 <span style="opacity: 0.5;">•</span> <a href="get-started.html">Get Started</a> <span style="opacity: 0.5;">•</span> <a href="#how-it-works">How It Works</a> <span style="opacity: 0.5;">•</span> <a href="#faq">FAQ</a> <span style="opacity: 0.5;">•</span> <a href="admin-guide.html">Guide</a></p>
-        <p style="margin-top: 10px;">Built with 💜 to make good habits stick.</p>
+        <p class="footer-links">MyDaily<span class="accent-orange">Win</span> &copy; 2026 <span class="footer-sep">•</span> <a href="get-started.html">Get Started</a> <span class="footer-sep">•</span> <a href="#how-it-works">How It Works</a> <span class="footer-sep">•</span> <a href="#faq">FAQ</a> <span class="footer-sep">•</span> <a href="admin-guide.html">Guide</a></p>
+        <p class="footer-tagline">Built with 💜 to make good habits stick.</p>
     </footer>
 
     <script src="js/sw-init.js"></script>
-    <script>
-        // Hamburger menu toggle
-        function toggleMenu() {
-            document.querySelector('.hamburger').classList.toggle('active');
-            document.querySelector('.menu-overlay').classList.toggle('active');
-            document.querySelector('.slide-menu').classList.toggle('active');
-        }
-
-        // Load user profiles from localStorage
-        function loadProfiles() {
-            const profilesList = document.getElementById('profilesList');
-            const profilesSection = document.getElementById('profilesSection');
-            let profiles = [];
-
-            // Check for legacy Stu profile
-            const stuState = localStorage.getItem('hr_state');
-            if (stuState) {
-                profiles.push({ id: 'stu', name: 'Stu', isLegacy: true });
-            }
-
-            // Check for other profiles
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('hr_profile_') && !key.includes('admins') && !key.includes('invites')) {
-                    try {
-                        const profileId = key.replace('hr_profile_', '');
-                        const data = JSON.parse(localStorage.getItem(key));
-                        if (data.name && !profiles.find(p => p.id === profileId)) {
-                            profiles.push({ id: profileId, name: data.name });
-                        }
-                    } catch (e) {}
-                }
-            }
-
-            if (profiles.length === 0) {
-                profilesSection.style.display = 'none';
-                return;
-            }
-
-            profilesSection.style.display = 'block';
-            profilesList.innerHTML = profiles.map(p => `
-                <a href="app.html?profile=${p.id}" class="profile-card">
-                    <div class="profile-avatar">${p.name.charAt(0).toUpperCase()}</div>
-                    <div class="profile-info">
-                        <div class="profile-name">${p.name}</div>
-                        <div class="profile-role">Open App</div>
-                    </div>
-                    <span style="color: var(--primary);">→</span>
-                </a>
-                <a href="admin.html?profile=${p.id}" class="menu-link" style="margin-left: 52px; padding: 8px 15px; font-size: 13px;">
-                    ⚙️ Admin Dashboard
-                </a>
-            `).join('');
-        }
-
-        // Close menu on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && document.querySelector('.slide-menu').classList.contains('active')) {
-                toggleMenu();
-            }
-            if (e.key === 'Escape' && document.querySelector('.demo-modal').classList.contains('active')) {
-                closeDemo();
-            }
-        });
-
-        // Load profiles on page load
-        loadProfiles();
-
-        // Demo Modal Functions
-        function openDemo() {
-            document.querySelector('.demo-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeDemo() {
-            document.querySelector('.demo-modal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // PWA Install Prompt
-        let deferredInstallPrompt = null;
-
-        window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
-            deferredInstallPrompt = e;
-            document.getElementById('pwaInstallBannerHome').style.display = 'block';
-        });
-
-        window.addEventListener('appinstalled', function() {
-            document.getElementById('pwaInstallBannerHome').style.display = 'none';
-            deferredInstallPrompt = null;
-        });
-
-        function triggerInstallPrompt() {
-            if (deferredInstallPrompt) {
-                deferredInstallPrompt.prompt();
-                deferredInstallPrompt.userChoice.then(function(result) {
-                    document.getElementById('pwaInstallBannerHome').style.display = 'none';
-                    deferredInstallPrompt = null;
-                });
-            }
-        }
-    </script>
+    <script src="js/home.js"></script>
 
     <!-- Demo Modal -->
-    <div class="demo-modal" onclick="if(event.target === this) closeDemo()">
-        <button class="demo-modal-close" onclick="closeDemo()">×</button>
+    <div class="demo-modal" data-action="inline-1">
+        <button class="demo-modal-close" data-action="closeDemo">×</button>
         <div class="demo-phone">
-            <div class="demo-screen" style="position: relative; overflow-y: auto;">
+            <div class="demo-screen demo-screen-scroll">
                 <div class="demo-dynamic-island"></div>
                 <div class="demo-status-bar">
                     <span>9:41</span>
@@ -1231,50 +372,50 @@
                 </div>
                 
                 <!-- App Header -->
-                <div style="background: linear-gradient(135deg, #3d8a02, #2d6e01); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 3px 0 rgba(0,0,0,0.15);">
-                    <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; color: white;">
-                        <span>🏆</span> MyDaily<span style="color: #ff9600;">Win</span>
+                <div class="demo-app-header">
+                    <div class="demo-app-brand">
+                        <span>🏆</span> MyDaily<span class="accent-orange">Win</span>
                     </div>
-                    <div style="display: flex; gap: 6px;">
-                        <span style="background: rgba(255,255,255,0.2); padding: 6px; border-radius: 8px; font-size: 14px;">⚙️</span>
-                        <span style="background: rgba(255,255,255,0.2); padding: 6px; border-radius: 8px; font-size: 14px;">🌙</span>
+                    <div class="demo-app-actions">
+                        <span class="demo-app-action-btn">⚙️</span>
+                        <span class="demo-app-action-btn">🌙</span>
                     </div>
                 </div>
                 
                 <!-- Content Area -->
-                <div style="padding: 16px; background: var(--bg);">
+                <div class="demo-content">
                     <!-- Greeting & Streak -->
-                    <div style="text-align: center; margin-bottom: 16px;">
-                        <div style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Good morning! ☀️</div>
-                        <div style="display: inline-flex; align-items: center; gap: 6px; background: #fff3cd; color: #856404; padding: 6px 12px; border-radius: 16px; font-weight: 700; font-size: 12px;">
+                    <div class="demo-greeting">
+                        <div class="demo-greeting-text">Good morning! ☀️</div>
+                        <div class="demo-streak-badge">
                             🔥 7 Day Streak
                         </div>
                     </div>
                     
                     <!-- Balance Hero -->
-                    <div style="background: linear-gradient(135deg, #3d8a02, #2d6e01); color: white; padding: 16px; text-align: center; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 0 #2d6e01;">
-                        <div style="display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 700;">🏆 Pro Level</div>
-                        <div style="font-size: 36px; font-weight: 800; margin: 8px 0;">1,250 pts</div>
-                        <div style="font-size: 14px; opacity: 0.9;">= $12.50</div>
-                        <div style="margin-top: 10px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; overflow: hidden;">
-                            <div style="width: 65%; height: 100%; background: white; border-radius: 3px;"></div>
+                    <div class="demo-balance">
+                        <div class="demo-balance-level">🏆 Pro Level</div>
+                        <div class="demo-balance-pts">1,250 pts</div>
+                        <div class="demo-balance-value">= $12.50</div>
+                        <div class="demo-balance-bar-wrap">
+                            <div class="demo-balance-bar"></div>
                         </div>
-                        <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">350 pts to next level</div>
+                        <div class="demo-balance-next">350 pts to next level</div>
                     </div>
                     
                     <!-- Daily Progress -->
-                    <div style="background: white; border-radius: 14px; padding: 12px; margin-bottom: 16px; border: 2px solid rgba(0,0,0,0.05); box-shadow: 0 3px 0 rgba(0,0,0,0.04);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-weight: 700; font-size: 13px;">Today's Progress</span>
-                            <span style="font-weight: 700; font-size: 13px; color: var(--primary);">2/4 tasks</span>
+                    <div class="demo-progress">
+                        <div class="demo-progress-header">
+                            <span class="demo-progress-label">Today's Progress</span>
+                            <span class="demo-progress-count">2/4 tasks</span>
                         </div>
-                        <div style="height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden;">
-                            <div style="height: 100%; background: linear-gradient(90deg, var(--primary), #4ade80); width: 50%;"></div>
+                        <div class="demo-progress-bar-wrap">
+                            <div class="demo-progress-bar"></div>
                         </div>
                     </div>
                     
                     <!-- Daily Habits Section -->
-                    <div style="font-size: 11px; font-weight: 700; color: var(--text-light); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Daily Habits</div>
+                    <div class="mock-section-label">📋 Daily Habits</div>
                     
                     <div class="demo-task">
                         <div class="demo-task-content">
@@ -1309,25 +450,25 @@
                     </div>
                     
                     <!-- Today's Bonus Section -->
-                    <div style="font-size: 11px; font-weight: 700; color: #f97316; margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.5px;">⭐ Today's Bonus</div>
+                    <div class="demo-bonus-label">⭐ Today's Bonus</div>
                     
-                    <div style="background: linear-gradient(135deg, #f97316, #fb923c); border-radius: 14px; padding: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 0 #ea580c;">
-                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <span style="font-size: 14px; font-weight: 700; color: white;">🏃 Exercise today</span>
-                            <span style="font-size: 11px; font-weight: 800; color: #f97316; padding: 3px 8px; border-radius: 8px; background: rgba(255,255,255,0.9);">+75 pts</span>
+                    <div class="demo-bonus-card">
+                        <div class="demo-bonus-info">
+                            <span class="demo-bonus-name">🏃 Exercise today</span>
+                            <span class="demo-bonus-pts">+75 pts</span>
                         </div>
-                        <div style="width: 36px; height: 36px; border-radius: 12px; background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5); flex-shrink: 0;"></div>
+                        <div class="demo-bonus-check"></div>
                     </div>
                     
                     <!-- Weekly Challenges Section -->
-                    <div style="background: linear-gradient(135deg, #a855f7, #ec4899); border-radius: 14px; padding: 16px; margin-top: 16px; text-align: center; color: white;">
-                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">🏆 Weekly Challenges</div>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: nowrap;">
-                                <span>☎️ Call family or friend</span><span style="background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 6px; white-space: nowrap;">+100 pts</span>
+                    <div class="demo-weekly">
+                        <div class="demo-weekly-title">🏆 Weekly Challenges</div>
+                        <div class="demo-weekly-list">
+                            <div class="demo-weekly-item">
+                                <span>☎️ Call family or friend</span><span class="demo-weekly-pts">+100 pts</span>
                             </div>
-                            <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: nowrap;">
-                                <span>📚 5-day reading streak</span><span style="background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 6px; white-space: nowrap;">+75 pts</span>
+                            <div class="demo-weekly-item">
+                                <span>📚 5-day reading streak</span><span class="demo-weekly-pts">+75 pts</span>
                             </div>
                         </div>
                     </div>
