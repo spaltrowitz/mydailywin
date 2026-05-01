@@ -418,3 +418,274 @@ input:focus, select:focus, textarea:focus {
 .badge-success { background: #dcfce7; color: #16a34a; }
 .badge-warning { background: #fef3c7; color: #d97706; }
 .badge-purple { background: #f3e8ff; color: #9333ea; }
+
+/* ===== RESPONSIVE: Tablet (max-width: 1024px) ===== */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .tab {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .card h2 {
+        font-size: 18px;
+    }
+
+    .stat-box .value {
+        font-size: 24px;
+    }
+
+    .modal-box {
+        max-width: 90%;
+        padding: 24px;
+    }
+}
+
+/* ===== RESPONSIVE: Mobile (max-width: 768px) ===== */
+@media (max-width: 768px) {
+    /* Top bar: stack vertically */
+    .top-bar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px;
+        text-align: center;
+    }
+
+    .top-bar-left {
+        justify-content: center;
+    }
+
+    .top-bar h1 {
+        font-size: 18px;
+    }
+
+    .top-bar p {
+        font-size: 12px;
+    }
+
+    .top-bar-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .top-bar-links a {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+
+    /* Tabs: horizontal scroll strip */
+    .tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        padding: 8px;
+        gap: 4px;
+        scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        flex-shrink: 0;
+        padding: 10px 12px;
+        font-size: 13px;
+        min-height: 40px;
+        white-space: nowrap;
+    }
+
+    /* Container */
+    .container {
+        padding: 12px;
+    }
+
+    /* Cards: full width, reduced padding */
+    .card {
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 14px;
+    }
+
+    .card h2 {
+        font-size: 17px;
+        margin-bottom: 12px;
+    }
+
+    .card h3 {
+        font-size: 15px;
+        margin: 16px 0 10px 0;
+    }
+
+    /* Stats: stack to 1 column on narrow screens */
+    .stat-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .stat-box {
+        padding: 12px;
+    }
+
+    .stat-box .value {
+        font-size: 22px;
+    }
+
+    .stat-box .label {
+        font-size: 13px;
+    }
+
+    /* Tables: horizontal scroll wrapper */
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    th, td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 12px 18px;
+        font-size: 15px;
+    }
+
+    .btn-sm {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+
+    /* Forms */
+    input[type="text"], input[type="number"], select, textarea {
+        padding: 10px 14px;
+        font-size: 15px;
+    }
+
+    /* Payment rows: stack on very narrow */
+    .payment-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .payment-amount {
+        font-size: 16px;
+    }
+
+    /* Level rows */
+    .level-row {
+        padding: 10px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .level-pts {
+        font-size: 13px;
+    }
+
+    /* Info/Warning boxes */
+    .info-box, .warning-box, .report-item {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    /* Feature items */
+    .feature-item {
+        gap: 8px;
+        padding: 10px 0;
+    }
+
+    .feature-icon {
+        font-size: 20px;
+    }
+
+    .feature-content p {
+        font-size: 14px;
+    }
+
+    /* Modal: nearly full screen on mobile */
+    .modal {
+        padding: 12px;
+    }
+
+    .modal-box {
+        max-width: 100%;
+        padding: 20px;
+        border-radius: 16px;
+        max-height: 85vh;
+    }
+
+    /* FAQ */
+    .faq-item {
+        padding: 12px 0;
+    }
+
+    .faq-q {
+        font-size: 15px;
+    }
+
+    .faq-a {
+        font-size: 13px;
+    }
+
+    /* Badges */
+    .badge {
+        font-size: 12px;
+        padding: 3px 8px;
+    }
+
+    /* Empty state */
+    .empty-state {
+        padding: 20px;
+        font-size: 14px;
+    }
+}
+
+/* ===== RESPONSIVE: Small phone (max-width: 375px) ===== */
+@media (max-width: 375px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-box .value {
+        font-size: 20px;
+    }
+
+    .top-bar-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tab {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .card h2 {
+        font-size: 16px;
+    }
+}
