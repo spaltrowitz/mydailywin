@@ -461,3 +461,11 @@ Prevents data inheritance on shared devices (kid's tablet, school computer).
 - **SW cache:** May need to add js/*.js to offline cache list
 
 **Next consideration:** If Phase 2 (deduplication) extracts more helpers (calculatePointsWithBonuses, formatDollar, getProfileSuffix), consider whether they belong in js/utils.js or remain page-specific.
+
+### Forgot Password Flow (P2 UX Fix)
+- Added `sendPasswordResetEmail` flow to `login.html` — standard Firebase Auth feature, no backend changes needed
+- Uses compat SDK (`auth.sendPasswordResetEmail(email)`) consistent with existing auth calls
+- Reset form is a sibling of the email login form inside `#authButtons`; toggling between them via `.active` class
+- Error codes handled: `auth/user-not-found`, `auth/invalid-email`, `auth/too-many-requests`
+- Success/error messages use new `.success-message` class (green) alongside existing `.error-message` (red)
+- Pre-fills reset email from login email field for UX continuity

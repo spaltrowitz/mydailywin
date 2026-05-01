@@ -327,3 +327,39 @@ Parallel execution with Mipha (user dev) and Impa (audit). Unified font stack an
 - page-specific scripts
 
 **CSP:** All js/ scripts use 'self' origin, already allowed
+
+### Admin Optimization Sweep — Impa Audit Items (2026-07-17)
+
+**Commit:** 5a10d14
+
+#### DL4: Consolidated Payout Functions (~50 lines saved)
+- Merged `markPayoutSent()` + `approvePayoutRequestLocal()` → single `approvePayoutRequest()` with Firestore-first, localStorage-fallback
+- Merged `dismissPayoutRequest()` + `dismissPayoutRequestLocal()` → single `dismissPayoutRequest()` with same graceful degradation pattern
+- Both rendering paths in `displayPendingRequests()` now call the same unified functions
+- Pattern: try Firestore, catch → localStorage fallback, then shared local state updates (admin data, balance deduction, UI refresh)
+
+#### DL5: Deduplicated Task Table Rendering (~35 lines saved)
+- Extracted `renderTaskRow(task, category)` helper
+- Replaced 4 identical forEach loops with data-driven `categories` array iteration
+- `displayTasks()` now loops over `[{key, tableId}]` pairs instead of repeating the same template 4 times
+
+#### DL7: Unified CSV Escaping (~10 lines cleaned)
+- `downloadTaskResponses()`, `downloadFeedbackLog()`, `downloadReports()` now use `escapeCSV()` consistently
+- Removed 3 inline `.replace(/"/g,'""')` patterns
+- `escapeCSV()` handles null/undefined, quotes, commas, and newlines uniformly
+- `escapeHtml()` (in js/utils.js) remains for HTML contexts only
+
+#### OI3: Extracted admin-guide.html Inline CSS (108 lines removed)
+- Moved 108-line `<style>` block to css/admin.css under "Admin Guide Page" section
+- admin-guide.html already imported admin.css — no HTML link changes needed
+- Duplicate rules (faq-item, faq-q, faq-a, btn) already existed in admin.css; guide-specific rules (hero, section, highlight-box, cta, footer) added fresh
+
+#### RO1: Batched getElementById in displayStats()
+- Cached 9 element references in single `els` object at top of function
+- Eliminates 11 separate DOM lookups per call
+
+#### Sidon: ARIA Tab Navigation
+- Tab container: `role="tablist"` + `aria-label="Admin sections"`
+- Tab buttons: `role="tab"` + `aria-selected` + `aria-controls`
+- Tab panels: `role="tabpanel"` on all 7 content sections
+- `showTab()` now manages `aria-selected` state alongside active class

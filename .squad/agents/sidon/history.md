@@ -26,3 +26,27 @@ The app is Duolingo-inspired: daily tasks earn points (100 pts = $1), streaks bu
 - **Navigation pain points:** app.html is all-modals, no tab navigation or bottom nav. Admin tabs overflow on mobile. No in-app link between user and admin views. 8-step onboarding may cause drop-off.
 - **shared.css exists but is NOT imported** by any user-facing page — accessibility utilities unused.
 - **Key file paths:** css/admin.css (admin styles), css/shared.css (unused shared styles), manifest.json (PWA), sw.js (service worker), offline.html (offline fallback)
+
+### Post-Implementation UX Sweep (completed)
+**Context:** Team shipped celebration modals, enhanced confetti, responsive breakpoints, unified fonts/CSS, shared JS, XP hardening. This sweep found NEW gaps.
+
+**Key findings (15 total, see .squad/decisions/inbox/sidon-user-sweep.md):**
+- **PWA install prompt missing (P1):** No `beforeinstallprompt` handler anywhere. Critical for daily-use app retention.
+- **Login bonus celebration weak (P1):** +25 pts awarded silently, card vanishes after 3 seconds with no confetti. This is the #1 daily re-engagement hook and it's the weakest celebration in the app.
+- **Spin wheel still flat animation (P2):** 100ms linear interval, abrupt stop. No easing/deceleration. `jackpot` keyframe defined but unused.
+- **Achievements still toast-only (P2):** Only 4 achievements, no modal. Now that level-up and streak milestones have modals, achievements are inconsistent.
+- **task-help-btn still 36x36px (P2):** Below 44px touch target. Persists from audit #1.
+- **No "all done" empty state (P2):** After completing all tasks, no celebratory card. Missed pride moment.
+- **manifest.json background_color mismatch (P3):** #f0f2f5 vs --bg: #f7f7f7. Flash of wrong color on PWA splash.
+- **shared.css/JS not in SW cache (P3):** Regression from recent refactor. Offline users get broken styling.
+- **Dark mode not on login/home/get-started (P3):** User enables dark mode in app, other pages are jarring light mode.
+- **No Escape key handler for app.html modals (P3):** home.html has one, app.html (10+ modals) does not.
+- **Unused keyframes still present (P3):** bounce, float, jackpot, goldShine, coinDrop, shake, rainbow — dead CSS.
+- **get-started.html uses alert() (P3):** Only remaining native alert in user-facing code.
+
+**Top 5 impact recommendations:**
+1. PWA install prompt (growth/retention lever)
+2. Login bonus celebration (daily loop psychology)
+3. "All done" empty state (pride + sharing driver)
+4. Spin wheel easing (signature moment polish)
+5. Cache shared.css/JS in service worker (offline regression fix)
