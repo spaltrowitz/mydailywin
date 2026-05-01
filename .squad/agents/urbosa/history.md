@@ -125,6 +125,24 @@
 
 **Pattern:** Always use `escapeHtml()` when interpolating any variable into innerHTML. Only numeric values and hardcoded strings are safe unescaped.
 
+### Responsive Breakpoints — Admin Dashboard (2026-07-15)
+
+**Problem:** admin.html had zero media queries — 7-tab horizontal bar overflowed on mobile, cards/tables were unusable on narrow screens.
+
+**Fix:** Added 3 breakpoints to `css/admin.css`:
+- **Tablet (1024px):** Reduced tab/card padding, capped container width
+- **Mobile (768px):** Scrollable horizontal tab strip (overflow-x: auto, hidden scrollbar), stacked top bar, table horizontal scroll, reduced fonts/padding, stacked payment rows, near-fullscreen modals
+- **Small phone (375px):** Single-column stat grid, further size reductions
+
+**Key decisions:**
+- Used scrollable strip (not hamburger menu) for tabs — keeps all tabs visible/accessible, simpler implementation
+- Tables use `display: block; overflow-x: auto` for horizontal scroll rather than stacking rows (preserves data relationships)
+- Payment rows stack vertically on mobile for readability
+- Viewport meta tag was already present — no HTML changes needed
+- All changes are additive (media query overrides only) — desktop layout untouched
+
+**Pattern:** Responsive overrides go in `css/admin.css` as appended `@media` blocks. Follow mobile-first breakpoint order: 1024px → 768px → 375px.
+
 ---
 
 ## Security Fix Session — 2026-04-30T20:38

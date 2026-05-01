@@ -338,3 +338,25 @@ Added `escapeHtml()` function to login.html (did not previously exist).
 - All three agents using consistent escaping approach
 - escapeHtml() function could be extracted to shared.js for team reuse
 
+
+### UX Improvements — Celebration Modals & Responsive (2026-07-18)
+
+#### Changes Made (app.html — 162 insertions, 9 deletions)
+1. **Level-Up Celebration Modal**: Full-screen modal with level badge (colored by level), randomized encouraging message, dismiss button. Level change detected in `render()` by tracking `state._lastLevelName` (transient, not persisted). Fires with 300ms delay to let points update first.
+2. **Streak Milestone Modals**: Celebration at 7, 14, 30-day streaks with themed icons/titles ("🔥 One Week Streak!", "💪 Two Week Streak!", "🏆 Monthly Champion!"). Detection added to `checkStreak()` — compares `prevStreak` before increment. 600ms delay to avoid collision with other toasts.
+3. **Enhanced Confetti**: Replaced 10-particle straight-down transition with 40-50 particle CSS animation system. Features: 20-80vw horizontal spread, rotation (random 0-360°), varied sizes (16-34px), staggered spawn (40ms intervals per particle), `@keyframes confettiFall` with rotation + opacity. `pointer-events: none` preserved. `prefers-reduced-motion` respected.
+4. **Responsive Breakpoints**: Three breakpoints added:
+   - `1024px`: container max-width constraint
+   - `768px`: reduced font sizes, card padding, modal width, task check size
+   - `375px`: compact header, smaller balance hero, tighter cards/modals, smaller badges/buttons/stars
+
+#### Key Patterns
+- `_lastLevelName` is a transient runtime property (prefixed with underscore) — not saved to localStorage. Prevents false level-up trigger on page load.
+- `triggerConfetti(count)` now accepts optional count parameter — existing callers (no args) get 40 particles by default. Celebration modals pass 45-50 for bigger bursts.
+- Streak milestone check uses `[7, 14, 30].includes()` — easy to extend with more milestones.
+- No sound effects added per user directive.
+
+#### Accessibility
+- Celebration modals have `role="dialog"`, `aria-modal="true"`, close button with `aria-label`
+- Confetti respects `prefers-reduced-motion: reduce`
+- All new touch targets meet 44px minimum
