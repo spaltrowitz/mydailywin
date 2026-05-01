@@ -96,71 +96,81 @@ service cloud.firestore {
     // ================================================================
     // Payout requests — cross-device sync
     //
-    // TODO: Scope by ownership once profile docs are reliably created
-    // in Firestore. Replace auth-only rules with:
-    //   hasProfileAccess(resource.data.profileId)
+    // Scoped by profile ownership: only the profile owner or a listed
+    // admin can access payout requests for that profile.
     // ================================================================
     match /payoutRequests/{requestId} {
-      allow read: if request.auth != null;
+      allow read: if request.auth != null
+        && hasProfileAccess(resource.data.profileId);
 
       allow create: if request.auth != null
         && request.resource.data.profileId is string
         && request.resource.data.amount is number
-        && request.resource.data.status == 'pending';
+        && request.resource.data.status == 'pending'
+        && hasProfileAccess(request.resource.data.profileId);
 
       allow update: if request.auth != null
-        && request.resource.data.profileId is string;
+        && request.resource.data.profileId is string
+        && hasProfileAccess(resource.data.profileId);
 
-      allow delete: if request.auth != null;
+      allow delete: if request.auth != null
+        && hasProfileAccess(resource.data.profileId);
     }
 
     // ================================================================
     // User notifications (user-facing — payment confirmations etc.)
     //
-    // TODO: Scope by ownership once profile docs are reliably created
-    // in Firestore. Replace auth-only rules with:
-    //   hasProfileAccess(resource.data.profileId)
+    // Scoped by profile ownership: only the profile owner or a listed
+    // admin can access notifications for that profile.
     // ================================================================
     match /userNotifications/{notificationId} {
-      allow read: if request.auth != null;
+      allow read: if request.auth != null
+        && hasProfileAccess(resource.data.profileId);
 
       allow create: if request.auth != null
         && request.resource.data.profileId is string
         && request.resource.data.type is string
-        && request.resource.data.read == false;
+        && request.resource.data.read == false
+        && hasProfileAccess(request.resource.data.profileId);
 
-      allow update: if request.auth != null;
+      allow update: if request.auth != null
+        && hasProfileAccess(resource.data.profileId);
 
-      allow delete: if request.auth != null;
+      allow delete: if request.auth != null
+        && hasProfileAccess(resource.data.profileId);
     }
 
     // ================================================================
     // User state — habit data sync across devices
     //
-    // TODO: Scope by ownership once profile docs are reliably created
-    // in Firestore. Replace auth-only rules with:
-    //   hasProfileAccess(profileId)
+    // Scoped by profile ownership: the doc ID is the profileId, so
+    // only the profile owner or a listed admin can read/write.
     // ================================================================
     match /userState/{profileId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
+      allow read: if request.auth != null
+        && hasProfileAccess(profileId);
+      allow write: if request.auth != null
+        && hasProfileAccess(profileId);
     }
 
     // ================================================================
     // Task proposals — user suggestions for new tasks
     //
-    // FIXED: create was 'if true' (unauthenticated writes).
-    // Now requires authentication + field validation.
+    // Scoped by profile ownership: only the profile owner or a listed
+    // admin can read/update/delete proposals for that profile.
     // ================================================================
     match /taskProposals/{proposalId} {
-      allow read: if request.auth != null;
+      allow read: if request.auth != null
+        && hasProfileAccess(resource.data.profileId);
 
       allow create: if request.auth != null
         && request.resource.data.profileId is string
         && request.resource.data.taskName is string
-        && request.resource.data.status == 'pending';
+        && request.resource.data.status == 'pending'
+        && hasProfileAccess(request.resource.data.profileId);
 
-      allow update, delete: if request.auth != null;
+      allow update, delete: if request.auth != null
+        && hasProfileAccess(resource.data.profileId);
     }
   }
 }

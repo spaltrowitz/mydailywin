@@ -173,3 +173,25 @@ Always use `escapeHtml()` when interpolating any variable into innerHTML. Replac
 - All three agents using consistent escapeHtml() strategy
 - escapeHtml() function should be extracted to shared.js if shared.js extraction happens (Revali)
 
+### Font Unification & shared.css Import (2026-07-15)
+
+**Problem:** Admin pages used system font stack (-apple-system, BlinkMacSystemFont...) instead of Nunito. shared.css existed with CSS variables but was never imported in admin pages. admin.css duplicated :root variables and reset that shared.css already defines. Card border-radius was 16px instead of the 20px standard.
+
+**Fix:**
+- Added Google Fonts Nunito import (400/600/700/800 weights) to both admin.html and admin-guide.html
+- Imported shared.css before admin.css in both pages (`<link>` order matters for cascade)
+- Removed duplicate `:root` block and `* { box-sizing }` reset from admin.css — shared.css handles both
+- Set `font-family: 'Nunito', sans-serif` as base font in admin.css body rule
+- admin-guide.html: removed inline `:root` variables, reset, and system font — now inherits from shared.css + admin.css
+- Replaced 5 hardcoded `#58cc02` hex values in admin.html inline styles with `var(--primary)`
+- Replaced hardcoded `white` with `var(--card-bg)` in form inputs and tab bar
+- Standardized card `border-radius: 16px` → `var(--radius-box)` (20px) in admin.css
+- Standardized button `border-radius: 12px` → `var(--radius-btn)` (16px) in admin.css and admin-guide.html
+- Standardized modal-box, badge border-radius to use CSS variables
+- admin-guide.html: replaced `--primary-dark` references with `--primary-shade` to match shared.css variable names
+- Left intentional colors alone (level badge colors like gold/silver/bronze, notification JS-generated styles)
+
+**Pattern:** shared.css is the single source of truth for CSS variables. admin.css extends it — never redeclare variables that shared.css already defines. Always import shared.css first, then page-specific CSS.
+
+**Cross-Agent:** This was Sidon's UX audit decision #6 (import shared.css) and #3 (unify fonts). Mipha's user-facing pages should follow the same Nunito + shared.css pattern.
+
