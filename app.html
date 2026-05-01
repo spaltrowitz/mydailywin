@@ -339,6 +339,85 @@
             background: var(--primary);
         }
 
+        /* ========== CELEBRATION MODALS ========== */
+        .celebration-modal .modal-box {
+            text-align: center;
+            overflow: visible;
+        }
+        .celebration-icon {
+            font-size: 64px;
+            margin-bottom: 8px;
+            animation: pop 0.4s ease-out;
+        }
+        .celebration-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .celebration-badge {
+            display: inline-block;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 8px 20px;
+            border-radius: 16px;
+            margin: 12px 0;
+            color: white;
+        }
+        .celebration-message {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ========== RESPONSIVE BREAKPOINTS ========== */
+        @media (max-width: 1024px) {
+            .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
+        }
+
+        @media (max-width: 768px) {
+            .balance-amount { font-size: 40px; }
+            .balance-dollars { font-size: 18px; }
+            .card { padding: 20px; margin-bottom: 20px; }
+            .modal-box { width: 92%; padding: 24px; }
+            .section-title { font-size: 18px; margin: 24px 0 12px; }
+            .task-name { font-size: 16px; }
+            .task-check { width: 46px; height: 46px; border-radius: 14px; font-size: 22px; }
+            .btn { padding: 14px; font-size: 15px; }
+        }
+
+        @media (max-width: 375px) {
+            header { padding: 12px 14px; }
+            .brand { font-size: 20px; gap: 6px; }
+            .theme-btn { font-size: 18px; padding: 6px; min-width: 40px; min-height: 40px; }
+            .container { padding: 0 12px; }
+            .balance-hero { padding: 18px 14px; border-radius: 18px; }
+            .balance-amount { font-size: 34px; }
+            .balance-dollars { font-size: 16px; }
+            .card { padding: 16px; margin-bottom: 16px; border-radius: 16px; }
+            .modal-box { width: 95%; padding: 20px; border-radius: 18px; }
+            .task-row { padding: 12px; margin-bottom: 10px; }
+            .task-content { margin-right: 10px; }
+            .task-name { font-size: 15px; }
+            .task-reward { font-size: 12px; padding: 3px 8px; }
+            .task-check { width: 42px; height: 42px; border-radius: 12px; font-size: 20px; }
+            .section-title { font-size: 16px; margin: 20px 0 10px; }
+            .btn { padding: 12px; font-size: 14px; border-radius: 12px; }
+            .streak-badge { font-size: 13px; padding: 6px 12px; }
+            .star-rating span { font-size: 32px; min-width: 40px; min-height: 40px; }
+            .celebration-icon { font-size: 48px; }
+            .celebration-title { font-size: 22px; }
+            .celebration-badge { font-size: 18px; padding: 6px 14px; }
+            .celebration-message { font-size: 14px; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -617,6 +696,30 @@
             <h3 style="margin-bottom: 10px;">💬 Contact Developer</h3>
             <p style="font-size: 15px; color: var(--text-light); margin-bottom: 10px;">Have feedback, questions, or issues?</p>
             <button class="btn" onclick="contactDeveloper()">✉️ Send Message</button>
+        </div>
+    </div>
+
+    <!-- LEVEL UP CELEBRATION MODAL -->
+    <div id="levelUpModal" class="modal celebration-modal" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeModal('levelUpModal')" aria-label="Close">&times;</button>
+            <div class="celebration-icon">🎉</div>
+            <div class="celebration-title">Level Up!</div>
+            <div id="levelUpBadge" class="celebration-badge">🥚 Beginner</div>
+            <div id="levelUpMessage" class="celebration-message">You're making incredible progress!</div>
+            <button class="btn btn-success" onclick="closeModal('levelUpModal')" style="margin-top: 10px;">Awesome! 🙌</button>
+        </div>
+    </div>
+
+    <!-- STREAK MILESTONE CELEBRATION MODAL -->
+    <div id="streakMilestoneModal" class="modal celebration-modal" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeModal('streakMilestoneModal')" aria-label="Close">&times;</button>
+            <div class="celebration-icon" id="streakMilestoneIcon">🔥</div>
+            <div class="celebration-title" id="streakMilestoneTitle">Streak Milestone!</div>
+            <div id="streakMilestoneCount" class="celebration-badge" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">🔥 7 Days</div>
+            <div id="streakMilestoneMessage" class="celebration-message">You're building an amazing habit!</div>
+            <button class="btn btn-accent" onclick="closeModal('streakMilestoneModal')" style="margin-top: 10px;">Keep Going! 💪</button>
         </div>
     </div>
 
@@ -2142,6 +2245,12 @@
             const level = getLevel(state.totalEarned || 0);
             document.getElementById('levelBadge').textContent = level.name;
             
+            // Detect level-up
+            if (state._lastLevelName && state._lastLevelName !== level.name) {
+                setTimeout(function() { showLevelUpCelebration(level); }, 300);
+            }
+            state._lastLevelName = level.name;
+            
             // Calculate progress to next level
             if (level.nextPts) {
                 const prevLevelPts = getPrevLevelPts(state.totalEarned || 0);
@@ -2756,8 +2865,14 @@
         function checkStreak() {
             const today = new Date().toDateString();
             if (state.lastStreakDate !== today) {
+                const prevStreak = state.streak;
                 state.streak++;
                 state.lastStreakDate = today;
+                
+                // Check for milestone celebrations
+                if ([7, 14, 30].includes(state.streak) && prevStreak < state.streak) {
+                    setTimeout(function() { showStreakMilestoneCelebration(state.streak); }, 600);
+                }
             }
         }
 
@@ -3233,17 +3348,55 @@
             confirmCallback = null;
         }
 
-        function triggerConfetti() {
+        function triggerConfetti(count) {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-            const count = 10;
-            for(let i=0; i<count; i++) {
-                const el = document.createElement('div');
-                el.innerText = ['🎉', '⭐', '✨'][Math.floor(Math.random()*3)];
-                el.style.cssText = `position:fixed;left:${Math.random()*100}vw;top:-50px;font-size:28px;transition:top 1.5s ease-in,opacity 1.5s;z-index:9999;pointer-events:none;`;
-                document.body.appendChild(el);
-                requestAnimationFrame(() => { el.style.top = '110vh'; el.style.opacity = '0'; });
-                setTimeout(() => el.remove(), 1600);
+            count = count || 40;
+            const emojis = ['🎉', '⭐', '✨', '🎊'];
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                    const startX = 20 + Math.random() * 60;
+                    const duration = 1200 + Math.random() * 800;
+                    const size = 16 + Math.random() * 18;
+                    el.style.cssText = 'position:fixed;left:' + startX + 'vw;top:-50px;font-size:' + size + 'px;pointer-events:none;z-index:10000;transform:rotate(' + (Math.random() * 360) + 'deg);animation:confettiFall ' + duration + 'ms ease-in forwards;';
+                    document.body.appendChild(el);
+                    setTimeout(function() { el.remove(); }, duration);
+                }, i * 40);
             }
+        }
+
+        function showLevelUpCelebration(level) {
+            document.getElementById('levelUpBadge').textContent = level.name;
+            document.getElementById('levelUpBadge').style.background = level.color;
+            var messages = [
+                'You\'re making incredible progress! Keep it up!',
+                'Amazing work! Your consistency is paying off!',
+                'Look at you go! Every point brings you closer to greatness!',
+                'Your dedication is inspiring! Onward and upward!'
+            ];
+            document.getElementById('levelUpMessage').textContent = messages[Math.floor(Math.random() * messages.length)];
+            openModal('levelUpModal');
+            triggerConfetti(50);
+        }
+
+        function showStreakMilestoneCelebration(streakCount) {
+            var config;
+            if (streakCount >= 30) {
+                config = { icon: '🏆', title: 'Monthly Champion!', message: '30 days of pure dedication! You\'re a legend!' };
+            } else if (streakCount >= 14) {
+                config = { icon: '💪', title: 'Two Week Streak!', message: '14 days strong! Nothing can stop you now!' };
+            } else if (streakCount >= 7) {
+                config = { icon: '🔥', title: 'One Week Streak!', message: '7 days in a row! You\'re building a real habit!' };
+            } else {
+                return;
+            }
+            document.getElementById('streakMilestoneIcon').textContent = config.icon;
+            document.getElementById('streakMilestoneTitle').textContent = config.title;
+            document.getElementById('streakMilestoneCount').textContent = '🔥 ' + streakCount + ' Days';
+            document.getElementById('streakMilestoneMessage').textContent = config.message;
+            openModal('streakMilestoneModal');
+            triggerConfetti(45);
         }
 
         init();
