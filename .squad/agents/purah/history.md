@@ -269,3 +269,21 @@ All 5 migrated features verified working correctly with:
 - Admin pending bug fixed and stable
 - Payout flow end-to-end operational
 - Profile-suffixed keys audit complete
+
+### Post-Parallel Agent Smoke Test (2026-05-01)
+
+**Context:** Riju (CSP), Daruk (EmailJS→Cloud Functions), Impa (CSS), Sidon (UX) all committed in parallel.
+
+**Findings:**
+- 🔴 admin.html CSP `connect-src` missing `*.cloudfunctions.net` — blocks `httpsCallable('sendInviteEmail')` at js/admin.js:1268
+- 🔴 admin.html missing `</body></html>` closing tags (file truncated at line 515)
+- 🟡 app.html doesn't load `js/dark-mode.js` in head — FOUC for dark mode users
+- 🟡 admin.html has zero dark mode support (no js/dark-mode.js, no theme logic in admin.js)
+- 🟡 Unnecessary `cdn.jsdelivr.net` in script-src for app.html and admin.html (attack surface)
+- 🟢 onclick migration 100% clean — zero remaining inline handlers
+- 🟢 SW cache list complete — all new JS/CSS files included
+- 🟢 Apple Sign-In correctly configured (button, function, CSP frame-src)
+- 🟢 Dark mode localStorage key ('theme') consistent across all pages
+- 🟢 data-action event delegation working in all 5 external JS files
+
+**Lesson:** Parallel agent commits on shared files require a structural integrity pass (closing tags, CSP coherence) as a mandatory gate. CSP is especially fragile because each agent may only understand their own domain's needs.
