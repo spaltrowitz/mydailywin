@@ -512,3 +512,31 @@ Parallel execution with Urbosa (admin) and Impa (audit). Unified font stack and 
 **4. manifest.json background_color fix (P3):**
 - Changed `background_color` from `#f0f2f5` → `#f7f7f7` to match `--bg` CSS variable
 - `theme_color` (#58cc02) already matches `--primary`, no change needed
+
+---
+
+## 2026-05-01T20:37 — Final Wave: PWA + Safety Review
+
+**Session:** 2026-05-01T20-37-00Z  
+**Tasks:**
+1. PWA install prompt (app+home)
+2. Login bonus celebration (confetti+5s+pulse)
+3. All-done card (50-particle confetti)
+4. manifest background_color fix
+5. Balancing task search + safety review
+
+**Decisions:**
+- PWA Install Prompt: Custom banner in app.html (localStorage dismiss), inline button in home.html
+- Login Bonus: 20-particle confetti (Tier 1, micro-celebration)
+- All Done Card: 50-particle confetti (Tier 2, peak moment), sessionStorage fire-once-per-day
+- manifest.json: Updated background_color #f0f2f5 → #f7f7f7 (match --bg), theme_color stays #58cc02
+- Balancing Task: Not found in code (may be in Firestore user data)
+- Safety Review: Tennis/pickleball task flagged as moderate risk for Shari review
+
+**Inbox:**
+- .squad/decisions/inbox/mipha-user-p1.md → merged to decisions.md
+- .squad/decisions/inbox/mipha-remove-balancing.md → merged to decisions.md
+- .squad/decisions/inbox/copilot-directive-2026-05-01T20-37.md → merged to decisions.md
+
+**Recommendation:** Shari reviews tennis/pickleball task appropriateness. Consider skill-level check or disclaimer for high-impact activities.
+

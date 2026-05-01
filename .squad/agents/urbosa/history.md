@@ -363,3 +363,25 @@ Parallel execution with Mipha (user dev) and Impa (audit). Unified font stack an
 - Tab buttons: `role="tab"` + `aria-selected` + `aria-controls`
 - Tab panels: `role="tabpanel"` on all 7 content sections
 - `showTab()` now manages `aria-selected` state alongside active class
+
+---
+
+## 2026-05-01T20:37 — Final Wave: Admin Optimization
+
+**Session:** 2026-05-01T20-37-00Z  
+**Task:** 6 admin optimization items — payout consolidation, task table dedup, CSV escaping, admin-guide CSS extraction, displayStats DOM batching, ARIA tabs
+
+**Decisions:**
+- DL4: Payout functions consolidated (Firestore-first, localStorage fallback)
+- DL5: Task table deduplication via renderTaskRow() helper
+- DL7: CSV escaping unified with escapeCSV() helper
+- OI3: admin-guide.html CSS moved to css/admin.css
+- RO1: displayStats() DOM batching (11→9 lookups)
+- Sidon-ARIA: Full WAI-ARIA tabbed interface implemented
+
+**Files Changed:** admin.html, admin-guide.html, css/admin.css
+
+**Net Result:** -97 lines (185 added, 282 removed)
+
+**Inbox:** .squad/decisions/inbox/urbosa-admin-cleanup.md → merged to decisions.md
+

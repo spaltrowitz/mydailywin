@@ -469,3 +469,39 @@ Prevents data inheritance on shared devices (kid's tablet, school computer).
 - Error codes handled: `auth/user-not-found`, `auth/invalid-email`, `auth/too-many-requests`
 - Success/error messages use new `.success-message` class (green) alongside existing `.error-message` (red)
 - Pre-fills reset email from login email field for UX continuity
+
+### SW Cache Regression Fix (Post-Refactor)
+- Sidon's refactor extracted shared code into `css/shared.css`, `js/firebase-config.js`, `js/sw-init.js`, `js/utils.js` but these were never added to `sw.js` STATIC_ASSETS
+- Also found `index.html` was missing from the cache list
+- Added all 5 files and bumped cache version from `mydailywin-v2` → `mydailywin-v3`
+- **Learning:** Any time files are created or renamed, the SW cache list must be updated in the same change. This is a mandatory checklist item for any file-touching refactor.
+
+---
+
+## 2026-05-01T20:37 — Final Wave: Password Reset + SW Cache Regression
+
+**Session:** 2026-05-01T20-37-00Z  
+**Tasks:** 
+1. Forgot password link in login.html using Firebase Auth sendPasswordResetEmail
+2. Fixed SW cache regression — added 5 missing files, bumped to v3
+
+**Decisions:**
+- DL-PASSWORD: Inline password reset form in login.html (no modal)
+  - Pre-fill email from login form
+  - Friendly error messages from Firebase error codes
+  - Client-side Firebase Auth, no backend changes
+  
+- DL-SW-CACHE: SW cache regression fixed
+  - Added 5 missing files to STATIC_ASSETS: css/shared.css, js/firebase-config.js, js/sw-init.js, js/utils.js, index.html
+  - Bumped version: mydailywin-v2 → mydailywin-v3
+  - Rationale: Offline users need all shared resources cached
+
+**Process Rule (Going Forward):**
+Any PR that adds/removes/renames a file must update sw.js STATIC_ASSETS and bump cache version. Checklist item for reviews.
+
+**Files Changed:** login.html, sw.js
+
+**Inbox:** 
+- .squad/decisions/inbox/daruk-forgot-password.md → merged to decisions.md
+- .squad/decisions/inbox/daruk-sw-cache.md → merged to decisions.md
+

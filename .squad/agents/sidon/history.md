@@ -50,3 +50,39 @@ The app is Duolingo-inspired: daily tasks earn points (100 pts = $1), streaks bu
 3. "All done" empty state (pride + sharing driver)
 4. Spin wheel easing (signature moment polish)
 5. Cache shared.css/JS in service worker (offline regression fix)
+
+---
+
+## 2026-05-01T20:37 — Final Wave: Fresh UX Sweep (15 Findings)
+
+**Session:** 2026-05-01T20-37-00Z  
+**Task:** Fresh user-side sweep — found 15 new items including PWA install prompt, login bonus celebration, all-done card, SW cache regression
+
+**Findings (15 Items):**
+1. F1 — No PWA Install Prompt Handler (P1, Critical)
+2. F2 — Login Bonus Disappears Too Fast (P1, Critical)
+3. F3 — Spin Wheel No Easing (P2)
+4. F4 — Achievements Toast-Only (P2)
+5. F5 — task-help-btn Below 44px Touch Target (P2)
+6. F6 — Onboarding Checkbox 20x20px (P2)
+7. F7 — No Empty State When All Tasks Done (P2)
+8. F8 — manifest background_color Mismatch (P3)
+9. F9 — Screenshots Array Empty (P3)
+10. F10 — No Escape Key Handler (P3)
+11. F11 — Dark Mode Not Available on Other Pages (P3)
+12. F12 — Login Bonus No Confetti (P2)
+13. F13 — get-started.html Uses alert() (P3)
+14. F14 — Unused CSS Keyframes (P3)
+15. F15 — SW Cache Missing shared.css/JS (P3, ✅ Daruk fixed)
+
+**Top 5 Impact Ranking:**
+1. F1 — PWA Install Prompt (Critical for retention)
+2. F2 + F12 — Login Celebration (#1 gamification win)
+3. F7 — All Done Card (Max pride moment)
+4. F3 — Spin Wheel Easing (Signature moment)
+5. F15 — SW Cache (Offline regression)
+
+**Inbox:** .squad/decisions/inbox/sidon-user-sweep.md → merged to decisions.md
+
+**Notes:** 15 findings provide comprehensive roadmap for next phase. Top 5 should be prioritized for next sprint.
+
