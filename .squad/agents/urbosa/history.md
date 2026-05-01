@@ -195,6 +195,20 @@ Always use `escapeHtml()` when interpolating any variable into innerHTML. Replac
 
 **Cross-Agent:** This was Sidon's UX audit decision #6 (import shared.css) and #3 (unify fonts). Mipha's user-facing pages should follow the same Nunito + shared.css pattern.
 
+### Code Deduplication — Impa Optimization Pass (2026-07-15)
+
+**Problem:** Impa's static analysis flagged repeated patterns inflating admin.html: suffix computation (10x), dollar formatting (7x), dead functions (2), and innerHTML += in loops (4 forEach).
+
+**Fixes:**
+- **getProfileSuffix():** Extracted helper at top of script, replaced 10 inline `(PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : ''` instances
+- **formatDollar(amount):** Extracted helper wrapping `parseFloat(amount).toFixed(2)`, replaced 7 call sites
+- **Dead code removed:** `approvePayoutRequest()` (deprecated wrapper, 4 lines) and `shareApp()` (unreferenced, 9 lines)
+- **innerHTML += perf fix:** Converted 4 task table forEach loops from `innerHTML +=` (reflow per iteration) to `array.push()` + `join('')` (single DOM write)
+
+**Result:** -44 lines removed, +42 added (net -2), but the real win is maintainability — suffix logic and dollar formatting each have a single source of truth now.
+
+**Pattern:** Use `getProfileSuffix()` and `formatDollar()` everywhere in admin.html instead of inline expressions. For innerHTML in loops, always build an array and join.
+
 
 ---
 

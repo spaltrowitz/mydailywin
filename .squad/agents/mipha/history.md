@@ -423,3 +423,26 @@ Parallel execution with Urbosa (admin) and Impa (audit). Unified font stack and 
 - Impa: Execute Phase 1 optimization (dead code removal)
 - Daruk: Lead Phase 1 JS extraction (firebase-config.js, sw-init.js, utils.js)
 - Revali: Prioritize Phases 2-3 (deduplication, CSS extraction)
+
+### Impa Optimization Execution — Dead Code + Helpers (app.html)
+
+**Session:** Executed Impa's D1, DL1, DL2 optimization findings for app.html.
+
+#### D1: Dead Code Removal (-16 lines)
+- Deleted `rate()`, `submitSurvey()`, and `currentRating` variable (lines 3209–3224 original)
+- Confirmed zero references anywhere in app.html — the feedback system was fully replaced by `submitFeedback()` + `feedbackModal`
+
+#### DL1: calculatePointsWithBonuses() Helper (-20 lines)
+- Extracted streak multiplier × lucky day × random bonus calculation into `calculatePointsWithBonuses(basePoints)`
+- Returns `{ pts, bonusMsg, randomMult }` — all values the callers need
+- Replaced 2 identical inline blocks: `completeTaskDirectly()` and `confirmTask()`
+- `confirmTask()` destructures `randomMult` for coin rain vs confetti decision
+
+#### DL2: addPoints() Helper (-10 lines)
+- Created `addPoints(amount)` updating both `state.balance` and `state.totalEarned`
+- Replaced 11 inline pairs across: login bonus, spin wheel, feedback, quotes (×2), daily bonus (×3), weekly bonus, tennis weekly, and the 2 task completion flows (via DL1)
+- Per-instance logic (saveState, checkStreak, etc.) left intact at call sites
+
+#### Net Impact
+- 42 insertions, 88 deletions = **-46 net lines**
+- 3 fewer duplication points for future maintenance
