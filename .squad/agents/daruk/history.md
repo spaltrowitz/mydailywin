@@ -418,3 +418,17 @@ Prevents data inheritance on shared devices (kid's tablet, school computer).
 - All using `escapeHtml()` escaping strategy (user-controlled data → HTML entities)
 - escapeHtml() function could be extracted to shared.js for team reuse
 
+
+## Learnings (2025-07-25)
+
+### Phase 1 Optimization — Shared JS Extraction
+
+**Completed items:**
+1. **js/firebase-config.js (DL8)** — Extracted identical `firebaseConfig` + `firebase.initializeApp()` from login.html, app.html, admin.html. Saves ~24 lines. Must load AFTER Firebase SDK scripts.
+2. **js/sw-init.js (DL9)** — Extracted service worker registration from home.html, login.html, get-started.html, app.html. Saves ~15 lines. No dependencies, loads first.
+3. **js/utils.js (DL10/CO3)** — Extracted `escapeHtml()` from app.html, login.html, admin.html. Unified 3 slightly different implementations into one canonical version (handles null input, uses String() coercion). Saves ~15 lines.
+4. **Deleted functions/ (D4)** — Confirmed dead stub (imports firebase-functions but exports nothing). Removed directory + firebase.json functions config. Saves ~200KB (mostly package-lock.json).
+
+**Script load order pattern:** sw-init.js → Firebase SDK CDNs → firebase-config.js → utils.js → page-specific scripts
+
+**Key detail:** The escapeHtml implementations had subtle differences — app.html used `&#039;` for single quotes while login/admin used `&#39;`. Unified to `&#39;` (the standard HTML entity). Both are valid but `&#39;` is shorter.
