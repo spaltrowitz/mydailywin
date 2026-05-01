@@ -22,3 +22,9 @@ Admin↔user data flows via localStorage keys and Firestore. Profile-based task 
 - **admin.html has deprecated function still present**: `approvePayoutRequest()` (line 1050-1053) is marked deprecated but not removed.
 - **Total estimated savings from audit: ~1,150-1,350 lines (11-13% reduction), 30-40% AI token cost reduction** when working across multiple files.
 - **Decision written to**: `.squad/decisions/inbox/impa-optimization-audit.md`
+
+### 2025-07-18 — Phase 2 Optimization Execution
+- **Phase 1 was already completed by prior commits**: Inline `<style>` blocks extracted to external CSS files, app.html keyframes already removed, inline `style=""` attributes on home.html already moved to home.css, sw.js cache list already complete.
+- **Phase 2 completed**: Consolidated .btn CSS base styles (shared.css provides universal properties, page CSS files trimmed to overrides only — 30 lines removed). Removed dead `.btn-completed` from app.css, dead `.btn-outline` from home.css. Bumped SW cache version.
+- **Key finding**: When CSS has been extracted to per-page files, the consolidation gain is smaller (30 lines vs. 100+) because each page's button design is intentionally distinct. The real value is token reduction when AI reads multiple CSS files.
+- **Remaining items with no action needed**: home.html inline styles were already at 2 (both `display:none` JS-toggled, cannot be moved to CSS). app.html keyframes were already removed. sw.js was already current.
