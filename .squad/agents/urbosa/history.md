@@ -105,3 +105,53 @@
 **Security Context:** Riju audit also flagged localStorage fallback in admin auth as bypassable; auth consolidation awaiting Firestore profile creation (Daruk P0).
 
 **Owner Notes:** Sidon created gamification skill; your admin.html responsive work aligns with user-facing gamification UI patterns (celebration modals, enhanced confetti).
+
+### XSS Remediation — innerHTML Escaping (2026-04-30, Security Audit)
+
+**Problem:** 45+ innerHTML assignments in admin.html interpolated user-controlled data (task names, report comments, profile names, admin emails) from localStorage without sanitization. localStorage tampering could inject scripts executing in the admin's browser.
+
+**Fix:**
+- Added `escapeHtml()` utility function (replaces &, <, >, ", ' with HTML entities)
+- Wrapped all user-controlled values in `escapeHtml()` across 25 call sites:
+  - Task tables (4x `t.name` in daily/bonus/permWeekly/weekly)
+  - Levels display (`lvl.name`)
+  - Payments (`p.month`, `p.notes`)
+  - Payout requests (`userName`, `doc.id`, `r.id`)
+  - Reports (`r.taskName`, `r.reason`, `r.comment`, `r.taskType`)
+  - Admins list (`ownerName`, `currentUser.email`, `displayName`, `admin.email`)
+  - Notifications (`displayName`, `PROFILE_NAME`, `notification.id/email`)
+- Static HTML structure and numeric values left unescaped (safe)
+- Committed in `d25fe40` as part of wave 2 security fixes
+
+**Pattern:** Always use `escapeHtml()` when interpolating any variable into innerHTML. Only numeric values and hardcoded strings are safe unescaped.
+
+---
+
+## Security Fix Session — 2026-04-30T20:38
+
+### XSS Remediation: innerHTML Escaping in admin.html
+
+#### Problem
+45+ innerHTML assignments in admin.html interpolated user-controlled data (task names, report comments, profile names, admin emails) from localStorage without sanitization. localStorage tampering could inject scripts executing in the admin's browser.
+
+#### Fix Applied (25 sites)
+Added `escapeHtml()` utility function and wrapped all user-controlled values before innerHTML insertion:
+- Task tables: 4x `t.name` (daily, bonus, permWeekly, weekly)
+- Levels display: 1x `lvl.name`
+- Payments: 2x (`p.month`, `p.notes`)
+- Payout requests: 3x (`userName`, `doc.id`, `r.id`)
+- Reports: 4x (`r.taskName`, `r.reason`, `r.comment`, `r.taskType`)
+- Admins list: 5x (`ownerName`, `currentUser.email`, `displayName`, `admin.email`, counts)
+- Notifications: 3x (`displayName`, `PROFILE_NAME`, `notification.id/email`)
+
+Static HTML structure and numeric values left unescaped (safe).
+
+#### Escaping Pattern
+Always use `escapeHtml()` when interpolating any variable into innerHTML. Replace &, <, >, ", ' with HTML entities. Only numeric values and hardcoded HTML structures escape unescaped.
+
+#### Coordination with Daruk & Mipha
+- Daruk fixed critical redirect and authorization vulnerabilities
+- Mipha fixed innerHTML XSS in app.html (4 sites) and login.html (6 interpolations)
+- All three agents using consistent escapeHtml() strategy
+- escapeHtml() function should be extracted to shared.js if shared.js extraction happens (Revali)
+

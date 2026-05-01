@@ -244,3 +244,65 @@ Executed Phases 1–4 of consolidation strategy (Mipha's responsibility in Phase
 **Owner Notes:** Sidon created `gamification` skill with sound effect patterns and particle physics guidance.
 
 **Cross-Agent:** Works with Urbosa on Decision 6–7 (shared.css import, dark mode extension, font unification, responsive breakpoints for admin).
+
+### XSS Vulnerability Fixes (2026-07-18)
+
+#### Changes Made
+- **app.html**: Wrapped 4 user-controlled innerHTML interpolations with `escapeHtml()`:
+  - `task.name` in daily task rendering (line ~2185)
+  - `b.name` in tennis weekly bonus rendering (line ~2216)
+  - `b.name` in regular weekly bonus rendering (line ~2232)
+  - `notifId` in payment modal onclick handler (line ~1384)
+- **login.html**: Added `escapeHtml()` function and fixed 2 profile rendering blocks:
+  - `profile.name` escaped in both owned and managed profile lists
+  - Replaced inline `onclick="openProfile('${profile.id}')"` with `data-profile-id` attributes + `addEventListener()` — eliminates string interpolation in JS execution context entirely
+  - Same pattern for `openAdmin()` onclick handlers
+
+#### Key Patterns
+- `escapeHtml()` already existed in app.html (line 843). login.html needed its own copy.
+- For onclick handlers that interpolate user data, `data-*` attributes + `addEventListener` is safer than escaping — the value never enters a JS execution context.
+- Not all innerHTML assignments are XSS risks — audited each one. Static HTML from hardcoded constants (TASK_HELP, level data, date strings from toISOString/toLocaleDateString) are safe.
+- `readAsDataURL()` output in img src is safe — always produces `data:` prefix with base64.
+
+#### Audit Summary (innerHTML instances reviewed)
+- app.html: 18 innerHTML assignments audited, 4 fixed
+- login.html: 6 innerHTML assignments audited, 2 blocks fixed (4 profile.id + 2 profile.name interpolations)
+
+---
+
+## Security Fix Session — 2026-04-30T20:38
+
+### XSS Remediation: innerHTML with User-Controlled Data
+
+#### app.html Fixes (4 sites)
+Wrapped user-controlled values with `escapeHtml()`:
+- `task.name` in daily task rows
+- `b.name` in tennis weekly bonus rows
+- `b.name` in regular weekly bonus rows
+- `notifId` in payment notification modal onclick
+
+Attack vector eliminated: localStorage tampering cannot inject scripts into user UI.
+
+#### login.html Fixes (6 interpolations across 2 profile blocks)
+Added `escapeHtml()` function to login.html (did not previously exist).
+- Escaped `profile.name` in owned profile list
+- Escaped `profile.name` in managed profile list
+- Replaced 4x inline `onclick="openProfile('${profile.id}')"` with `data-profile-id` attributes + `addEventListener()`
+- Replaced 2x inline `onclick="openAdmin(...)"` with data attributes + event handlers
+
+**Escaping Strategy:**
+- For HTML text content: use `escapeHtml()` to replace &, <, >, ", ' with HTML entities
+- For values in JS execution context (onclick): use `data-*` attributes + `addEventListener()` — safer because value never enters JS execution context
+- Static HTML and hardcoded strings: no escaping needed
+
+#### Full innerHTML Audit (24 instances)
+- app.html: 18 innerHTML assignments reviewed → 4 fixed, 14 verified safe
+- login.html: 6 innerHTML assignments reviewed → 2 profile blocks fixed
+- Safe patterns identified: static HTML, numeric values, readAsDataURL() outputs, hardcoded constants
+
+### Coordination with Daruk & Urbosa
+- Daruk fixed critical redirect and authorization vulnerabilities
+- Urbosa fixed innerHTML XSS in admin.html (25 sites, same escapeHtml() strategy)
+- All three agents using consistent escaping approach
+- escapeHtml() function could be extracted to shared.js for team reuse
+

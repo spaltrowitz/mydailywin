@@ -324,3 +324,68 @@ All findings documented in `.squad/agents/daruk/bugbash-findings.md` with file p
 - localStorage fallback in admin auth is bypassable — part of auth consolidation when profiles move to Firestore
 
 **Next Steps:** Once get-started.html writes profile docs to Firestore, the TODO rules can be fully implemented using existing helpers.
+
+### Security Fixes: Open Redirect + Firestore Ownership Scoping (Riju Audit)
+
+#### Fix 1 — Open Redirect in login.html
+- `?redirect=` parameter was used in `window.location.href` with zero validation — classic open redirect.
+- Added `isSafeRedirect()` helper: allows relative paths starting with `/` (rejecting `//` protocol-relative), or same-origin absolute URLs via `new URL().origin` comparison.
+- Malformed URLs caught by try/catch → returns false. No redirect happens for invalid values.
+
+#### Fix 2 — Firestore Rules Ownership Scoping
+- All 4 remaining TODO collections now use `hasProfileAccess()`:
+  - `payoutRequests`: read/update/delete check `resource.data.profileId`; create checks `request.resource.data.profileId`.
+  - `userNotifications`: same pattern as payoutRequests.
+  - `userState/{profileId}`: doc ID is the profileId — `hasProfileAccess(profileId)` on all ops.
+  - `taskProposals`: same pattern as payoutRequests.
+- **Prerequisite still applies:** `hasProfileAccess()` requires the Firestore profile doc to exist with `ownerEmail`. Profiles created only in localStorage will fail ownership checks until get-started.html writes to Firestore.
+- Removed all TODO comments from these collections — the ownership scoping is now implemented.
+
+### Security Wave 2 Fixes (2025-07-18)
+- **Privilege escalation closed:** Removed localStorage fallback for admin auth in admin.html. When Firestore is offline, admin access is denied — localStorage is never trusted for authorization decisions.
+- **PROFILE_ID injection closed:** Both app.html and admin.html now validate PROFILE_ID against `/^[a-zA-Z0-9_-]+$/` before use in localStorage keys or Firestore paths. Invalid values fall to null and trigger redirect to get-started.
+- **Sign-out data leak closed:** login.html signOut() now clears all `hr_profile_*`, `hr_state*`, `hr_admin*`, `hr_pending_*`, `hr_user_profiles_*`, and `hr_additional_admins*` localStorage keys. Prevents cached data inheritance on shared devices.
+- **Pattern:** Always collect keys to remove into an array first, then iterate — modifying localStorage during iteration skips keys.
+
+---
+
+## Security Fix Session — 2026-04-30T20:38
+
+### Wave 1: Critical Authorization & Redirect Vulnerabilities Closed
+
+#### Open Redirect in login.html
+Added `isSafeRedirect()` validation function. The `?redirect=` parameter is now validated before use in `window.location.href`. Only allows:
+- Relative paths starting with `/` (rejects `//` protocol-relative URLs)
+- Absolute URLs matching `window.location.origin`
+All other values silently rejected. Attack vector eliminated.
+
+#### Firestore Rules Ownership Scoping
+Applied `hasProfileAccess(profileId)` to 4 collections:
+- `payoutRequests`: read/update/delete check `resource.data.profileId`
+- `userNotifications`: read/update/delete check `resource.data.profileId`
+- `userState/{profileId}`: doc ID is the profileId
+- `taskProposals`: read/update/delete check `resource.data.profileId`
+
+All operations now verify that the requesting user owns or administers the profile. Uses existing `isProfileOwner()` + `isProfileAdmin()` helpers. Prerequisite: Firestore profile docs must exist (localStorage-only profiles will fail checks).
+
+### Wave 2: Privilege Escalation & Injection Prevention
+
+#### Removed localStorage Admin Fallback
+admin.html no longer falls back to localStorage when Firestore is unavailable. Firestore is now the sole authority for admin status. Trade-off acceptable: admin operations require Firestore anyway.
+
+#### PROFILE_ID Validation
+Added regex pattern `/^[a-zA-Z0-9_-]+$/` in app.html and admin.html. PROFILE_ID now validated before use in localStorage keys or Firestore paths. Prevents crafted values from targeting arbitrary keys or unintended Firestore paths.
+
+#### Sign-Out Cleanup
+login.html signOut() now aggressively clears all `hr_*` localStorage keys:
+- hr_profile_*, hr_state*, hr_admin*, hr_pending_*, hr_user_profiles_*, hr_additional_admins*
+Prevents data inheritance on shared devices (kid's tablet, school computer).
+
+**Implementation note:** Collected keys into array first, then cleared — avoids iteration issues.
+
+### Coordination with Mipha & Urbosa
+- Mipha fixed innerHTML XSS in app.html (4 sites) and login.html (6 interpolations)
+- Urbosa fixed innerHTML XSS in admin.html (25 sites)
+- All using `escapeHtml()` escaping strategy (user-controlled data → HTML entities)
+- escapeHtml() function could be extracted to shared.js for team reuse
+
