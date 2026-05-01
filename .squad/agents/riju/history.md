@@ -35,3 +35,15 @@ Key security surfaces: firestore.rules, login.html (auth), admin.html (privilege
 - `admin.html:1904-1906` — EmailJS keys exposed client-side
 - `app.html:2180-2182` — Task names rendered without escaping
 - `app.html:1785` — userState written to Firestore with doc ID = PROFILE_ID (guessable)
+
+## Learnings
+
+### CSP Refactor (unsafe-inline elimination)
+- **Completed:** Extracted all inline `<style>` and `<script>` blocks from app.html and offline.html to external files
+- **Pattern used:** `data-action` attribute + delegated `document.addEventListener('click', ...)` — works without build tools
+- **CSP policy:** `script-src 'self' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net` — no 'unsafe-inline'
+- **style-src:** Kept `'unsafe-inline'` for style attributes (low risk, no code execution vector)
+- **Prior work:** login.html, home.html, get-started.html, admin.html were already partially migrated; app.html and offline.html were the remaining gaps
+- **Key insight:** The app uses 57+ inline onclick handlers in app.html alone — all converted to event delegation pattern
+- **Service worker:** Cache bumped to v4 to include new external assets
+- **CDN origins whitelisted:** gstatic.com (Firebase SDK), googleapis.com (APIs), cdn.jsdelivr.net (EmailJS), fonts.googleapis.com/gstatic.com (Nunito font)
