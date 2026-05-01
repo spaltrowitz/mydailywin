@@ -1513,8 +1513,7 @@
             if (state.lastLoginDate !== today) {
                 // Give login bonus
                 state.lastLoginDate = today;
-                state.balance += 25;
-                state.totalEarned += 25;
+                addPoints(25);
                 state.spinUsedToday = false; // Reset spin for new day
                 saveState();
                 
@@ -1535,6 +1534,35 @@
         function getRandomBonus() {
             // 10% chance of 2x bonus on any task
             return Math.random() < 0.1 ? 2 : 1;
+        }
+
+        function addPoints(amount) {
+            state.balance += amount;
+            state.totalEarned += amount;
+        }
+
+        function calculatePointsWithBonuses(basePoints) {
+            let pts = basePoints;
+            let bonusMsg = '';
+
+            const streakMult = getStreakMultiplier();
+            if (streakMult > 1) {
+                pts = Math.floor(pts * streakMult);
+                bonusMsg += `🔥 ${streakMult}x streak bonus! `;
+            }
+
+            if (isLuckyDay()) {
+                pts = Math.floor(pts * 1.5);
+                bonusMsg += '🍀 Lucky day 1.5x! ';
+            }
+
+            const randomMult = getRandomBonus();
+            if (randomMult > 1) {
+                pts = Math.floor(pts * randomMult);
+                bonusMsg += '🎉 You got a random 2x bonus! ';
+            }
+
+            return { pts, bonusMsg, randomMult };
         }
 
         function spinWheel() {
@@ -1585,8 +1613,7 @@
                     spinEmoji.style.transform = 'rotate(0deg) scale(1.3)';
                     spinResult.textContent = prize.text;
                     
-                    state.balance += prize.pts;
-                    state.totalEarned += prize.pts;
+                    addPoints(prize.pts);
                     state.spinUsedToday = true;
                     saveState();
                     render();
@@ -1675,8 +1702,7 @@
             state.feedbackHistory.push(feedback);
             
             // Award points
-            state.balance += 15;
-            state.totalEarned += 15;
+            addPoints(15);
             state.weeklyFeedbackCompleted = getWeekNumber();
             saveState();
             
@@ -2108,8 +2134,7 @@
             hideQuoteOnboarding();
             
             // Add 5 points to global state
-            state.balance += 5;
-            state.totalEarned += 5;
+            addPoints(5);
             saveState();
             
             updateQuoteButtons();
@@ -2165,8 +2190,7 @@
             hideSpanishOnboarding();
             
             // Add 5 points to global state
-            state.balance += 5;
-            state.totalEarned += 5;
+            addPoints(5);
             saveState();
             
             updateQuoteButtons();
@@ -2416,32 +2440,8 @@
             task.completed = true;
             markTaskCompletedEver(task.id);
             
-            // Calculate points with bonuses
-            let pts = task.value;
-            let bonusMsg = '';
-            
-            // Streak multiplier
-            const streakMult = getStreakMultiplier();
-            if (streakMult > 1) {
-                pts = Math.floor(pts * streakMult);
-                bonusMsg += `🔥 ${streakMult}x streak bonus! `;
-            }
-            
-            // Lucky day
-            if (isLuckyDay()) {
-                pts = Math.floor(pts * 1.5);
-                bonusMsg += '🍀 Lucky day 1.5x! ';
-            }
-            
-            // Random bonus (10% chance of 2x)
-            const randomMult = getRandomBonus();
-            if (randomMult > 1) {
-                pts = Math.floor(pts * randomMult);
-                bonusMsg += '🎉 You got a random 2x bonus! ';
-            }
-            
-            state.balance += pts;
-            state.totalEarned += pts;
+            const { pts, bonusMsg } = calculatePointsWithBonuses(task.value);
+            addPoints(pts);
             
             checkStreak();
             checkAchievements();
@@ -2484,32 +2484,8 @@
                 task.proof = document.getElementById('taskComment').value;
                 markTaskCompletedEver(task.id);
                 
-                // Calculate points with bonuses
-                let pts = task.value;
-                let bonusMsg = '';
-                
-                // Streak multiplier
-                const streakMult = getStreakMultiplier();
-                if (streakMult > 1) {
-                    pts = Math.floor(pts * streakMult);
-                    bonusMsg += `🔥 ${streakMult}x streak bonus! `;
-                }
-                
-                // Lucky day
-                if (isLuckyDay()) {
-                    pts = Math.floor(pts * 1.5);
-                    bonusMsg += '🍀 Lucky day 1.5x! ';
-                }
-                
-                // Random bonus (10% chance of 2x)
-                const randomMult = getRandomBonus();
-                if (randomMult > 1) {
-                    pts = Math.floor(pts * randomMult);
-                    bonusMsg += '🎉 You got a random 2x bonus! ';
-                }
-                
-                state.balance += pts;
-                state.totalEarned += pts;
+                const { pts, bonusMsg, randomMult } = calculatePointsWithBonuses(task.value);
+                addPoints(pts);
                 
                 checkStreak();
                 checkAchievements();
@@ -2558,8 +2534,7 @@
                     // Simple checkbox tasks - no modal needed, complete directly
                     markTaskCompletedEver(bonus.id);
                     state.dailyBonusCompleted = dayNum;
-                    state.balance += bonus.value;
-                    state.totalEarned += bonus.value;
+                    addPoints(bonus.value);
                     
                     if (!state.dailyBonusComments) state.dailyBonusComments = [];
                     state.dailyBonusComments.push({
@@ -2602,8 +2577,7 @@
             });
             
             state.dailyBonusCompleted = dayNum;
-            state.balance += bonus.value;
-            state.totalEarned += bonus.value;
+            addPoints(bonus.value);
             checkStreak();
             saveState();
             closeModal('taskModal');
@@ -2684,8 +2658,7 @@
             });
             
             state.weeklyBonusesCompleted.push(bonus.id);
-            state.balance += bonus.value;
-            state.totalEarned += bonus.value;
+            addPoints(bonus.value);
             saveState();
             closeModal('taskModal');
             render();
@@ -2784,8 +2757,7 @@
             // Check if 3 sessions reached
             const newCount = getTennisSessionsThisWeek().length;
             if (newCount >= 3) {
-                state.balance += TENNIS_WEEKLY.value;
-                state.totalEarned += TENNIS_WEEKLY.value;
+                addPoints(TENNIS_WEEKLY.value);
                 closeModal('tennisModal');
                 saveState();
                 render();
@@ -3203,24 +3175,6 @@
             const subject = encodeURIComponent('MyDailyWin Feedback');
             const body = encodeURIComponent('Hi!\n\nI have some feedback about MyDailyWin:\n\n');
             window.location.href = `mailto:sharipaltrowitz@gmail.com?subject=${subject}&body=${body}`;
-        }
-
-        // ========== SURVEY ==========
-        let currentRating = 0;
-        function rate(n) {
-            currentRating = n;
-            document.querySelectorAll('.rate-emoji').forEach(e => e.style.transform = 'scale(1)');
-            event.target.style.transform = 'scale(1.5)';
-        }
-
-        function submitSurvey() {
-             if (!currentRating) { showToast('⚠️ Please tap a rating emoji'); return; }
-             state.balance += 10;  // 10 pts = $0.10
-             state.totalEarned += 10;
-             showToast('Thanks for the feedback! +10 pts');
-             document.getElementById('surveyInvite').style.display = 'none'; // Hide after submit
-             saveState();
-             render();
         }
 
         // ========== UI UTILS ==========
