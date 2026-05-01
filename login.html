@@ -133,6 +133,67 @@
         .error-message.show {
             display: block;
         }
+        .success-message {
+            background: #dcfce7;
+            color: #16a34a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        .success-message.show {
+            display: block;
+        }
+        .forgot-password-link {
+            display: inline-block;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .forgot-password-link:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+        .reset-form {
+            display: none;
+            margin-top: 12px;
+        }
+        .reset-form.active {
+            display: block;
+        }
+        .reset-form input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            background: var(--bg);
+        }
+        .reset-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .btn-reset {
+            background: var(--primary);
+            border: none;
+            color: white;
+        }
+        .btn-reset:hover {
+            background: var(--primary-dark);
+        }
+        .btn-cancel {
+            background: white;
+            border: 2px solid #e5e7eb;
+            color: var(--text);
+        }
+        .btn-cancel:hover {
+            background: #f9fafb;
+        }
         .loading {
             display: none;
             align-items: center;
@@ -245,6 +306,7 @@
         <p class="subtitle">Sign in to access your profiles</p>
         
         <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
         
         <div id="loading" class="loading">
             <div class="spinner"></div>
@@ -281,7 +343,15 @@
                         aria-label="Show password">👁️</button>
                 </div>
                 <button class="btn btn-email" onclick="signInWithEmail()">Sign In</button>
+                <a class="forgot-password-link" onclick="showResetForm()">Forgot password?</a>
                 <button class="btn btn-google" onclick="createAccount()">Create Account</button>
+            </div>
+            
+            <div id="resetForm" class="reset-form">
+                <p style="font-size: 14px; color: var(--text-light); margin-bottom: 12px;">Enter your email and we'll send a reset link.</p>
+                <input type="email" id="resetEmail" placeholder="Email address" autocomplete="email">
+                <button class="btn btn-reset" onclick="sendResetEmail()">Send Reset Link</button>
+                <button class="btn btn-cancel" onclick="hideResetForm()">Cancel</button>
             </div>
         </div>
         
@@ -420,10 +490,65 @@
 
         function showEmailForm() {
             document.getElementById('emailForm').classList.add('active');
+            document.getElementById('resetForm').classList.remove('active');
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.classList.add('show');
+        }
+
+        function hideSuccess() {
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        function showResetForm() {
+            hideError();
+            hideSuccess();
+            const emailVal = document.getElementById('email').value;
+            document.getElementById('resetEmail').value = emailVal;
+            document.getElementById('emailForm').classList.remove('active');
+            document.getElementById('resetForm').classList.add('active');
+        }
+
+        function hideResetForm() {
+            hideError();
+            hideSuccess();
+            document.getElementById('resetForm').classList.remove('active');
+            document.getElementById('emailForm').classList.add('active');
+        }
+
+        async function sendResetEmail() {
+            hideError();
+            hideSuccess();
+            const email = document.getElementById('resetEmail').value.trim();
+
+            if (!email) {
+                showError('Please enter your email address.');
+                return;
+            }
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                hideError();
+                showSuccess('Reset link sent! Check your email.');
+            } catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    showError('No account found with that email.');
+                } else if (error.code === 'auth/invalid-email') {
+                    showError('Please enter a valid email address.');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showError('Too many attempts. Please try again later.');
+                } else {
+                    showError('Something went wrong. Please try again.');
+                }
+            }
         }
 
         async function signInWithGoogle() {
             hideError();
+            hideSuccess();
             showLoading();
             try {
                 const provider = new firebase.auth.GoogleAuthProvider();
@@ -436,6 +561,7 @@
 
         async function signInWithEmail() {
             hideError();
+            hideSuccess();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
@@ -455,6 +581,7 @@
 
         async function createAccount() {
             hideError();
+            hideSuccess();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
