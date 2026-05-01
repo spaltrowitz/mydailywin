@@ -472,3 +472,157 @@ page-specific <script> (uses firebase.auth(), firebase.firestore(), escapeHtml()
 
 ---
 
+
+---
+
+## Decision: Apple Sign-In Implementation (Daruk)
+**Status:** ✅ Implemented  
+**Date:** 2025-07-25  
+**Agent:** Daruk (Backend Dev)  
+**Scope:** login.html, js/login.js
+
+**Context:** Apple Sign-In added to login.html alongside existing Google Sign-In.
+
+**Decision:**
+- Uses Firebase Auth `OAuthProvider('apple.com')` with popup flow (same as Google)
+- Scopes: email, name
+- Auth state listener handles post-sign-in redirect (no separate redirect logic needed)
+- Button uses inline SVG for Apple logo (no external image dependency)
+
+**Impact:**
+- No changes to auth state listener or redirect logic — Apple auth result flows through same `onAuthStateChanged` handler
+- Apple may return a private relay email on first sign-in; display name may be null on subsequent sign-ins (Apple only sends name on first auth)
+
+---
+
+## Decision: EmailJS Migration to Cloud Function (Daruk)
+**Status:** ✅ Implemented  
+**Date:** 2025-01-20  
+**Agent:** Daruk (Backend Dev)  
+**Scope:** functions/index.js, admin.html, firebase.json, CSP configuration
+
+**Context:**
+admin.html was using EmailJS client-side with exposed service/template IDs and public key. Medium security finding — any user could inspect page source and use those credentials.
+
+**Decision:**
+1. Migrate email sending to Firebase Cloud Function (`sendInviteEmail`)
+2. Validates caller is authenticated via Firebase Auth
+3. Calls EmailJS REST API server-side (credentials never exposed to client)
+4. Validates input (email format, required fields)
+
+**Implementation:**
+- Cloud Function: `functions/index.js` — exports `sendInviteEmail` (v2 onCall)
+- Client: admin.html uses `firebase.functions().httpsCallable()` instead of EmailJS SDK
+- Removed from client: EmailJS CDN script, public key, service ID, template ID
+- CSP updated: `*.cloudfunctions.net` replaces `api.emailjs.com` in connect-src
+- firebase.json: Added `"functions"` config block
+
+**Trade-offs:**
+- Cold start latency on first invocation (~1-2s) — acceptable for invite emails
+- Still using EmailJS (same 200/month free tier limit) — just calling from server side now
+
+---
+
+## Decision: Phase 2 CSS Optimization (Impa)
+**Status:** ✅ Implemented  
+**Date:** 2025-07-18  
+**Agent:** Impa (Optimizer)  
+**Scope:** shared.css, app.css, admin.css, home.css, login.css, get-started.css, sw.js
+
+**What Was Done:**
+1. Consolidated .btn CSS across 6 page-specific CSS files
+2. shared.css now owns universal base properties (border, border-radius, font-size, cursor, transition, display, padding, min-height)
+3. Each page CSS only specifies deltas
+4. Removed dead CSS: `.btn-completed` (app.css), `.btn-outline` (home.css)
+5. Bumped SW cache to v6
+
+**What Was Already Done (Phase 1):**
+- app.html keyframes (bounce, float, jackpot, etc.) — already removed
+- home.html inline `style=""` attributes — already extracted to home.css
+- Inline `<style>` blocks — already extracted to per-page CSS files
+
+**Net Impact:**
+- ~30 lines of redundant `.btn` CSS removed
+- 2 dead CSS selectors removed
+- All page CSS files inherit from shared.css — DRY principle
+- Token cost reduction for multi-file AI reads
+
+**Rationale:**
+Centralizing base button properties ensures: (a) single source of truth for future changes, (b) lower token cost, (c) less style drift between pages.
+
+---
+
+## Decision: CSP unsafe-inline Elimination (Riju)
+**Status:** ✅ Implemented  
+**Date:** 2025-01-20  
+**Agent:** Riju (Security)  
+**Scope:** All HTML pages, all JS/CSS files, CSP meta tags, event handling
+
+**Context:**
+Security audit flagged `unsafe-inline` in script-src as High finding. All HTML pages had inline `<style>` blocks, inline `<script>` blocks (2000+ lines in app.html), and 57+ inline `onclick` handlers.
+
+**Decision:**
+1. Extract all inline code to external files (CSS and JS separated per page)
+2. Convert inline event handlers to delegated listeners using `data-action` attributes
+3. Add CSP meta tags with `script-src 'self'` + explicit CDN origins
+4. Keep `'unsafe-inline'` for `style-src` only (not a code execution vector)
+
+**CSP Policy Example:**
+```
+script-src 'self' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net;
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+font-src https://fonts.gstatic.com;
+```
+
+**Trade-offs:**
+- **Pro:** XSS via inline script injection fully mitigated
+- **Pro:** No build system required — works with vanilla HTML/JS
+- **Con:** `style-src 'unsafe-inline'` remains (acceptable risk, not code execution vector)
+- **Con:** Event delegation adds ~50 lines per JS file for dispatcher
+
+**Files Changed:**
+- app.html, offline.html — inline code extracted, CSP added, onclick→data-action
+- New CSS files: css/app.css, css/offline.css
+- New JS files: js/app.js, js/home.js, js/login.js, js/offline.js
+- admin.html — CSP connect-src fix
+- sw.js — cache manifest updated to v4
+
+**Alternatives Considered:**
+- Nonce-based CSP — requires server-side rendering; not viable with static Firebase Hosting
+- Hash-based CSP — brittle; breaks on any code change
+- Full style externalization — impractical without build step for 500+ inline style attributes
+
+---
+
+## Decision: UX Remaining Items Implementation (Sidon)
+**Status:** ✅ Implemented  
+**Date:** 2025-07-24  
+**Agent:** Sidon (UX/Design)  
+**Scope:** js/app.js, js/get-started.js, js/dark-mode.js (NEW), css/login.css, css/home.css, css/get-started.css, sw.js
+
+**Context:**
+Post-sweep findings F3 (spin wheel easing), F10 (Escape key), F11 (dark mode), F13 (toast) remained unimplemented. Polish items (P2-P3) that improve perceived quality and consistency.
+
+**Decisions:**
+
+1. **Spin wheel uses exponential deceleration** — `setTimeout` chain with `delay = 60 * e^(1.8 * progress)`. No external dependencies. Winner pre-determined for clean final frame.
+
+2. **Escape key closes topmost modal** — single global `keydown` listener in app.js, finds `.modal.active` and calls `closeModal()`. No per-modal wiring needed.
+
+3. **Dark mode respects localStorage('theme') then prefers-color-scheme** — shared `js/dark-mode.js` runs synchronously on page load to prevent flash. Same color palette as app.html dark mode (#131f24 bg, #202f36 cards, #37464f borders, #e5e5e5 text).
+
+4. **Toast replaces alert() in get-started.html** — self-contained `showToast()` function in js/get-started.js, styled consistently with app.html toasts, includes dark mode support.
+
+**Impact:**
+- Dark mode now works across all user-facing page transitions (login → home → get-started → app)
+- Spin wheel feels like a real slot machine moment (suspenseful deceleration)
+- Keyboard users can dismiss modals without mouse
+- No more jarring native browser dialogs in onboarding
+- Consistent dark mode experience (unified palette)
+
+**Supporting Changes:**
+- Service worker cache bumped to v5
+- Added `js/dark-mode.js` to SW precache list
+- All JS validated with `node -c` syntax check
+
+---

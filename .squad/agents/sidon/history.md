@@ -105,3 +105,27 @@ The app is Duolingo-inspired: daily tasks earn points (100 pts = $1), streaks bu
 - All JS passes `node -c` syntax validation
 
 **Remaining from sweep:** F4 (achievements modal), F5 (touch target), F6 (checkbox size), F14 (dead keyframes)
+
+## 2026-05-01T22:40 — UX Sweep Implementation Sprint Complete
+
+**Session:** 2026-05-01T22-40-27Z — backlog-sprint  
+**Implementation Results:** F3, F10, F11, F13 ✅  
+
+**Cross-Agent Updates:**
+- **From Riju:** CSP refactor done. Event delegation pattern supports dark-mode-js toggle without inline script risk. Escape key handler uses semantic event listeners (no data-action needed, uses native keydown event).
+- **From Daruk:** Cloud Function email delivery (used in invite flows) now supports async toast notification UI without blocking spin wheel animation.
+- **From Impa:** Service worker v5 includes new js/dark-mode.js in precache. Dark mode CSS consolidated across all page files (login.css, home.css, get-started.css now have dark-mode overrides matching app.html palette).
+
+### Implementation Details (F3/F10/F11/F13)
+- **F3 — Spin Wheel Easing:** Exponential deceleration `60ms * e^(1.8 * progress)` creates perceived fairness + suspense. Pre-determined winner prevents desync between visual emoji and actual payout.
+- **F10 — Escape Key:** Single `keydown` listener finds `.modal.active` (top of stack) and closes it. Handles all 10+ modals uniformly without modal-specific code.
+- **F11 — Dark Mode Everywhere:** js/dark-mode.js inits at page load, reads localStorage + prefers-color-scheme, applies `data-theme="dark"` to body. CSS variables handle color swaps (app.html already had vars, other pages got them added).
+- **F13 — alert() → toasts:** get-started.html now uses showToast() with same styling as app.html toasts. Maintains brand consistency.
+
+### Remaining (F4/F5/F6/F7/F14)
+- F4: Achievements modal (design pending)
+- F5: task-help-btn 44px touch target (requires HTML restructure, blocked)
+- F6: Onboarding checkbox 20x20px (requires HTML restructure, blocked)
+- F7: All-done empty state card (design pending)
+- F14: Unused keyframes (safe to remove, low priority)
+

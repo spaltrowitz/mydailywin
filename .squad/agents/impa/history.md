@@ -28,3 +28,19 @@ Admin↔user data flows via localStorage keys and Firestore. Profile-based task 
 - **Phase 2 completed**: Consolidated .btn CSS base styles (shared.css provides universal properties, page CSS files trimmed to overrides only — 30 lines removed). Removed dead `.btn-completed` from app.css, dead `.btn-outline` from home.css. Bumped SW cache version.
 - **Key finding**: When CSS has been extracted to per-page files, the consolidation gain is smaller (30 lines vs. 100+) because each page's button design is intentionally distinct. The real value is token reduction when AI reads multiple CSS files.
 - **Remaining items with no action needed**: home.html inline styles were already at 2 (both `display:none` JS-toggled, cannot be moved to CSS). app.html keyframes were already removed. sw.js was already current.
+
+## 2026-05-01T22:40 — Phase 2 Optimization Sprint Complete
+
+**Session:** 2026-05-01T22-40-27Z — backlog-sprint  
+**Cross-Agent Updates:**
+
+### Team Coordination Context
+- **From Riju:** Extracted CSS files (new external deps from CSP refactor) now included in service worker cache. Cache version bump to v5 includes all new assets.
+- **From Daruk:** Cloud Function imports don't affect frontend bundle size. functions/index.js kept minimal.
+- **From Sidon:** New files (js/dark-mode.js, updated toast in js/get-started.js) included in SW v5 precache. Dark mode CSS added to all 5 page CSS files.
+
+### Learnings
+- When CSS is per-page (intentional design variation), consolidation baseline is smaller but multi-file token savings remain significant.
+- Service worker cache versioning is critical for multi-agent parallel work — each agent bumps independently, latest wins.
+- Shared CSS patterns (like .btn base styles) should live in shared.css + be imported by every page CSS file for consistency and DRY.
+

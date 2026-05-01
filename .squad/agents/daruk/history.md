@@ -526,3 +526,19 @@ Any PR that adds/removes/renames a file must update sw.js STATIC_ASSETS and bump
 - CSP updated: replaced `https://api.emailjs.com` with `https://*.cloudfunctions.net`
 - Functions config in firebase.json: `"functions": { "source": "functions", "runtime": "nodejs18" }`
 - Node 18 runtime, dependencies: firebase-admin, firebase-functions, node-fetch (v2 for CJS compat)
+
+## 2026-05-01T22:40 — EmailJS Migration & Cross-Agent Learnings
+
+**Session:** 2026-05-01T22-40-27Z — backlog-sprint  
+**Cross-Agent Updates:**
+
+### Team Coordination Context
+- **From Riju:** CSP now enforces script-src 'self' + whitelist (no unsafe-inline). Cloud Function must be same-origin (via `firebase.app()` callable invocation, not fetch). CSP policy already whitelists googleapis.com for Cloud Functions SDK.
+- **From Impa:** Cloud Function import statements now included in functions/index.js bundle optimization. Service worker precache includes function assets.
+- **From Sidon:** Email delivery (invite links in admin flow, recovery links in auth flow) now handled by callable function. UI toast notifications for success/error states already styled.
+
+### Learnings
+- Callable Cloud Functions authenticate via Firebase Auth tokens automatically (no CORS headers needed).
+- EmailJS credentials in backend config allows future library swap without frontend code changes.
+- Error handling: catch both Network errors and function-specific errors (e.g., invalid email).
+

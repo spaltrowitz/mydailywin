@@ -47,3 +47,19 @@ Key security surfaces: firestore.rules, login.html (auth), admin.html (privilege
 - **Key insight:** The app uses 57+ inline onclick handlers in app.html alone — all converted to event delegation pattern
 - **Service worker:** Cache bumped to v4 to include new external assets
 - **CDN origins whitelisted:** gstatic.com (Firebase SDK), googleapis.com (APIs), cdn.jsdelivr.net (EmailJS), fonts.googleapis.com/gstatic.com (Nunito font)
+
+## 2026-05-01T22:40 — CSP Refactor Sprint Complete
+
+**Session:** 2026-05-01T22-40-27Z — backlog-sprint  
+**Cross-Agent Updates:**
+
+### Team Coordination Context
+- **From Daruk:** EmailJS keys removed from admin.html (no more client-side credential exposure). Cloud Function handles all email delivery. CSP now blocks unsafe inline + external origin restrictions eliminate JS injection vectors.
+- **From Impa:** Service worker cache now v5. All external assets (CSS extracted in this sprint) included in precache. CSP policy whitelists cdn.jsdelivr.net for EmailJS.
+- **From Sidon:** All app modals now Escape-closable and dark-mode aware. Spin wheel animation respects prefers-reduced-motion where applicable. No accessibility regressions from CSP refactor (all 57+ event handlers converted to semantic data-action delegation).
+
+### Learnings
+- Event delegation pattern (`data-action` attributes + central `document.addEventListener`) scales cleanly without build tool overhead.
+- CSP meta tag placement order matters (must be in `<head>` before any external resource declarations).
+- Coordinate with service worker cache versioning when adding external CSS/JS — old caches will 404 if not bumped.
+
