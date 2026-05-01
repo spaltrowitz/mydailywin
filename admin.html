@@ -28,18 +28,18 @@
 
     <div class="container">
         <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
-            <button class="tab" onclick="showTab('tasks')">📋 Tasks</button>
-            <button class="tab" onclick="showTab('payments')">💰 Payments</button>
-            <button class="tab" onclick="showTab('levels')">🏆 Levels</button>
-            <button class="tab" onclick="showTab('admins')">👥 Admins</button>
-            <button class="tab" onclick="showTab('faq')">❓ FAQ</button>
-            <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
+        <div class="tabs" role="tablist" aria-label="Admin sections">
+            <button class="tab active" role="tab" aria-selected="true" aria-controls="dashboard" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="tasks" onclick="showTab('tasks')">📋 Tasks</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="payments" onclick="showTab('payments')">💰 Payments</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="levels" onclick="showTab('levels')">🏆 Levels</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="admins" onclick="showTab('admins')">👥 Admins</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="faq" onclick="showTab('faq')">❓ FAQ</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="settings" onclick="showTab('settings')">⚙️ Settings</button>
         </div>
 
         <!-- DASHBOARD TAB -->
-        <div id="dashboard" class="tab-content active">
+        <div id="dashboard" class="tab-content active" role="tabpanel">
             <div class="card">
                 <h2>📊 <span class="user-name">User</span>'s Progress</h2>
                 <div class="stat-grid">
@@ -115,7 +115,7 @@
         </div>
 
         <!-- TASKS TAB -->
-        <div id="tasks" class="tab-content">
+        <div id="tasks" class="tab-content" role="tabpanel">
             <div class="card">
                 <h2>📋 Daily Tasks</h2>
                 <p style="color: var(--text-light); margin-bottom: 15px;">Core tasks that appear every day. Click to edit.</p>
@@ -153,7 +153,7 @@
         </div>
 
         <!-- PAYMENTS TAB -->
-        <div id="payments" class="tab-content">
+        <div id="payments" class="tab-content" role="tabpanel">
             <div class="card" id="pendingRequestsCard" style="display: none;">
                 <h2>🔔 Pending Payout Requests</h2>
                 <p style="color: var(--text-light); margin-bottom: 15px;"><span class="user-name">User</span> has requested a payout</p>
@@ -185,7 +185,7 @@
         </div>
 
         <!-- LEVELS TAB -->
-        <div id="levels" class="tab-content">
+        <div id="levels" class="tab-content" role="tabpanel">
             <div class="card">
                 <h2>🏆 Level Progression</h2>
                 <p style="color: var(--text-light); margin-bottom: 20px;">Levels based on <strong>total lifetime points earned</strong></p>
@@ -211,7 +211,7 @@
         </div>
 
         <!-- ADMINS TAB -->
-        <div id="admins" class="tab-content">
+        <div id="admins" class="tab-content" role="tabpanel">
             <!-- Notifications Banner -->
             <div id="adminNotifications" style="display: none;"></div>
             
@@ -236,7 +236,7 @@
         </div>
 
         <!-- FAQ TAB -->
-        <div id="faq" class="tab-content">
+        <div id="faq" class="tab-content" role="tabpanel">
             <!-- Quick Reference Card -->
             <div class="card" style="background: linear-gradient(135deg, #22c55e22, #22c55e44); border: 2px solid var(--primary);">
                 <h2>📊 Quick Reference</h2>
@@ -389,7 +389,7 @@
         </div>
 
         <!-- SETTINGS TAB -->
-        <div id="settings" class="tab-content">
+        <div id="settings" class="tab-content" role="tabpanel">
             <div class="card">
                 <h2>⚙️ Admin Settings</h2>
                 <div class="info-box">
@@ -665,13 +665,16 @@
         // ========== TAB FUNCTIONALITY ==========
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
             document.getElementById(tabId).classList.add('active');
-            // Find the correct tab button and mark it active
             document.querySelectorAll('.tab').forEach(t => {
                 if (t.textContent.toLowerCase().includes(tabId.toLowerCase()) || 
                     t.getAttribute('onclick')?.includes(tabId)) {
                     t.classList.add('active');
+                    t.setAttribute('aria-selected', 'true');
                 }
             });
             // Save current tab to sessionStorage
@@ -819,90 +822,62 @@
             const balance = state.balance || 0;
             const streak = state.streak || 0;
             
-            document.getElementById('totalPts').textContent = Math.floor(totalEarned).toLocaleString();
-            document.getElementById('totalDollars').textContent = '$' + (totalEarned / 100).toFixed(2);
-            document.getElementById('currentBalance').textContent = Math.floor(balance).toLocaleString();
-            document.getElementById('balanceDollars').textContent = '$' + (balance / 100).toFixed(2);
-            document.getElementById('streak').textContent = streak;
-            document.getElementById('currentOwed').textContent = '$' + (balance / 100).toFixed(2);
+            const els = {
+                totalPts: document.getElementById('totalPts'),
+                totalDollars: document.getElementById('totalDollars'),
+                currentBalance: document.getElementById('currentBalance'),
+                balanceDollars: document.getElementById('balanceDollars'),
+                streak: document.getElementById('streak'),
+                currentOwed: document.getElementById('currentOwed'),
+                currentLevel: document.getElementById('currentLevel'),
+                streakBonusInfo: document.getElementById('streakBonusInfo'),
+                streakBonusText: document.getElementById('streakBonusText')
+            };
+
+            els.totalPts.textContent = Math.floor(totalEarned).toLocaleString();
+            els.totalDollars.textContent = '$' + (totalEarned / 100).toFixed(2);
+            els.currentBalance.textContent = Math.floor(balance).toLocaleString();
+            els.balanceDollars.textContent = '$' + (balance / 100).toFixed(2);
+            els.streak.textContent = streak;
+            els.currentOwed.textContent = '$' + (balance / 100).toFixed(2);
             
             const level = getLevel(totalEarned);
-            document.getElementById('currentLevel').textContent = level.name;
-            document.getElementById('currentLevel').style.color = level.color;
+            els.currentLevel.textContent = level.name;
+            els.currentLevel.style.color = level.color;
 
             if (streak >= 14) {
-                document.getElementById('streakBonusInfo').style.display = 'block';
-                document.getElementById('streakBonusText').textContent = '2x points on all tasks (14+ day streak)';
+                els.streakBonusInfo.style.display = 'block';
+                els.streakBonusText.textContent = '2x points on all tasks (14+ day streak)';
             } else if (streak >= 7) {
-                document.getElementById('streakBonusInfo').style.display = 'block';
-                document.getElementById('streakBonusText').textContent = '1.5x points on all tasks (7+ day streak)';
+                els.streakBonusInfo.style.display = 'block';
+                els.streakBonusText.textContent = '1.5x points on all tasks (7+ day streak)';
             }
         }
 
+        function renderTaskRow(t, category) {
+            return `<tr class="editable-row" onclick="openEditTask('${category}', ${t.id})">
+                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
+                        <td class="points-cell">${t.value}</td>
+                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
+                        <td>✏️</td>
+                    </tr>`;
+        }
+
         function displayTasks() {
-            // Daily tasks
-            const dailyTable = document.getElementById('dailyTasksTable');
-            const dailyTasks = getTasks('daily');
-            let html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
-            dailyTasks.forEach(t => {
-                html.push(`
-                    <tr class="editable-row" onclick="openEditTask('daily', ${t.id})">
-                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
-                        <td class="points-cell">${t.value}</td>
-                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
-                        <td>✏️</td>
-                    </tr>
-                `);
-            });
-            dailyTable.innerHTML = html.join('');
+            const categories = [
+                { key: 'daily', tableId: 'dailyTasksTable' },
+                { key: 'dailyBonus', tableId: 'dailyBonusTable' },
+                { key: 'permanentWeekly', tableId: 'permanentWeeklyTable' },
+                { key: 'weekly', tableId: 'weeklyBonusTable' }
+            ];
 
-            // Daily bonus tasks
-            const bonusTable = document.getElementById('dailyBonusTable');
-            const bonusTasks = getTasks('dailyBonus');
-            html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
-            bonusTasks.forEach(t => {
-                html.push(`
-                    <tr class="editable-row" onclick="openEditTask('dailyBonus', ${t.id})">
-                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
-                        <td class="points-cell">${t.value}</td>
-                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
-                        <td>✏️</td>
-                    </tr>
-                `);
+            categories.forEach(({ key, tableId }) => {
+                const table = document.getElementById(tableId);
+                const tasks = getTasks(key);
+                const html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
+                tasks.forEach(t => html.push(renderTaskRow(t, key)));
+                table.innerHTML = html.join('');
             });
-            bonusTable.innerHTML = html.join('');
-
-            // Permanent weekly tasks
-            const permWeeklyTable = document.getElementById('permanentWeeklyTable');
-            const permWeeklyTasks = getTasks('permanentWeekly');
-            html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
-            permWeeklyTasks.forEach(t => {
-                html.push(`
-                    <tr class="editable-row" onclick="openEditTask('permanentWeekly', ${t.id})">
-                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
-                        <td class="points-cell">${t.value}</td>
-                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
-                        <td>✏️</td>
-                    </tr>
-                `);
-            });
-            permWeeklyTable.innerHTML = html.join('');
-
-            // Weekly bonus tasks
-            const weeklyTable = document.getElementById('weeklyBonusTable');
-            const weeklyTasks = getTasks('weekly');
-            html = ['<tr><th>Task</th><th>Points</th><th>$</th><th></th></tr>'];
-            weeklyTasks.forEach(t => {
-                html.push(`
-                    <tr class="editable-row" onclick="openEditTask('weekly', ${t.id})">
-                        <td class="task-name-cell">${escapeHtml(t.name)}</td>
-                        <td class="points-cell">${t.value}</td>
-                        <td class="dollar-cell">$${(t.value/100).toFixed(2)}</td>
-                        <td>✏️</td>
-                    </tr>
-                `);
-            });
-            weeklyTable.innerHTML = html.join('');
         }
 
         function displayLevels() {
@@ -1010,7 +985,7 @@
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 8px; min-width: 130px;">
-                                <button class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;" onclick="markPayoutSent('${escapeHtml(doc.id)}', ${r.amount}, ${r.points}, '${escapeHtml(userName)}')">✓ Mark as Sent</button>
+                                <button class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;" onclick="approvePayoutRequest('${escapeHtml(doc.id)}', ${r.amount}, ${r.points}, '${escapeHtml(userName)}')">✓ Mark as Sent</button>
                                 <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="dismissPayoutRequest('${escapeHtml(doc.id)}')">✕ Dismiss</button>
                             </div>
                         </div>
@@ -1036,54 +1011,55 @@
                             <div style="font-size: 12px; color: #b45309;">Requested ${new Date(r.requestedAt).toLocaleDateString()} at ${new Date(r.requestedAt).toLocaleTimeString()}</div>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="approvePayoutRequestLocal('${escapeHtml(r.id)}')">✓ Paid</button>
-                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="dismissPayoutRequestLocal('${escapeHtml(r.id)}')">✕</button>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="approvePayoutRequest('${escapeHtml(r.id)}', ${r.amount}, ${r.points}, '${escapeHtml(PROFILE_NAME)}')">✓ Paid</button>
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;" onclick="dismissPayoutRequest('${escapeHtml(r.id)}')">✕</button>
                         </div>
                     </div>
                 `).join('');
             }
         }
         
-        async function markPayoutSent(requestId, amount, points, userName) {
+        async function approvePayoutRequest(requestId, amount, points, userName) {
             try {
-                // Update Firestore with sent status
                 await db.collection('payoutRequests').doc(requestId).update({
                     status: 'completed',
                     completedAt: firebase.firestore.FieldValue.serverTimestamp(),
                     sentBy: 'MyDailyWin'
                 });
-                
-                // Record the payment locally
-                const admin = loadAdminData();
-                admin.payments = admin.payments || [];
-                admin.payments.unshift({
-                    month: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-                    amount: amount,
-                    notes: 'Sent via MyDailyWin Zelle',
-                    date: new Date().toISOString(),
-                    recipient: userName
-                });
-                saveAdminData(admin);
-                
-                // Deduct from user's balance
-                const state = loadState();
-                state.balance = Math.max(0, state.balance - points);
-                saveState(state);
-                
-                // Save notification for user to see when they open the app
                 await saveUserNotification(userName, amount);
-                
-                showToast('✅ $' + formatDollar(amount) + ' sent to ' + userName + '!');
-                displayPayments();
-                displayStats();
             } catch (err) {
-                console.error('Error marking payout as sent:', err);
-                showToast('❌ Error processing payment');
+                console.error('Firestore payout update failed, using localStorage:', err);
+                const suffix = getProfileSuffix();
+                const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+                const request = requests.find(r => r.id === requestId);
+                if (request) {
+                    request.status = 'completed';
+                    request.completedAt = new Date().toISOString();
+                    localStorage.setItem('hr_payout_requests' + suffix, JSON.stringify(requests));
+                }
             }
+
+            const admin = loadAdminData();
+            admin.payments = admin.payments || [];
+            admin.payments.unshift({
+                month: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                amount: amount,
+                notes: 'Payout request approved',
+                date: new Date().toISOString(),
+                recipient: userName
+            });
+            saveAdminData(admin);
+
+            const state = loadState();
+            state.balance = Math.max(0, state.balance - points);
+            saveState(state);
+
+            showToast('✅ Payment of $' + formatDollar(amount) + ' recorded');
+            displayPayments();
+            displayStats();
         }
         
         async function saveUserNotification(userName, amount) {
-            // Save a notification in Firestore that the user's app can check
             const profileId = PROFILE_ID || 'stu';
             try {
                 await db.collection('userNotifications').add({
@@ -1108,57 +1084,16 @@
                     status: 'dismissed',
                     dismissedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
-                showToast('Request dismissed');
-                displayPendingRequests();
             } catch (err) {
-                console.error('Error dismissing payout:', err);
-                showToast('❌ Error dismissing request');
-            }
-        }
-        
-        // Fallback functions for localStorage
-        function approvePayoutRequestLocal(requestId) {
-            const suffix = getProfileSuffix();
-            const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
-            const request = requests.find(r => r.id === requestId);
-            
-            if (!request) return;
-            
-            request.status = 'completed';
-            request.completedAt = new Date().toISOString();
-            localStorage.setItem('hr_payout_requests' + suffix, JSON.stringify(requests));
-            
-            const admin = loadAdminData();
-            admin.payments = admin.payments || [];
-            admin.payments.unshift({
-                month: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-                amount: request.amount,
-                notes: 'Payout request approved',
-                date: new Date().toISOString()
-            });
-            saveAdminData(admin);
-            
-            const state = loadState();
-            state.balance = Math.max(0, state.balance - request.points);
-            saveState(state);
-            
-            showToast('✅ Payment of $' + formatDollar(request.amount) + ' recorded');
-            displayPayments();
-            displayStats();
-        }
-        
-        function dismissPayoutRequestLocal(requestId) {
-            if (!confirm('Dismiss this payout request without paying?')) return;
-            
-            const suffix = getProfileSuffix();
-            const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
-            const index = requests.findIndex(r => r.id === requestId);
-            
-            if (index > -1) {
-                requests[index].status = 'dismissed';
-                requests[index].dismissedAt = new Date().toISOString();
-                localStorage.setItem('hr_payout_requests' + suffix, JSON.stringify(requests));
+                console.error('Firestore dismiss failed, using localStorage:', err);
+                const suffix = getProfileSuffix();
+                const requests = JSON.parse(localStorage.getItem('hr_payout_requests' + suffix) || '[]');
+                const index = requests.findIndex(r => r.id === requestId);
+                if (index > -1) {
+                    requests[index].status = 'dismissed';
+                    requests[index].dismissedAt = new Date().toISOString();
+                    localStorage.setItem('hr_payout_requests' + suffix, JSON.stringify(requests));
+                }
             }
             
             showToast('Request dismissed');
@@ -1372,7 +1307,7 @@
             const log = JSON.parse(localStorage.getItem('hr_completed_log' + suffix) || '[]');
             if (log.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Points,Comment\n';
-            log.forEach(e => csv += `"${e.date}","${e.type}","${e.task}","${e.points}","${(e.comment||'').replace(/"/g,'""')}"\n`);
+            log.forEach(e => csv += [escapeCSV(e.date), escapeCSV(e.type), escapeCSV(e.task), escapeCSV(e.points), escapeCSV(e.comment || '')].join(',') + '\n');
             downloadCSV(csv, 'mydailywin-tasks');
         }
 
@@ -1381,7 +1316,7 @@
             const fb = JSON.parse(localStorage.getItem('hr_feedback' + suffix) || '[]');
             if (fb.length === 0) { alert('No data'); return; }
             let csv = 'Date,Mood,Energy,Overall,Comments\n';
-            fb.forEach(f => csv += `"${new Date(f.date).toLocaleDateString()}","${f.mood||''}","${f.energy||''}","${f.overall||''}","${(f.comments||'').replace(/"/g,'""')}"\n`);
+            fb.forEach(f => csv += [escapeCSV(new Date(f.date).toLocaleDateString()), escapeCSV(f.mood || ''), escapeCSV(f.energy || ''), escapeCSV(f.overall || ''), escapeCSV(f.comments || '')].join(',') + '\n');
             downloadCSV(csv, 'mydailywin-feedback');
         }
 
@@ -1390,7 +1325,7 @@
             const rpts = JSON.parse(localStorage.getItem('hr_reports' + suffix) || '[]');
             if (rpts.length === 0) { alert('No data'); return; }
             let csv = 'Date,Type,Task,Reason,Comment\n';
-            rpts.forEach(r => csv += `"${new Date(r.date).toLocaleDateString()}","${r.taskType}","${r.taskName}","${r.reason}","${(r.comment||'').replace(/"/g,'""')}"\n`);
+            rpts.forEach(r => csv += [escapeCSV(new Date(r.date).toLocaleDateString()), escapeCSV(r.taskType), escapeCSV(r.taskName), escapeCSV(r.reason), escapeCSV(r.comment || '')].join(',') + '\n');
             downloadCSV(csv, 'mydailywin-reports');
         }
 

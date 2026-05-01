@@ -407,7 +407,84 @@ input:focus, select:focus, textarea:focus {
 .badge-warning { background: #fef3c7; color: #d97706; }
 .badge-purple { background: #f3e8ff; color: #9333ea; }
 
-/* ===== RESPONSIVE: Tablet (max-width: 1024px) ===== */
+/* ===== Admin Guide Page ===== */
+.hero {
+    background: linear-gradient(135deg, var(--primary), var(--primary-shade));
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.section {
+    background: var(--card-bg);
+    border-radius: var(--radius-box);
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    font-size: 24px;
+    color: var(--primary-shade);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section h3 {
+    font-size: 18px;
+    margin: 20px 0 10px;
+    color: var(--text);
+}
+
+.section p, .section li {
+    color: var(--text-light);
+    margin-bottom: 10px;
+}
+
+.section ul {
+    padding-left: 20px;
+}
+
+.highlight-box {
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    border-radius: var(--radius-btn);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.highlight-box h4 {
+    color: var(--primary-shade);
+    margin-bottom: 10px;
+}
+
+.cta {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+footer a {
+    color: var(--primary);
+    text-decoration: none;
+}
 @media (max-width: 1024px) {
     .container {
         max-width: 100%;
