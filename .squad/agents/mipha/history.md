@@ -385,3 +385,41 @@ Added `escapeHtml()` function to login.html (did not previously exist).
 - habitrewards.html does not exist in the repo — skipped
 
 **Pattern Established:** shared.css is the single source of truth for CSS variables. Pages should NOT redeclare `:root` vars unless overriding for dark mode or page-specific theming.
+
+---
+
+## Font Unification & CSS Consolidation (2026-05-01)
+
+### Spawn Summary
+Parallel execution with Urbosa (admin) and Impa (audit). Unified font stack and CSS variable source across all pages.
+
+### Tasks Completed
+1. ✅ **Nunito Font Stack** — Applied Google Fonts Nunito (400/600/700/800) to app.html, login.html, home.html, get-started.html, index.html
+2. ✅ **shared.css Import** — All 5 user pages now import shared.css as canonical CSS variable source (before page-level `<style>`)
+3. ✅ **CSS Variable Replacement** — Replaced 12 hardcoded hex values with variables (--primary, --bg, --card-bg, --text, --text-secondary, --border, --radius-box, --radius-btn)
+4. ✅ **Duplicate CSS Removal** — Removed 42 lines of duplicate `:root` blocks and reset styles (no longer needed after shared.css import)
+5. ✅ **Responsive Breakpoints** — Added 3-tier responsive design (375px small phone, 768px mobile, 1024px tablet) with mobile-first reductions for header, balance hero, cards, modals, task rows, buttons, badges, star ratings, celebration modals
+6. ✅ **Decisions Written** — mipha-font-unify.md, mipha-ux-improvements.md logged to inbox
+
+### Cross-Agent Work
+- **Urbosa:** Parallel admin font unification; both agents converged on Nunito + shared.css canonical design
+- **Impa:** Audit validates consolidation strategy (CO4: .btn styles, CO5: CSS custom properties)
+- **Sidon:** UX decisions 1-2-3 (celebrations, confetti, responsive breakpoints) now implemented
+- **Daruk:** Ready for Phase 1 optimization (dead code removal, shared JS extraction)
+
+### Key Decisions
+- Nunito is the single font across entire platform (marketing → login → app → admin)
+- shared.css is the authoritative source for colors and spacing — no duplication
+- Responsive design uses CSS media queries only (no HTML structural changes, no JS changes)
+- Dark mode can now propagate through shared.css (Sidon Decision #7 prerequisite met)
+
+### Known Limitations
+- JS color references in gamification levels (app.html) remain hardcoded — CSS variables don't work in JS data objects
+- `<meta name="theme-color">` remains hardcoded — meta tags don't support CSS variables
+- Dark mode overrides kept in page-level `<style>` blocks — correct pattern for theme-specific customization
+
+### Next Steps (Team)
+- Urbosa: Complete admin font/responsive work (parallel track)
+- Impa: Execute Phase 1 optimization (dead code removal)
+- Daruk: Lead Phase 1 JS extraction (firebase-config.js, sw-init.js, utils.js)
+- Revali: Prioritize Phases 2-3 (deduplication, CSS extraction)

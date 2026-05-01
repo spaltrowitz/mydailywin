@@ -195,3 +195,50 @@ Always use `escapeHtml()` when interpolating any variable into innerHTML. Replac
 
 **Cross-Agent:** This was Sidon's UX audit decision #6 (import shared.css) and #3 (unify fonts). Mipha's user-facing pages should follow the same Nunito + shared.css pattern.
 
+
+---
+
+## Font Unification & CSS Consolidation (2026-05-01)
+
+### Spawn Summary
+Parallel execution with Mipha (user dev) and Impa (audit). Unified font stack and CSS variable source across all pages, added responsive breakpoints.
+
+### Tasks Completed
+1. ✅ **Nunito Font Stack** — Applied Google Fonts Nunito (400/600/700) to admin.html, admin-guide.html
+2. ✅ **shared.css Import** — Both admin pages now import shared.css as canonical CSS variable source (before page-level `<style>`)
+3. ✅ **CSS Variable Replacement** — admin.css updated: removed duplicate `:root`, replaced 5 hardcoded #58cc02 values with var(--primary), standardized border-radius to var(--radius-box) and var(--radius-btn)
+4. ✅ **Responsive Breakpoints** — Added 3-tier responsive design (1024px tablet, 768px mobile, 375px small phone):
+   - **Scrollable tab strip** at mobile (all 7 tabs visible, no hamburger)
+   - **Horizontal scroll tables** at mobile (preserves column relationships)
+   - **Stacked stat grid** at small phone
+   - 271 lines added to css/admin.css (media queries, no HTML changes, no JS changes)
+5. ✅ **Decisions Written** — urbosa-font-unify.md, urbosa-responsive.md logged to inbox
+
+### Cross-Agent Work
+- **Mipha:** Parallel user-facing font unification; both agents converged on Nunito + shared.css canonical design
+- **Impa:** Audit validates consolidation strategy (responsive work aligns with Phase 3 CSS extraction)
+- **Sidon:** UX Decision #5 (responsive breakpoints) now implemented for admin
+- **Daruk:** Ready for Phase 1 optimization (dead code removal, shared JS extraction)
+
+### Key Decisions
+- Nunito font unifies all admin pages with user-facing pages (marketing → login → app → admin)
+- shared.css is the authoritative source for colors and spacing — no duplication in admin.css
+- Responsive design uses **scrollable tab strip** (not hamburger) because all 7 tabs remain visible and immediately accessible; consistent with existing interaction pattern
+- Responsive design uses **horizontal scroll tables** (not row stacking) because it preserves column relationships and tables have only 3-4 columns
+- No HTML structural changes, no JavaScript changes (CSS-only implementation)
+- Dark mode can now propagate through shared.css for admin (Sidon Decision #7 prerequisite met)
+
+### CSS Variables in Use (admin pages)
+- **Colors:** --primary (#58cc02), --bg (#f7f7f7), --card-bg (#ffffff), --text (#333333), --text-secondary (#555555), --border (#6c757d), --success (#28a745), --danger (#dc3545), --warning (#ffc107), --info (#17a2b8), --light (#e9ecef)
+- **Spacing:** --radius-box (20px), --radius-btn (8px)
+
+### Known Exceptions
+- **Level badge colors** (gold, silver, bronze): Remain hardcoded — serve distinct gamification purpose, not part of theme
+- **JS-generated notification styles:** Remain hardcoded — only used in JS context, not CSS variables
+- **Responsive behavior:** Mobile tab bar uses CSS only (overflow-x: auto, flex-wrap: nowrap) — no hamburger menu needed
+
+### Next Steps (Team)
+- Mipha: Complete user-facing responsive work (parallel track)
+- Impa: Execute Phase 1 optimization (dead code removal)
+- Daruk: Lead Phase 1 JS extraction (firebase-config.js, sw-init.js, utils.js)
+- Revali: Prioritize Phases 2-3 (deduplication, CSS extraction)
