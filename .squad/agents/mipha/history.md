@@ -489,3 +489,26 @@ Parallel execution with Urbosa (admin) and Impa (audit). Unified font stack and 
 - Phase 2 may move calculatePointsWithBonuses, addPoints, formatDollar, getProfileSuffix to shared.js
 
 **Next consideration:** Track whether Phase 2 deduplication items belong in js/utils.js (shared across app+admin) or remain page-specific.
+
+### P1/P2 User Improvements (Sidon Sweep Implementation)
+
+**1. PWA Install Prompt (P1):**
+- Added `beforeinstallprompt` handler to both app.html and home.html
+- app.html: Shows a blue gradient banner card with Install button, dismissible via ✕ (stores `pwaInstallDismissed` in localStorage to not re-nag)
+- home.html: Shows an "📱 Add to Home Screen" button in the hero section alongside Get Started / Sign In
+- Both pages hide the prompt after install or dismiss, listen for `appinstalled` event
+
+**2. Login Bonus Celebration (P1):**
+- Added `triggerConfetti(20)` call when login bonus is awarded (Tier 1 per skill — 20 particles for micro-celebration)
+- Extended auto-hide timer from 3s → 5s
+- Made card more visually prominent: 48px emoji (was 40), 22px title (was 18), 16px subtitle (was 14), added pulse animation
+
+**3. All Done Celebration Card (P2):**
+- Added `allDoneSection` HTML card with green gradient, 🎉 emoji, "You crushed it today!" message, and dismiss button
+- Detection logic in render(): when all tasks complete and not yet celebrated today (uses sessionStorage key with date to show once per day per session)
+- Fires `triggerConfetti(50)` (Tier 2 per skill — 50 particles for pride moment)
+- Hides automatically if tasks become unchecked (undo)
+
+**4. manifest.json background_color fix (P3):**
+- Changed `background_color` from `#f0f2f5` → `#f7f7f7` to match `--bg` CSS variable
+- `theme_color` (#58cc02) already matches `--primary`, no change needed

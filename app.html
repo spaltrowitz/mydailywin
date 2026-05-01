@@ -491,10 +491,20 @@
 
         <!-- Daily Login Bonus -->
         <div id="loginBonusSection" style="display: none; margin-bottom: 20px;">
-            <div class="card" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; color: #1a1a2e; text-align: center; padding: 20px;">
-                <div style="font-size: 40px;">🎁</div>
-                <div style="font-size: 18px; font-weight: 800; margin: 10px 0;">Daily Login Bonus!</div>
-                <div style="font-size: 14px;">+25 pts just for showing up!</div>
+            <div class="card" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; color: #1a1a2e; text-align: center; padding: 28px; animation: pulse 1.5s ease-in-out infinite;">
+                <div style="font-size: 48px;">🎁</div>
+                <div style="font-size: 22px; font-weight: 800; margin: 12px 0;">Daily Login Bonus!</div>
+                <div style="font-size: 16px; font-weight: 600;">+25 pts just for showing up! 🎉</div>
+            </div>
+        </div>
+
+        <!-- All Done Celebration -->
+        <div id="allDoneSection" style="display: none; margin-bottom: 20px;">
+            <div class="card" style="background: linear-gradient(135deg, #58cc02, #3d8a02); border: none; color: white; text-align: center; padding: 28px;">
+                <div style="font-size: 48px;">🎉</div>
+                <div style="font-size: 22px; font-weight: 800; margin: 12px 0;">All Done!</div>
+                <div style="font-size: 16px; font-weight: 600;">You crushed it today! 💪</div>
+                <button onclick="document.getElementById('allDoneSection').style.display='none'" style="margin-top: 14px; background: rgba(255,255,255,0.25); border: none; color: white; font-size: 14px; font-weight: 700; padding: 8px 20px; border-radius: 20px; cursor: pointer;">Dismiss</button>
             </div>
         </div>
 
@@ -503,6 +513,17 @@
             <div class="card" style="background: linear-gradient(135deg, #7c3aed, #a855f7); border: 2px solid #ffd700; color: white; text-align: center; padding: 15px;">
                 <div style="font-size: 24px;">🍀✨ Bonus Day! ✨🍀</div>
                 <div style="font-size: 16px; margin-top: 5px;">All tasks worth <strong>1.5x points</strong> today!</div>
+            </div>
+        </div>
+
+        <!-- PWA Install Banner -->
+        <div id="pwaInstallBanner" style="display: none; margin-bottom: 20px;">
+            <div class="card" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; text-align: center; padding: 20px; position: relative;">
+                <button id="pwaInstallDismiss" onclick="dismissInstallBanner()" style="position: absolute; top: 8px; right: 12px; background: none; border: none; color: rgba(255,255,255,0.7); font-size: 18px; cursor: pointer; padding: 4px;">✕</button>
+                <div style="font-size: 32px;">📱</div>
+                <div style="font-size: 18px; font-weight: 800; margin: 8px 0;">Add to Home Screen</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 12px;">Quick access — open MyDailyWin in one tap!</div>
+                <button id="pwaInstallBtn" onclick="triggerInstallPrompt()" style="background: white; color: #2563eb; border: none; font-size: 16px; font-weight: 700; padding: 12px 28px; border-radius: 25px; cursor: pointer;">Install App</button>
             </div>
         </div>
 
@@ -1493,11 +1514,12 @@
                 state.spinUsedToday = false; // Reset spin for new day
                 saveState();
                 
-                // Show login bonus animation
+                // Show login bonus animation with confetti
                 document.getElementById('loginBonusSection').style.display = 'block';
+                triggerConfetti(20);
                 setTimeout(() => {
                     document.getElementById('loginBonusSection').style.display = 'none';
-                }, 3000);
+                }, 5000);
             }
         }
 
@@ -2376,6 +2398,17 @@
                 document.getElementById('multiplierHint').innerHTML = '✅ Spin used! Come back tomorrow!';
             } else {
                 spinSection.style.display = 'none';
+            }
+
+            // All Done celebration — show once per day when all tasks completed
+            const allDoneSection = document.getElementById('allDoneSection');
+            const allDoneKey = 'allDoneCelebrated_' + new Date().toDateString();
+            if (allDone && state.tasks.length > 0 && !sessionStorage.getItem(allDoneKey)) {
+                sessionStorage.setItem(allDoneKey, '1');
+                allDoneSection.style.display = 'block';
+                triggerConfetti(50);
+            } else if (!allDone) {
+                allDoneSection.style.display = 'none';
             }
             
             // Show streak multiplier
@@ -3309,6 +3342,38 @@
             document.getElementById('streakMilestoneMessage').textContent = config.message;
             openModal('streakMilestoneModal');
             triggerConfetti(45);
+        }
+
+        // ========== PWA INSTALL PROMPT ==========
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            // Show banner unless user previously dismissed
+            if (!localStorage.getItem('pwaInstallDismissed')) {
+                document.getElementById('pwaInstallBanner').style.display = 'block';
+            }
+        });
+
+        window.addEventListener('appinstalled', function() {
+            document.getElementById('pwaInstallBanner').style.display = 'none';
+            deferredInstallPrompt = null;
+        });
+
+        function triggerInstallPrompt() {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                deferredInstallPrompt.userChoice.then(function(result) {
+                    document.getElementById('pwaInstallBanner').style.display = 'none';
+                    deferredInstallPrompt = null;
+                });
+            }
+        }
+
+        function dismissInstallBanner() {
+            document.getElementById('pwaInstallBanner').style.display = 'none';
+            localStorage.setItem('pwaInstallDismissed', '1');
         }
 
         init();

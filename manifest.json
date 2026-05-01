@@ -4,7 +4,7 @@
   "description": "Turn daily habits into a rewarding game. Stay active, stay sharp, and celebrate your wins!",
   "start_url": "/app.html",
   "display": "standalone",
-  "background_color": "#f0f2f5",
+  "background_color": "#f7f7f7",
   "theme_color": "#58cc02",
   "orientation": "portrait-primary",
   "icons": [
