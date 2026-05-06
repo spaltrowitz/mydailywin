@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Stuart's Profile - MyDailyWin</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css">
+    <style>
+        body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        .card { max-width: 600px; margin: 40px auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { text-align: center; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: var(--text-light); margin-bottom: 30px; }
+        .status { padding: 16px; border-radius: 12px; margin: 15px 0; font-weight: 600; }
+        .status.info { background: #e0f2fe; color: #0369a1; }
+        .status.success { background: #dcfce7; color: #16a34a; }
+        .status.error { background: #fee2e2; color: #dc2626; }
+        .status.warning { background: #fef3c7; color: #92400e; }
+        .btn-seed { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-seed:hover { background: var(--primary-dark); }
+        .btn-seed:disabled { opacity: 0.5; cursor: not-allowed; }
+        .links { margin-top: 20px; padding: 16px; background: #f0fdf4; border-radius: 12px; }
+        .links a { display: block; padding: 10px; color: var(--primary); font-weight: 600; text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
+        .admin-section { margin-top: 20px; }
+        .admin-section h3 { margin-bottom: 10px; }
+        .admin-input { display: flex; gap: 8px; margin-bottom: 8px; }
+        .admin-input input { flex: 1; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px; }
+        .admin-input button { padding: 12px 16px; background: #e0e7ff; color: #4338ca; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .admin-list { margin-top: 10px; }
+        .admin-item { padding: 8px 12px; background: #f9fafb; border-radius: 8px; margin-bottom: 4px; font-size: 14px; }
+        #log { margin-top: 15px; font-size: 13px; color: var(--text-light); max-height: 200px; overflow-y: auto; }
+        #log div { padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🏆 Seed Stuart's Profile</h1>
+        <p class="subtitle">Write the "stu" profile to Firestore so it works on any device</p>
+
+        <div id="authStatus" class="status info">⏳ Checking authentication...</div>
+
+        <div id="seedSection" style="display: none;">
+            <div class="admin-section">
+                <h3>👥 Admin Emails (optional)</h3>
+                <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Add family members who should have admin access</p>
+                <div class="admin-input">
+                    <input type="email" id="adminEmail" placeholder="Email address">
+                    <button id="addAdminBtn">Add</button>
+                </div>
+                <div id="adminList" class="admin-list"></div>
+            </div>
+
+            <button id="seedBtn" class="btn-seed">🚀 Seed Profile to Firestore</button>
+            <div id="log"></div>
+        </div>
+
+        <div id="linksSection" class="links" style="display: none;">
+            <h3>✅ Stuart's Links</h3>
+            <p style="font-size: 13px; color: var(--text-light); margin-bottom: 8px;">Share these with your dad:</p>
+            <a href="/app.html?profile=stu" target="_blank">📱 Stuart's App → mydailywin.web.app/app.html?profile=stu</a>
+            <a href="/admin.html?profile=stu" target="_blank">⚙️ Admin Dashboard → mydailywin.web.app/admin.html?profile=stu</a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script>
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let adminEmails = [];
+        let currentUser = null;
+
+        function log(msg) {
+            const el = document.getElementById('log');
+            const div = document.createElement('div');
+            div.textContent = msg;
+            el.appendChild(div);
+            el.scrollTop = el.scrollHeight;
+        }
+
+        auth.onAuthStateChanged(user => {
+            const statusEl = document.getElementById('authStatus');
+            if (user) {
+                currentUser = user;
+                statusEl.className = 'status success';
+                statusEl.textContent = '✅ Signed in as ' + user.email;
+                document.getElementById('seedSection').style.display = 'block';
+            } else {
+                statusEl.className = 'status warning';
+                statusEl.innerHTML = '⚠️ Not signed in. <a href="login.html?redirect=' + encodeURIComponent(window.location.href) + '">Sign in first</a>';
+            }
+        });
+
+        document.getElementById('addAdminBtn').addEventListener('click', function() {
+            const input = document.getElementById('adminEmail');
+            const email = input.value.trim().toLowerCase();
+            if (!email || !email.includes('@')) return;
+            if (adminEmails.includes(email)) return;
+            adminEmails.push(email);
+            input.value = '';
+            renderAdmins();
+        });
+
+        function renderAdmins() {
+            const list = document.getElementById('adminList');
+            list.innerHTML = adminEmails.map(e => '<div class="admin-item">📧 ' + e + '</div>').join('');
+        }
+
+        document.getElementById('seedBtn').addEventListener('click', async function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '⏳ Seeding...';
+
+            try {
+                // 1. Write the profile document
+                log('Writing profiles/stu document...');
+                await db.collection('profiles').doc('stu').set({
+                    name: 'Stuart Paltrowitz',
+                    forWho: 'parent',
+                    relationship: 'parent',
+                    phoneComfort: 'comfortable',
+                    motivation: 'both',
+                    activities: ['walk', 'exercise', 'puzzles', 'reading', 'learning'],
+                    template: 'regular',
+                    ownerEmail: currentUser.email.toLowerCase(),
+                    creatorEmail: currentUser.email.toLowerCase(),
+                    createdAt: new Date().toISOString()
+                }, { merge: true });
+                log('✅ Profile document created');
+
+                // 2. Add the owner as an admin
+                log('Adding owner as admin...');
+                await db.collection('profiles').doc('stu').collection('admins').doc(currentUser.email.toLowerCase()).set({
+                    email: currentUser.email.toLowerCase(),
+                    name: currentUser.displayName || 'Owner',
+                    role: 'owner',
+                    addedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                log('✅ Owner admin added');
+
+                // 3. Add additional admins
+                for (const email of adminEmails) {
+                    log('Adding admin: ' + email + '...');
+                    await db.collection('profiles').doc('stu').collection('admins').doc(email).set({
+                        email: email,
+                        role: 'admin',
+                        addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    log('✅ Admin added: ' + email);
+                }
+
+                // 4. Link to user's profile list
+                log('Linking to your account...');
+                const userProfilesKey = 'hr_user_profiles_' + currentUser.uid;
+                let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
+                if (!userProfiles.find(p => p.id === 'stu')) {
+                    userProfiles.push({ id: 'stu', name: 'Stuart Paltrowitz' });
+                    localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
+                }
+
+                // 5. Cache profile locally too
+                localStorage.setItem('hr_profile_stu', JSON.stringify({
+                    name: 'Stuart Paltrowitz',
+                    template: 'regular'
+                }));
+
+                log('🎉 All done! Stuart\'s profile is ready.');
+                btn.textContent = '✅ Done!';
+                btn.style.background = '#16a34a';
+
+                document.getElementById('linksSection').style.display = 'block';
+                document.getElementById('authStatus').className = 'status success';
+                document.getElementById('authStatus').textContent = '🎉 Profile seeded successfully!';
+
+            } catch (err) {
+                log('❌ Error: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = '🚀 Retry';
+                document.getElementById('authStatus').className = 'status error';
+                document.getElementById('authStatus').textContent = '❌ Error: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
