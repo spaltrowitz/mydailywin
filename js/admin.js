@@ -323,7 +323,7 @@
             { id: 142, name: "😊\u00a0Do something that makes you smile", value: 50 },
             { id: 143, name: "🥦\u00a0Eat a fruit or vegetable", value: 50 },
             { id: 144, name: "🐟\u00a0Eat protein with a meal", value: 50 },
-            { id: 145, name: "🌱\u00a0Water or tend a plant", value: 50 },
+            { id: 145, name: "🌿\u00a0Spend 10 minutes gardening outside", value: 50 },
             { id: 146, name: "💡\u00a0Teach someone something", value: 50 },
             { id: 148, name: "🤝\u00a0Help someone with something", value: 50 },
             { id: 149, name: "🎨\u00a0Do something creative", value: 50 },

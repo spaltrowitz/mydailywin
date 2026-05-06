@@ -233,7 +233,7 @@
             { id: 143, name: "🥦 Eat a fruit or vegetable", value: 50, freq: 2 },
             { id: 144, name: "🐟 Eat protein with a meal", value: 50, freq: 1 },
             // Wellness: Purpose
-            { id: 145, name: "🌱 Water or tend a plant", value: 50, freq: 1 },
+            { id: 145, name: "🌿 Spend 10 minutes gardening outside", value: 50, needsPhoto: true, needsComment: true, commentPrompt: "What did you work on?", freq: 0.5 },
             { id: 148, name: "🤝 Help someone with something", value: 50, freq: 1 }
         ];
         
@@ -286,7 +286,7 @@
             { id: 143, name: "🥦\u00a0Eat a fruit or vegetable", value: 50, needsComment: true, commentPrompt: "What did you eat?", freq: 2 },
             { id: 144, name: "🐟\u00a0Eat protein with a meal", value: 50, needsComment: true, commentPrompt: "What protein did you have?", freq: 1 },
             // Purpose / Contribution
-            { id: 145, name: "🌱\u00a0Water or tend a plant", value: 50, needsPhoto: true, freq: 1 },
+            { id: 145, name: "🌿\u00a0Spend 10 minutes gardening outside", value: 50, needsPhoto: true, needsComment: true, commentPrompt: "What did you work on?", freq: 0.5 },
             { id: 146, name: "💡\u00a0Teach someone something", value: 50, needsComment: true, commentPrompt: "What did you teach?", freq: 0.5 },
             { id: 148, name: "🤝\u00a0Help someone with something", value: 50, needsComment: true, commentPrompt: "What did you help with?", freq: 1 },
             { id: 149, name: "🎨\u00a0Do something creative", value: 50, needsPhoto: true, needsComment: true, commentPrompt: "What did you create?", freq: 1 },
