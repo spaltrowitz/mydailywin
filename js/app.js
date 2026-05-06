@@ -2268,13 +2268,17 @@
         }
         
         async function confirmCashout() {
+            const cashoutBtn = document.getElementById('cashoutBtn');
+            
+            // Prevent double-taps
+            if (cashoutBtn.disabled) return;
+            
             const pts = Math.floor(state.balance);
             const dollars = (pts / 100).toFixed(2);
             
             if (pts <= 0) return;
             
-            // Show loading state
-            const cashoutBtn = document.getElementById('cashoutBtn');
+            // Show loading state immediately
             const originalText = cashoutBtn.textContent;
             cashoutBtn.textContent = '⏳ Processing...';
             cashoutBtn.disabled = true;
@@ -2282,6 +2286,11 @@
             
             const profileId = PROFILE_ID || 'stu';
             const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+            
+            // Deduct balance immediately to prevent double-cashouts
+            state.balance = Math.max(0, state.balance - pts);
+            saveState(state);
+            updateBalanceDisplay();
             
             // Save to Firestore for cross-device sync
             try {

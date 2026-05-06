@@ -183,7 +183,7 @@
             document.getElementById(tabId).classList.add('active');
             document.querySelectorAll('.tab').forEach(t => {
                 if (t.textContent.toLowerCase().includes(tabId.toLowerCase()) || 
-                    t.getAttribute('onclick')?.includes(tabId)) {
+                    t.getAttribute('data-arg') === tabId) {
                     t.classList.add('active');
                     t.setAttribute('aria-selected', 'true');
                 }
@@ -561,9 +561,8 @@
             });
             saveAdminData(admin);
 
-            const state = loadState();
-            state.balance = Math.max(0, state.balance - points);
-            saveState(state);
+            // Note: Balance was already deducted in app.js when the user requested the cashout
+            // No need to deduct again here to prevent double-deduction
 
             showToast('✅ Payment of $' + formatDollar(amount) + ' recorded');
             displayPayments();
@@ -1419,32 +1418,32 @@
         cleanupPendingInvites();
         loadAdminNotifications();
 
-// ========== EVENT DELEGATION (CSP-compliant, replaces inline handlers) ==========
-document.addEventListener('click', function(e) {
-    const el = e.target.closest('[data-action]');
-    if (!el) return;
-    const action = el.getAttribute('data-action');
-    const arg = el.getAttribute('data-arg');
+        // ========== EVENT DELEGATION (CSP-compliant, replaces inline handlers) ==========
+        document.addEventListener('click', function(e) {
+            const el = e.target.closest('[data-action]');
+            if (!el) return;
+            const action = el.getAttribute('data-action');
+            const arg = el.getAttribute('data-arg');
 
-    switch(action) {
-        case 'showTab': showTab(arg); break;
-        case 'openAddTaskModal': openAddTaskModal(arg); break;
-        case 'openPaymentModal': openPaymentModal(); break;
-        case 'closeModal': closeModal(arg); break;
-        case 'downloadTaskResponses': downloadTaskResponses(); break;
-        case 'downloadFeedbackLog': downloadFeedbackLog(); break;
-        case 'downloadReports': downloadReports(); break;
-        case 'clearReports': clearReports(); break;
-        case 'saveNewTask': saveNewTask(); break;
-        case 'saveEditTask': saveEditTask(); break;
-        case 'deleteTask': deleteTask(); break;
-        case 'savePayment': savePayment(); break;
-        case 'addAdmin': addAdmin(); break;
-        case 'contactDeveloper': contactDeveloper(); break;
-        case 'referFriend': referFriend(); break;
-        case 'downloadAllData': downloadAllData(); break;
-        case 'resetUserBalance': resetUserBalance(); break;
-        case 'resetUserData': resetUserData(); break;
-        case 'exportSurveyDataCSV': exportSurveyDataCSV(); break;
-    }
-});
+            switch(action) {
+                case 'showTab': showTab(arg); break;
+                case 'openAddTaskModal': openAddTaskModal(arg); break;
+                case 'openPaymentModal': openPaymentModal(); break;
+                case 'closeModal': closeModal(arg); break;
+                case 'downloadTaskResponses': downloadTaskResponses(); break;
+                case 'downloadFeedbackLog': downloadFeedbackLog(); break;
+                case 'downloadReports': downloadReports(); break;
+                case 'clearReports': clearReports(); break;
+                case 'saveNewTask': saveNewTask(); break;
+                case 'saveEditTask': saveEditTask(); break;
+                case 'deleteTask': deleteTask(); break;
+                case 'savePayment': savePayment(); break;
+                case 'addAdmin': addAdmin(); break;
+                case 'contactDeveloper': contactDeveloper(); break;
+                case 'referFriend': referFriend(); break;
+                case 'downloadAllData': downloadAllData(); break;
+                case 'resetUserBalance': resetUserBalance(); break;
+                case 'resetUserData': resetUserData(); break;
+                case 'exportSurveyDataCSV': exportSurveyDataCSV(); break;
+            }
+        });

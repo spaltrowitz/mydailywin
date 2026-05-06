@@ -282,6 +282,22 @@
                 await db.collection('userState').doc('stu').delete();
                 log('✅ Cloud state cleared');
 
+                // Clear payout requests
+                const payoutSnap = await db.collection('payoutRequests').where('profileId', '==', 'stu').get();
+                payoutSnap.forEach(doc => doc.ref.delete());
+                log('✅ Payout requests cleared (' + payoutSnap.size + ' deleted)');
+
+                // Clear user notifications
+                const notifSnap = await db.collection('userNotifications').where('profileId', '==', 'stu').get();
+                notifSnap.forEach(doc => doc.ref.delete());
+                log('✅ User notifications cleared (' + notifSnap.size + ' deleted)');
+
+                // Clear localStorage payout keys
+                ['hr_payout_requests', 'hr_payout_requests_stu'].forEach(function(k) {
+                    localStorage.removeItem(k);
+                });
+                log('✅ Payout data cleared');
+
                 log('🎉 Stuart starts at $0. Open the app to verify.');
                 btn.textContent = '✅ Reset Complete';
                 btn.style.background = '#dcfce7';
