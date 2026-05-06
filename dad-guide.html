@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dad's Quick Guide to MyDailyWin</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f7f7f7;
+            color: #3c3c3c;
+            line-height: 1.8;
+            font-size: 18px;
+        }
+        .top-bar {
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin: 40px 0 16px;
+            color: #2d6e01;
+        }
+        h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 30px 0 12px;
+        }
+        .hero-card {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0 30px;
+        }
+        .hero-card h2 {
+            color: #2d6e01;
+            margin: 0 0 10px;
+            font-size: 28px;
+        }
+        .hero-card p {
+            font-size: 18px;
+            color: #595959;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .card-green {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+        }
+        .card-amber {
+            background: #fffbeb;
+            border: 2px solid #fde68a;
+        }
+        .big-emoji {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .step-list {
+            counter-reset: steps;
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            counter-increment: steps;
+            padding: 16px 16px 16px 60px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            position: relative;
+            font-size: 18px;
+        }
+        .step-list li::before {
+            content: counter(steps);
+            position: absolute;
+            left: 16px;
+            top: 14px;
+            width: 34px;
+            height: 34px;
+            background: #58cc02;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .money-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 17px;
+        }
+        .money-table th {
+            background: #2d6e01;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .money-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .money-table tr:nth-child(even) { background: #f9fafb; }
+        .objection {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 5px solid #f59e0b;
+        }
+        .objection-q {
+            font-weight: 800;
+            font-size: 19px;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+        .objection-a {
+            color: #595959;
+            font-size: 17px;
+        }
+        .highlight {
+            background: #dcfce7;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        .cta-card {
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .cta-card h3 { font-size: 24px; margin-bottom: 10px; color: white; }
+        .cta-card p { opacity: 0.9; margin-bottom: 16px; }
+        .cta-card a {
+            display: inline-block;
+            background: white;
+            color: #2d6e01;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .print-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 14px 28px;
+            background: white;
+            border: 2px solid #58cc02;
+            color: #2d6e01;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        @media print {
+            .print-btn, .top-bar { display: none; }
+            body { font-size: 14px; }
+            .container { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="home.html" style="text-decoration: none; color: inherit;">
+            <h1>🏆 MyDailyWin</h1>
+        </a>
+    </div>
+
+    <div class="container">
+        <button class="print-btn" onclick="window.print()">🖨️ Print This Guide</button>
+
+        <div class="hero-card">
+            <h2>👋 Hey Dad!</h2>
+            <p>Your kids set up a fun little app for you. It takes <strong>2 minutes a day</strong> and you get paid for doing things you already do.</p>
+        </div>
+
+        <!-- ============ WHAT IS THIS? ============ -->
+        <h2>🤔 What is this?</h2>
+        <div class="card">
+            <p>MyDailyWin is a simple app on your phone. Every day, it shows you a short list of easy things to do — like going for a walk, doing a crossword, or playing Wordle.</p>
+            <p><strong>When you do them, you tap a checkmark. You earn points. Points turn into real money.</strong></p>
+            <p>That's it. No catch. Your family set this up because they want to keep you active, sharp, and having fun.</p>
+        </div>
+
+        <!-- ============ HOW THE MONEY WORKS ============ -->
+        <h2>💰 How the money works</h2>
+        <div class="card card-green">
+            <p style="font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 16px;">100 points = $1.00</p>
+            <table class="money-table">
+                <tr><th>What you do</th><th>Points</th></tr>
+                <tr><td>🚶 Go for a walk</td><td>25 pts</td></tr>
+                <tr><td>📝 Do a crossword</td><td>50 pts</td></tr>
+                <tr><td>🟩 Play Wordle</td><td>10 pts</td></tr>
+                <tr><td>⭐ Daily bonus task</td><td>50 pts</td></tr>
+                <tr><td>🎰 Spin the wheel</td><td>10–150 pts</td></tr>
+                <tr><td>🏆 Weekly challenges</td><td>200–500 pts</td></tr>
+            </table>
+            <p style="text-align: center; font-weight: 700;">Most people earn <span class="highlight">$3–$7 per week</span> just doing everyday stuff.</p>
+        </div>
+
+        <!-- ============ YOUR DAILY ROUTINE ============ -->
+        <h2>📱 Your daily routine (2 minutes)</h2>
+        <ol class="step-list">
+            <li><strong>Open the app</strong> on your phone. (It's the green trophy icon 🏆 on your home screen.)</li>
+            <li><strong>Look at your tasks.</strong> There are usually 3–4 simple things to do today.</li>
+            <li><strong>Do the tasks</strong> whenever you feel like it during the day. No rush.</li>
+            <li><strong>Tap the checkmark ✓</strong> next to each one when you've done it.</li>
+            <li><strong>Spin the wheel 🎰</strong> after finishing all your daily tasks — it's a free bonus!</li>
+        </ol>
+
+        <div class="card card-amber">
+            <div class="big-emoji">💡</div>
+            <p style="text-align: center;"><strong>You don't have to do everything.</strong> Even checking off one task counts. But the more you do, the more you earn — and the longer your streak gets!</p>
+        </div>
+
+        <!-- ============ STREAKS ============ -->
+        <h2>🔥 What's a streak?</h2>
+        <div class="card">
+            <p>A streak means you've done at least one task every day in a row.</p>
+            <p><strong>Why it matters:</strong></p>
+            <ul style="padding-left: 24px;">
+                <li><strong>Days 1–6:</strong> Normal points</li>
+                <li><strong>Days 7–13:</strong> Everything earns <strong>1.5x more!</strong> 🔥</li>
+                <li><strong>Day 14+:</strong> Everything earns <strong>2x more!</strong> 🔥🔥</li>
+            </ul>
+            <p>So a 25-point walk becomes 37 points after a week, and 50 points after two weeks. It adds up!</p>
+        </div>
+
+        <div class="card card-green">
+            <p><strong>😅 Missed a day?</strong> Don't worry — tap the streak badge and call a family member. Log the call, and your streak comes right back. We all have off days!</p>
+        </div>
+
+        <!-- ============ WEEKLY CHALLENGES ============ -->
+        <h2>🏆 Weekly challenges</h2>
+        <div class="card">
+            <p>Each week, you'll see a couple of bigger challenges worth more points. Things like:</p>
+            <ul style="padding-left: 24px;">
+                <li>🎾 Play tennis or pickleball (3 times = 90 pts)</li>
+                <li>💑 Take your wife to lunch (500 pts!)</li>
+                <li>📞 Call a friend or family member (200 pts)</li>
+                <li>🍽️ Try a new restaurant (300 pts)</li>
+            </ul>
+            <p>These are <strong>optional</strong> — but they're fun and worth a lot of points.</p>
+        </div>
+
+        <!-- ============ GETTING PAID ============ -->
+        <h2>💵 Getting paid</h2>
+        <div class="card">
+            <p>Your points add up over time. When you're ready to cash out:</p>
+            <ol style="padding-left: 24px;">
+                <li>Go to <strong>Settings</strong> (the ⚙️ gear icon)</li>
+                <li>Tap <strong>Redeem Points</strong></li>
+                <li>Your family will send the money via Zelle</li>
+            </ol>
+            <p>There's no deadline. Cash out whenever you want.</p>
+        </div>
+
+        <!-- ============ OBJECTION HANDLING ============ -->
+        <h2>❓ You might be thinking...</h2>
+
+        <div class="objection">
+            <div class="objection-q">"I don't need an app to tell me to take a walk."</div>
+            <div class="objection-a">You're right — you don't. But this isn't about being told what to do. It's about having a fun little thing to check in with each day. Think of it like a crossword — you do it because it's a nice part of your routine, not because someone's making you. Plus, you get paid. 😄</div>
+        </div>
+
+        <div class="objection">
+            <div class="objection-q">"Where does the money come from?"</div>
+            <div class="objection-a">From your kids! They set up a fund specifically for this. They <em>want</em> to reward you for staying active and having fun. It's their way of saying "we're proud of you, keep it up." It doesn't cost you anything.</div>
+        </div>
+
+        <div class="objection">
+            <div class="objection-q">"I'm not good with technology."</div>
+            <div class="objection-a">That's totally fine. All you do is open the app and tap checkmarks. There's nothing to type, no passwords to remember, no accounts to create. If you can tap a button on your phone, you can use this. And your family can help anytime.</div>
+        </div>
+
+        <div class="objection">
+            <div class="objection-q">"I'll forget to use it."</div>
+            <div class="objection-a">Most people just open it with their morning coffee. It takes 30 seconds to look at the list. Then check things off throughout the day. If you forget a day, no big deal — your streak can be recovered with a phone call to family. We built it to be forgiving.</div>
+        </div>
+
+        <div class="objection">
+            <div class="objection-q">"This seems too complicated."</div>
+            <div class="objection-a">It's simpler than it looks. Seriously — open the app, see a list, tap the green checkmarks. That's the whole thing. Ignore everything else if you want. The streaks, levels, and bonuses are just extra fun — you don't need to understand them to earn points.</div>
+        </div>
+
+        <div class="objection">
+            <div class="objection-q">"I don't want to be tracked or monitored."</div>
+            <div class="objection-a">Nobody's watching you. The app runs on your phone and only you see it. Your family can see your points total if you want (so they know when to pay you!), but they can't see what you're doing minute by minute. It's like a scoreboard, not a camera.</div>
+        </div>
+
+        <div class="objection">
+            <div class="objection-q">"What if I don't want to do a task?"</div>
+            <div class="objection-a">Skip it! Everything is optional. The tasks change every day, so tomorrow might have something better. Do what you enjoy, skip what you don't. There's no punishment for skipping — just fewer points that day.</div>
+        </div>
+
+        <!-- ============ QUICK REFERENCE ============ -->
+        <h2>📋 Quick reference</h2>
+        <div class="card card-green">
+            <table class="money-table">
+                <tr><th>Thing</th><th>Detail</th></tr>
+                <tr><td>💰 Points to dollars</td><td>100 points = $1.00</td></tr>
+                <tr><td>🔥 7-day streak bonus</td><td>1.5x all points</td></tr>
+                <tr><td>🔥🔥 14-day streak bonus</td><td>2x all points</td></tr>
+                <tr><td>🎰 Daily spin wheel</td><td>Free after completing all tasks</td></tr>
+                <tr><td>😅 Missed a day?</td><td>Call family → streak recovered</td></tr>
+                <tr><td>💵 Cash out</td><td>Anytime via Settings → Redeem</td></tr>
+            </table>
+        </div>
+
+        <!-- ============ CTA ============ -->
+        <div class="cta-card">
+            <h3>Ready to try it?</h3>
+            <p>Open the app and check off your first task. That's all you have to do today!</p>
+            <a href="/app.html?profile=stu">Open MyDailyWin 🏆</a>
+        </div>
+
+        <div class="card" style="text-align: center; font-size: 16px; color: #595959;">
+            <p>📱 <strong>Need to add the app to your phone?</strong><br>
+            <a href="/install-guide.html" style="color: #58cc02; font-weight: 600;">Follow the step-by-step install guide →</a></p>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">🖨️ Print This Guide</button>
+    </div>
+</body>
+</html>
