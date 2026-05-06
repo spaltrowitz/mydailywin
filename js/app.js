@@ -559,7 +559,7 @@
                         </div>
                     </div>
                     
-                    <button onclick="dismissPaymentNotification('${escapeHtml(String(notifId))}')" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                    <button data-action="dismissPaymentNotification" data-arg="${escapeHtml(String(notifId))}" class="btn btn-primary" style="width: 100%; padding: 14px;">
                         🎉 Awesome!
                     </button>
                 </div>
@@ -1393,7 +1393,7 @@
             state.tasks.forEach(task => {
                 if (!task.completed) allDone = false;
                 
-                const helpBtn = TASK_HELP[task.id] ? `<button class="task-help-btn" onclick="event.stopPropagation(); showTaskHelp(${task.id})" title="How to get started">?</button>` : '';
+                const helpBtn = TASK_HELP[task.id] ? `<button class="task-help-btn" data-action="showTaskHelp" data-arg="${task.id}" title="How to get started">?</button>` : '';
                 
                 const div = document.createElement('div');
                 div.className = 'task-row';
@@ -1402,7 +1402,7 @@
                         <div class="task-name" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${escapeHtml(task.name)}${helpBtn}</div>
                         <div class="task-reward">+${task.value} pts</div>
                     </div>
-                    <button class="task-check ${task.completed ? 'completed' : ''}" onclick="onTaskClick(${task.id})">
+                    <button class="task-check ${task.completed ? 'completed' : ''}" data-action="onTaskClick" data-arg="${task.id}">
                         ${task.completed ? '✓' : ''}
                     </button>
                 `;
@@ -1433,14 +1433,14 @@
                             <div style="font-weight: 700; font-size: 18px; ${completed ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${escapeHtml(b.name)} <span style="font-weight: 600; font-size: 14px; opacity: 0.9;">${count}/${b.target} sessions</span></div>
                             <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${completed ? '✅ Done!' : `+${b.value} pts`}</div>
                         </div>
-                        <button class="task-check ${completed ? 'completed' : ''}" style="background: ${completed ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" onclick="openTennisModal(${completed})">
+                        <button class="task-check ${completed ? 'completed' : ''}" style="background: ${completed ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" data-action="openTennisModal" data-arg="${completed}">
                             ${completed ? '✓' : count > 0 ? count : '+'}
                         </button>
                     `;
                     bonusContainer.appendChild(row);
                 } else {
                     const isCompleted = state.weeklyBonusesCompleted.includes(b.id);
-                    const helpBtn = TASK_HELP[b.id] ? `<button class="task-help-btn" style="border-color: white; color: white;" onclick="event.stopPropagation(); showTaskHelp(${b.id})" title="How to get started">?</button>` : '';
+                    const helpBtn = TASK_HELP[b.id] ? `<button class="task-help-btn" style="border-color: white; color: white;" data-action="showTaskHelp" data-arg="${b.id}" title="How to get started">?</button>` : '';
                     
                     const row = document.createElement('div');
                     row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.15); padding: 14px 16px; border-radius: 20px; width: 100%;';
@@ -1449,7 +1449,7 @@
                             <div style="font-weight: 700; font-size: 18px; ${isCompleted ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${escapeHtml(b.name)}${helpBtn}</div>
                             <div style="display: inline-block; font-weight: 800; font-size: 14px; color: #a855f7; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); margin-top: 4px;">${isCompleted ? '✅ Done!' : `+${b.value} pts`}</div>
                         </div>
-                        <button class="task-check ${isCompleted ? 'completed' : ''}" style="background: ${isCompleted ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" onclick="handleWeeklyClick(${idx}, ${isCompleted})">
+                        <button class="task-check ${isCompleted ? 'completed' : ''}" style="background: ${isCompleted ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)'}; border: 2px solid rgba(255,255,255,0.5);" data-action="handleWeeklyClick" data-arg="${idx}" data-arg2="${isCompleted}">
                             ${isCompleted ? '✓' : ''}
                         </button>
                     `;
@@ -1469,7 +1469,7 @@
                 // Show help icon for daily bonus if it has help info
                 const showDailyHelp = TASK_HELP[dailyBonus.id];
                 document.getElementById('dailyBonusHelpBtn').innerHTML = showDailyHelp 
-                    ? `<button class="task-help-btn" style="border-color: white; color: white;" onclick="event.stopPropagation(); showTaskHelp(${dailyBonus.id})" title="How to get started">?</button>` 
+                    ? `<button class="task-help-btn" style="border-color: white; color: white;" data-action="showTaskHelp" data-arg="${dailyBonus.id}" title="How to get started">?</button>` 
                     : '';
                 
                 const dailyBtn = document.getElementById('dailyBonusBtn');
@@ -1668,6 +1668,12 @@
                 commentInput.value = '';
                 document.getElementById('imgPreview').innerHTML = '';
                 document.getElementById('taskPhoto').value = '';
+                // Show desktop tip if not on mobile
+                var photoTip = document.getElementById('photoTip');
+                if (photoTip) {
+                    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    photoTip.style.display = (!isMobile && photoSection.style.display === 'block') ? 'block' : 'none';
+                }
                 openModal('taskModal');
             }
         }
@@ -2232,7 +2238,7 @@
                         </div>
                     </div>
                     
-                    <button onclick="closeModal('cashoutModal'); location.reload();" class="btn btn-primary" style="width: 100%; padding: 14px;">
+                    <button data-action="closeCashoutAndReload" class="btn btn-primary" style="width: 100%; padding: 14px;">
                         Got it!
                     </button>
                 </div>
@@ -2463,7 +2469,27 @@
         window.addEventListener('appinstalled', function() {
             document.getElementById('pwaInstallBanner').style.display = 'none';
             deferredInstallPrompt = null;
+            awardInstallBonus();
         });
+
+        function awardInstallBonus() {
+            var INSTALL_BONUS_KEY = PROFILE_ID ? 'hr_install_bonus_' + PROFILE_ID : 'hr_install_bonus';
+            if (localStorage.getItem(INSTALL_BONUS_KEY)) return;
+            localStorage.setItem(INSTALL_BONUS_KEY, '1');
+            state.balance = (state.balance || 0) + 100;
+            state.totalEarned = (state.totalEarned || 0) + 100;
+            saveState();
+            render();
+            showToast('🎉 +100 pts for adding to Home Screen!');
+        }
+
+        // Detect standalone mode (iOS Add to Home Screen)
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            var INSTALL_BONUS_KEY = PROFILE_ID ? 'hr_install_bonus_' + PROFILE_ID : 'hr_install_bonus';
+            if (!localStorage.getItem(INSTALL_BONUS_KEY)) {
+                setTimeout(function() { awardInstallBonus(); }, 2000);
+            }
+        }
 
         function triggerInstallPrompt() {
             if (deferredInstallPrompt) {
@@ -2522,6 +2548,12 @@ document.addEventListener('click', function(e) {
         case 'confirmCashout': confirmCashout(); break;
         case 'submitFeedback': submitFeedback(); break;
         case 'setRating': setRating(parseInt(arg)); break;
+        case 'onTaskClick': onTaskClick(parseInt(arg)); break;
+        case 'showTaskHelp': e.stopPropagation(); showTaskHelp(parseInt(arg)); break;
+        case 'openTennisModal': openTennisModal(arg === 'true'); break;
+        case 'handleWeeklyClick': handleWeeklyClick(parseInt(arg), el.getAttribute('data-arg2') === 'true'); break;
+        case 'dismissPaymentNotification': dismissPaymentNotification(arg); break;
+        case 'closeCashoutAndReload': closeModal('cashoutModal'); location.reload(); break;
         // Inline handlers
         case 'inline-1': document.getElementById('allDoneSection').style.display='none'; break;
         case 'inline-2': document.getElementById('taskPhoto').click(); break;

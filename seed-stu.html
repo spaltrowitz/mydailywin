@@ -68,6 +68,10 @@
 
             <button id="seedBtn" class="btn-seed">🚀 Save Profile to Cloud</button>
             <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px;">This writes Stuart's name, tasks, and admin list to Firestore so the app works on any device</p>
+
+            <button id="resetBtn" style="width: 100%; padding: 14px; background: #fee2e2; color: #dc2626; border: 2px solid #fca5a5; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 12px;">🔄 Reset Points to $0 (Fresh Start)</button>
+            <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 4px;">Clears all points, streaks, and history so he starts from scratch</p>
+
             <div id="log"></div>
         </div>
 
@@ -257,6 +261,36 @@
                 btn.textContent = '🚀 Retry';
                 document.getElementById('authStatus').className = 'status error';
                 document.getElementById('authStatus').textContent = '❌ Error: ' + err.message;
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', async function() {
+            if (!confirm('Are you sure? This will erase ALL of Stuart\'s points, streaks, and history. He starts completely fresh.')) return;
+            var btn = this;
+            btn.disabled = true;
+            btn.textContent = '⏳ Resetting...';
+            try {
+                // Clear localStorage state
+                ['hr_state', 'hr_state_stu', 'hr_date', 'hr_date_stu', 'hr_week', 'hr_week_stu',
+                 'hr_reports', 'hr_reports_stu', 'hr_completed_ever', 'hr_completed_ever_stu',
+                 'hr_install_bonus', 'hr_install_bonus_stu'].forEach(function(k) {
+                    localStorage.removeItem(k);
+                });
+                log('✅ Local state cleared');
+
+                // Clear Firestore userState
+                await db.collection('userState').doc('stu').delete();
+                log('✅ Cloud state cleared');
+
+                log('🎉 Stuart starts at $0. Open the app to verify.');
+                btn.textContent = '✅ Reset Complete';
+                btn.style.background = '#dcfce7';
+                btn.style.color = '#16a34a';
+                btn.style.borderColor = '#bbf7d0';
+            } catch (err) {
+                log('❌ Error: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = '🔄 Retry Reset';
             }
         });
     </script>

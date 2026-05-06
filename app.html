@@ -131,7 +131,7 @@
                 <span id="progressText" style="font-weight: 700; color: var(--primary);">0/4 tasks</span>
             </div>
             <div style="height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; position: relative;">
-                <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--primary), #4ade80); width: 0%; transition: width 0.5s ease; position: relative;">
+                <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-dark)); width: 0%; transition: width 0.5s ease; position: relative;">
                 </div>
             </div>
             <div id="multiplierHint" style="text-align: center; margin-top: 10px; font-size: 15px; color: var(--primary); font-weight: 600;">
@@ -144,7 +144,7 @@
 
         <!-- Lucky Spin -->
         <div id="spinSection" style="display: none; margin-bottom: 25px;">
-            <div class="card" style="background: linear-gradient(135deg, var(--primary), #4ade80); border: none; color: white; text-align: center; padding: 25px;">
+            <div class="card" style="background: linear-gradient(135deg, #3d8a02, #2d6e01); border: none; color: white; text-align: center; padding: 25px;">
                 <div style="font-size: 16px; letter-spacing: 1px; opacity: 0.9;">🎁 Bonus Reward Unlocked!</div>
                 <div style="font-size: 80px; margin: 15px 0; transition: transform 0.5s;" id="spinEmoji">🎁</div>
                 <button data-action="spinWheel" id="spinBtn" style="background: white; color: var(--primary); border: none; border-radius: 16px; padding: 16px 40px; font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: all 0.1s;">
@@ -198,8 +198,11 @@
             <div id="photoSection">
                 <p style="margin-bottom: 10px; font-weight: 700;">📸 Photo (Optional)</p>
                 <div class="file-upload" data-action="inline-2">
-                    📷 Upload Photo
-                    <input type="file" id="taskPhoto" hidden accept="image/*" data-action="inline-3">
+                    📷 Take or Choose Photo
+                    <input type="file" id="taskPhoto" hidden accept="image/*" capture="environment" data-action="inline-3">
+                </div>
+                <div id="photoTip" style="margin: 8px 0; padding: 10px 14px; background: #fffbeb; border-radius: 10px; font-size: 13px; color: #92400e; display: none;">
+                    💡 <strong>On a computer?</strong> Text the photo to yourself, save it, then click "Take or Choose Photo" above to upload it from your files.
                 </div>
                 <div id="imgPreview" style="margin-bottom: 15px; border-radius: 12px; overflow: hidden;"></div>
             </div>
@@ -457,7 +460,7 @@
             <button class="close-modal" data-action="closeModal" data-arg="progressModal" aria-label="Close">&times;</button>
             <h2 style="margin-bottom: 15px; font-size: 24px;">📊 How Progress Works</h2>
             
-            <div style="background: linear-gradient(135deg, var(--primary), #4ade80); padding: 20px; border-radius: 16px; color: white; margin-bottom: 20px;">
+            <div style="background: linear-gradient(135deg, #3d8a02, #2d6e01); padding: 20px; border-radius: 16px; color: white; margin-bottom: 20px;">
                 <div style="font-size: 32px; text-align: center; margin-bottom: 10px;">🎯</div>
                 <div style="text-align: center; font-weight: 700;">Complete Your Daily Habits!</div>
             </div>
