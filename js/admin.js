@@ -490,7 +490,7 @@
             }
             
             // Display pending payout requests from Firestore
-            displayPendingRequests();
+            displayPendingRequests().catch(function(err) { console.warn('displayPendingRequests failed:', err.message); });
         }
         
         async function displayPendingRequests() {
@@ -648,7 +648,7 @@
             }
             
             showToast('Request dismissed');
-            displayPendingRequests();
+            displayPendingRequests().catch(function(err) { console.warn('displayPendingRequests failed:', err.message); });
         }
 
         function displayReports() {
@@ -1262,7 +1262,7 @@
                     localStorage.setItem(getNotificationsKey(), JSON.stringify(notifications));
                 }
             }
-            loadAdminNotifications();
+            loadAdminNotifications().catch(function(err) { console.warn('loadAdminNotifications failed:', err.message); });
         }
 
         async function addAdmin() {
@@ -1334,9 +1334,12 @@
         }
 
         // ========== EMAIL INVITE (via Cloud Function) ==========
-        const sendInviteEmailFn = firebase.functions().httpsCallable('sendInviteEmail');
+        let sendInviteEmailFn = null;
 
         async function sendInviteEmail(email) {
+            if (!sendInviteEmailFn) {
+                sendInviteEmailFn = firebase.functions().httpsCallable('sendInviteEmail');
+            }
             const currentUser = auth.currentUser;
             const senderName = currentUser?.displayName || currentUser?.email || 'A MyDailyWin user';
             const appUrl = window.location.origin;
@@ -1490,9 +1493,9 @@
             displayReports();
             loadAdmins();
             cleanupPendingInvites();
-            loadAdminNotifications();
+            loadAdminNotifications().catch(function(err) { console.warn('loadAdminNotifications failed:', err.message); });
             // Fetch latest state from cloud (Stu's device syncs here)
-            loadStateFromCloud();
+            loadStateFromCloud().catch(function(err) { console.warn('loadStateFromCloud failed:', err.message); });
         } catch (err) {
             console.error('Init error (tabs still work):', err);
         }
