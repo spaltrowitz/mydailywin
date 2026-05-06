@@ -198,7 +198,6 @@
         // LOW-TECH TEMPLATE: Simple, essential daily tasks for users who need straightforward activities
         const LOW_TECH_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 50 },
-            { id: 2, name: "💊 Take medications", value: 25 },
             { id: 4, name: "🛏️ Make the bed", value: 25 },
             { id: 5, name: "📞 Call a family member", value: 50 }
         ];
@@ -209,7 +208,6 @@
             { id: 102, name: "🧘 Do some stretching", value: 50, freq: 2 },
             { id: 103, name: "📺 Watch a favorite show", value: 25, freq: 1.5 },
             { id: 104, name: "🍽️ Eat a healthy meal", value: 50, freq: 2 },
-            { id: 105, name: "😴 Get a good night's sleep", value: 50, freq: 2 },
             { id: 106, name: "🧹 Tidy up one room", value: 50, freq: 1 },
             { id: 107, name: "📖 Read for 15 minutes", value: 50, freq: 2 },
             { id: 108, name: "🎵 Listen to music you enjoy", value: 25, freq: 2 }
@@ -331,7 +329,7 @@
             { id: 322, name: "☕ Have coffee/lunch with someone new", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you meet with?" },
             { id: 323, name: "💬 Have a 15+ minute conversation", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you talk to?" },
             // Wellness: Physical
-            { id: 324, name: "🏊 Try a new physical activity", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you try?" },
+            { id: 324, name: "🏊 Try a gentle new activity", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you try?" },
             { id: 325, name: "🩺 Schedule or attend a health appointment", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What appointment?" },
             // Wellness: Emotional
             { id: 326, name: "📝 Write a letter or card to someone", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you write to?" },
