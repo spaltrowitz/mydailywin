@@ -33,10 +33,7 @@
         };
 
         function generateProfileId() {
-            // Generate a unique profile ID
-            const timestamp = Date.now().toString(36);
-            const random = Math.random().toString(36).substring(2, 8);
-            return timestamp + random;
+            return crypto.randomUUID();
         }
 
         function selectOption(step, value, event) {
