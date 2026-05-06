@@ -285,3 +285,218 @@ page-specific <script> (uses firebase.auth(), firebase.firestore(), escapeHtml()
 - Behavioral change: None (pure refactor)
 
 ---
+
+---
+
+# Session: 2026-05-06 Admin Fixes, Reset, Security Audit, Testing
+
+---
+
+## 1. Admin Portal Tab Fixes (2026-05-06, Urbosa)
+
+**Status:** ✅ IMPLEMENTED
+
+### Event Delegation Handler Scope
+**Choice:** Moved event delegation click handler inside the `auth.onAuthStateChanged` callback.
+**Why:** All functions referenced by the handler (`showTab()`, `openAddTaskModal()`, etc.) are defined inside the auth callback. Handler was at top-level scope, so all function calls were undefined.
+**Pattern:** CSP-compliant data-action/data-arg event delegation requires the handler to be in the same scope as the functions it calls. If functions are closure-scoped, the listener must be too.
+**Trade-off:** Event listener won't be registered until auth check completes. However, this is acceptable because the entire admin interface is gated behind auth.
+
+### Tab Layout: Horizontal Scroll vs. Wrapping
+**Choice:** Changed desktop tabs from wrapping (`flex-wrap: wrap`) to horizontal scroll (`flex-wrap: nowrap` + `overflow-x: auto`).
+**Why:** 
+- Prevents the 7th tab (Settings) from wrapping to its own row on narrower screens
+- Keeps all navigation visible in one consistent location
+- Mobile pattern already used horizontal scroll — extends to desktop for consistency
+**Styling:** Reduced tab padding (12px→10px), added `flex-shrink: 0`, `white-space: nowrap`, `scrollbar-width: thin`
+**Trade-off:** Users on very narrow screens will need to scroll horizontally. Preferable to janky wrapping at different breakpoints.
+
+### showTab() Fallback Logic
+**Choice:** Changed fallback check from `t.getAttribute('onclick')?.includes(tabId)` to `t.getAttribute('data-arg') === tabId`.
+**Why:** Admin page uses data-action/data-arg attributes for CSP compliance — no onclick attributes exist. Corrected fallback properly matches the tab button's data-arg.
+
+---
+
+## 2. Critical Bug Fix: Cashout Balance Deduction (2026-05-06, Mipha)
+
+**Status:** ✅ IMPLEMENTED  
+**Priority:** P0 (Critical)
+
+### The Bug
+1. User requests cashout → balance stays the same
+2. User could request multiple cashouts before admin processes
+3. Admin marks as sent → balance gets deducted (only once)
+**Impact:** User could exploit this to request multiple payouts from the same balance.
+
+### The Fix
+**Changed timing:**
+- **OLD:** Balance deducted in `admin.js:approvePayoutRequest()` when admin marks as sent
+- **NEW:** Balance deducted in `app.js:confirmCashout()` immediately when user requests
+
+**Race condition fix:** Added double-tap prevention at function start: `if (cashoutBtn.disabled) return;`
+
+### Why This Works
+- Prevents exploitation via multiple cashout requests
+- User sees correct balance right away (UX improvement)
+- Admin sees accurate "currently owed" calculation
+- Defense in depth: balance check + button state check
+
+### Additional Changes
+- **seed-stu.html:** Added clearing of `payoutRequests` collection, `userNotifications` collection, localStorage payout keys
+- **app.html:** Removed Admin Mode section (no longer needed)
+
+---
+
+## 3. Security Audit — May 2026 (2026-05-06, Riju)
+
+**Status:** ⏳ FINDINGS DOCUMENTED — DECISIONS PENDING OWNER INPUT  
+**Scope:** Full privacy & security review
+
+### Audit Summary
+**12 findings** ranging from Critical to Info level.
+
+**Critical (2):**
+- F1: Email as Firestore doc ID (PII exposure, GDPR/CCPA concern)
+- F2: localStorage as source of truth for points (client can modify balance)
+
+**High (3):**
+- F3: User content not escaped in innerHTML calls (XSS risk)
+- F4: Profile ID enumeration vulnerability (sequential numeric IDs)
+- F5: CSP unsafe-inline scripts in login.html (CSP migration incomplete)
+
+**Medium (4):**
+- Rate limiting on payout requests missing
+- GDPR/CCPA data export endpoint missing
+- Logging/validation hardening needed
+- Session timeout patterns
+
+**Low (3):**
+- Email validation patterns
+- Input sanitization examples
+- Dark mode edge cases
+
+### Key Decisions
+
+**Decision 1: Email as Firestore Doc ID**
+**Status:** ⚠️ RISK ACCEPTED (medium-term fix recommended)
+**Recommendation:** Hash emails (SHA-256) for doc IDs, store plaintext in doc data only. Requires data migration.
+**Team input:** Shari to decide priority vs. implementation cost.
+
+**Decision 2: localStorage as Source of Truth for Points**
+**Status:** ⚠️ KNOWN LIMITATION (by design for offline-first)
+**Mitigation Options:**
+1. Accept risk (family trust model — not a security app)
+2. Make Firestore authoritative, validate all writes server-side
+3. Add tamper detection (hash balance + salt in localStorage)
+**Team input:** Revali/Shari to decide if trust model is acceptable.
+
+**Decision 3: CSP unsafe-inline for Scripts**
+**Status:** ⚠️ PARTIALLY FIXED (login.html still has unsafe-inline)
+**Fixed:** app.html, admin.html already migrated to external JS + event delegation
+**Remaining:** login.html still has inline `<script>` tags
+**Mitigation:** Extract login.html inline scripts → js/login.js. Remove `'unsafe-inline'` from CSP.
+
+### Positive Findings
+- Cloud Functions already implement auth checks and input validation
+- Firebase Auth properly configured (Google + email/password)
+- Admin authorization flow is solid (Firestore-first, no localStorage fallback)
+- Most user content safely escaped via `escapeHtml()` utility
+- Service Worker and offline support don't introduce new attack surface
+
+### Implementation Priorities
+
+| Priority | Item | Owner | Effort |
+|----------|------|-------|--------|
+| **P0 (Critical)** | F1: Hash email in Firestore doc IDs | Daruk | High (migration script) |
+| **P0 (Critical)** | F2: Implement localStorage tamper detection OR accept trust model | Revali + Daruk | Medium |
+| **P1 (High)** | F3: Escape all user content in innerHTML calls | Mipha + Daruk | Low |
+| **P1 (High)** | F4: Profile ID enumeration mitigation (add UUIDs or UUID v4) | Daruk | Low |
+| **P1 (High)** | F5: Complete CSP migration (remove unsafe-inline) | Daruk | Low |
+
+---
+
+## 4. Settings Modal Redesign (2026-05-03, Sidon)
+
+**Status:** ✅ IMPLEMENTED
+
+### What Changed
+1. **Removed Admin Mode section entirely** — Stuart (70s user) should never see admin controls
+2. **Condensed sections** — merged related actions
+3. **Visual grouping** — used background cards instead of hr separators for better hierarchy
+4. **Improved touch targets** — all buttons meet 44px minimum
+5. **Reduced explanation text** — senior users don't need "why" text for every action
+
+### Information Architecture
+**Top priority (kept):**
+- Cloud sync status — reassures user data is safe
+- Balance display — core engagement metric
+
+**Middle priority (consolidated):**
+- Suggest Task + Contact Developer merged into "Get Help" section
+- Share Progress kept (social proof/bragging rights driver)
+
+**Lower priority (removed):**
+- "Refer a Friend" — removed. Family app (Stuart + Shari), not viral growth. Referring is low-value noise.
+
+### Senior-Friendly Considerations
+- Large balance display remains (32px, color contrast)
+- Simplified language (no jargon)
+- Fewer choices = less decision paralysis (5 sections → 3 cards)
+- Clear visual hierarchy
+
+### Trade-offs
+**Removed "Refer a Friend":** This app is built for a specific user (Stuart) and his admin (Shari). Not a platform product. Referral adds UI noise without value. If growth becomes a priority, add dedicated "Invite" flow in main UI.
+
+---
+
+## 5. Purah Smoke Test Report (2026-05-01)
+
+**Status:** ⏳ FINDINGS LOGGED — CRITICAL ISSUES REQUIRE FIXES  
+**Scope:** CSP validation, onclick migration, SW cache, file integrity, dark mode, Apple Sign-In
+
+### Critical Issues
+
+🔴 **admin.html CSP missing `cloudfunctions.net` in connect-src**
+- Issue: `js/admin.js:1268` calls `firebase.functions().httpsCallable('sendInviteEmail')`. Firebase callable functions hit `*.cloudfunctions.net` which is NOT covered by CSP.
+- Impact: Admin invite emails will be BLOCKED by browser CSP. Silent failure.
+- Fix: Add `https://*.cloudfunctions.net` to admin.html CSP `connect-src`.
+
+🔴 **admin.html missing `</body>` and `</html>` closing tags**
+- Issue: File ends with `<script src="js/admin.js"></script>` — no closing tags.
+- Impact: Browsers auto-close, but invalid HTML. May cause issues with parsers, SEO tools, accessibility scanners. Indicates possible file truncation.
+- Fix: Add `</body>\n</html>` at end.
+
+### Medium Issues
+
+🟡 **app.html does NOT load `js/dark-mode.js` — FOUC risk**
+- Issue: Dark mode is in `js/app.js` (body-end), not in head. Flash Of Unstyled Content (light → dark flicker) on load for dark mode users.
+- Fix: Add `<script src="js/dark-mode.js"></script>` to app.html `<head>`.
+
+🟡 **admin.html has NO dark mode support at all**
+- Issue: No `js/dark-mode.js` loaded, no dark mode logic in `js/admin.js`.
+- Fix: Add `<script src="js/dark-mode.js"></script>` to admin.html head, ensure `css/admin.css` has dark mode styles.
+
+🟡 **cdn.jsdelivr.net whitelisted but unused**
+- Issue: app.html and admin.html include `cdn.jsdelivr.net` in `script-src` but don't use it. Unnecessary attack surface.
+- Fix: Remove `https://cdn.jsdelivr.net` from both CSPs.
+
+### Green Checks
+
+🟢 **Zero remaining `onclick=` attributes** — all migrated to data-action event delegation  
+🟢 **SW cache includes all external JS and CSS files**  
+🟢 **Apple Sign-In properly configured**  
+🟢 **Firebase SDK, Google Auth, EmailJS properly whitelisted**
+
+### Gate Status
+
+🔴 **NOT READY** — 2 critical bugs must be fixed before user testing.
+
+**Required before deploy:**
+1. Add `https://*.cloudfunctions.net` to admin.html CSP connect-src
+2. Add `</body></html>` to end of admin.html
+3. Add `<script src="js/dark-mode.js"></script>` to app.html head
+
+**Recommended (non-blocking):**
+4. Remove `cdn.jsdelivr.net` from app.html and admin.html CSP
+5. Add dark-mode.js to admin.html head
+

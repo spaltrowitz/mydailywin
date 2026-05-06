@@ -6,60 +6,106 @@
 **User:** Shari Paltrowitz
 **Repo:** mydailywin (spaltrowitz/mydailywin)
 
-Two-role trust model: Admin (parent/manager) configures tasks, approves payouts, manages settings. User (kid/employee) completes tasks, earns points, spins wheel. Data syncs via localStorage keys and Firestore. Admin writes to `hr_admin_{profile}`, user reads via `getConfiguredDailyTasks()`. Balance resets write to both `STORAGE_KEY` and `hr_state_stu`. Profile creation propagates `hr_pending_user_email` from login into profileData.
+Two-role trust model: Admin (parent/manager) configures tasks, approves payouts, manages settings. User (kid/employee) completes tasks, earns points, spins wheel. Data syncs via localStorage keys and Firestore. Admin writes to `hr_admin_{profile}`, user reads via `getConfiguredDailyTasks()`.
 
 Key security surfaces: firestore.rules, login.html (auth), admin.html (privilege), app.html (user), functions/ (Cloud Functions).
 
-## Learnings
+## Core Context — Prior Audits
 
-### 2025-01-XX — Full Security Audit
+Riju completed prior security work including:
+- CSP refactor: eliminated unsafe-inline from app.html and offline.html (57+ inline onclick handlers converted to data-action delegation)
+- Service worker: v5 cache includes all external assets, precache fully populated
+- Auth flow: identified open redirect vulnerability in login.html (`?redirect=` param), proper Firestore-first authorization without localStorage fallback
+- Firestore rules: all collections scoped by `hasProfileAccess()`, admin email as doc ID (privacy concern but access-controlled)
+- Cloud Functions: auth checks and input validation present, EmailJS credentials server-side only
 
-**Key Architecture Findings:**
-- Two-role model (admin/user) with shared localStorage as primary data store
-- Firestore used for cross-device sync but many collections lack ownership scoping (marked with TODOs)
-- Auth flow uses Firebase Auth with Google + email/password
-- Admin authorization uses multi-layered check: Firestore profile owner → Firestore admins subcollection → localStorage fallback → legacy 'stu' hardcoded owner
-- EmailJS public key and service ID are client-side (expected for EmailJS but still an exposure)
-- CSP is configured in firebase.json with 'unsafe-inline' for scripts
-- login.html has open redirect vulnerability via `?redirect=` param
-- No rate limiting on client-side payout requests
-- Profile names from localStorage rendered as innerHTML without escaping in multiple places
-- Firestore rules have 4 collections (payoutRequests, userNotifications, userState, taskProposals) with auth-only access (no ownership scoping)
+Key learnings:
+- Event delegation pattern (`data-action` attributes + central `addEventListener`) scales without build tools
+- CSP meta tag placement order matters (must be in `<head>`)
+- Coordinate service worker cache versioning when adding external assets
 
-**Key File Paths:**
-- `firestore.rules` — Firestore security rules
-- `login.html:355-377` — Open redirect vulnerability
-- `admin.html:580-630` — localStorage auth fallback (bypassable)
-- `admin.html:1227-1234` — Unescaped user content in innerHTML (reports)
-- `admin.html:1724-1731` — Unescaped admin names in innerHTML
-- `admin.html:1904-1906` — EmailJS keys exposed client-side
-- `app.html:2180-2182` — Task names rendered without escaping
-- `app.html:1785` — userState written to Firestore with doc ID = PROFILE_ID (guessable)
+## Recent Learnings
 
-## Learnings
+### 2026-05-06 — Full Security & Privacy Audit Complete
 
-### CSP Refactor (unsafe-inline elimination)
-- **Completed:** Extracted all inline `<style>` and `<script>` blocks from app.html and offline.html to external files
-- **Pattern used:** `data-action` attribute + delegated `document.addEventListener('click', ...)` — works without build tools
-- **CSP policy:** `script-src 'self' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net` — no 'unsafe-inline'
-- **style-src:** Kept `'unsafe-inline'` for style attributes (low risk, no code execution vector)
-- **Prior work:** login.html, home.html, get-started.html, admin.html were already partially migrated; app.html and offline.html were the remaining gaps
-- **Key insight:** The app uses 57+ inline onclick handlers in app.html alone — all converted to event delegation pattern
-- **Service worker:** Cache bumped to v4 to include new external assets
-- **CDN origins whitelisted:** gstatic.com (Firebase SDK), googleapis.com (APIs), cdn.jsdelivr.net (EmailJS), fonts.googleapis.com/gstatic.com (Nunito font)
+#### Audit Scope
+- Firestore rules, all HTML files, all JavaScript, Cloud Functions, Firebase configuration
+- Read-only analysis (no code changes)
+- Deliverable: SECURITY-AUDIT-SUMMARY.md with 12 findings
 
-## 2026-05-01T22:40 — CSP Refactor Sprint Complete
+#### Findings Summary
 
-**Session:** 2026-05-01T22-40-27Z — backlog-sprint  
-**Cross-Agent Updates:**
+**Critical (2):**
+- **F1: Email as Firestore doc ID** — PII exposure. Email used as doc ID in `profiles/{profileId}/admins/{email}`. Doc IDs logged, indexed, visible in URLs. GDPR/CCPA concern.
+- **F2: localStorage as source of truth for points** — Client can modify. User can use DevTools to inflate balance. Firestore used for sync but NOT authoritative.
 
-### Team Coordination Context
-- **From Daruk:** EmailJS keys removed from admin.html (no more client-side credential exposure). Cloud Function handles all email delivery. CSP now blocks unsafe inline + external origin restrictions eliminate JS injection vectors.
-- **From Impa:** Service worker cache now v5. All external assets (CSS extracted in this sprint) included in precache. CSP policy whitelists cdn.jsdelivr.net for EmailJS.
-- **From Sidon:** All app modals now Escape-closable and dark-mode aware. Spin wheel animation respects prefers-reduced-motion where applicable. No accessibility regressions from CSP refactor (all 57+ event handlers converted to semantic data-action delegation).
+**High (3):**
+- **F3: User content not escaped in innerHTML** — Audit found likely safe usage of `escapeHtml()` but some paths need review
+- **F4: Profile ID enumeration** — Sequential numeric IDs. Attacker can guess by incrementing.
+- **F5: CSP unsafe-inline in login.html** — app.html and admin.html already migrated. login.html still has inline scripts.
 
-### Learnings
-- Event delegation pattern (`data-action` attributes + central `document.addEventListener`) scales cleanly without build tool overhead.
-- CSP meta tag placement order matters (must be in `<head>` before any external resource declarations).
-- Coordinate with service worker cache versioning when adding external CSS/JS — old caches will 404 if not bumped.
+**Medium (4):**
+- F6: Rate limiting on payout requests (missing in Firestore rules)
+- F7: GDPR/CCPA data export endpoint (missing)
+- F8-F9: Logging/validation hardening
+
+**Low (3):**
+- Session timeout patterns, email validation, input sanitization examples
+
+#### Positive Findings
+- Cloud Functions: auth checks present, input validation present, EmailJS server-side only
+- Firebase Auth: properly configured (Google + email/password)
+- Admin authorization: multi-layered and secure
+- Firestore rules: strong access control patterns via `hasProfileAccess()`
+- Input sanitization: `escapeHtml()` used consistently
+
+#### Key Decisions Needed (Owner Input)
+
+**Decision 1: Email doc IDs (F1)**
+- **Status:** ⚠️ RISK ACCEPTED (medium-term fix)
+- **Mitigation:** Hash emails (SHA-256) for doc IDs, plaintext in data only
+- **Team decision:** Prioritize vs. implementation cost?
+
+**Decision 2: localStorage Trust Model (F2)**
+- **Status:** ⚠️ KNOWN LIMITATION (by design for offline-first)
+- **Options:** (1) Accept risk (family trust model), (2) Firestore authoritative + server-side validation, (3) Tamper detection (hash + salt)
+- **Team decision:** Which path?
+
+**Decision 3: CSP Migration (F5)**
+- **Status:** ⚠️ PARTIALLY FIXED (login.html remaining)
+- **Mitigation:** Extract login.html inline scripts → js/login.js. Remove `'unsafe-inline'` from CSP.
+- **Owner:** Daruk (backend) or Mipha (frontend)
+
+#### Implementation Roadmap
+
+| Priority | Item | Owner | Effort |
+|----------|------|-------|--------|
+| **P0** | F1: Hash email in doc IDs | Daruk | High (migration) |
+| **P0** | F2: Trust model decision → implementation | Revali + Daruk | Medium |
+| **P1** | F3: Code review innerHTML escaping | Mipha + Daruk | Low |
+| **P1** | F4: UUID v4 for profile IDs | Daruk | Low |
+| **P1** | F5: CSP migration (login.html) | Daruk | Low |
+| **P2** | F6: Rate limit payout requests | Daruk | Low |
+| **P2** | F7: GDPR/CCPA export endpoint | Daruk | Medium |
+
+#### Files Audited
+- `firestore.rules` — strong access control, admin email as doc ID
+- `firebase.json` — CSP policy (unsafe-inline present)
+- `js/admin.js`, `js/app.js`, `js/login.js` — auth flow, input validation, innerHTML usage
+- `js/get-started.js` — profile creation, profile ID generation (timestamp+random, enumerable)
+- `functions/index.js` — auth validation, input sanitization
+- All HTML files — CSP meta tags, script loading, innerHTML usage
+
+#### Session Impact
+- Full security posture documented in SECURITY-AUDIT-SUMMARY.md
+- 12 findings with CVSS-style severity
+- Implementation roadmap with owner assignments
+- No immediate blockers — foundation solid
+- Two critical team decisions needed before P0/P1 execution
+
+#### Cross-Team Context
+- **Revali:** Security decision needed on localStorage trust model
+- **Daruk:** P0/P1 items are backend responsibility. Email hashing (F1) highest effort.
+- **Mipha:** P1 items (XSS review, CSP) if decision finalized
+- **Shari:** localStorage trust model + email hashing priority decisions
 

@@ -160,3 +160,43 @@ The app is Duolingo-inspired: daily tasks earn points (100 pts = $1), streaks bu
 - **Loading states:** Conversational and specific ("Calculating your streak…") not generic ("Loading...").
 - **Error framing:** Lead with what the user wanted before the technical message.
 - **Tab labels should be task-oriented and short:** e.g., "Today's Readiness" not "Dashboard Overview."
+
+---
+
+## 2026-05-03 — Settings Modal Redesign
+
+**Session:** Settings popup redesign for senior-friendly UX  
+**Context:** User (Shari) requested admin mode removal + cleaner settings UI for 70-year-old user (Stuart)
+
+### Changes Made
+1. **Removed Admin Mode section entirely** — Stuart should never see admin controls in his daily app experience
+2. **Removed "Refer a Friend" section** — MyDailyWin is a family app (Stuart + Shari), not a viral growth product. Referral in settings = noise without value
+3. **Consolidated "Suggest Task" + "Contact Developer"** — both are user-to-admin communication, merged into single "Get Help" card
+4. **Replaced 4 hr separators with 3 background cards** — cleaner visual grouping, better hierarchy
+5. **Removed section emojis and explanatory paragraphs** — reduced visual clutter, action buttons are self-explanatory
+6. **Made balance display slightly larger** — 32px → 36px for primary metric emphasis
+
+### Information Architecture
+**Final structure (5 sections → 3 cards):**
+1. Cloud Sync Status (unchanged — reassures user data is safe)
+2. Balance Display (enhanced — core engagement metric)
+3. Share Progress card (kept — social proof driver)
+4. Get Help card (merged — suggest task + contact developer)
+
+### Senior-Friendly Design Principles Applied
+- Fewer choices = less decision paralysis (removed low-value options)
+- Larger primary information (balance display)
+- Simplified language (no jargon, minimal explanation text)
+- Clear visual hierarchy (background cards instead of separators)
+- Touch targets maintained at 44px minimum
+
+### Technical Notes
+- **No new CSS required** — uses existing `.btn`, `.btn-success`, `.btn-ghost`, CSS variables
+- **All element IDs preserved** — no JS changes needed (syncStatus, settingsBalance, propName, propReason still work)
+- **All data-action handlers preserved** — submitProposal, shareProgress, contactDeveloper unchanged
+- **Dark mode support automatic** — CSS variables handle theme switching
+
+### Files
+- Design rationale: `.squad/decisions/inbox/sidon-settings-redesign.md`
+- New HTML: `.squad/agents/sidon/new-settings-html.txt`
+- CSS notes: `.squad/agents/sidon/css-notes.md`
