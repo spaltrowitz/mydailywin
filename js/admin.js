@@ -1,8 +1,14 @@
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        let db, auth;
+        try {
+            db = firebase.firestore();
+            auth = firebase.auth();
+        } catch (e) {
+            console.error('Firebase init failed:', e);
+            document.title = '⚠️ Firebase Error';
+        }
 
-        // Check auth state
-        auth.onAuthStateChanged(async user => {
+        // Check auth state — only if auth initialized
+        if (auth) auth.onAuthStateChanged(async user => {
             if (user) {
                 const profileParam = new URLSearchParams(window.location.search).get('profile');
                 let profileName = profileParam === 'stu' ? 'Stu' : profileParam;
@@ -1399,11 +1405,12 @@
         }
 
         // ========== EVENT DELEGATION (CSP-compliant) ==========
-        // Registered BEFORE init calls so tabs always work even if init throws
+        console.log('✅ Admin event delegation registered');
         document.addEventListener('click', function(e) {
             const el = e.target.closest('[data-action]');
             if (!el) return;
             const action = el.getAttribute('data-action');
+            console.log('🔧 Click action:', action);
             const arg = el.getAttribute('data-arg');
 
             switch(action) {
