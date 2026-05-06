@@ -511,6 +511,10 @@ input:focus, select:focus, textarea:focus {
     animation: modalSlideUp 0.25s ease-out;
 }
 
+@supports (height: 100dvh) {
+    .modal-box { max-height: calc(100dvh - 40px); }
+}
+
 @keyframes modalSlideUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -522,9 +526,18 @@ input:focus, select:focus, textarea:focus {
 }
 
 .close-modal {
-    float: right;
-    font-size: 28px;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: none;
     cursor: pointer;
+    border-radius: 10px;
+    font-size: 28px;
+    float: right;
     color: var(--text-light);
     transition: color 0.15s;
     line-height: 1;
@@ -717,7 +730,7 @@ footer a {
     }
 
     .top-bar p {
-        font-size: 11px;
+        font-size: 13px;
     }
 
     .top-bar-links {
@@ -749,7 +762,7 @@ footer a {
         flex-shrink: 0;
         padding: 10px 12px;
         font-size: 13px;
-        min-height: 42px;
+        min-height: 44px;
         white-space: nowrap;
     }
 
@@ -788,7 +801,7 @@ footer a {
     }
 
     .stat-box .label {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     .stat-box.highlight .value {
@@ -799,7 +812,6 @@ footer a {
         display: block;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        white-space: nowrap;
     }
 
     th, td {
@@ -885,7 +897,7 @@ footer a {
     }
 
     .badge {
-        font-size: 12px;
+        font-size: 13px;
         padding: 3px 10px;
     }
 
@@ -911,7 +923,7 @@ footer a {
     }
 
     .tab {
-        font-size: 12px;
+        font-size: 13px;
         padding: 8px 10px;
     }
 
@@ -982,7 +994,7 @@ footer a {
 }
 
 .activity-photo {
-    max-width: 200px;
+    max-width: min(200px, 100%);
     border-radius: 12px;
     cursor: pointer;
     transition: transform 0.2s;

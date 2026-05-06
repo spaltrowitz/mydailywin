@@ -1148,6 +1148,9 @@ body.dark-mode .menu-divider {
     font-weight: 700;
     cursor: pointer;
     list-style: none;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
 }
 
 .faq-list .faq-answer {
@@ -1184,6 +1187,8 @@ body.dark-mode .menu-divider {
     align-items: center;
     gap: 4px 8px;
 }
+
+.footer-links a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 4px; }
 
 .footer-sep { opacity: 0.5; }
 
@@ -1451,3 +1456,11 @@ body.dark-mode .menu-divider {
 
 /* Profile arrow */
 .profile-arrow { color: var(--primary); }
+
+@media (max-width: 375px) {
+    .hero h1 { font-size: 28px; }
+    .hero p { font-size: 15px; }
+    .section-title { font-size: 24px; }
+    .steps { grid-template-columns: 1fr; }
+    .why-tiles { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+}

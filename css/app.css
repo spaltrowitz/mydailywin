@@ -3,7 +3,8 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            padding-bottom: 120px;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: max(120px, env(safe-area-inset-bottom));
             overflow-x: hidden;
             transition: background 0.3s, color 0.3s;
         }
@@ -33,7 +34,7 @@
         /* ========== UI COMPONENTS ========== */
         header {
             background: linear-gradient(135deg, #3d8a02, #2d6e01);
-            padding: 15px 20px;
+            padding: max(15px, env(safe-area-inset-top)) 20px 15px;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -268,8 +269,8 @@
         }
         /* Help button for tech tasks */
         .task-help-btn {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 2px solid var(--primary);
             background: transparent;
@@ -355,7 +356,7 @@
         @media (max-width: 375px) {
             header { padding: 12px 14px; }
             .brand { font-size: 20px; gap: 6px; }
-            .theme-btn { font-size: 18px; padding: 6px; min-width: 40px; min-height: 40px; }
+            .theme-btn { font-size: 18px; padding: 6px; min-width: 44px; min-height: 44px; }
             .container { padding: 0 12px; }
             .balance-hero { padding: 18px 14px; border-radius: 18px; }
             .balance-amount { font-size: 34px; }
@@ -366,11 +367,11 @@
             .task-content { margin-right: 10px; }
             .task-name { font-size: 15px; }
             .task-reward { font-size: 12px; padding: 3px 8px; }
-            .task-check { width: 42px; height: 42px; border-radius: 12px; font-size: 20px; }
+            .task-check { width: 44px; height: 44px; border-radius: 12px; font-size: 20px; }
             .section-title { font-size: 16px; margin: 20px 0 10px; }
             .btn { padding: 12px; font-size: 14px; border-radius: 12px; }
             .streak-badge { font-size: 13px; padding: 6px 12px; }
-            .star-rating span { font-size: 32px; min-width: 40px; min-height: 40px; }
+            .star-rating span { font-size: 32px; min-width: 44px; min-height: 44px; }
             .celebration-icon { font-size: 48px; }
             .celebration-title { font-size: 22px; }
             .celebration-badge { font-size: 18px; padding: 6px 14px; }

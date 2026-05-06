@@ -374,3 +374,8 @@ body.dark-mode .btn-email:hover {
 body.dark-mode .back-link {
     color: #a3a3a3;
 }
+
+@media (max-width: 400px) {
+    .login-card { padding: 24px 16px; border-radius: 18px; }
+    .user-info { flex-wrap: wrap; gap: 8px; }
+}
