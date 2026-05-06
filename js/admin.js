@@ -4,7 +4,7 @@
         auth.onAuthStateChanged(async user => {
             if (user) {
                 const profileParam = new URLSearchParams(window.location.search).get('profile');
-                const profileName = profileParam === 'stu' ? 'Stu' : profileParam;
+                let profileName = profileParam === 'stu' ? 'Stu' : profileParam;
                 const userEmail = user.email?.toLowerCase();
                 
                 console.log('🔐 Auth check for:', userEmail, 'on profile:', profileParam);
@@ -18,6 +18,13 @@
                     const profileDoc = await profileRef.get();
                     
                     console.log('📄 Firestore profile exists:', profileDoc.exists);
+                    
+                    // Use Firestore profile name if available
+                    if (profileDoc.exists && profileDoc.data().name) {
+                        profileName = profileDoc.data().name;
+                        // Cache profile to localStorage for cross-device access
+                        localStorage.setItem('hr_profile_' + profileParam, JSON.stringify(profileDoc.data()));
+                    }
                     
                     // Check if user is the profile owner
                     if (profileDoc.exists && profileDoc.data().ownerEmail?.toLowerCase() === userEmail) {
@@ -88,7 +95,16 @@
                 const profileParam = new URLSearchParams(window.location.search).get('profile');
                 if (profileParam) {
                     sessionStorage.setItem('hr_pending_profile', profileParam);
-                    sessionStorage.setItem('hr_pending_profile_name', profileParam === 'stu' ? 'Stu' : profileParam);
+                    // Try localStorage first for a human-readable name
+                    let pendingName = profileParam === 'stu' ? 'Stu' : profileParam;
+                    try {
+                        const cached = localStorage.getItem('hr_profile_' + profileParam);
+                        if (cached) {
+                            const parsed = JSON.parse(cached);
+                            if (parsed.name) pendingName = parsed.name;
+                        }
+                    } catch (e) {}
+                    sessionStorage.setItem('hr_pending_profile_name', pendingName);
                     // Update sign-in link to include redirect back to this page
                     const signInLink = document.getElementById('signInLink');
                     if (signInLink) {
@@ -128,6 +144,19 @@
                 const profile = JSON.parse(profileData);
                 PROFILE_NAME = profile.name || 'User';
                 document.title = PROFILE_NAME + "'s Admin Mode";
+            } else {
+                // Fallback: load from Firestore (handled in onAuthStateChanged above)
+                // Name will be updated once Firestore responds
+                db.collection('profiles').doc(PROFILE_ID).get().then(function(doc) {
+                    if (doc.exists && doc.data().name) {
+                        PROFILE_NAME = doc.data().name;
+                        document.title = PROFILE_NAME + "'s Admin Mode";
+                        localStorage.setItem('hr_profile_' + PROFILE_ID, JSON.stringify(doc.data()));
+                        updateUserNames();
+                    }
+                }).catch(function(err) {
+                    console.warn('Firestore profile fetch failed:', err);
+                });
             }
         }
 

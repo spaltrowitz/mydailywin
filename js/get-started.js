@@ -239,6 +239,9 @@
                 
                 // Also save survey data for export
                 saveSurveyData(profileData);
+
+                // Save profile to Firestore for cross-device access
+                saveProfileToFirestore(profileData);
             } catch (e) {
                 showToast('Unable to save your profile. Your browser storage may be full or unavailable. Please try again or use a different browser.', 6000);
                 return;
@@ -253,6 +256,36 @@
                 surveyCompletedAt: new Date().toISOString()
             });
             localStorage.setItem('hr_survey_log', JSON.stringify(surveyLog));
+        }
+
+        function saveProfileToFirestore(profileData) {
+            if (typeof firebase === 'undefined' || !firebase.firestore) return;
+            try {
+                var db = firebase.firestore();
+                db.collection('profiles').doc(profileData.id).set({
+                    name: profileData.name,
+                    forWho: profileData.forWho || null,
+                    relationship: profileData.relationship || null,
+                    phoneComfort: profileData.phoneComfort || null,
+                    motivation: profileData.motivation || null,
+                    activities: profileData.activities || [],
+                    customActivities: profileData.customActivities || '',
+                    payoutPref: profileData.payoutPref || 'ondemand',
+                    template: profileData.template || 'regular',
+                    adminGoals: profileData.adminGoals || '',
+                    adminChallenges: profileData.adminChallenges || '',
+                    adminNotes: profileData.adminNotes || '',
+                    ownerEmail: profileData.ownerEmail || null,
+                    creatorEmail: profileData.creatorEmail || null,
+                    createdAt: profileData.createdAt || new Date().toISOString()
+                }, { merge: true }).then(function() {
+                    console.log('Profile saved to Firestore:', profileData.id);
+                }).catch(function(err) {
+                    console.warn('Firestore profile save failed (will work offline):', err);
+                });
+            } catch (e) {
+                console.warn('Firestore unavailable for profile save:', e);
+            }
         }
 
         function buildSummary() {

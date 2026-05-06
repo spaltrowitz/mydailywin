@@ -97,6 +97,27 @@
                 } catch (e) {
                     console.warn('Failed to parse profile data:', e);
                 }
+            } else {
+                // Fallback: load profile from Firestore for cross-device access
+                db.collection('profiles').doc(PROFILE_ID).get().then(function(doc) {
+                    if (doc.exists) {
+                        var data = doc.data();
+                        PROFILE_NAME = data.name || 'Friend';
+                        document.title = PROFILE_NAME + "'s MyDailyWin";
+                        // Cache to localStorage for future visits
+                        localStorage.setItem('hr_profile_' + PROFILE_ID, JSON.stringify(data));
+                        // Update greeting if already rendered
+                        var greetingEl = document.getElementById('greeting');
+                        if (greetingEl) {
+                            var hour = new Date().getHours();
+                            var timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+                            greetingEl.textContent = timeGreeting + ', ' + PROFILE_NAME + '!';
+                        }
+                        console.log('Profile loaded from Firestore:', PROFILE_ID);
+                    }
+                }).catch(function(err) {
+                    console.warn('Firestore profile fetch failed:', err);
+                });
             }
         }
 
