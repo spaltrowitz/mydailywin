@@ -230,25 +230,16 @@
         }
         .file-upload:hover { border-color: var(--primary); color: var(--primary); }
 
-        /* Weekly Survey */
-        .survey-invite {
-            background: linear-gradient(135deg, #8b5cf6, #d946ef);
+        /* Weekly Survey (inline card) */
+        .survey-inline-card {
+            background: var(--bg);
+            border: 2px solid #e5e7eb;
             border-radius: var(--radius-box);
             padding: 20px;
             margin-top: 30px;
-            text-align: center;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 6px 0 rgba(139, 92, 246, 0.3);
         }
-        .survey-invite:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 9px 0 rgba(139, 92, 246, 0.3);
-        }
-        .survey-invite:active {
-            transform: translateY(0);
-            box-shadow: 0 3px 0 rgba(139, 92, 246, 0.3);
+        body.dark-mode .survey-inline-card {
+            border-color: #37464f;
         }
         .star-rating {
             display: flex;

@@ -904,8 +904,7 @@
             state.weeklyFeedbackCompleted = getWeekNumber();
             saveState();
             
-            // Close modal and hide survey invite
-            closeModal('feedbackModal');
+            // Hide the inline survey card
             document.getElementById('surveyInvite').style.display = 'none';
             
             // Reset form
@@ -1170,7 +1169,9 @@
             if (currentUser && syncEnabled) {
                 syncIcon.textContent = '✅';
                 syncText.textContent = 'Cloud Sync Active';
-                syncDetail.textContent = `Syncing as ${currentUser.email}`;
+                syncDetail.textContent = currentUser.email
+                    ? `Syncing as ${currentUser.email}`
+                    : 'Your progress is saved automatically';
                 syncIcon.style.color = 'var(--primary)';
             } else if (currentUser) {
                 syncIcon.textContent = '☁️';
