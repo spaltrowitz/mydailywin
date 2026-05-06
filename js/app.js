@@ -273,7 +273,7 @@
             // Social Connection
             { id: 134, name: "👋\u00a0Say hi to a neighbor", value: 50, freq: 1 },
             { id: 135, name: "😂\u00a0Share a joke or funny video", value: 50, needsComment: true, commentPrompt: "What was it?", freq: 1 },
-            { id: 136, name: "🖼️\u00a0Share a photo with family", value: 50, freq: 1 },
+            { id: 136, name: "🖼️\u00a0Share a photo with family", value: 50, needsPhoto: true, freq: 1 },
             { id: 147, name: "💬\u00a0Have a 15+ minute conversation", value: 50, needsComment: true, commentPrompt: "Who did you talk to?", freq: 1.5 },
             // Physical Wellness
             { id: 138, name: "🦵\u00a0Do 5 sit-to-stands", value: 50, freq: 1 },
@@ -286,10 +286,10 @@
             { id: 143, name: "🥦\u00a0Eat a fruit or vegetable", value: 50, needsComment: true, commentPrompt: "What did you eat?", freq: 2 },
             { id: 144, name: "🐟\u00a0Eat protein with a meal", value: 50, needsComment: true, commentPrompt: "What protein did you have?", freq: 1 },
             // Purpose / Contribution
-            { id: 145, name: "🌱\u00a0Water or tend a plant", value: 50, freq: 1 },
+            { id: 145, name: "🌱\u00a0Water or tend a plant", value: 50, needsPhoto: true, freq: 1 },
             { id: 146, name: "💡\u00a0Teach someone something", value: 50, needsComment: true, commentPrompt: "What did you teach?", freq: 0.5 },
             { id: 148, name: "🤝\u00a0Help someone with something", value: 50, needsComment: true, commentPrompt: "What did you help with?", freq: 1 },
-            { id: 149, name: "🎨\u00a0Do something creative", value: 50, needsComment: true, commentPrompt: "What did you create?", freq: 1 },
+            { id: 149, name: "🎨\u00a0Do something creative", value: 50, needsPhoto: true, needsComment: true, commentPrompt: "What did you create?", freq: 1 },
             { id: 150, name: "📚\u00a0Read for 10+ minutes (book)", value: 50, needsComment: true, commentPrompt: "What are you reading?", freq: 1.5 }
         ];
         
@@ -1682,6 +1682,26 @@
             }
         }
 
+        function compressPhoto(dataUrl, maxWidth = 800) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = function() {
+                    if (dataUrl.length <= 500 * 1024) {
+                        resolve(dataUrl);
+                        return;
+                    }
+                    const canvas = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                };
+                img.src = dataUrl;
+            });
+        }
+
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -1692,7 +1712,7 @@
             }
         }
 
-        function confirmTask() {
+        async function confirmTask() {
             // Handle daily bonus separately
             if (state.currentTaskId === 'daily_bonus') {
                 confirmDailyBonus();
@@ -1709,6 +1729,12 @@
             if (task) {
                 task.completed = true;
                 task.proof = document.getElementById('taskComment').value;
+                
+                const photoImg = document.getElementById('imgPreview').querySelector('img');
+                let photoData = photoImg ? photoImg.src : null;
+                if (photoData) photoData = await compressPhoto(photoData);
+                task.photo = photoData;
+                
                 markTaskCompletedEver(task.id);
                 
                 const { pts, bonusMsg, randomMult } = calculatePointsWithBonuses(task.value);
@@ -1747,16 +1773,16 @@
                 const commentLabel = document.getElementById('commentLabel');
                 const commentInput = document.getElementById('taskComment');
                 
-                if (bonus.needsComment && bonus.commentPrompt) {
-                    // Tasks with specific comment prompts (no photo)
-                    photoSection.style.display = 'none';
-                    commentLabel.textContent = '💬 ' + bonus.commentPrompt;
-                    commentInput.placeholder = bonus.commentPrompt;
-                } else if (bonus.needsPhoto) {
-                    // Tasks where photo is the proof
-                    photoSection.style.display = 'block';
-                    commentLabel.textContent = '💬 Comment (Optional)';
-                    commentInput.placeholder = 'Quick note...';
+                if (bonus.needsPhoto || (bonus.needsComment && bonus.commentPrompt)) {
+                    photoSection.style.display = bonus.needsPhoto ? 'block' : 'none';
+
+                    if (bonus.needsComment && bonus.commentPrompt) {
+                        commentLabel.textContent = '💬 ' + bonus.commentPrompt;
+                        commentInput.placeholder = bonus.commentPrompt;
+                    } else {
+                        commentLabel.textContent = '💬 Comment (Optional)';
+                        commentInput.placeholder = 'Quick note...';
+                    }
                 } else {
                     // Simple checkbox tasks - no modal needed, complete directly
                     markTaskCompletedEver(bonus.id);
@@ -1819,10 +1845,14 @@
             }
         }
 
-        function confirmDailyBonus() {
+        async function confirmDailyBonus() {
             const dayNum = getDayNumber();
             const bonus = state.currentDailyBonus;
             const comment = document.getElementById('taskComment').value.trim();
+            
+            const photoImg = document.getElementById('imgPreview').querySelector('img');
+            let photoData = photoImg ? photoImg.src : null;
+            if (photoData) photoData = await compressPhoto(photoData);
             
             markTaskCompletedEver(bonus.id);
             
@@ -1832,6 +1862,7 @@
                 taskId: bonus.id,
                 taskName: bonus.name,
                 comment: comment,
+                photo: photoData,
                 date: new Date().toISOString(),
                 dayNum: dayNum
             });
@@ -1890,6 +1921,9 @@
                 state.currentWeeklyBonus = bonus;
                 document.getElementById('modalTaskTitle').textContent = bonus.name;
                 
+                const photoSection = document.getElementById('photoSection');
+                photoSection.style.display = bonus.needsPhoto ? 'block' : 'none';
+                
                 // Update the comment placeholder if there's a custom prompt
                 const commentInput = document.getElementById('taskComment');
                 commentInput.placeholder = bonus.commentPrompt || 'Quick note...';
@@ -1901,9 +1935,13 @@
             }
         }
         
-        function confirmWeeklyBonus() {
+        async function confirmWeeklyBonus() {
             const bonus = state.currentWeeklyBonus;
             const comment = document.getElementById('taskComment').value.trim();
+            
+            const photoImg = document.getElementById('imgPreview').querySelector('img');
+            let photoData = photoImg ? photoImg.src : null;
+            if (photoData) photoData = await compressPhoto(photoData);
             
             markTaskCompletedEver(bonus.id);
             
@@ -1913,6 +1951,7 @@
                 taskId: bonus.id,
                 taskName: bonus.name,
                 comment: comment,
+                photo: photoData,
                 date: new Date().toISOString(),
                 week: getWeekNumber()
             });
