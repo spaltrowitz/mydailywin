@@ -197,13 +197,11 @@
             
             <div id="photoSection">
                 <p style="margin-bottom: 10px; font-weight: 700;">📸 Photo (Optional)</p>
-                <div class="file-upload" data-action="inline-2">
+                <div class="file-upload" data-action="inline-2" id="photoUploadBtn">
                     📷 Take or Choose Photo
-                    <input type="file" id="taskPhoto" hidden accept="image/*" capture="environment" data-action="inline-3">
+                    <input type="file" id="taskPhoto" hidden accept="image/*" data-action="inline-3">
                 </div>
-                <div id="photoTip" style="margin: 8px 0; padding: 10px 14px; background: #fffbeb; border-radius: 10px; font-size: 13px; color: #92400e; display: none;">
-                    💡 <strong>On a computer?</strong> Text the photo to yourself, save it, then click "Take or Choose Photo" above to upload it from your files.
-                </div>
+                <div id="photoTip" style="margin: 8px 0; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none;"></div>
                 <div id="imgPreview" style="margin-bottom: 15px; border-radius: 12px; overflow: hidden;"></div>
             </div>
 

@@ -36,7 +36,7 @@
         const rawProfileId = urlParams.get('profile');
         const PROFILE_ID = (rawProfileId && /^[a-zA-Z0-9_-]+$/.test(rawProfileId)) ? rawProfileId : null;
         if (rawProfileId && !PROFILE_ID) {
-            console.warn('⚠️ Invalid profile ID rejected:', rawProfileId);
+            console.warn('⚠️ Invalid profile ID rejected:', rawProfileId);
         }
         
         // Storage key prefix based on profile
@@ -200,7 +200,7 @@
             { id: 1, name: "🚶 Go for a walk", value: 50 },
             { id: 2, name: "💊 Take medications", value: 25 },
             { id: 3, name: "🥤 Drink 8 glasses of water", value: 25 },
-            { id: 4, name: "🛏️ Make the bed", value: 25 },
+            { id: 4, name: "🛏️ Make the bed", value: 25 },
             { id: 5, name: "📞 Call a family member", value: 50 }
         ];
         
@@ -209,7 +209,7 @@
             { id: 101, name: "🌳 Spend 15 minutes outside", value: 50, freq: 2 },
             { id: 102, name: "🧘 Do some stretching", value: 50, freq: 2 },
             { id: 103, name: "📺 Watch a favorite show", value: 25, freq: 1.5 },
-            { id: 104, name: "🍽️ Eat a healthy meal", value: 50, freq: 2 },
+            { id: 104, name: "🍽️ Eat a healthy meal", value: 50, freq: 2 },
             { id: 105, name: "😴 Get a good night's sleep", value: 50, freq: 2 },
             { id: 106, name: "🧹 Tidy up one room", value: 50, freq: 1 },
             { id: 107, name: "📖 Read for 15 minutes", value: 50, freq: 2 },
@@ -228,12 +228,12 @@
             { id: 101, name: "📸 Take a photo of something interesting", value: 50, needsPhoto: true, freq: 2 },
             { id: 102, name: "🧹 Organize one drawer or shelf", value: 50, needsPhoto: true, freq: 1 },
             { id: 122, name: "🚗 Clean out the car", value: 50, needsPhoto: true, freq: 0.5 },
-            { id: 109, name: "🗑️ Throw away one thing you don't need", value: 50, needsPhoto: true, freq: 1 },
+            { id: 109, name: "🗑️ Throw away one thing you don't need", value: 50, needsPhoto: true, freq: 1 },
             { id: 123, name: "🔗 Try NYTimes Connections", value: 35, freq: 2 },
             { id: 103, name: "🌳 Spend 10 minutes outside", value: 50, freq: 2 },
             { id: 106, name: "🔋 Charge devices overnight", value: 50, freq: 1 },
             { id: 111, name: "🧽 Wipe down a counter or surface", value: 50, freq: 1 },
-            { id: 112, name: "🛏️ Make the bed", value: 50, freq: 1.5 },
+            { id: 112, name: "🛏️ Make the bed", value: 50, freq: 1.5 },
             { id: 114, name: "🧘 Do 5 minutes of stretching", value: 50, freq: 1.5 },
             { id: 115, name: "💊 Take vitamins", value: 50, freq: 1.5 },
             { id: 120, name: "📧 Clear out old emails", value: 50, freq: 1, excludeFromStu: true },
@@ -291,18 +291,18 @@
             { id: 305, name: "🍿 Use the microwave", value: 50, isWeekly: true },
             { id: 306, name: "🛒 Check Aisle app for deals", value: 150, isWeekly: true, needsComment: true, commentPrompt: "Did you buy anything?", stuOnly: true },
             { id: 307, name: "💑 Take wife to lunch/dinner", value: 500, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?" },
-            { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What restaurant?" },
+            { id: 308, name: "🍽️ Try a new restaurant", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What restaurant?" },
             { id: 309, name: "💌 Tell a kid you're thinking of them", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you reach out to?" },
-            { id: 310, name: "❤️ Do something nice for wife", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you do?" },
-            { id: 311, name: "🛍️ Buy a new grocery item", value: 150, isWeekly: true, needsComment: true, commentPrompt: "What did you buy?" },
+            { id: 310, name: "❤️ Do something nice for wife", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you do?" },
+            { id: 311, name: "🛍️ Buy a new grocery item", value: 150, isWeekly: true, needsComment: true, commentPrompt: "What did you buy?" },
             { id: 312, name: "🍔 Lunch with tennis friends", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?", stuOnly: true },
             { id: 313, name: "🤖 Use ChatGPT to solve something", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you ask?" },
             { id: 314, name: "📞 Call a friend or family", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you call?" },
             { id: 315, name: "📦 Get rid of 3 office items", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What items?" },
             { id: 316, name: "👕 Donate clothing", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What did you donate?" },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true, needsComment: true, commentPrompt: "How many pairs?" },
-            { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?", stuOnly: true },
-            { id: 319, name: "🗑️ Throw away 5 items", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you throw away?" }
+            { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?", stuOnly: true },
+            { id: 319, name: "🗑️ Throw away 5 items", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you throw away?" }
         ];
 
         // ========== TASK HELP INSTRUCTIONS ==========
@@ -345,7 +345,7 @@
                 content: '<p><strong>What is it?</strong> An AI assistant that can answer questions, help with writing, and more.</p><p><strong>How to use it:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>chat.openai.com</strong> in your browser</li><li>Or download the <strong>ChatGPT</strong> app</li><li>Create a free account</li><li>Type any question and hit enter!</li></ol><p style="margin-top: 15px;"><strong>Try asking:</strong></p><ul style="margin-left: 20px;"><li>"What should I make for dinner tonight?"</li><li>"Explain why the sky is blue"</li><li>"Help me write a birthday message"</li></ul>'
             },
             318: {
-                title: "🕵️ Mystery Shopping",
+                title: "🕵️ Mystery Shopping",
                 content: '<p><strong>What is it?</strong> Get paid to shop and review stores or restaurants.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Search for "mystery shopping companies" or try sites like:</li><li><strong>Market Force</strong> (marketforce.com)</li><li><strong>BestMark</strong> (bestmark.com)</li><li>Create an account and fill out your profile</li><li>Browse available shops in your area</li><li>Apply for ones that interest you</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Never pay to become a mystery shopper - legit ones are free to join!</p>'
             }
         };
@@ -786,7 +786,7 @@
             const suggestions = document.getElementById('feedbackSuggestions').value.trim();
             
             if (rating === 0) {
-                showToast('⚠️ Please select a star rating');
+                showToast('⚠️ Please select a star rating');
                 return;
             }
             
@@ -1007,7 +1007,7 @@
                     // Clear error state on success
                     if (lastSyncError) {
                         lastSyncError = null;
-                        showToast('☁️ Back online! Data synced.');
+                        showToast('☁️ Back online! Data synced.');
                     }
                 } catch (err) {
                     console.error('Cloud sync failed:', err);
@@ -1668,11 +1668,38 @@
                 commentInput.value = '';
                 document.getElementById('imgPreview').innerHTML = '';
                 document.getElementById('taskPhoto').value = '';
-                // Show desktop tip if not on mobile
+                // Show device-specific photo tip
                 var photoTip = document.getElementById('photoTip');
-                if (photoTip) {
-                    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                    photoTip.style.display = (!isMobile && photoSection.style.display === 'block') ? 'block' : 'none';
+                var uploadBtn = document.getElementById('photoUploadBtn');
+                var photoInput = document.getElementById('taskPhoto');
+                if (photoTip && photoSection.style.display === 'block') {
+                    var ua = navigator.userAgent;
+                    var isIPhone = /iPhone|iPad|iPod/i.test(ua);
+                    var isAndroid = /Android/i.test(ua);
+                    if (isIPhone) {
+                        photoInput.removeAttribute('capture');
+                        uploadBtn.firstChild.textContent = '📷 Take Photo or Choose from Library';
+                        photoTip.style.display = 'block';
+                        photoTip.style.background = '#f0fdf4';
+                        photoTip.style.color = '#166534';
+                        photoTip.innerHTML = '💡 Tap the button above. You can <strong>take a new photo</strong> with your camera or <strong>pick one</strong> from your photo library.';
+                    } else if (isAndroid) {
+                        photoInput.setAttribute('capture', 'environment');
+                        uploadBtn.firstChild.textContent = '📷 Take Photo or Choose File';
+                        photoTip.style.display = 'block';
+                        photoTip.style.background = '#f0fdf4';
+                        photoTip.style.color = '#166534';
+                        photoTip.innerHTML = '💡 Tap the button above. Your camera will open, or you can pick a photo from your gallery.';
+                    } else {
+                        photoInput.removeAttribute('capture');
+                        uploadBtn.firstChild.textContent = '📷 Choose Photo from Files';
+                        photoTip.style.display = 'block';
+                        photoTip.style.background = '#fffbeb';
+                        photoTip.style.color = '#92400e';
+                        photoTip.innerHTML = '💡 <strong>On a computer?</strong> Take the photo on your phone, then text or email it to yourself. Save it to your computer, then click the button above to upload it.';
+                    }
+                } else if (photoTip) {
+                    photoTip.style.display = 'none';
                 }
                 openModal('taskModal');
             }
@@ -1842,11 +1869,11 @@
             const park = document.getElementById('tennisPark').value;
             
             if (!date) {
-                showToast('⚠️ Please select when you played');
+                showToast('⚠️ Please select when you played');
                 return;
             }
             if (!park) {
-                showToast('⚠️ Please select where you played');
+                showToast('⚠️ Please select where you played');
                 return;
             }
             
@@ -1977,7 +2004,7 @@
             const who = sanitizeInput(rawWho, 50);
             
             if (who.length < 2) {
-                showToast('⚠️ Please enter who you called');
+                showToast('⚠️ Please enter who you called');
                 return;
             }
             
@@ -2020,7 +2047,7 @@
             const reason = sanitizeInput(rawReason, 500);
             
             if (!isValidTaskName(name)) {
-                showToast('⚠️ Please enter a valid task name (2-100 characters)');
+                showToast('⚠️ Please enter a valid task name (2-100 characters)');
                 return;
             }
             
@@ -2086,7 +2113,7 @@
         function submitReport() {
             const reason = document.getElementById('reportReason').value;
             if (!reason) {
-                showToast('⚠️ Please select a reason');
+                showToast('⚠️ Please select a reason');
                 return;
             }
             
