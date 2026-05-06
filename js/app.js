@@ -218,6 +218,23 @@
             { id: 106, name: "🧹 Tidy up one room", value: 50, freq: 1 },
             { id: 107, name: "📖 Read for 15 minutes", value: 50, freq: 2 },
             { id: 108, name: "🎵 Listen to music you enjoy", value: 25, freq: 2 }
+            // Wellness: Social
+            { id: 134, name: "👋 Say hi to a neighbor", value: 50, freq: 1 },
+            { id: 136, name: "🖼️ Share a photo with family", value: 50, freq: 1 },
+            { id: 147, name: "💬 Have a 15+ minute conversation", value: 50, freq: 1.5 },
+            // Wellness: Physical
+            { id: 138, name: "🦵 Do 5 sit-to-stands", value: 50, freq: 1 },
+            { id: 139, name: "🚶‍♂️ Walk 10 minutes after a meal", value: 50, freq: 1.5 },
+            // Wellness: Emotional
+            { id: 140, name: "🙏 Write 3 things you're grateful for", value: 50, freq: 1.5 },
+            { id: 141, name: "🌅 Sit quietly for 5 minutes", value: 50, freq: 1 },
+            { id: 142, name: "😊 Do something that makes you smile", value: 50, freq: 1 },
+            // Wellness: Nutrition
+            { id: 143, name: "🥦 Eat a fruit or vegetable", value: 50, freq: 2 },
+            { id: 144, name: "🐟 Eat protein with a meal", value: 50, freq: 1 },
+            // Wellness: Purpose
+            { id: 145, name: "🌱 Water or tend a plant", value: 50, freq: 1 },
+            { id: 148, name: "🤝 Help someone with something", value: 50, freq: 1 }
         ];
         
         // REGULAR TEMPLATE: Standard tasks for tech-comfortable users (like Stu's current setup)
