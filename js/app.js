@@ -257,6 +257,7 @@
             { id: 134, name: "👋\u00a0Say hi to a neighbor", value: 50, freq: 1 },
             { id: 135, name: "😂\u00a0Share a joke or funny video", value: 50, needsComment: true, commentPrompt: "What was it?", freq: 1 },
             { id: 136, name: "🖼️\u00a0Share a photo with family", value: 50, freq: 1 },
+            { id: 147, name: "💬\u00a0Have a 15+ minute conversation", value: 50, needsComment: true, commentPrompt: "Who did you talk to?", freq: 1.5 },
             // Physical Wellness
             { id: 138, name: "🦵\u00a0Do 5 sit-to-stands", value: 50, freq: 1 },
             { id: 139, name: "🚶‍♂️\u00a0Walk 10 minutes after a meal", value: 50, freq: 1.5 },
@@ -269,7 +270,10 @@
             { id: 144, name: "🐟\u00a0Eat protein with a meal", value: 50, needsComment: true, commentPrompt: "What protein did you have?", freq: 1 },
             // Purpose / Contribution
             { id: 145, name: "🌱\u00a0Water or tend a plant", value: 50, freq: 1 },
-            { id: 146, name: "💡\u00a0Teach someone something", value: 50, needsComment: true, commentPrompt: "What did you teach?", freq: 0.5 }
+            { id: 146, name: "💡\u00a0Teach someone something", value: 50, needsComment: true, commentPrompt: "What did you teach?", freq: 0.5 },
+            { id: 148, name: "🤝\u00a0Help someone with something", value: 50, needsComment: true, commentPrompt: "What did you help with?", freq: 1 },
+            { id: 149, name: "🎨\u00a0Do something creative", value: 50, needsComment: true, commentPrompt: "What did you create?", freq: 1 },
+            { id: 150, name: "📚\u00a0Read for 10+ minutes (book)", value: 50, needsComment: true, commentPrompt: "What are you reading?", freq: 1.5 }
         ];
         
         // Load profile data and determine which template to use
@@ -324,7 +328,6 @@
             { id: 311, name: "🛍️ Buy a new grocery item", value: 150, isWeekly: true, needsComment: true, commentPrompt: "What did you buy?" },
             { id: 312, name: "🍔 Lunch with tennis friends", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Where did you go?", stuOnly: true },
             { id: 313, name: "🤖 Use ChatGPT to solve something", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you ask?" },
-            { id: 314, name: "📞 Call a friend or family", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you call?" },
             { id: 315, name: "📦 Get rid of 3 office items", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What items?" },
             { id: 316, name: "👕 Donate clothing", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What did you donate?" },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true, needsComment: true, commentPrompt: "How many pairs?" },
@@ -335,16 +338,13 @@
             { id: 321, name: "🎬 Watch a documentary", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you watch?" },
             // Wellness: Social
             { id: 322, name: "☕ Have coffee/lunch with someone new", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you meet with?" },
-            { id: 323, name: "💬 Have a 15+ minute conversation", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you talk to?" },
             // Wellness: Physical
             { id: 324, name: "🏊 Try a gentle new activity", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you try?" },
             { id: 325, name: "🩺 Schedule or attend a health appointment", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What appointment?" },
             // Wellness: Emotional
             { id: 326, name: "📝 Write a letter or card to someone", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you write to?" },
-            { id: 327, name: "🎨 Do something creative", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you create?" },
             // Wellness: Nutrition
             // Wellness: Purpose
-            { id: 329, name: "🤝 Help someone with something", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you help with?" },
             { id: 330, name: "📦 Organize one area of the house", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you organize?" }
         ];
 
