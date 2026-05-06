@@ -742,6 +742,7 @@ footer a {
     .top-bar-links a {
         font-size: 13px;
         padding: 7px 14px;
+        white-space: normal;
     }
 
     .tabs {
