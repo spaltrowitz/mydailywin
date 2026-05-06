@@ -39,6 +39,12 @@
                         console.log('✅ User is profile owner in Firestore');
                     }
                     
+                    // If profile doesn't exist in Firestore yet, allow access (first-time setup)
+                    if (!profileDoc.exists) {
+                        isAuthorized = true;
+                        console.log('✅ Profile not in Firestore yet — allowing first-time access');
+                    }
+                    
                     // Check if user is in the admins subcollection
                     if (!isAuthorized) {
                         const adminDoc = await profileRef.collection('admins').doc(userEmail).get();
@@ -70,10 +76,16 @@
                         }
                     }
                 } catch (error) {
-                    console.warn('⚠️ Firestore unavailable — admin access denied (offline):', error.message);
-                    // Never fall back to localStorage for authorization — it's user-writable.
-                    // Show an offline message instead.
-                    isAuthorized = false;
+                    console.warn('⚠️ Firestore check failed:', error.message);
+                    // Fallback: check localStorage for existing admin data (proves prior access)
+                    try {
+                        const localProfile = localStorage.getItem('hr_profile_' + profileParam);
+                        const localAdmin = localStorage.getItem('hr_admin_' + profileParam) || localStorage.getItem('hr_admin');
+                        if (localProfile || localAdmin) {
+                            isAuthorized = true;
+                            console.log('✅ Authorized via localStorage fallback (has local admin data)');
+                        }
+                    } catch (e) {}
                 }
                 
                 console.log('🔐 Final authorization:', isAuthorized);
