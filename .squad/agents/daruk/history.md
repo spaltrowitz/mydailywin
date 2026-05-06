@@ -66,6 +66,22 @@
 
 ---
 
+### Security Fixes — Riju's Audit Findings (High Priority)
+
+**Session:** Security fix sprint  
+
+**Changes Made:**
+1. **login.html CSP hardened:** Removed `'unsafe-inline'` from `script-src`. All JS was already external (js/login.js) with data-action event delegation, so no functional change — just tightening the policy.
+2. **Profile ID generation:** Replaced timestamp-based `Date.now().toString(36) + random` with `crypto.randomUUID()` in js/get-started.js. Legacy IDs (e.g. "stu") unaffected.
+3. **innerHTML audit (clean):** All innerHTML in admin.js and app.js already escapes user content via `escapeHtml()` from utils.js. No fixes needed.
+
+**Learnings:**
+- `crypto.randomUUID()` is available in all modern browsers (no polyfill needed for our target audience)
+- CSP meta tags and server headers (firebase.json) are evaluated independently — most restrictive wins per-directive. The firebase.json global header still has `'unsafe-inline'` in script-src; a future sweep should remove it there too once all pages are verified clean.
+- The codebase's innerHTML hygiene is solid — previous escapeHtml() work paid off.
+
+---
+
 ### Historical Context (Archived)
 
 **Previous Sessions Summary:**
@@ -122,3 +138,19 @@ The following learnings come from Backend agents across Shari's other personal p
 - **Sleep date normalization:** Always use start_at date ("night of") for consistency across sources.
 - **SQLite performance:** Pre-compile prepared statements to module-level constants. WAL mode for concurrent reads.
 - **PostgreSQL migration gotchas:** SQLite-isms to watch: `datetime('now')`, `INSERT OR IGNORE`, `date()` expressions, PRAGMAs. `ON CONFLICT` upserts are PG-compatible as-is.
+
+## Session: 2026-05-06 — Security Audit Fixes
+
+**Context:** Daruk fixed 3 high-priority security findings from Riju's audit.
+
+**Work completed:**
+- Replaced guessable timestamp profile IDs with `crypto.randomUUID()` in `js/get-started.js`
+- Removed `'unsafe-inline'` from Content Security Policy in `login.html`
+- Audited all `innerHTML` usage — no vulnerabilities found (all user content already escaped via `escapeHtml()`)
+
+**Impact:** Security posture improved. UUID generation now cryptographically secure. CSP strengthened.
+
+**Files:** js/get-started.js, login.html
+
+**Note:** `firebase.json` global CSP still contains `'unsafe-inline'` in `script-src`. This should be removed once all pages are verified to have no inline scripts. Currently, per-page meta tags are the enforcement mechanism.
+

@@ -200,3 +200,69 @@ The app is Duolingo-inspired: daily tasks earn points (100 pts = $1), streaks bu
 - Design rationale: `.squad/decisions/inbox/sidon-settings-redesign.md`
 - New HTML: `.squad/agents/sidon/new-settings-html.txt`
 - CSS notes: `.squad/agents/sidon/css-notes.md`
+
+### 2025-07-25 — Admin Portal Beautification
+
+**Session:** Full visual polish pass on admin.html + css/admin.css  
+**Requested by:** Shari Paltrowitz
+
+**Changes Made (CSS-focused, no functional changes):**
+
+1. **Top bar:** Deeper green gradient (#3a8f00 → primary-dark → primary), subtle radial glow overlay, glassmorphism nav buttons with backdrop-filter, 1px glass border
+2. **Cards:** Added subtle 1px border ring (rgba border trick), hover lift effect with enhanced shadow, slightly more padding (26px)
+3. **Stat boxes:** Larger value font (30px → 32px for highlights), hover interaction with green border hint and lift, better border-radius (16px), highlight boxes get glow shadow
+4. **Tab bar:** Tighter padding (6px surround), active tab gets gradient + shadow matching primary buttons, bolder font-weight (700)
+5. **Buttons:** All buttons now use gradients instead of flat colors, consistent shadow layer by color, hover lifts with deepened gradient, standardized border-radius using --radius-btn
+6. **Tables:** Separated border-spacing, lighter divider lines (#eef0f3), table headers now transparent bg with smaller uppercase letter-spacing, editable rows get rounded hover highlight per-cell
+7. **Empty states:** Dashed border treatment, background fill, bolder font — looks intentional not broken
+8. **Info/warning/report boxes:** Gradient backgrounds instead of flat, larger border-radius (14px), more padding and line-height
+9. **Modals:** Backdrop blur, slide-up entrance animation (modalSlideUp keyframe), card-bg instead of hardcoded white, deeper box-shadow
+10. **Badges:** Pill-shaped (20px radius), slightly larger padding
+11. **Typography:** Card h2 changed from green to --text for better hierarchy (emoji provides color), h3 gets uppercase letter-spacing treatment, FAQ questions bolder (800)
+12. **Payment rows:** Gradient backgrounds, hover lift, larger amount font (20px)
+13. **Level rows:** Larger radius (14px), hover border hint, current level gets glow shadow
+14. **Forms:** Input focus gets green glow ring (matching shared.css pattern), includes email type selector
+15. **Quick Reference card (HTML):** Each fact item gets a frosted pill background for visual separation
+16. **Empty reported tasks:** Warmer copy ("all clear!" vs bare text)
+17. **Responsive:** Added email input to mobile form rules, reduced-motion media query added, consistent mobile border-radius
+
+**Principles applied:**
+- Professional but warm — gradients and glows instead of flat colors
+- Same product family as app.html — green gradients, rounded everything, lift-on-hover micro-interactions
+- Clear visual hierarchy — highlight stat boxes glow, tables de-emphasized, buttons gradient-ranked
+- Mobile-friendly — tab bar untouched structurally, padding/sizing scales smoothly
+- Empty states feel intentional (dashed border + background)
+
+**What was NOT changed:**
+- Zero HTML IDs modified
+- Zero data-action attributes modified  
+- Zero JS changes
+- Tab bar scroll behavior preserved exactly
+- All 50 IDs and 19 unique data-actions verified post-edit
+
+
+## Session: 2026-05-06 — Admin Portal Visual Overhaul
+
+**Context:** Sidon completed a comprehensive visual redesign of the admin portal UI.
+
+**Design decisions:**
+- Gradient buttons (matching app.html's Duolingo-inspired feel)
+- Card hover lifts for subtle interactivity signals
+- Modal backdrop blur + slide-up animations for premium feel
+- Empty states use dashed borders to signal "nothing here yet"
+- Stat box highlights get glow shadows for visual hierarchy
+- Table headers de-emphasized with transparent background
+- Top bar deeper gradient with subtle glow overlay
+
+**Implementation notes:**
+- All changes CSS-only (no JS, no ID/attribute changes)
+- No backend or service worker changes required
+- Pattern established: gradient buttons + 16px border-radius for stat boxes
+
+**Team impact:** 
+- Daruk/Impa: No backend changes needed (purely presentational)
+- Riju: No CSP changes. No new external resources.
+- All: New admin UI elements should follow gradient button pattern and 16px border-radius for stat boxes
+
+**Files:** css/admin.css, admin.html
+

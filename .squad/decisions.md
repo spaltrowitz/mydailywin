@@ -500,3 +500,39 @@ page-specific <script> (uses firebase.auth(), firebase.firestore(), escapeHtml()
 4. Remove `cdn.jsdelivr.net` from app.html and admin.html CSP
 5. Add dark-mode.js to admin.html head
 
+# Decision: Security Fixes from Riju's Audit
+
+**Author:** Daruk (Backend Dev)  
+**Date:** 2025-07-26  
+
+## Changes
+
+1. **login.html CSP:** `'unsafe-inline'` removed from `script-src`. Safe because all JS is already external with event delegation.
+2. **Profile IDs:** New profiles use `crypto.randomUUID()` instead of timestamp-based IDs. Existing profiles unchanged.
+3. **innerHTML audit:** No changes needed — all user content already escaped via `escapeHtml()`.
+
+## Follow-up Needed
+
+- **firebase.json global CSP** still has `'unsafe-inline'` in `script-src`. This should be removed once all pages (app.html, admin.html, get-started.html, home.html, etc.) are verified to have no inline scripts. The per-page meta tags are currently the enforcement mechanism.
+
+# Decision: Admin Portal Visual Polish
+
+**Author:** Sidon (UI/UX Designer)  
+**Date:** 2025-07-25  
+**Scope:** css/admin.css + admin.html (visual only)
+
+## What Changed
+Full visual polish pass on admin portal. All changes are CSS-only (no JS, no ID/attribute changes). Key design decisions:
+
+1. **Gradient buttons instead of flat** — matches app.html's Duolingo-inspired feel
+2. **Card hover lift** — subtle interactivity signal, consistent with modern design language
+3. **Modal backdrop blur + slide-up animation** — premium feel without performance cost
+4. **Empty states use dashed borders** — signals "nothing here yet" vs "something broke"
+5. **Stat box highlights get glow shadow** — key numbers (total points, total $) visually pop
+6. **Table headers de-emphasized** — transparent bg, smaller font, so data rows take focus
+7. **Top bar deeper gradient** — more visual weight, subtle glow overlay
+
+## Team Impact
+- **Daruk/Impa:** No backend or service worker changes needed. Purely presentational.
+- **Riju:** No CSP changes. No new external resources. backdrop-filter is CSS-only.
+- **All:** If adding new admin UI elements, follow gradient button pattern and 16px border-radius for stat boxes.
