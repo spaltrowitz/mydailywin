@@ -306,6 +306,7 @@
         // Fun/reward-focused activities (100 pts = $1.00)
         const WEEKLY_BONUSES = [
             { id: 301, name: "💿 Sell coins or vinyls", value: 500, isWeekly: true, needsComment: true, commentPrompt: "What did you sell?" },
+            { id: 331, name: "🔍 Research 5 coins or vinyls", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you look up?" },
             { id: 302, name: "📺 Watch show/movie (streaming)", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you watch?" },
             { id: 305, name: "🍿 Use the microwave", value: 50, isWeekly: true },
             { id: 306, name: "🛒 Check Aisle app for deals", value: 150, isWeekly: true, needsComment: true, commentPrompt: "Did you buy anything?", stuOnly: true },
@@ -357,11 +358,11 @@
             },
             117: {
                 title: "🎧 Podcasts Setup",
-                content: '<p><strong>What is it?</strong> Free audio shows you can listen to on any topic.</p><p><strong>How to listen:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>open.spotify.com</strong> in your browser (free, no download)</li><li>Or use the <strong>Podcasts</strong> app already on your iPhone</li><li>Search for a topic you like (news, sports, history, comedy)</li><li>Tap a show, then tap an episode to play</li><li>Use headphones or play through your phone speaker</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Popular picks: "The Daily" (news), "SmartLess" (comedy), "Radiolab" (science)</p>'
+                content: '<p><strong>What is it?</strong> Free audio shows you can listen to on any topic.</p><p><strong>How to listen:</strong></p><ol style="margin-left: 20px;"><li>Open the <strong>Podcasts</strong> app on your iPhone (it\'s already there — purple icon)</li><li>Search for a topic you like (news, sports, history, comedy)</li><li>Tap a show, then tap an episode to play</li><li>Use headphones or play through your phone speaker</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Popular picks: "The Daily" (news), "SmartLess" (comedy), "Radiolab" (science)</p>'
             },
             118: {
                 title: "📺 Streaming Setup",
-                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>Check if you already have a subscription (ask family!)</li><li>Go to the website (netflix.com, hulu.com) in your browser</li><li>Log in with your account</li><li>Browse and click something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try documentaries or classic movies to start!</p>'
+                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>You have access to Netflix, Hulu, Apple TV, and Amazon Video</li><li>Open any of them on your TV, phone, or browser</li><li>Browse and pick something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try documentaries or classic movies to start!</p>'
             },
             119: {
                 title: "📱 Delete Unused Apps",
@@ -369,11 +370,11 @@
             },
             302: {
                 title: "📺 Streaming Setup",
-                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>Check if you already have a subscription (ask family!)</li><li>Go to the website (netflix.com, hulu.com) in your browser</li><li>Log in with your account</li><li>Browse and click something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try a movie or show someone recommended!</p>'
+                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>You have access to Netflix, Hulu, Apple TV, and Amazon Video</li><li>Open any of them on your TV, phone, or browser</li><li>Browse and pick something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try a movie or show someone recommended!</p>'
             },
             306: {
                 title: "🛒 Aisle App Setup",
-                content: '<p><strong>What is it?</strong> An app that shows grocery deals and lets you clip digital coupons.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Ask a family member to help you set up the <strong>Aisle</strong> app</li><li>Create an account with your email</li><li>Select your local grocery stores</li><li>Browse deals and tap to "clip" coupons</li><li>Show the app at checkout or link your store loyalty card</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Check the app before your grocery trip!</p>'
+                content: '<p><strong>What is it?</strong> An app that shows grocery deals and lets you clip digital coupons.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Open the <strong>Aisle</strong> app on your phone (you\'re already set up!)</li><li>Check for new deals before your grocery trip</li><li>Tap to "clip" any coupons you want</li><li>Show the app at checkout</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Check the app before your grocery trip!</p>'
             },
             313: {
                 title: "🤖 ChatGPT Setup",
@@ -413,7 +414,7 @@
             },
             320: {
                 title: "📚 Start or Continue a Book",
-                content: '<p><strong>Goal:</strong> Spend some time reading a book this week.</p><p><strong>How to find books:</strong></p><ul style="margin-left: 20px;"><li>Visit your local library (free!)</li><li>Ask family for recommendations</li><li>Audiobooks count too — go to <strong>librivox.org</strong> for free audiobooks in your browser</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Not sure what to read? Ask ChatGPT: "Recommend a book about [topic I like]"</p>'
+                content: '<p><strong>Goal:</strong> Spend some time reading a book this week.</p><p><strong>How to find books:</strong></p><ul style="margin-left: 20px;"><li>Visit the public library — you already go!</li><li>Ask the librarian for recommendations</li><li>Audiobooks count too — ask the library about their free audiobook program</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Not sure what to read? Ask ChatGPT: "Recommend a book about [topic I like]"</p>'
             },
             321: {
                 title: "🎬 Watch a Documentary",
@@ -429,11 +430,15 @@
             },
             301: {
                 title: "💿 Sell Coins or Vinyls",
-                content: '<p><strong>Goal:</strong> List or sell items from your collection.</p><p><strong>How to sell:</strong></p><ul style="margin-left: 20px;"><li><strong>eBay</strong> — best for coins and vinyl records</li><li><strong>Facebook Marketplace</strong> — sell locally, no shipping</li><li><strong>Local record/coin shops</strong> — get an in-person quote</li><li>Ask family to help you list items online</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Take clear photos and look up what similar items sold for!</p>'
+                content: '<p><strong>Goal:</strong> List or sell items from your collection.</p><p><strong>How to sell:</strong></p><ul style="margin-left: 20px;"><li><strong>Local record/coin shops</strong> — bring items in for a quote</li><li><strong>Coin shows and flea markets</strong> — great for meeting collectors</li><li><strong>Research first:</strong> Search eBay for your item, filter by "Sold" to see real prices</li><li>Or ask ChatGPT: "This is a [year] [coin/vinyl]. How much is it worth?"</li><li>Knowing the value helps you get a fair price in person</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Take clear photos and look up what similar items sold for!</p>'
             },
             316: {
                 title: "👕 Donate Clothing",
                 content: '<p><strong>Goal:</strong> Find clothes you no longer wear and donate them.</p><p><strong>Where to donate:</strong></p><ul style="margin-left: 20px;"><li>Goodwill or Salvation Army</li><li>Local clothing drives</li><li>Homeless shelters</li><li>Put in a bag by the door — drop off next time you\'re out</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 If you haven\'t worn it in a year, someone else could use it!</p>'
+            },
+            331: {
+                title: "🔍 Research Coins or Vinyls",
+                content: '<p><strong>Goal:</strong> Look up the value of 5 coins or vinyl records you own.</p><p><strong>How to research:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>ebay.com</strong> in your browser</li><li>Search for your coin or vinyl (e.g. "1965 quarter" or "Beatles Abbey Road vinyl")</li><li>Click <strong>Sold Items</strong> filter to see what people actually paid</li><li>Write down the prices</li></ol><p style="margin-top: 15px;"><strong>Or use ChatGPT:</strong></p><p style="margin-left: 20px;">"I have a [year] [description]. How much is it worth and how much can I expect to sell it for?"</p><p style="margin-top: 15px; color: var(--primary);">💡 Knowing the value before selling means you won\'t get lowballed!</p>'
             }
         };
 
