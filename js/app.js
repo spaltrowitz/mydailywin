@@ -589,9 +589,10 @@
 
         // ========== INIT ==========
         function init() {
-            // Set admin link with profile parameter
-            if (PROFILE_ID) {
-                document.getElementById('adminLink').href = 'admin.html?profile=' + PROFILE_ID;
+            // Set admin link with profile parameter (if element exists)
+            var adminLink = document.getElementById('adminLink');
+            if (adminLink && PROFILE_ID) {
+                adminLink.href = 'admin.html?profile=' + PROFILE_ID;
             }
             
             loadState();
