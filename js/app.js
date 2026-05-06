@@ -604,7 +604,7 @@
             render();
             
             // Check for payment notifications
-            checkPaymentNotifications();
+            checkPaymentNotifications().catch(function(err) { console.warn('Payment notification check failed:', err.message); });
         }
         
         // Check for payment sent notifications from Firestore
