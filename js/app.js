@@ -323,7 +323,7 @@
             { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?", stuOnly: true },
             { id: 319, name: "🗑️ Throw away 5 items", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you throw away?" },
             // Wellness: Cognitive
-            { id: 320, name: "📚 Finish a book chapter", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What are you reading?" },
+            { id: 320, name: "📚 Start or continue a book", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What are you reading?" },
             { id: 321, name: "🎬 Watch a documentary", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you watch?" },
             // Wellness: Social
             { id: 322, name: "☕ Have coffee/lunch with someone new", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you meet with?" },
@@ -383,6 +383,62 @@
             318: {
                 title: "🕵️ Mystery Shopping",
                 content: '<p><strong>What is it?</strong> Get paid to shop and review stores or restaurants.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Search for "mystery shopping companies" or try sites like:</li><li><strong>Market Force</strong> (marketforce.com)</li><li><strong>BestMark</strong> (bestmark.com)</li><li>Create an account and fill out your profile</li><li>Browse available shops in your area</li><li>Apply for ones that interest you</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Never pay to become a mystery shopper - legit ones are free to join!</p>'
+            },
+            130: {
+                title: "🧮 Sudoku Setup",
+                content: '<p><strong>What is it?</strong> A number puzzle where you fill a 9x9 grid so each row, column, and box has digits 1-9.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Search "Sudoku" in the App Store and download a free app</li><li>Or visit <strong>websudoku.com</strong></li><li>Start with "Easy" difficulty</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start by looking for rows that are almost complete!</p>'
+            },
+            131: {
+                title: "🎓 Learn Something New",
+                content: '<p><strong>Goal:</strong> Learn one new fact today — about anything!</p><p><strong>Easy ways:</strong></p><ul style="margin-left: 20px;"><li>Google a question you\'ve always wondered about</li><li>Watch a short YouTube video on a topic you like</li><li>Read a Wikipedia article</li><li>Ask ChatGPT something curious</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Try: "What\'s the tallest building in the world?" or "How do airplanes fly?"</p>'
+            },
+            132: {
+                title: "✍️ Write a Memory",
+                content: '<p><strong>Goal:</strong> Write down one memory from your life. It can be anything!</p><p><strong>Ideas:</strong></p><ul style="margin-left: 20px;"><li>A favorite vacation</li><li>Something funny that happened</li><li>A memory with your kids when they were young</li><li>Your first job</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Just a few sentences is perfect. Type it in the comment box!</p>'
+            },
+            138: {
+                title: "🦵 Sit-to-Stands",
+                content: '<p><strong>What is it?</strong> Stand up from a chair and sit back down. Great for leg strength!</p><p><strong>How to do it safely:</strong></p><ol style="margin-left: 20px;"><li>Sit in a sturdy chair (not on wheels)</li><li>Scoot to the front edge</li><li>Lean forward slightly and push up to standing</li><li>Pause, then sit back down slowly</li><li>Repeat 5 times</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Keep a table nearby for support. Go at your own pace — no rush!</p>'
+            },
+            140: {
+                title: "🙏 Gratitude Journaling",
+                content: '<p><strong>Goal:</strong> Write 3 things you\'re thankful for today. Big or small!</p><p><strong>Examples:</strong></p><ul style="margin-left: 20px;"><li>"The weather was nice today"</li><li>"Had a good talk with my son"</li><li>"Enjoyed my morning coffee"</li><li>"My tennis game is improving"</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Type them in the comment box, or write in a notebook — whatever\'s easier!</p>'
+            },
+            324: {
+                title: "🏊 Gentle Activities to Try",
+                content: '<p><strong>Goal:</strong> Try something different to keep moving in new ways.</p><p><strong>Safe ideas:</strong></p><ul style="margin-left: 20px;"><li>🏊 Swimming or water aerobics (easy on joints)</li><li>🚶 Walk a new trail or park</li><li>🧘 Gentle yoga — search YouTube: "gentle yoga for seniors"</li><li>🏓 Table tennis or bocce ball</li><li>🚴 Stationary bike at a gym</li><li>💃 A beginner dance class</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Start slow. If it hurts, stop. The goal is fun, not intensity!</p>'
+            },
+            327: {
+                title: "🎨 Creative Ideas",
+                content: '<p><strong>Goal:</strong> Make or create something — anything counts!</p><p><strong>Ideas:</strong></p><ul style="margin-left: 20px;"><li>🎨 Draw, paint, or doodle</li><li>📸 Take an artistic photo</li><li>🧑‍🍳 Try a new recipe</li><li>✍️ Write a poem or short story</li><li>🔧 Build or fix something</li><li>🎵 Play music or sing</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 No wrong answers — if you made something, it counts!</p>'
+            },
+            320: {
+                title: "📚 Start or Continue a Book",
+                content: '<p><strong>Goal:</strong> Spend some time reading a book this week.</p><p><strong>How to find books:</strong></p><ul style="margin-left: 20px;"><li>Visit your local library (free!)</li><li>Ask family for recommendations</li><li>Try a large-print edition if regular text is small</li><li>Audiobooks count too — try Libby app (free with library card)</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Not sure what to read? Ask ChatGPT: "Recommend a book about [topic I like]"</p>'
+            },
+            321: {
+                title: "🎬 Watch a Documentary",
+                content: '<p><strong>Goal:</strong> Watch something that teaches you something new.</p><p><strong>Where to find them:</strong></p><ul style="margin-left: 20px;"><li><strong>YouTube</strong> — search "best documentaries" + a topic you like</li><li><strong>Netflix/Hulu</strong> — browse the Documentaries category</li><li><strong>PBS</strong> — free at pbs.org</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Try: nature, history, space, cooking, or true crime!</p>'
+            },
+            325: {
+                title: "🩺 Health Appointment",
+                content: '<p><strong>Goal:</strong> Schedule or go to any health appointment this week.</p><p><strong>Counts as completed:</strong></p><ul style="margin-left: 20px;"><li>Doctor checkup</li><li>Dentist</li><li>Eye doctor</li><li>Physical therapy</li><li>Even just calling to schedule one!</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Preventive care keeps you healthy long-term. One call is all it takes!</p>'
+            },
+            326: {
+                title: "📝 Write a Letter or Card",
+                content: '<p><strong>Goal:</strong> Write to someone you care about — handwritten or typed.</p><p><strong>Ideas:</strong></p><ul style="margin-left: 20px;"><li>A thank-you note</li><li>A birthday card</li><li>A "thinking of you" note to an old friend</li><li>An email to someone you haven\'t talked to in a while</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Handwritten notes are extra special — people love getting real mail!</p>'
+            },
+            328: {
+                title: "🧑‍🍳 Cook from Scratch",
+                content: '<p><strong>Goal:</strong> Make a meal using real ingredients — not a frozen dinner.</p><p><strong>Easy starter recipes:</strong></p><ul style="margin-left: 20px;"><li>Scrambled eggs with toast</li><li>Pasta with sauce and vegetables</li><li>A simple soup or stew</li><li>Grilled chicken and salad</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Search YouTube: "easy recipes for beginners" for step-by-step videos!</p>'
+            },
+            301: {
+                title: "💿 Sell Coins or Vinyls",
+                content: '<p><strong>Goal:</strong> List or sell items from your collection.</p><p><strong>How to sell:</strong></p><ul style="margin-left: 20px;"><li><strong>eBay</strong> — best for coins and vinyl records</li><li><strong>Facebook Marketplace</strong> — sell locally, no shipping</li><li><strong>Local record/coin shops</strong> — get an in-person quote</li><li>Ask family to help you list items online</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Take clear photos and look up what similar items sold for!</p>'
+            },
+            316: {
+                title: "👕 Donate Clothing",
+                content: '<p><strong>Goal:</strong> Find clothes you no longer wear and donate them.</p><p><strong>Where to donate:</strong></p><ul style="margin-left: 20px;"><li>Goodwill or Salvation Army</li><li>Local clothing drives</li><li>Homeless shelters</li><li>Put in a bag by the door — drop off next time you\'re out</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 If you haven\'t worn it in a year, someone else could use it!</p>'
             }
         };
 
