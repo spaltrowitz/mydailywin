@@ -788,80 +788,126 @@
             }
         }
 
-/* ========== DARK MODE ========== */
-body.dark-mode {
-    background: var(--bg);
-    --bg: #131f24;
-    --card-bg: #202f36;
-    --text: #e5e5e5;
-    --text-light: #a3a3a3;
+/* ========== ALTERNATING SECTION BACKGROUNDS ========== */
+/* Dark green → light green alternation instead of dark mode */
+
+/* Hero: dark green (already set in .hero) */
+
+/* App Preview: light green (already set) */
+
+/* Why section: soft green instead of purple */
+.why-section {
+    text-align: center;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9) !important;
+    border-radius: 24px;
+    padding: 40px 20px;
+    margin-top: 30px;
 }
+
+/* Features container: white */
+
+/* How It Works: light green tint */
+.how-it-works {
+    background: linear-gradient(135deg, #f0f9f0, #e8f5e9) !important;
+}
+
+/* FAQ: white (already white) */
+
+/* Gamification: light green */
+.gamification {
+    text-align: center;
+    background: linear-gradient(135deg, #e8f5e9, #f0f9f0);
+    padding: 60px 20px;
+}
+
+/* CTA: dark green (already set) */
+
+/* Footer: dark green instead of dark gray */
+footer {
+    background: #1a3a00 !important;
+    color: rgba(255,255,255,0.8);
+}
+footer a {
+    color: #58cc02 !important;
+}
+
+/* ========== DARK MODE DISABLED FOR HOMEPAGE ========== */
+/* Homepage always uses light alternating greens */
 body.dark-mode .hero {
-    background: linear-gradient(135deg, #1a3a00, #0f2600);
-}
-body.dark-mode .section {
-    background: #131f24;
+    background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 50%, #1a5200 100%);
 }
 body.dark-mode .feature-card {
-    background: #202f36;
-    border-color: #37464f;
+    background: white;
+    border-color: rgba(0,0,0,0.04);
+    color: #3c3c3c;
 }
-body.dark-mode .stat {
-    background: #202f36;
+body.dark-mode .feature-card h3 {
+    color: #3c3c3c;
 }
-body.dark-mode .stat span:last-child {
-    color: #a3a3a3;
+body.dark-mode .feature-card p {
+    color: #595959;
 }
 body.dark-mode .how-it-works {
-    background: #1a2730;
+    background: linear-gradient(135deg, #f0f9f0, #e8f5e9) !important;
 }
-body.dark-mode .earnings-section {
-    background: linear-gradient(135deg, #1a2000, #1a2700);
+body.dark-mode .step h4 {
+    color: #3c3c3c;
 }
-body.dark-mode .earning-card {
-    background: #202f36;
+body.dark-mode .step p {
+    color: #595959;
+}
+body.dark-mode .section-title {
+    color: #3c3c3c;
 }
 body.dark-mode .badge-item {
-    background: #202f36;
-    color: #e5e5e5;
+    background: white;
+    color: #3c3c3c;
 }
 body.dark-mode .badge-item:nth-child(even) {
-    background: #2a2040;
-    border-color: #3d2e5c;
+    background: #f0f9f0;
+    border-color: #c8e6c9;
 }
 body.dark-mode .why-section {
-    background: linear-gradient(135deg, #1a1a2e, #1e1530);
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9) !important;
 }
 body.dark-mode .why-tile {
-    background: #202f36;
+    background: white;
 }
 body.dark-mode .why-tile-title {
-    color: #e5e5e5;
+    color: #3c3c3c;
+}
+body.dark-mode .why-tile-desc {
+    color: #595959;
 }
 body.dark-mode .cta-section {
-    background: linear-gradient(135deg, #0f2600, #1a3a00);
+    background: linear-gradient(135deg, #2d6e01 0%, #3d8a02 50%, #1a5200 100%);
 }
 body.dark-mode .hamburger {
-    background: #202f36;
+    background: white;
 }
 body.dark-mode .hamburger span {
-    background: #e5e5e5;
+    background: #58cc02;
 }
 body.dark-mode .slide-menu {
-    background: #131f24;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+    background: white;
+}
+body.dark-mode .menu-link {
+    color: #3c3c3c;
+}
+body.dark-mode .menu-section-title {
+    color: #595959;
 }
 body.dark-mode .phone-tap-hint {
     background: white;
-    color: var(--text-light);
+    color: #595959;
 }
 body.dark-mode .phone-tap-hint:hover {
     background: var(--primary);
     color: white;
 }
 body.dark-mode .demo-modal-close {
-    background: #202f36;
-    color: #e5e5e5;
+    background: white;
+    color: #3c3c3c;
 }
 body.dark-mode .demo-task {
     background: white;
@@ -880,36 +926,57 @@ body.dark-mode .demo-progress {
     border-color: rgba(0,0,0,0.05);
 }
 body.dark-mode .faq-section {
-    background: #131f24;
+    background: white;
 }
 body.dark-mode .faq-list details {
-    background: #1a2730;
-    border-color: #37464f;
+    background: #f0f9f0;
+    border-color: #c8e6c9;
 }
 body.dark-mode .faq-list .faq-answer {
-    color: #a3a3a3;
+    color: #595959;
 }
 body.dark-mode .faq-quick-ref {
-    background: linear-gradient(135deg, rgba(206,130,255,0.05), rgba(206,130,255,0.1));
-    border-color: #37464f;
+    background: linear-gradient(135deg, rgba(88,204,2,0.05), rgba(88,204,2,0.1));
+    border-color: #c8e6c9;
+}
+body.dark-mode .faq-quick-ref h3 {
+    color: #3c3c3c;
 }
 body.dark-mode .demo-status-bar {
     color: #1a1a1a;
     background: #f7f7f7;
 }
+body.dark-mode .gamification {
+    background: linear-gradient(135deg, #e8f5e9, #f0f9f0);
+}
+body.dark-mode .gamification-desc {
+    color: #595959;
+}
+body.dark-mode .app-preview {
+    background: linear-gradient(160deg, #e8f5e9 0%, #c8e6c9 40%, #a5d6a7 100%);
+}
+body.dark-mode .section-subtitle {
+    color: #595959;
+}
+body.dark-mode .app-preview-caption {
+    color: #595959;
+}
 body.dark-mode footer {
-    background: #0a1015;
-    color: #a3a3a3;
+    background: #1a3a00;
+    color: rgba(255,255,255,0.8);
 }
 body.dark-mode footer a {
-    color: var(--primary);
+    color: #58cc02;
 }
 body.dark-mode .demo-modal {
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
 }
-body.dark-mode .demo-box {
-    background: #202f36;
-    color: #e5e5e5;
+body.dark-mode .profile-card {
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    color: #3c3c3c;
+}
+body.dark-mode .menu-divider {
+    background: #e5e7eb;
 }
 
 /* ========== INLINE STYLE EXTRACTIONS ========== */

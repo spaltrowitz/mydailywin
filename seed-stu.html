@@ -36,15 +36,29 @@
 </head>
 <body>
     <div class="card">
-        <h1>🏆 Seed Stuart's Profile</h1>
-        <p class="subtitle">Write the "stu" profile to Firestore so it works on any device</p>
+        <h1>🏆 Setup Stuart's Profile</h1>
+        <p class="subtitle">This saves Stuart's profile config to the cloud so it works on any device (his phone, your phone, etc.)</p>
 
         <div id="authStatus" class="status info">⏳ Checking authentication...</div>
 
+        <div id="existingAdminsSection" style="display: none;">
+            <div class="status success" style="margin-bottom: 15px;">
+                <strong>✅ Found existing admins!</strong> These will be preserved:
+            </div>
+            <div id="existingAdminsList" class="admin-list"></div>
+        </div>
+
+        <div id="localAdminsSection" style="display: none;">
+            <div class="status info" style="margin-bottom: 15px;">
+                <strong>📦 Found admins in your browser</strong> — these will be synced to the cloud:
+            </div>
+            <div id="localAdminsList" class="admin-list"></div>
+        </div>
+
         <div id="seedSection" style="display: none;">
             <div class="admin-section">
-                <h3>👥 Admin Emails (optional)</h3>
-                <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Add family members who should have admin access</p>
+                <h3>👥 Add More Admins (optional)</h3>
+                <p style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Only needed if you want to add new people</p>
                 <div class="admin-input">
                     <input type="email" id="adminEmail" placeholder="Email address">
                     <button id="addAdminBtn">Add</button>
@@ -52,7 +66,8 @@
                 <div id="adminList" class="admin-list"></div>
             </div>
 
-            <button id="seedBtn" class="btn-seed">🚀 Seed Profile to Firestore</button>
+            <button id="seedBtn" class="btn-seed">🚀 Save Profile to Cloud</button>
+            <p style="font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px;">This writes Stuart's name, tasks, and admin list to Firestore so the app works on any device</p>
             <div id="log"></div>
         </div>
 
@@ -71,7 +86,9 @@
     <script>
         const auth = firebase.auth();
         const db = firebase.firestore();
-        let adminEmails = [];
+        let newAdminEmails = [];
+        let existingAdmins = [];
+        let localAdmins = [];
         let currentUser = null;
 
         function log(msg) {
@@ -82,13 +99,53 @@
             el.scrollTop = el.scrollHeight;
         }
 
-        auth.onAuthStateChanged(user => {
+        auth.onAuthStateChanged(async user => {
             const statusEl = document.getElementById('authStatus');
             if (user) {
                 currentUser = user;
                 statusEl.className = 'status success';
                 statusEl.textContent = '✅ Signed in as ' + user.email;
                 document.getElementById('seedSection').style.display = 'block';
+
+                // Check for existing admins in Firestore
+                try {
+                    const adminsSnapshot = await db.collection('profiles').doc('stu').collection('admins').get();
+                    if (!adminsSnapshot.empty) {
+                        adminsSnapshot.forEach(doc => {
+                            existingAdmins.push(doc.data());
+                        });
+                        document.getElementById('existingAdminsSection').style.display = 'block';
+                        document.getElementById('existingAdminsList').innerHTML = existingAdmins
+                            .map(a => '<div class="admin-item">✅ ' + (a.name || a.firstName || a.email) + (a.name ? ' (' + a.email + ')' : '') + ' — ' + (a.role || 'admin') + '</div>')
+                            .join('');
+                    }
+                } catch (e) {
+                    console.log('No existing admins in Firestore (or profile not created yet)');
+                }
+
+                // Check for admins in localStorage
+                try {
+                    var keys = ['hr_profile_admins', 'hr_profile_admins_stu', 'hr_additional_admins'];
+                    keys.forEach(function(key) {
+                        var data = localStorage.getItem(key);
+                        if (data) {
+                            var parsed = JSON.parse(data);
+                            parsed.forEach(function(a) {
+                                if (a.email && !localAdmins.find(function(x) { return x.email === a.email; })
+                                    && !existingAdmins.find(function(x) { return x.email === a.email; })) {
+                                    localAdmins.push(a);
+                                }
+                            });
+                        }
+                    });
+                    if (localAdmins.length > 0) {
+                        document.getElementById('localAdminsSection').style.display = 'block';
+                        document.getElementById('localAdminsList').innerHTML = localAdmins
+                            .map(a => '<div class="admin-item">📦 ' + (a.name || a.email) + (a.name ? ' (' + a.email + ')' : '') + '</div>')
+                            .join('');
+                    }
+                } catch (e) {}
+
             } else {
                 statusEl.className = 'status warning';
                 statusEl.innerHTML = '⚠️ Not signed in. <a href="login.html?redirect=' + encodeURIComponent(window.location.href) + '">Sign in first</a>';
@@ -99,24 +156,25 @@
             const input = document.getElementById('adminEmail');
             const email = input.value.trim().toLowerCase();
             if (!email || !email.includes('@')) return;
-            if (adminEmails.includes(email)) return;
-            adminEmails.push(email);
+            if (newAdminEmails.includes(email)) return;
+            if (existingAdmins.find(a => a.email === email)) { input.value = ''; return; }
+            newAdminEmails.push(email);
             input.value = '';
             renderAdmins();
         });
 
         function renderAdmins() {
             const list = document.getElementById('adminList');
-            list.innerHTML = adminEmails.map(e => '<div class="admin-item">📧 ' + e + '</div>').join('');
+            list.innerHTML = newAdminEmails.map(e => '<div class="admin-item">➕ ' + e + '</div>').join('');
         }
 
         document.getElementById('seedBtn').addEventListener('click', async function() {
             const btn = this;
             btn.disabled = true;
-            btn.textContent = '⏳ Seeding...';
+            btn.textContent = '⏳ Saving...';
 
             try {
-                // 1. Write the profile document
+                // 1. Write the profile document (merge — preserves existing fields)
                 log('Writing profiles/stu document...');
                 await db.collection('profiles').doc('stu').set({
                     name: 'Stuart Paltrowitz',
@@ -130,10 +188,10 @@
                     creatorEmail: currentUser.email.toLowerCase(),
                     createdAt: new Date().toISOString()
                 }, { merge: true });
-                log('✅ Profile document created');
+                log('✅ Profile document saved');
 
-                // 2. Add the owner as an admin
-                log('Adding owner as admin...');
+                // 2. Add the owner as an admin (preserves existing)
+                log('Ensuring owner is admin...');
                 await db.collection('profiles').doc('stu').collection('admins').doc(currentUser.email.toLowerCase()).set({
                     email: currentUser.email.toLowerCase(),
                     name: currentUser.displayName || 'Owner',
@@ -141,20 +199,35 @@
                     addedAt: firebase.firestore.FieldValue.serverTimestamp(),
                     acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
-                log('✅ Owner admin added');
+                log('✅ Owner confirmed');
 
-                // 3. Add additional admins
-                for (const email of adminEmails) {
-                    log('Adding admin: ' + email + '...');
+                // 3. Migrate localStorage admins to Firestore
+                for (const admin of localAdmins) {
+                    var email = admin.email.toLowerCase();
+                    log('Migrating admin from browser: ' + email + '...');
+                    await db.collection('profiles').doc('stu').collection('admins').doc(email).set({
+                        email: email,
+                        name: admin.name || null,
+                        firstName: admin.firstName || null,
+                        role: 'admin',
+                        addedAt: admin.addedAt ? new Date(admin.addedAt) : firebase.firestore.FieldValue.serverTimestamp(),
+                        acceptedAt: admin.acceptedAt ? new Date(admin.acceptedAt) : null
+                    }, { merge: true });
+                    log('✅ Migrated: ' + (admin.name || email));
+                }
+
+                // 4. Add any NEW admins
+                for (const email of newAdminEmails) {
+                    log('Adding new admin: ' + email + '...');
                     await db.collection('profiles').doc('stu').collection('admins').doc(email).set({
                         email: email,
                         role: 'admin',
                         addedAt: firebase.firestore.FieldValue.serverTimestamp()
                     }, { merge: true });
-                    log('✅ Admin added: ' + email);
+                    log('✅ Added: ' + email);
                 }
 
-                // 4. Link to user's profile list
+                // 5. Link to user's profile list
                 log('Linking to your account...');
                 const userProfilesKey = 'hr_user_profiles_' + currentUser.uid;
                 let userProfiles = JSON.parse(localStorage.getItem(userProfilesKey) || '[]');
@@ -163,19 +236,20 @@
                     localStorage.setItem(userProfilesKey, JSON.stringify(userProfiles));
                 }
 
-                // 5. Cache profile locally too
+                // 6. Cache profile locally
                 localStorage.setItem('hr_profile_stu', JSON.stringify({
                     name: 'Stuart Paltrowitz',
                     template: 'regular'
                 }));
 
-                log('🎉 All done! Stuart\'s profile is ready.');
+                var totalAdmins = existingAdmins.length + localAdmins.length + newAdminEmails.length;
+                log('🎉 Done! Profile saved with ' + totalAdmins + ' admin(s).');
                 btn.textContent = '✅ Done!';
                 btn.style.background = '#16a34a';
 
                 document.getElementById('linksSection').style.display = 'block';
                 document.getElementById('authStatus').className = 'status success';
-                document.getElementById('authStatus').textContent = '🎉 Profile seeded successfully!';
+                document.getElementById('authStatus').textContent = '🎉 Profile saved! ' + totalAdmins + ' admin(s) configured.';
 
             } catch (err) {
                 log('❌ Error: ' + err.message);

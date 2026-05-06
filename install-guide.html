@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install MyDailyWin on Your Phone</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shared.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f7f7f7;
+            color: #3c3c3c;
+            line-height: 1.7;
+        }
+        .top-bar {
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h2 {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin: 30px 0 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #595959;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .phone-picker {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .phone-btn {
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            border: 3px solid #e5e7eb;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .phone-btn.active {
+            border-color: #58cc02;
+            background: #f0fdf4;
+            box-shadow: 0 4px 12px rgba(88, 204, 2, 0.2);
+        }
+        .phone-btn:hover { border-color: #58cc02; }
+        .instructions { display: none; }
+        .instructions.active { display: block; }
+        .step-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-left: 5px solid #58cc02;
+        }
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #58cc02;
+            color: white;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 20px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .step-detail {
+            font-size: 17px;
+            color: #595959;
+            margin-left: 52px;
+        }
+        .step-detail strong { color: #3c3c3c; }
+        .step-icon {
+            font-size: 28px;
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 10px;
+            margin: 4px 2px;
+            vertical-align: middle;
+        }
+        .tip-card {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #bbf7d0;
+        }
+        .tip-card h3 { margin-bottom: 8px; }
+        .done-card {
+            background: linear-gradient(135deg, #3d8a02, #2d6e01);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .done-card h3 { font-size: 24px; margin-bottom: 10px; }
+        .done-card p { opacity: 0.9; font-size: 16px; }
+        .back-link {
+            display: block;
+            text-align: center;
+            padding: 20px;
+            color: #58cc02;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="home.html" style="text-decoration: none; color: inherit;">
+            <h1>🏆 MyDailyWin</h1>
+        </a>
+    </div>
+
+    <div class="container">
+        <h2>📱 Add to Your Home Screen</h2>
+        <p class="subtitle">Follow these steps to put MyDailyWin on your phone — just like a regular app!</p>
+
+        <div class="phone-picker">
+            <button class="phone-btn active" id="iphoneBtn" onclick="showInstructions('iphone')">🍎 iPhone</button>
+            <button class="phone-btn" id="androidBtn" onclick="showInstructions('android')">🤖 Android</button>
+        </div>
+
+        <!-- iPhone Instructions -->
+        <div class="instructions active" id="iphone-instructions">
+            <div class="tip-card">
+                <h3>⚠️ Important: Use Safari!</h3>
+                <p style="font-size: 16px;">On iPhones, you <strong>must</strong> use the <strong>Safari</strong> browser (the blue compass icon). This won't work from Chrome or other browsers on iPhone.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">1</span> Open Safari</div>
+                <div class="step-detail">
+                    Find the <strong>Safari</strong> app on your phone. It's the blue compass icon 🧭 that came with your phone.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">2</span> Go to the website</div>
+                <div class="step-detail">
+                    In the address bar at the top, type:<br>
+                    <strong style="font-size: 18px; color: #58cc02;">my-daily-win.web.app</strong><br>
+                    Then tap <strong>Go</strong> on the keyboard.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">3</span> Tap the Share button</div>
+                <div class="step-detail">
+                    Look at the <strong>bottom</strong> of the screen. Find the <strong>Share</strong> button — it looks like a square with an arrow pointing up:<br>
+                    <span class="step-icon">⬆️📤</span><br>
+                    Tap it.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">4</span> Scroll down and tap "Add to Home Screen"</div>
+                <div class="step-detail">
+                    A menu will pop up. <strong>Scroll down</strong> in that menu until you see:<br>
+                    <span class="step-icon">➕</span> <strong>Add to Home Screen</strong><br>
+                    Tap it.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">5</span> Tap "Add"</div>
+                <div class="step-detail">
+                    A screen will appear showing the app name. Just tap <strong>Add</strong> in the top right corner. That's it!
+                </div>
+            </div>
+
+            <div class="done-card">
+                <h3>🎉 You're done!</h3>
+                <p>MyDailyWin is now on your home screen. Tap the icon anytime to open it — just like any other app!</p>
+            </div>
+        </div>
+
+        <!-- Android Instructions -->
+        <div class="instructions" id="android-instructions">
+            <div class="tip-card">
+                <h3>💡 Tip: Use Chrome</h3>
+                <p style="font-size: 16px;">On Android phones, use <strong>Chrome</strong> (the round colorful icon). It will show you an easy install button.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">1</span> Open Chrome</div>
+                <div class="step-detail">
+                    Find the <strong>Chrome</strong> app on your phone. It's the round icon with red, yellow, green, and blue colors.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">2</span> Go to the website</div>
+                <div class="step-detail">
+                    In the address bar at the top, type:<br>
+                    <strong style="font-size: 18px; color: #58cc02;">my-daily-win.web.app</strong><br>
+                    Then tap <strong>Go</strong> or the arrow.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">3</span> Look for the install banner</div>
+                <div class="step-detail">
+                    You might see a banner at the bottom that says <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong>. If you see it, tap it and skip to Step 5!<br><br>
+                    If you <strong>don't</strong> see the banner, go to Step 4.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">4</span> Tap the three dots menu</div>
+                <div class="step-detail">
+                    Look in the <strong>top right corner</strong> of Chrome. Tap the <strong>three dots</strong>:<br>
+                    <span class="step-icon">⋮</span><br>
+                    Then look for <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong> and tap it.
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-title"><span class="step-num">5</span> Tap "Install" or "Add"</div>
+                <div class="step-detail">
+                    A popup will appear. Tap <strong>Install</strong> or <strong>Add</strong>. That's it!
+                </div>
+            </div>
+
+            <div class="done-card">
+                <h3>🎉 You're done!</h3>
+                <p>MyDailyWin is now on your home screen. Tap the icon anytime to open it — just like any other app!</p>
+            </div>
+        </div>
+
+        <div class="tip-card">
+            <h3>❓ Need help?</h3>
+            <p style="font-size: 16px;">If you're having trouble, ask a family member to help you follow these steps. It only takes a minute!</p>
+        </div>
+
+        <a href="home.html" class="back-link">← Back to MyDailyWin</a>
+    </div>
+
+    <script>
+        function showInstructions(type) {
+            document.querySelectorAll('.instructions').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.phone-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(type + '-instructions').classList.add('active');
+            document.getElementById(type + 'Btn').classList.add('active');
+        }
+    </script>
+</body>
+</html>
