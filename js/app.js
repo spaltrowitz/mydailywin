@@ -30,14 +30,6 @@
             }
         });
         
-        // For legacy profiles (stu), use anonymous auth silently so state syncs
-        // to Firestore without Stu needing to sign in
-        if (IS_LEGACY_PROFILE && !auth.currentUser) {
-            auth.signInAnonymously().catch(function(err) {
-                console.log('Anonymous auth skipped:', err.message);
-            });
-        }
-
         // ========== PROFILE DETECTION ==========
         const urlParams = new URLSearchParams(window.location.search);
         const rawProfileId = urlParams.get('profile');
@@ -55,6 +47,14 @@
             ? (PROFILE_ID === 'stu' ? 'hr_admin' : 'hr_admin_' + PROFILE_ID)
             : 'hr_admin';
         const IS_LEGACY_PROFILE = PROFILE_ID === 'stu';
+
+        // For legacy profiles (stu), use anonymous auth silently so state syncs
+        // to Firestore without Stu needing to sign in
+        if (IS_LEGACY_PROFILE && !auth.currentUser) {
+            auth.signInAnonymously().catch(function(err) {
+                console.log('Anonymous auth skipped:', err.message);
+            });
+        }
 
         // If no profile, check for existing profiles or redirect to get-started
         if (!PROFILE_ID) {
