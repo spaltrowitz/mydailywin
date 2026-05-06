@@ -1,4 +1,5 @@
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
         // Check auth state
         auth.onAuthStateChanged(async user => {
