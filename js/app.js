@@ -199,7 +199,6 @@
         const LOW_TECH_TASKS = [
             { id: 1, name: "🚶 Go for a walk", value: 50 },
             { id: 2, name: "💊 Take medications", value: 25 },
-            { id: 3, name: "🥤 Drink 8 glasses of water", value: 25 },
             { id: 4, name: "🛏️ Make the bed", value: 25 },
             { id: 5, name: "📞 Call a family member", value: 50 }
         ];
@@ -254,7 +253,6 @@
             { id: 135, name: "😂\u00a0Share a joke or funny video", value: 50, needsComment: true, commentPrompt: "What was it?", freq: 1 },
             { id: 136, name: "🖼️\u00a0Share a photo with family", value: 50, freq: 1 },
             // Physical Wellness
-            { id: 137, name: "💧\u00a0Drink 6 glasses of water", value: 50, freq: 2 },
             { id: 138, name: "🦵\u00a0Do 5 sit-to-stands", value: 50, freq: 1 },
             { id: 139, name: "🚶‍♂️\u00a0Walk 10 minutes after a meal", value: 50, freq: 1.5 },
             // Emotional / Mental Health
