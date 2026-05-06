@@ -1,3 +1,9 @@
+        body.dark-mode {
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+        }
         body {
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -8,7 +14,7 @@
             padding: 20px;
         }
         .login-card {
-            background: white;
+            background: var(--card-bg, white);
             border-radius: 24px;
             padding: 40px;
             max-width: 400px;

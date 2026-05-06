@@ -248,7 +248,7 @@
             keysToRemove.forEach(k => localStorage.removeItem(k));
         }
 
-        function loadUserProfiles(user) {
+        async function loadUserProfiles(user) {
             // Get profiles created by this user
             const userProfilesKey = 'hr_user_profiles_' + user.uid;
             const savedProfiles = localStorage.getItem(userProfilesKey);
@@ -258,6 +258,41 @@
             const managedProfilesKey = 'hr_managed_profiles_' + user.email;
             const savedManaged = localStorage.getItem(managedProfilesKey);
             let managedProfiles = savedManaged ? JSON.parse(savedManaged) : [];
+            
+            // Also check Firestore for profiles this user owns or manages
+            try {
+                const db = firebase.firestore();
+                const email = user.email.toLowerCase();
+                
+                // Check all profiles where user is owner
+                const ownedSnap = await db.collection('profiles')
+                    .where('ownerEmail', '==', email).get();
+                ownedSnap.forEach(doc => {
+                    if (!profiles.find(p => p.id === doc.id)) {
+                        profiles.push({ id: doc.id, name: doc.data().name || doc.id });
+                    }
+                });
+                
+                // Also always include "stu" profile check for legacy support
+                if (!profiles.find(p => p.id === 'stu')) {
+                    try {
+                        const stuAdminDoc = await db.collection('profiles').doc('stu').collection('admins').doc(email).get();
+                        if (stuAdminDoc.exists) {
+                            const stuDoc = await db.collection('profiles').doc('stu').get();
+                            const stuName = stuDoc.exists && stuDoc.data().name ? stuDoc.data().name : 'Stu';
+                            managedProfiles.push({ id: 'stu', name: stuName });
+                        }
+                    } catch(e) { console.log('Stu profile check skipped'); }
+                }
+                
+                // Persist discovered profiles to localStorage for offline access
+                localStorage.setItem(userProfilesKey, JSON.stringify(profiles));
+                if (managedProfiles.length > 0) {
+                    localStorage.setItem(managedProfilesKey, JSON.stringify(managedProfiles));
+                }
+            } catch(e) {
+                console.warn('Firestore profile discovery failed:', e.message);
+            }
             
             const profileList = document.getElementById('profileList');
             const managedList = document.getElementById('managedList');

@@ -344,10 +344,6 @@
         // ========== TASK HELP INSTRUCTIONS ==========
         // Instructions for tasks (shown via "i" icon)
         const TASK_HELP = {
-            5: {
-                title: "🟩 Wordle Setup",
-                content: '<p><strong>What is it?</strong> A daily word puzzle where you guess a 5-letter word in 6 tries.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/wordle</strong> in your web browser — no download needed</li><li>Works on any phone, tablet, or computer</li><li>Guess any 5-letter word to start</li><li>Green = right letter, right spot</li><li>Yellow = right letter, wrong spot</li><li>Gray = letter not in word</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with words that have common letters like "CRANE" or "STARE"</p>'
-            },
             123: {
                 title: "🔗 Connections Setup",
                 content: '<p><strong>What is it?</strong> A daily puzzle where you group 16 words into 4 categories.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/connections</strong> in your browser — no download needed</li><li>Works on any phone, tablet, or computer</li><li>Look at the 16 words and find groups of 4 that share something in common</li><li>Tap 4 words, then hit Submit</li><li>You get 4 mistakes before the game ends</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with the most obvious group first!</p>'

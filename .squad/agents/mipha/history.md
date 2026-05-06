@@ -95,3 +95,20 @@ Mipha completed 15+ sessions spanning:
 **Removed:** Admin Mode section
 **Why:** Stuart (70s user) should never see admin controls.
 
+### 2026-07-18 — Three Bug Fixes
+
+#### Login Profile Discovery via Firestore
+**Problem:** After sign-out/sign-in, login page only checked localStorage for profiles — which was empty.
+**Fix:** Made `loadUserProfiles()` async. After localStorage check, also queries Firestore for profiles where user's email is owner (`ownerEmail` field) or admin (legacy `stu` profile check). Persists discovered profiles to localStorage for offline access.
+**File:** js/login.js
+
+#### Login Dark Mode Override
+**Problem:** Dark mode CSS vars made login page background go black while card stayed white.
+**Fix:** Added `body.dark-mode` override in login.css that forces light-mode values for `--bg`, `--card-bg`, `--text`, `--text-light`. Changed `.login-card` background from hardcoded `white` to `var(--card-bg, white)`.
+**File:** css/login.css
+
+#### Removed Wordle Help Entry
+**Problem:** Wordle task (id: 5) still had a TASK_HELP entry showing a help icon that should have been removed.
+**Fix:** Deleted the `5: { ... }` entry from the TASK_HELP object.
+**File:** js/app.js
+
