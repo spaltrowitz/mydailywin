@@ -235,6 +235,28 @@
             }
         }
 
+        // Load state from Firestore and update dashboard
+        async function loadStateFromCloud() {
+            if (!PROFILE_ID || !db) return;
+            try {
+                const doc = await db.collection('userState').doc(PROFILE_ID).get();
+                if (doc.exists) {
+                    const cloudState = doc.data();
+                    const localState = loadState();
+                    const cloudEarned = cloudState.totalEarned || 0;
+                    const localEarned = localState.totalEarned || 0;
+                    if (cloudEarned >= localEarned) {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudState));
+                        console.log('📊 Dashboard synced from cloud (totalEarned:', cloudEarned, ')');
+                        displayStats();
+                        displayLevels();
+                    }
+                }
+            } catch (err) {
+                console.log('Cloud state fetch skipped:', err.message);
+            }
+        }
+
         function saveState(state) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             // Dual-write for stu profile — app.html reads from hr_state_stu
@@ -1469,6 +1491,8 @@
             loadAdmins();
             cleanupPendingInvites();
             loadAdminNotifications();
+            // Fetch latest state from cloud (Stu's device syncs here)
+            loadStateFromCloud();
         } catch (err) {
             console.error('Init error (tabs still work):', err);
         }

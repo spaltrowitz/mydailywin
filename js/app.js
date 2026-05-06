@@ -26,10 +26,17 @@
             currentUser = user;
             if (user && PROFILE_ID) {
                 syncEnabled = true;
-                // Try to load from cloud if available
                 loadFromCloud();
             }
         });
+        
+        // For legacy profiles (stu), use anonymous auth silently so state syncs
+        // to Firestore without Stu needing to sign in
+        if (IS_LEGACY_PROFILE && !auth.currentUser) {
+            auth.signInAnonymously().catch(function(err) {
+                console.log('Anonymous auth skipped:', err.message);
+            });
+        }
 
         // ========== PROFILE DETECTION ==========
         const urlParams = new URLSearchParams(window.location.search);
@@ -1089,7 +1096,7 @@
                     await db.collection('userState').doc(PROFILE_ID).set({
                         ...state,
                         lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
-                        updatedBy: currentUser.email
+                        updatedBy: currentUser.email || 'user-device'
                     }, { merge: true });
                     console.log('State synced to cloud');
                     // Clear error state on success
@@ -2584,8 +2591,9 @@
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             deferredInstallPrompt = e;
-            // Show banner unless user previously dismissed
-            if (!localStorage.getItem('pwaInstallDismissed')) {
+            // Only show install banner on mobile/tablet — not desktop
+            var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+            if (isMobile && !localStorage.getItem('pwaInstallDismissed')) {
                 document.getElementById('pwaInstallBanner').style.display = 'block';
             }
         });
