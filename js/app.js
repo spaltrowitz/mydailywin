@@ -335,7 +335,6 @@
             { id: 326, name: "📝 Write a letter or card to someone", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you write to?" },
             { id: 327, name: "🎨 Do something creative", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you create?" },
             // Wellness: Nutrition
-            { id: 328, name: "🧑‍🍳 Cook a meal from scratch", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What did you cook?" },
             // Wellness: Purpose
             { id: 329, name: "🤝 Help someone with something", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you help with?" },
             { id: 330, name: "📦 Organize one area of the house", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you organize?" }
@@ -346,11 +345,11 @@
         const TASK_HELP = {
             5: {
                 title: "🟩 Wordle Setup",
-                content: '<p><strong>What is it?</strong> A daily word puzzle where you guess a 5-letter word in 6 tries.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/wordle</strong> in your web browser</li><li>Or download the <strong>NY Times Games</strong> app</li><li>Guess any 5-letter word to start</li><li>Green = right letter, right spot</li><li>Yellow = right letter, wrong spot</li><li>Gray = letter not in word</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with words that have common letters like "CRANE" or "STARE"</p>'
+                content: '<p><strong>What is it?</strong> A daily word puzzle where you guess a 5-letter word in 6 tries.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/wordle</strong> in your web browser — no download needed</li><li>Works on any phone, tablet, or computer</li><li>Guess any 5-letter word to start</li><li>Green = right letter, right spot</li><li>Yellow = right letter, wrong spot</li><li>Gray = letter not in word</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with words that have common letters like "CRANE" or "STARE"</p>'
             },
             123: {
                 title: "🔗 Connections Setup",
-                content: '<p><strong>What is it?</strong> A daily puzzle where you group 16 words into 4 categories.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/connections</strong></li><li>Or open the <strong>NY Times Games</strong> app</li><li>Look at the 16 words and find groups of 4 that share something in common</li><li>Tap 4 words, then hit Submit</li><li>You get 4 mistakes before the game ends</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with the most obvious group first!</p>'
+                content: '<p><strong>What is it?</strong> A daily puzzle where you group 16 words into 4 categories.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>nytimes.com/games/connections</strong> in your browser — no download needed</li><li>Works on any phone, tablet, or computer</li><li>Look at the 16 words and find groups of 4 that share something in common</li><li>Tap 4 words, then hit Submit</li><li>You get 4 mistakes before the game ends</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start with the most obvious group first!</p>'
             },
             120: {
                 title: "📧 Email Cleanup",
@@ -358,11 +357,11 @@
             },
             117: {
                 title: "🎧 Podcasts Setup",
-                content: '<p><strong>What is it?</strong> Free audio shows you can listen to on any topic.</p><p><strong>How to listen:</strong></p><ol style="margin-left: 20px;"><li>Open the <strong>Podcasts</strong> app (built into iPhone) or download <strong>Spotify</strong></li><li>Search for a topic you like (news, sports, history, comedy)</li><li>Tap a show, then tap an episode to play</li><li>Use headphones or play through your phone speaker</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Popular picks: "The Daily" (news), "SmartLess" (comedy), "Radiolab" (science)</p>'
+                content: '<p><strong>What is it?</strong> Free audio shows you can listen to on any topic.</p><p><strong>How to listen:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>open.spotify.com</strong> in your browser (free, no download)</li><li>Or use the <strong>Podcasts</strong> app already on your iPhone</li><li>Search for a topic you like (news, sports, history, comedy)</li><li>Tap a show, then tap an episode to play</li><li>Use headphones or play through your phone speaker</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Popular picks: "The Daily" (news), "SmartLess" (comedy), "Radiolab" (science)</p>'
             },
             118: {
                 title: "📺 Streaming Setup",
-                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>Check if you already have a subscription (ask family!)</li><li>Download the app from the App Store</li><li>Log in with your account</li><li>Browse and tap something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try documentaries or classic movies to start!</p>'
+                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>Check if you already have a subscription (ask family!)</li><li>Go to the website (netflix.com, hulu.com) in your browser</li><li>Log in with your account</li><li>Browse and click something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try documentaries or classic movies to start!</p>'
             },
             119: {
                 title: "📱 Delete Unused Apps",
@@ -370,15 +369,15 @@
             },
             302: {
                 title: "📺 Streaming Setup",
-                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>Check if you already have a subscription (ask family!)</li><li>Download the app from the App Store</li><li>Log in with your account</li><li>Browse and tap something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try a movie or show someone recommended!</p>'
+                content: '<p><strong>What is it?</strong> Watch TV shows and movies on your phone, tablet, or TV.</p><p><strong>Popular services:</strong> Netflix, Hulu, Amazon Prime Video, Disney+</p><p><strong>How to watch:</strong></p><ol style="margin-left: 20px;"><li>Check if you already have a subscription (ask family!)</li><li>Go to the website (netflix.com, hulu.com) in your browser</li><li>Log in with your account</li><li>Browse and click something to watch!</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Try a movie or show someone recommended!</p>'
             },
             306: {
                 title: "🛒 Aisle App Setup",
-                content: '<p><strong>What is it?</strong> An app that shows grocery deals and lets you clip digital coupons.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Download <strong>"Aisle"</strong> from the App Store</li><li>Create an account with your email</li><li>Select your local grocery stores</li><li>Browse deals and tap to "clip" coupons</li><li>Show the app at checkout or link your store loyalty card</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Check the app before your grocery trip!</p>'
+                content: '<p><strong>What is it?</strong> An app that shows grocery deals and lets you clip digital coupons.</p><p><strong>How to get started:</strong></p><ol style="margin-left: 20px;"><li>Ask a family member to help you set up the <strong>Aisle</strong> app</li><li>Create an account with your email</li><li>Select your local grocery stores</li><li>Browse deals and tap to "clip" coupons</li><li>Show the app at checkout or link your store loyalty card</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Check the app before your grocery trip!</p>'
             },
             313: {
                 title: "🤖 ChatGPT Setup",
-                content: '<p><strong>What is it?</strong> An AI assistant that can answer questions, help with writing, and more.</p><p><strong>How to use it:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>chat.openai.com</strong> in your browser</li><li>Or download the <strong>ChatGPT</strong> app</li><li>Create a free account</li><li>Type any question and hit enter!</li></ol><p style="margin-top: 15px;"><strong>Try asking:</strong></p><ul style="margin-left: 20px;"><li>"What should I make for dinner tonight?"</li><li>"Explain why the sky is blue"</li><li>"Help me write a birthday message"</li></ul>'
+                content: '<p><strong>What is it?</strong> An AI assistant that can answer questions, help with writing, and more.</p><p><strong>How to use it:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>chatgpt.com</strong> in your browser — no download needed</li><li>Create a free account</li><li>Type any question and hit enter!</li></ol><p style="margin-top: 15px;"><strong>Try asking:</strong></p><ul style="margin-left: 20px;"><li>"What should I make for dinner tonight?"</li><li>"Explain why the sky is blue"</li><li>"Help me write a birthday message"</li></ul>'
             },
             318: {
                 title: "🕵️ Mystery Shopping",
@@ -386,7 +385,7 @@
             },
             130: {
                 title: "🧮 Sudoku Setup",
-                content: '<p><strong>What is it?</strong> A number puzzle where you fill a 9x9 grid so each row, column, and box has digits 1-9.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Search "Sudoku" in the App Store and download a free app</li><li>Or visit <strong>websudoku.com</strong></li><li>Start with "Easy" difficulty</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start by looking for rows that are almost complete!</p>'
+                content: '<p><strong>What is it?</strong> A number puzzle where you fill a 9x9 grid so each row, column, and box has digits 1-9.</p><p><strong>How to play:</strong></p><ol style="margin-left: 20px;"><li>Go to <strong>websudoku.com</strong> in your browser — free, no download</li><li>Or try <strong>sudoku.com</strong></li><li>Start with "Easy" difficulty</li></ol><p style="margin-top: 15px; color: var(--primary);">💡 Tip: Start by looking for rows that are almost complete!</p>'
             },
             131: {
                 title: "🎓 Learn Something New",
@@ -414,7 +413,7 @@
             },
             320: {
                 title: "📚 Start or Continue a Book",
-                content: '<p><strong>Goal:</strong> Spend some time reading a book this week.</p><p><strong>How to find books:</strong></p><ul style="margin-left: 20px;"><li>Visit your local library (free!)</li><li>Ask family for recommendations</li><li>Try a large-print edition if regular text is small</li><li>Audiobooks count too — try Libby app (free with library card)</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Not sure what to read? Ask ChatGPT: "Recommend a book about [topic I like]"</p>'
+                content: '<p><strong>Goal:</strong> Spend some time reading a book this week.</p><p><strong>How to find books:</strong></p><ul style="margin-left: 20px;"><li>Visit your local library (free!)</li><li>Ask family for recommendations</li><li>Audiobooks count too — go to <strong>librivox.org</strong> for free audiobooks in your browser</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Not sure what to read? Ask ChatGPT: "Recommend a book about [topic I like]"</p>'
             },
             321: {
                 title: "🎬 Watch a Documentary",
@@ -427,10 +426,6 @@
             326: {
                 title: "📝 Write a Letter or Card",
                 content: '<p><strong>Goal:</strong> Write to someone you care about — handwritten or typed.</p><p><strong>Ideas:</strong></p><ul style="margin-left: 20px;"><li>A thank-you note</li><li>A birthday card</li><li>A "thinking of you" note to an old friend</li><li>An email to someone you haven\'t talked to in a while</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Handwritten notes are extra special — people love getting real mail!</p>'
-            },
-            328: {
-                title: "🧑‍🍳 Cook from Scratch",
-                content: '<p><strong>Goal:</strong> Make a meal using real ingredients — not a frozen dinner.</p><p><strong>Easy starter recipes:</strong></p><ul style="margin-left: 20px;"><li>Scrambled eggs with toast</li><li>Pasta with sauce and vegetables</li><li>A simple soup or stew</li><li>Grilled chicken and salad</li></ul><p style="margin-top: 15px; color: var(--primary);">💡 Search YouTube: "easy recipes for beginners" for step-by-step videos!</p>'
             },
             301: {
                 title: "💿 Sell Coins or Vinyls",
