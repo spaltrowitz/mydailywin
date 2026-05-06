@@ -114,6 +114,12 @@
                     <button class="btn btn-danger btn-sm" data-action="clearReports">🗑️ Clear All</button>
                 </div>
             </div>
+
+            <div class="card">
+                <h2>📝 Recent Activity</h2>
+                <div id="activityLogContainer"></div>
+                <button class="btn btn-secondary btn-block" style="margin-top: 15px;" data-action="downloadActivityCSV">📥 Download Activity CSV</button>
+            </div>
         </div>
 
         <!-- TASKS TAB -->
@@ -548,5 +554,9 @@
         console.log('✅ Failsafe tab handler active');
     })();
     </script>
+
+    <div id="photoOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; cursor:pointer; align-items:center; justify-content:center;" data-action="closePhotoOverlay">
+        <img id="photoOverlayImg" style="max-width:90%; max-height:90%; border-radius:12px;" alt="Full size photo">
+    </div>
     </body>
 </html>

@@ -250,6 +250,7 @@
                         console.log('📊 Dashboard synced from cloud (totalEarned:', cloudEarned, ')');
                         displayStats();
                         displayLevels();
+                        displayActivityLog();
                     }
                 }
             } catch (err) {
@@ -675,6 +676,87 @@
             
             showToast('Request dismissed');
             displayPendingRequests().catch(function(err) { console.warn('displayPendingRequests failed:', err.message); });
+        }
+
+        function displayActivityLog() {
+            const state = loadState();
+            const daily = (state.dailyBonusComments || []).map(function(c) {
+                return Object.assign({}, c, { type: 'Daily' });
+            });
+            const weekly = (state.weeklyBonusComments || []).map(function(c) {
+                return Object.assign({}, c, { type: 'Weekly' });
+            });
+            var entries = daily.concat(weekly);
+            entries.sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+            var recent = entries.slice(0, 20);
+            var container = document.getElementById('activityLogContainer');
+            if (!container) return;
+
+            if (recent.length === 0) {
+                container.innerHTML = '<div class="empty-state">No activity yet. Entries will appear when tasks are completed.</div>';
+                return;
+            }
+
+            container.innerHTML = recent.map(function(entry) {
+                var dateStr = '';
+                try {
+                    dateStr = new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                } catch (e) { dateStr = entry.date || ''; }
+
+                var badgeClass = entry.type === 'Daily' ? 'activity-badge-daily' : 'activity-badge-weekly';
+                var photoHtml = '';
+                if (entry.photo) {
+                    photoHtml = '<img class="activity-photo" src="' + escapeHtml(entry.photo) + '" alt="Task photo" data-action="openPhotoOverlay" data-arg="' + escapeHtml(entry.photo) + '">';
+                }
+                var commentHtml = entry.comment ? '<div class="activity-comment"><em>"' + escapeHtml(entry.comment) + '"</em></div>' : '';
+
+                return '<div class="activity-entry">' +
+                    '<div class="activity-header">' +
+                        '<span class="activity-task">' + escapeHtml(entry.taskName || 'Task') + '</span>' +
+                        '<span class="activity-badge ' + badgeClass + '">' + entry.type + '</span>' +
+                    '</div>' +
+                    '<div class="activity-date">' + dateStr + '</div>' +
+                    commentHtml +
+                    photoHtml +
+                '</div>';
+            }).join('');
+        }
+
+        function downloadActivityCSV() {
+            var state = loadState();
+            var daily = (state.dailyBonusComments || []).map(function(c) {
+                return Object.assign({}, c, { type: 'Daily' });
+            });
+            var weekly = (state.weeklyBonusComments || []).map(function(c) {
+                return Object.assign({}, c, { type: 'Weekly' });
+            });
+            var entries = daily.concat(weekly);
+            entries.sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+
+            if (entries.length === 0) {
+                showToast('No activity data to export');
+                return;
+            }
+
+            var csvRows = ['Date,Type,Task Name,Comment,Has Photo'];
+            entries.forEach(function(e) {
+                var dateStr = '';
+                try { dateStr = new Date(e.date).toLocaleDateString('en-US'); } catch (err) { dateStr = e.date || ''; }
+                var comment = (e.comment || '').replace(/"/g, '""');
+                csvRows.push('"' + dateStr + '","' + e.type + '","' + (e.taskName || '') + '","' + comment + '","' + (e.photo ? 'Yes' : 'No') + '"');
+            });
+
+            var blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'activity-log-' + new Date().toISOString().slice(0, 10) + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function displayReports() {
@@ -1496,6 +1578,15 @@
                 case 'resetUserBalance': resetUserBalance(); break;
                 case 'resetUserData': resetUserData(); break;
                 case 'exportSurveyDataCSV': exportSurveyDataCSV(); break;
+                case 'downloadActivityCSV': downloadActivityCSV(); break;
+                case 'openPhotoOverlay':
+                    var overlay = document.getElementById('photoOverlay');
+                    document.getElementById('photoOverlayImg').src = arg;
+                    overlay.style.display = 'flex';
+                    break;
+                case 'closePhotoOverlay':
+                    document.getElementById('photoOverlay').style.display = 'none';
+                    break;
             }
         });
 
@@ -1517,6 +1608,7 @@
             displayLevels();
             displayPayments();
             displayReports();
+            displayActivityLog();
             loadAdmins();
             cleanupPendingInvites();
             loadAdminNotifications().catch(function(err) { console.warn('loadAdminNotifications failed:', err.message); });
