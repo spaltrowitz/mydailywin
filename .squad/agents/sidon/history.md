@@ -129,3 +129,34 @@ The app is Duolingo-inspired: daily tasks earn points (100 pts = $1), streaks bu
 - F7: All-done empty state card (design pending)
 - F14: Unused keyframes (safe to remove, low priority)
 
+
+## Cross-Project Designer Knowledge (injected 2026-05-02)
+
+### From EatDiscounted (Verbal)
+- **SSE streaming as UX differentiator:** Progressive results appearing one-by-one creates excitement. Protect and enhance streaming reveal moments — they're the product's emotional core.
+- **Emotional payoff matters:** Finding results should feel like a win, not a status report. Apply this thinking to task completions and reward reveals in gamified apps.
+
+### From Slotted (Suki)
+- **Emoji audit methodology:** Apply 4-criteria test to all emojis. If there's a text label next to the emoji, the emoji is redundant. Reduced 100→13 unique emojis (87% reduction).
+- **Progressive disclosure based on user milestones:** Show different UI based on user stage (0 tasks done vs. streak active vs. power user). Temporal design (WHEN features appear) > spatial design (WHAT to show).
+- **Settings pages should minimize "teaching" copy:** Label controls clearly and let users act. Explanations belong in onboarding.
+- **Duplicate CTAs = decision paralysis:** When two CTAs compete with equal visual weight, neither wins.
+
+### From Slotted (Ty Lee)
+- **"Visual diet, not redesign":** Features work — the visual layer is drowning. Strip, then polish.
+- **Type scale enforcement:** Define 5 levels (page title, section header, card title, body, caption) and enforce globally to prevent accidental visual cascade.
+- **Empty states must feel intentional:** Warm whitespace + illustration + single CTA. Not broken — designed.
+- **Micro-interactions = emotional moments:** Friend joins → celebration; task completed → reinforcement. State transitions should animate.
+
+### From Scrunch (Jan)
+- **"No pre-browse gates, ever":** Even an optional bottom sheet before content is a gate. First screen must be immediately useful.
+- **Mobile touch targets: 44px minimum** (Apple HIG + WCAG). Check all interactive elements including help buttons and checkboxes.
+- **Collapsible filters on mobile:** 15+ options all at once on 375px = cognitive overload. Collapse behind toggle with active-count badge.
+- **Stack, don't squeeze:** Row layouts overflow on mobile. Use `flex-col sm:flex-row` pattern.
+
+### From HealthStitch (Book — UX Writing)
+- **Voice:** Smart, personal, encouraging — like a knowledgeable friend. Avoid jargon in user-facing text.
+- **Null states:** Use em-dash "—" instead of "--" for missing data — reads as intentional absence, not bug.
+- **Loading states:** Conversational and specific ("Calculating your streak…") not generic ("Loading...").
+- **Error framing:** Lead with what the user wanted before the technical message.
+- **Tab labels should be task-oriented and short:** e.g., "Today's Readiness" not "Dashboard Overview."

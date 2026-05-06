@@ -78,3 +78,47 @@
 **Full historical details:** See `.squad/agents/daruk/history-archived.md` for pre-May 2026 context (P0 details, bug bash findings, phase consolidation work).
 
 ---
+
+## Cross-Project Backend Knowledge (injected 2026-05-02)
+
+The following learnings come from Backend agents across Shari's other personal projects.
+
+### From EatDiscounted (Fenster)
+- **API rate limiting:** Per-IP sliding window rate limiting (5/min on primary endpoint, 10/min on secondary, 20/min on reads). Return 429 + `Retry-After` header. Dead-code rate limit constants are a red flag — verify they're actually wired in.
+- **In-memory caching:** TTL-based caching (1hr for API results, 5min for sitemaps). Key pattern: `restaurant::platform`. ~10-50x capacity multiplier for quota-limited APIs. Caveat: in-memory cache lost on deploy — needs Redis for serverless.
+- **Search API migration:** Moved from Google CSE (100 free/day) to Brave Search API (2,000 free/month, 20x capacity). Brave supports same `site:` operator. Lesson: always have a fallback search provider ready.
+- **Direct API integrations:** Upside and Bilt both have public no-auth REST APIs for restaurant data. Pattern: check for public APIs before defaulting to search-scraping approaches.
+- **Unicode handling:** NFD decomposition + combining-mark stripping for transliteration ("Café" → "Cafe"). Special cases needed for ß→ss, æ→ae, œ→oe.
+- **Security:** `.env.local` must be in `.gitignore` — check git history for prior exposure and rotate keys. Hardcoded salts in DB utilities are a risk. Remove dead code that references sensitive constants.
+- **SQLite patterns:** WAL mode for concurrent reads, UNIQUE constraints, parameterized queries. Hot-reload fragility + SQLite on serverless is a known blocker.
+
+### From Slotted (Zuko, alumni: Roy, Sam)
+- **Security (critical patterns):** Never hardcode admin secret fallbacks — use fail-closed pattern (403 if env var unset). Strip sensitive fields (OAuth tokens, email, socialBattery) from all API responses via `stripSensitive()`. Always add new token fields to the sensitive fields list.
+- **OAuth token storage:** Supabase Vault encryption (not plaintext DB columns). Pattern: `oauth_tokens` table stores vault secret UUIDs; SQL helper functions are SECURITY DEFINER. Old columns renamed to `_deprecated` (not dropped) for rollback safety.
+- **CORS:** Whitelist specific origins in the `cors` callback. The default `callback(null, true)` in the else branch = security hole. No-origin requests (mobile, curl) allowed intentionally via `!origin` check.
+- **Google webhooks:** Must always return 200 (even on errors) or Google deactivates the endpoint. For stale sync tokens (410), clear and retry immediately in the same call.
+- **Notification dedup:** Cascading strategy — 1hr by relatedUserId → 5min by relatedId → 10min by title. Use unique notification types for filter logic.
+- **Race conditions:** Solved with AFTER UPDATE trigger + FOR UPDATE lock (atomic DB-level, not application-level). Use `ON CONFLICT` upserts instead of delete-then-insert.
+- **API normalization:** Accept both camelCase and snake_case in request bodies. Return both naming conventions in responses for frontend compatibility.
+- **Account deletion:** CASCADE from users table + cancel meetups + notify participants + clear OAuth tokens + delete related records. Must handle all FK references.
+- **RLS policies:** `get_current_user_id()` SECURITY DEFINER helper maps `auth.uid()` → internal UUID. Separate SELECT/INSERT/UPDATE/DELETE policies per table.
+- **Duplicate detection:** Before inserting, check for existing records with overlapping criteria. Return 409 with existing ID.
+- **Block/mute:** `blocked_users` table with RLS. Block check on friend invite + meetup creation. Blocking also removes existing friendship.
+
+### From Scrunch (Danny)
+- **Supabase query optimization:** Use `select('id', { count: 'exact', head: true })` for count-only queries — transfers zero rows instead of fetching all rows and checking `.length`.
+- **Dedup performance:** Replace O(n²) `filter+findIndex` with O(n) Map-based dedup for list processing.
+- **Parallel API calls:** Convert sequential `for` loops over external APIs to `Promise.all()`. Sequential fetches are the #1 latency killer.
+- **TypeScript type drift:** When TS types drift from actual DB schema, the app silently degrades. `as unknown as Type` casts mask real errors. Use schema-generated types to stay in sync.
+- **Loading gate anti-pattern:** Blocking render until all queries resolve is the #1 perceived perf killer. Use `placeholderData` + `staleTime` in React Query hooks and render with defaults immediately.
+- **Search relevance:** Domain-aware keyword extraction with a domain vocabulary outperforms generic NLP (stop-word removal). Reddit search: 4-6 keyword terms optimal. Multi-query strategy (primary + fallback) doubles relevant results.
+- **Fallback UX:** Never disguise navigation/fallback actions as content items. Show clear status (error vs. no results) with actionable next steps.
+
+### From HealthStitch (Wash)
+- **Sync architecture:** WHOOP = backend-pull (server fetches from API), Apple Watch = iOS-push (app pushes to backend). Different data sources need different sync strategies.
+- **Metric normalization (critical):** WHOOP RMSSD ≠ Apple SDNN for HRV. Must maintain separate baselines per source/metric. API responses should nest by source (`hrv.whoop`, `hrv.apple_watch`).
+- **Dedup strategy:** `INSERT OR IGNORE` with unique indexes on `(user_id, source, external_id)`. Both WHOOP and HealthKit provide stable external IDs.
+- **Background sync (iOS):** Anchored queries (not date-based) are more reliable — no missed samples. JWT in Keychain (not UserDefaults) for background access. BGAppRefreshTask as fallback if no observer syncs in 2+ hours.
+- **Sleep date normalization:** Always use start_at date ("night of") for consistency across sources.
+- **SQLite performance:** Pre-compile prepared statements to module-level constants. WAL mode for concurrent reads.
+- **PostgreSQL migration gotchas:** SQLite-isms to watch: `datetime('now')`, `INSERT OR IGNORE`, `date()` expressions, PRAGMAs. `ON CONFLICT` upserts are PG-compatible as-is.

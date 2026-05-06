@@ -35,3 +35,17 @@
 - Decisions.md P1 checklist updated (5 items marked complete, 1 pending approval)
 - Session log filed for future reference
 
+
+## Cross-Project Scribe Knowledge (injected 2026-05-02)
+
+### From EatDiscounted (Scribe)
+- **Scribe as team initialization anchor:** Initial setup establishes project context and "ready for work" state. History grows from session activity.
+
+### From Slotted (Scribe)
+- **Lightweight scribe setup works:** Project context + empty learnings section. No need to pre-populate — sessions generate the content.
+
+### From Scrunch (Scribe)
+- **Same minimal pattern:** Project context established, learnings populate organically from team sessions.
+
+### From HealthStitch (Scribe)
+- **Consistent structure across projects:** All scribes use same format (Project Context → Learnings). Cross-project consistency makes it easy to find information regardless of which project you're in.

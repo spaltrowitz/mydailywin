@@ -44,3 +44,14 @@ Admin↔user data flows via localStorage keys and Firestore. Profile-based task 
 - Service worker cache versioning is critical for multi-agent parallel work — each agent bumps independently, latest wins.
 - Shared CSS patterns (like .btn base styles) should live in shared.css + be imported by every page CSS file for consistency and DRY.
 
+
+## Cross-Project Optimizer Knowledge (injected 2026-05-02)
+
+### From Scrunch (Cha-Cha)
+- **React Query migration pattern:** Installed-but-unused React Query = 13KB dead weight + no caching/dedup. Migration approach: (1) create shared hooks with canonical query keys, (2) replace all `useEffect`+`useState` fetches, (3) convert writes to `useMutation` with query invalidation. `staleTime: 5min, gcTime: 10min` as sensible defaults.
+- **`select('*')` is a performance trap:** Narrow to only needed columns per page context. Products with large `ingredients[]` arrays (30-50 items) cause massive over-fetching. Achieved ~40% reduction in network payload.
+- **Dynamic import for fallback data:** Static import of seed data (69-80KB) should be `await import()` in error fallback only. Vite code-splits into separate chunk, removed from initial bundle.
+- **Component decomposition for render performance:** Decomposed 1173-line monolith into 7 files. All extracted components wrapped in `React.memo()` with `useCallback` for stable handler references. Eliminated sibling re-renders.
+- **Homepage load optimization:** Separate lightweight hook for homepage (7 columns, limit 20, `placeholderData` from pre-computed seed) = perceived load from 1.3s to 0ms.
+- **Regression check after optimization:** When consolidating per-page queries into shared hooks, column-specific selects may revert to `select('*')`. Always audit shared hooks after migration.
+- **Route-level code splitting with React.lazy():** All 14 page components should be lazy-loaded from App.tsx.

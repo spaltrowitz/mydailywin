@@ -22,7 +22,7 @@
 | Sidon | UX/Design | Gamification feel, animations, visual polish | 🎨 |
 | Riju | Security | Firestore rules, auth, data isolation, trust boundaries | 🔒 |
 | Scribe | Session Logger | Memory, decisions, session logs | 📋 |
-| Ralph | Work Monitor | Work queue, backlog, keep-alive | 🔄 |
+| Ralph | Work Monitor | Work queue, backlog, keep-alive | ⏸️ Removed |
 
 ## Key Files
 

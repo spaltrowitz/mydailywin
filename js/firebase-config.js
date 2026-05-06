@@ -1,7 +1,7 @@
 // Firebase configuration — shared across login.html, app.html, admin.html
 const firebaseConfig = {
     apiKey: "AIzaSyCWHGMZDhCKIUWKcjOAHG8RKb2aZ-56MsI",
-    authDomain: "mydailywin.firebaseapp.com",
+    authDomain: "mydailywin-7dc5e.firebaseapp.com",
     projectId: "mydailywin",
     storageBucket: "mydailywin.firebasestorage.app",
     messagingSenderId: "614332100388",

@@ -4,7 +4,6 @@
     "runtime": "nodejs22"
   },
   "hosting": {
-    "site": "mydailywin",
     "public": ".",
     "ignore": [
       "firebase.json",
@@ -20,7 +19,7 @@
         "headers": [
           {
             "key": "Content-Security-Policy",
-            "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.gstatic.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net https://accounts.google.com; frame-src https://accounts.google.com https://habitrewards-131.firebaseapp.com https://mydailywin.firebaseapp.com; object-src 'none'; base-uri 'self'"
+            "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.gstatic.com https://*.googleusercontent.com https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://api.emailjs.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://appleid.apple.com; object-src 'none'; base-uri 'self'"
           },
           {
             "key": "X-Frame-Options",
@@ -42,7 +41,8 @@
         "source": "**",
         "destination": "/home.html"
       }
-    ]
+    ],
+    "site": "my-daily-win"
   },
   "firestore": {
     "rules": "firestore.rules"

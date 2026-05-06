@@ -65,12 +65,12 @@
             height: 20px;
         }
         .btn-email {
-            background: var(--primary);
+            background: #e5e7eb;
             border: none;
-            color: white;
+            color: var(--text);
         }
         .btn-email:hover {
-            background: var(--primary-dark);
+            background: #d1d5db;
         }
         .divider {
             display: flex;
@@ -295,7 +295,7 @@ body.dark-mode {
     background: linear-gradient(135deg, #1a3a00, #0f2600);
 }
 body.dark-mode .login-card {
-    background: #202f36;
+    background: #1a2a1a;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
 }
 body.dark-mode h1 {
@@ -305,25 +305,25 @@ body.dark-mode .subtitle {
     color: #a3a3a3;
 }
 body.dark-mode .btn-google {
-    background: #2a3940;
-    border-color: #37464f;
+    background: #2a3a2a;
+    border-color: #3a4f3a;
     color: #e5e5e5;
 }
 body.dark-mode .btn-google:hover {
-    background: #37464f;
-    border-color: #4a5e68;
+    background: #3a4f3a;
+    border-color: #4a6a4a;
 }
 body.dark-mode .divider {
     color: #a3a3a3;
 }
 body.dark-mode .divider::before,
 body.dark-mode .divider::after {
-    background: #37464f;
+    background: #3a4f3a;
 }
 body.dark-mode .email-form input,
 body.dark-mode .reset-form input {
-    background: #131f24;
-    border-color: #37464f;
+    background: #0f1a0f;
+    border-color: #3a4f3a;
     color: #e5e5e5;
 }
 body.dark-mode .email-form input:focus,
@@ -339,24 +339,31 @@ body.dark-mode .success-message {
     color: #86efac;
 }
 body.dark-mode .profile-item {
-    background: #131f24;
+    background: #0f1a0f;
 }
 body.dark-mode .profile-item:hover {
-    background: #37464f;
+    background: #3a4f3a;
 }
 body.dark-mode .profile-name {
     color: #e5e5e5;
 }
 body.dark-mode .user-info {
-    background: #131f24;
+    background: #0f1a0f;
 }
 body.dark-mode .user-name {
     color: #e5e5e5;
 }
 body.dark-mode .btn-cancel {
-    background: #2a3940;
-    border-color: #37464f;
+    background: #2a3a2a;
+    border-color: #3a4f3a;
     color: #e5e5e5;
+}
+body.dark-mode .btn-email {
+    background: #2a3a2a;
+    color: #c5c5c5;
+}
+body.dark-mode .btn-email:hover {
+    background: #3a4f3a;
 }
 body.dark-mode .back-link {
     color: #a3a3a3;

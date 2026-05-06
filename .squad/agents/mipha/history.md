@@ -1,542 +1,77 @@
-# Mipha — User Dev
+# Mipha — History
 
-## Core Context
+## Key Patterns & Corrections
 
-**Tech Stack:** Frontend UI (app.html, login.html, home.html), CSS styling, UX patterns, dark mode
+### Escaping & Security
+- **XSS strategy:** User-controlled data → `escapeHtml()`. Values in JS execution context (onclick) → `data-*` attributes + `addEventListener()`. Static HTML/hardcoded constants are safe for innerHTML.
+- **innerHTML audit:** app.html had 18, login.html had 6 — only user-controlled data needs escaping. login.html needed its own `escapeHtml()` copy (now in js/utils.js).
 
-**Key Responsibilities:**
-- User-facing HTML/CSS (app.html daily interface, task management UI)
-- Login flow and onboarding (login.html, get-started.html styling)
-- Landing page (home.html, marketing site)
-- Dark mode implementation
-- Modal dialogs and gamification UI (celebration screens, notifications)
+### Architecture
+- **Code consolidation (Option C):** Merged 3 divergent codebases → single app.html. Deleted habitrewards.html (zero unique features), redirected index.html. Migrated 5 features: TASK_HELP, filterForProfile(), task flags, completedEver tracking, help buttons.
+- **getDefaultState():** Canonical default state merging 19 fields — used at init and catch block. Prevents schema drift.
+- **Profile suffix pattern:** `(PROFILE_ID && !IS_LEGACY_PROFILE) ? '_' + PROFILE_ID : ''` — use everywhere for storage keys.
+- **shared.css is single source of truth** for CSS variables. Pages should NOT redeclare `:root` vars unless overriding for dark mode.
+- **Shared JS load order:** sw-init.js → Firebase SDK → firebase-config.js → utils.js → page scripts.
 
-**Critical Decisions (Historical):**
-1. **Escaping Strategy:** User-controlled data → `escapeHtml()`. Values in JS execution context → `data-*` attributes + `addEventListener()`.
-2. **Dark Mode Pattern:** CSS variables (`--primary`, `--secondary`, theme colors). Toggle via `document.documentElement.setAttribute('data-theme', ...)`.
-3. **Gamification UI:** Celebration modals, confetti animations (10 particles, straight-down). Unused keyframes (jackpot, coinDrop, goldShine) available for enhancement.
-4. **Typography:** Quicksand font for home.html (playful), app.html/login.html should align (currently system fonts on login/get-started).
+### Bug Fix Patterns
+- `IS_LEGACY_PROFILE` must be defined as `PROFILE_ID === 'stu'` in every file that references it.
+- All `JSON.parse` calls hardened with try/catch + sensible defaults. `saveState()` can silently fail on quota.
+- `hr_state_stu` key was wrong — legacy profile check uses `hr_state` (unsuffixed).
+- Event parameters in onclick: use optional chaining `event?.currentTarget`.
+- Transient runtime properties prefixed with underscore (`_lastLevelName`) — not persisted to localStorage.
 
-**Known Issues:**
-- home.html and offline.html lack dark mode support
-- login.html and get-started.html still use system font (should add Quicksand or Nunito)
-- Service worker CACHE_NAME never versioned (stale page risk)
-- localStorage sync gap: admin changes tasks, app doesn't see until reload
+### UI/UX Patterns
+- **Responsive:** 375px/768px/1024px breakpoints. All touch targets 44px min. CSS media queries only.
+- **Celebrations:** Level-up via transient `_lastLevelName`, streak milestones at 7/14/30 days, 40-50 particle confetti with `prefers-reduced-motion` respect.
+- **PWA install:** `beforeinstallprompt` handler with dismissible banner (localStorage flag).
+- **Font:** Nunito via Google Fonts (`display=swap`). Quicksand was tried and reverted.
+- **All Done card:** 50-particle confetti, sessionStorage fire-once-per-day.
+- **Login bonus:** 20-particle confetti (Tier 1 micro-celebration), 5s auto-hide, pulse animation.
 
-**Design Feedback (Shari, 2026-04-30):**
-- Sound effects downgraded to P3 (nice-to-have, not required)
+### Optimization (Impa audit)
+- Deleted dead code: `rate()`, `submitSurvey()`, `currentRating` (-16 lines).
+- Extracted `calculatePointsWithBonuses(basePoints)` (-20 lines) and `addPoints(amount)` (-10 lines).
+- Net: -46 lines, 3 fewer duplication points.
 
----
+## Cross-Project Frontend Knowledge (injected 2026-05-02)
 
-## Full History
+### From MyDailyWin (Urbosa — Admin Dev)
+- **Storage key mismatch was critical:** Dual-write needed in every write path. Canonical suffix pattern above.
+- **innerHTML loop performance:** `innerHTML +=` in forEach is O(n²). Array.push() + join('') is O(n).
+- **ARIA tab navigation:** `role="tablist"` + `aria-label` on container, `role="tab"` + `aria-selected` + `aria-controls` on buttons, `role="tabpanel"` on panels.
+- **Responsive admin:** Scrollable horizontal tab strip (not hamburger). Tables use `overflow-x: auto`.
+- **Task table dedup:** Extracted `renderTaskRow(task, category)` helper. Data-driven categories array.
 
-## Cross-Agent Context from Full Team Review (2026-02-27)
+### From EatDiscounted (Hockney — Frontend Dev)
+- **SSE streaming:** AbortController on ReadableStream fetch. Abort-on-new-search, 30s timeout, cleanup on unmount.
+- **Accessibility:** `aria-label` on inputs, `aria-live="polite"` + `role="status"` + `aria-busy` on results, `aria-current="page"` on active nav.
+- **Error vs empty state:** Distinct UI states. 429 → rate-limit message. Red card + retry button.
+- **Premium design:** 2px borders, hover shadows + scale(1.02-1.03), not-found at 60% opacity.
 
-### From Revali (Lead/Architect)
-- Code duplication enabler for drift bugs — must unify or extract shared code.
-- localStorage key mismatch is part of larger architecture issue (admin/app alignment).
-- CSP headers required — coordinate with Daruk on firebase.json.
-- Firestore rules are security-critical.
+### From Slotted (Katara — Frontend Dev)
+- **Security:** Hardcoded dev email (PII), credential console.logs, Firebase SW placeholder keys → build-time substitution.
+- **npm overrides:** For deep transitive deps. Monitor upstream for removal.
+- **TypeScript:** Type catch errors as `AxiosError` or `Error`, not `any`.
 
-### From Urbosa (Admin Dev)
-- saveState undefined breaks payout flow.
-- Storage key mismatch breaks user balance reads.
-- Admin needs to stay in sync with app.html's profile system.
+### From Scrunch (Frenchy — Frontend Dev)
+- **Component decomposition:** Extract large components, wrap in `React.memo`, pass stable props.
+- **Toast system:** React context `ToastProvider` + `useToast()`. Wire to all mutations.
+- **setState-in-effect fix:** Render-time sync pattern. `data?.y ?? []` creates new arrays — `useMemo` when used as dependency.
+- **React Query `placeholderData`:** Function searching caches for instant navigation.
+- **Auth loading gate:** Never return null — `animate-pulse` placeholder.
 
-### From Daruk (Backend Dev)
-- Firestore rules vulnerability affects app security.
-- Service worker caching strategy not versioning properly.
-- No real-time localStorage sync between tabs.
+### From HealthStitch (Kaylee — Frontend Dev)
+- **CSS design system:** Custom properties, skeleton loaders, card hover elevation.
+- **Sync freshness:** Green/amber/red by time, auto-refresh 60s, retry on error.
+- **VITE_API_URL:** Shared config, single client module for all API calls.
 
-### From Purah (Tester)
-- Three divergent codebases make testing harder — unification will reduce test burden.
-- Dark mode gaps in home.html and offline.html (Mipha's scope).
-
----
-
-## Learnings
-
-### Project Context (Day 1)
-- MyDailyWin: gamified habit-tracking web app, Duolingo-inspired UI
-- Stack: Vanilla HTML/CSS/JS, Firebase, PWA
-- User: Shari Paltrowitz
-- User-facing pages: app.html (3024 lines), index.html (2380 lines), habitrewards.html (2047 lines)
-- Key patterns: surveyInvite (not surveySection), openModal guards, filterForProfile with stuOnly/excludeFromStu
-
-### Comprehensive Review (Day 2)
-- **Three divergent codebases**: app.html is the "evolved" version with Firebase sync, profile support, admin config, input sanitization, custom confirm modal, daily quotes, weighted bonus selection. index.html is the "feature-rich" version with task help/onboarding, profile filtering (stuOnly, excludeFromStu, LOW_TECH_MODE). habitrewards.html is the "original" with no profile support at all.
-- **CSS duplication**: ~300 identical lines of CSS inline in each of the 3 pages. shared.css exists but is NOT imported by any page.
-- **JS duplication**: getLevel, getPrevLevelPts, spinWheel, triggerCoinRain, triggerConfetti, checkAchievements, getWeekNumber, getDayNumber — all duplicated 3x with minor variations.
-- **Storage divergence**: app.html uses profiled keys (hr_state_{profile}), index.html/habitrewards.html use unprofiled key (hr_state). This means the same user's data can split across pages.
-- **Dead code across all 3 pages**: rate(), submitSurvey(), isWednesday(), addBonus(), getNearMissMessage(), downloadFeedbackLog(), downloadTaskResponses() — defined but never called or never wired to UI.
-- **reportTask() references missing DOM**: index.html and habitrewards.html define reportTask() referencing #reportTaskName, #reportReason, #reportComment but no reportModal HTML exists.
-- **Multiplier stacking**: streak(2x) × luckyDay(1.5x) × randomBonus(2x) = up to 6x. Intentional but notable.
-- **Random bonus exploit**: Undo+redo a task rerolls Math.random(), so users can fish for the 10% 2x bonus.
-- **No localStorage error handling**: saveState() can silently fail if quota is exceeded. loadState() JSON.parse can crash if data is corrupted (no try/catch).
-- **Modal accessibility gaps**: close-modal uses <span> not <button>, no focus trapping, surveyInvite div has no role="button"/tabindex.
-- **Dark mode gaps**: home.html and offline.html have no dark mode. Progress bar background (#e5e7eb) has no dark override.
-- **home.html uses system fonts** instead of Nunito, breaking visual consistency with app pages.
-- **CSS typo**: `bg: rgba(88, 204, 2, 0.1);` in .task-reward (app.html:186, habitrewards.html:184) — invalid property, harmless because `background:` follows.
-
-### P0/P1 Bug Fixes (app.html)
-- **IS_LEGACY_PROFILE**: Added `const IS_LEGACY_PROFILE = PROFILE_ID === 'stu';` at line 823, matching admin.html's definition. Was referenced at line ~2803 (payout fallback) but never defined — would crash on any payout request fallback path.
-- **updateBalanceDisplay()**: Replaced both calls (quote acknowledge + Spanish quote) with `render()`, which already updates balance display at lines 1939-1942. No new function needed.
-- **loadState() try/catch**: Wrapped JSON.parse in try/catch with full default state fallback (balance:0, totalEarned:0, streak:0, empty arrays). Corrupted localStorage no longer crashes the app.
-- **All JSON.parse hardened**: Added try/catch to 8 additional JSON.parse calls: profile data (×2), cloud sync local state, quote state, proposals, reports, payout requests. Each has sensible fallback (empty object/array). Skipped deep-clone patterns (`JSON.parse(JSON.stringify(...))`) since those can't fail, and existing try/catch blocks that were already correct.
-
-### P0 Execution (Feb 27, Session: p0-fixes)
-- ✅ Executed all 2 critical bugs in app.html: IS_LEGACY_PROFILE undefined, updateBalanceDisplay() undefined, plus robustness hardening on loadState() and 8 JSON.parse calls
-- All P0 items for Mipha marked complete in decisions.md
-- Session logged at .squad/orchestration-log/2026-02-27T16-30-p0-fixes.md
-
-### getDefaultState() Extraction + Modal Accessibility (Session: p1-a11y)
-- **getDefaultState()**: Extracted canonical default state function in app.html merging 19 fields from the initial declaration, loadState catch block, and loadState guard checks. Used at both `let state` init and catch block. Prevents schema drift — new fields only need one edit.
-- **Modal close buttons**: Changed 21 `<span class="close-modal">` to `<button class="close-modal" aria-label="Close">` across app.html (8), index.html (7), habitrewards.html (6). Added button-reset CSS (background/border/padding none) to `.close-modal` in all 3 files.
-- **ARIA dialog attributes**: Added `role="dialog" aria-modal="true"` to 22 modal container divs across all 3 user pages. Added `aria-labelledby` to taskModal (all 3 pages), taskHelpModal (index.html), confirmModal (app.html) — the modals that already had h2 elements with IDs.
-- **Not changed**: No focus trap (separate effort), star rating spans, dynamically-created paymentReceivedModal.
-
-### P1 Execution — Accessibility Refactor + Default State Extraction (Session: 2026-03-03)
-
-**Orchestration Log:** .squad/orchestration-log/2026-03-03T16-17-21Z-mipha-13.md
-
-#### Changes Made
-- Extracted `getDefaultState()` function: canonical default state used at init and in loadState() catch block (eliminates schema drift)
-- Converted 21 close/dismiss spans to buttons with aria-label across app.html, index.html, habitrewards.html
-- Added role="dialog" + aria-modal="true" to 22 modals across all three user pages
-- Applied aria-labelledby to modals with header elements
-
-#### Cross-Agent Alignment
-- **Urbosa:** admin.html now follows same JSON.parse defensive pattern (established first in app.html)
-- **Daruk:** Default state structure formalization enables better Firestore sync contracts
-- **Revali:** Accessibility standardization across 3 pages enables safe consolidation (habitrewards.html → app.html merge now feasible)
-
-#### Accessibility Standard
-- WCAG 2.1 AA compliance (Level AA)
-- Full keyboard navigation for all modals and close buttons
-- Screen reader announcements for modal role and labeling
-
-#### Known Limitations
-- Focus trap pattern not yet implemented (separate effort)
-- Star rating accessibility (spans) not converted (subset of modal work)
-
-#### Quality Gate
-- No regression in visual appearance
-- Button styling maintained via CSS reset
-- Modal behavior unchanged; accessibility added non-invasively
-
-### Phase 2: index.html Feature Migration to app.html (Session: phase2-consolidation)
-
-**Orchestration:** Per Revali's approved Option C consolidation strategy.
-
-#### Features Migrated
-1. **TASK_HELP data object + showTaskHelp()**: 12-entry help content object with modal. Applied `escapeHtml()` to title in showTaskHelp. Content is static HTML (safe for innerHTML — not user input).
-2. **Profile Task Filtering (stuOnly/excludeFromStu)**: Added `filterForProfile()` using `IS_LEGACY_PROFILE` (equivalent of index.html's `IS_STU_PROFILE`). Wired into `getConfiguredDailyTasks()`, `getDailyBonus()`, and `getWeeklyBonuses()`. Added flags to: Duolingo (excludeFromStu), Clear emails (excludeFromStu), Tennis (stuOnly), Aisle app (stuOnly), Lunch with tennis friends (stuOnly), Mystery Shop (stuOnly).
-3. **Tech Comfort Filtering**: SKIPPED — app.html already handles this via `profileTemplate` mechanism which uses entirely separate task sets (LOW_TECH_TASKS vs REGULAR_TASKS). More comprehensive than index.html's `filterForTechComfort()`.
-4. **Completed-Ever Tracking**: Added `getCompletedEverTasks()` and `markTaskCompletedEver()` with profile-suffixed key (`hr_completed_ever_${PROFILE_ID}`). Wired into all 5 completion paths: `completeTaskDirectly()`, `confirmTask()`, `confirmDailyBonus()`, direct daily bonus, `confirmWeeklyBonus()`.
-5. **Help buttons in task rendering**: Added "i" buttons to daily tasks, weekly bonuses, and daily bonus in `render()`. Only shown for tasks with TASK_HELP entries. White-styled variants for colored bonus sections.
-
-#### Key Decisions
-- `escapeHtml()` applied to help title (belt-and-suspenders with textContent). Content left as raw HTML because it's a hardcoded constant, not user input — escaping would break the formatting.
-- `filterForProfile()` applied inside `getConfiguredDailyTasks()` so it covers both admin-configured and default tasks.
-- `getDailyBonus()` now returns null when all bonuses are filtered out; UI hides section gracefully.
-- `getWeeklyBonuses()` uses same Tennis check as index.html: `if (!TENNIS_WEEKLY.stuOnly || IS_LEGACY_PROFILE)`.
-- Profile-suffixed `COMPLETED_EVER_KEY` follows app.html convention, not index.html's unsuffixed pattern.
-
----
-
-### Phase 1–4 Code Consolidation (2026-03-03)
-
-#### Session Context
-Executed Phases 1–4 of consolidation strategy (Mipha's responsibility in Phase 2):
-
-**Phase 1 (Daruk, 193s):** Deleted habitrewards.html (2047 lines)
-- Zero unique features, security downgrade, orphaned
-- Mipha scope reduced from 3 → 2 user pages (app.html, index.html)
-
-**Phase 2 (Agent 17, 1680s):** Migrated 5 features from index.html → app.html (149 insertions)
-- TASK_HELP constant (11 entries) + showTaskHelp() with escapeHtml() sanitization
-- filterForProfile() with profile-aware task filtering (IS_LEGACY_PROFILE pattern)
-- Task metadata flags (stuOnly, excludeFromStu) on profile-specific tasks
-- getCompletedEverTasks() + markTaskCompletedEver() for persistent task history per profile
-- Help button rendering in daily/weekly/bonus task UI with event.stopPropagation() handling
-- Total: 149 insertions, all with proper escaping and profile-suffixed storage keys
-
-**Phase 3 (Daruk, 41s):** Redirected index.html, updated firebase.json
-- index.html now thin redirect stub to /home.html (from 2375 lines → 12 lines)
-- firebase.json catch-all rewrite updated: `/index.html` → `/home.html`
-- app.html is now sole user-facing app page
-
-**Phase 4 (Purah, 78s):** Verified all 5 features pass QA
-- TASK_HELP + showTaskHelp() properly defined with all 11 entries ✅
-- filterForProfile() correctly uses IS_LEGACY_PROFILE ✅
-- Task flags properly set on all profile-specific tasks ✅
-- getCompletedEverTasks() + markTaskCompletedEver() working with profile-suffixed keys ✅
-- Help buttons render correctly with event.stopPropagation() ✅
-- No duplicate definitions, no unsuffixed storage keys, all escaping verified ✅
-
-#### Impact & Status
-- **Code consolidation:** Option C fully executed; habitrewards.html deleted, index.html redirected
-- **Mipha's deliverable:** 5 features migrated with 149 insertions, zero regressions
-- **Quality gate:** 🟢 READY FOR PRODUCTION (Purah verification passed, all features verified)
-- **Knowledge transfer:** Consolidation enables future feature development on app.html only (single source of truth)
-
-### Bug Bash Fixes (2026-03-04)
-
-#### Changes Made (get-started.html, app.html, home.html, og-image.svg)
-1. **Step 7b back button**: `goBack()` now handles string `'7b'` step — returns to step 7
-2. **Event parameter guards**: `selectOption()`, `selectPayoutPref()`, `selectHelpOption()` now accept `event` param with optional chaining (`event?.currentTarget`). All onclick handlers updated to pass `event`.
-3. **saveProfileSetup() error handling**: All localStorage writes wrapped in try/catch. On failure, user sees alert and function returns early (no silent data loss).
-4. **hr_state_stu key mismatch**: Legacy profile detection in app.html line 907 now checks `hr_state` (correct key) instead of `hr_state_stu` (never existed).
-5. **Tagline update**: "Build Better Habits, Earn Real Rewards" → "Turn Daily Habits into Daily Wins" in home.html (title, og:title, twitter:title) and og-image.svg.
-6. **Branding comment**: "WHY HABITREWARDS" → "WHY MYDAILYWIN" in home.html.
-
-#### Key Patterns
-- For inline onclick handlers that pass `event`, the browser's implicit `event` variable works but the function signature must accept it as a parameter for programmatic calls.
-- `saveProfileSetup()` is called during `goToSummary()` — the try/catch prevents redirect if storage fails.
-
-### Home Page Design Polish (2026-04-14)
-
-#### Changes Made
-1. **Inline SVG favicon in hero**: Replaced 🏆 emoji (renders inconsistently) with the actual `favicon.svg` inlined directly. Sized at 100×100px. CSS `.hero-logo` updated from font-size to width/height.
-2. **Nunito font**: Added Google Fonts import (400/600/700/800) and set as primary font-family on body, matching app.html's typography.
-3. **Secondary purple accents**: Applied `--secondary` (#ce82ff) in three places: "Why MyDailyWin?" section gets purple-tinted gradient background, alternating gamification badges get light purple background, FAQ Quick Reference box border changed from green to purple with purple gradient background.
-4. **"Win" wordmark**: Hero h1 now renders "MyDaily" in white and "Win" in gold (`var(--orange)`) via inline span.
-5. **og-image.png**: Neither `rsvg-convert` nor ImageMagick `convert` available on this machine. Logged as TODO in decisions inbox.
-
-#### Key Patterns
-- Inline SVG avoids an extra network request and ensures consistent rendering vs emoji.
-- Purple accents are subtle (light tints like `#faf5ff`, `#f3e8ff`, `#e9d5ff`) — not competing with primary green.
-- Nunito import uses `display=swap` for good CLS scores.
-
-
----
-
-### Bug Bash Session (2026-04-14)
-
-**Status:** ✅ 6 fixes completed and committed
-
-#### Fixes Delivered
-1. **Step 7b Navigation** — goBack() now handles string `'7b'` step
-2. **Event Parameter Guards** — selectOption(), selectPayoutPref(), selectHelpOption() accept optional event param
-3. **saveProfileSetup Error Handling** — Added try/catch; localStorage writes protected
-4. **hr_state Key Correction** — Fixed legacy profile check from `hr_state_stu` → `hr_state`
-5. **Tagline Update** — "Build Better Habits, Earn Real Rewards" → "Turn Daily Habits into Daily Wins"
-6. **Branding Cleanup** — Comment updated to MYDAILYWIN
-
-#### Cross-Agent Notes
-- Daruk fixed Firestore write to get-started.html; app.html must read from Firestore with localStorage fallback
-- localStorage → Firestore migration in onboarding now enabled; verify app.html reads correctly
-- CSP update from Daruk includes mydailywin domain; no further auth changes needed on user-facing pages
-
-#### Key Convention Extracted
-- Event parameters in onclick handlers should use optional chaining pattern: `event?.currentTarget`
-- Storage keys must always be profile-suffixed for non-stu profiles: `hr_{feature}_{PROFILE_ID}`
-
-### Logo & Font Revert (2026-07-18)
-
-#### Changes Made
-1. **Logo reverted**: Removed inline SVG trophy from hero. Replaced with 🏆 emoji at 72px — clean, universal, polished. CSS `.hero-logo` changed from width/height to font-size/line-height.
-2. **Font swap**: Nunito → **Quicksand** (400/500/600/700). Quicksand is rounder, friendlier, and better suited for a gamified app. Google Fonts import updated.
-3. **Removed "Win" gold styling**: Hero h1 changed from `MyDaily<span style="color: var(--orange);">Win</span>` to plain `MyDailyWin`. Clean, unified, no Word Art effect.
-4. **Purple accents preserved**: No changes to `--secondary` usage. They still look good.
-
-#### User Preference (Shari)
+## Owner Preferences (learned)
 - Prefers emoji-based logo over custom SVG — simpler is better
 - Dislikes split-color wordmark styling (gold "Win") — wants unified title
-- Font should feel playful but professional — Quicksand fits this brief
-- Key file: `home.html` lines 13 (font import), 46 (body font), 57-61 (hero-logo CSS), 842-843 (hero markup)
+- Font should feel playful but professional — Quicksand fits (reverted from Nunito on home.html)
+- Sound effects downgraded to P3 (nice-to-have)
+- Purple accents are subtle tints (#faf5ff, #f3e8ff) — not competing with primary green
 
+## Session Archive Summary
 
-### CTA Section Background Fix (2026-07-18)
-
-#### Change
-- `.cta-section` background changed from `var(--primary)` (#58cc02, bright green) to `linear-gradient(135deg, #2d6e01, #3d8a02)` — the same dark green palette as the hero section, reversed.
-
-#### Reason
-- Hero gradient was updated to dark greens (#3d8a02 → #2d6e01) in earlier design work, but CTA section still used the bright `--primary`. The contrast was jarring — bright neon block at the bottom against a muted top.
-
-#### Pattern
-- When updating hero/header colors, check CTA/footer sections for palette consistency. The page should feel like one continuous design, not mismatched blocks.
-
-### UX/Design Audit — Gamification & Responsive (2026-04-30, Sidon)
-
-📌 Team update (2026-04-30): UX audit identified 8 priority decisions spanning gamification, visual consistency, responsive design — decided by Sidon
-
-**P1 Decisions (Your Scope — app.html):**
-1. Sound effects for reward moments (Web Audio API, mute toggle) — owns implementation
-2. Celebration modals for level-ups/streaks/achievements (40-50 particle confetti) — works with Decision 8
-3. Responsive breakpoints (375px, 768px, 1024px) — app.html needs layout queries
-4. Unify font stack to Nunito (currently app.html has Nunito, good starting point)
-5. Enhance confetti system (40-50 particles, rotation, spread, activate unused keyframes: jackpot, coinDrop, goldShine)
-
-**P2 Decisions (Shared with Urbosa):**
-6. Import shared.css everywhere (enables consistent dark mode, CSS vars)
-7. Extend dark mode to all pages (currently only app.html)
-
-**Owner Notes:** Sidon created `gamification` skill with sound effect patterns and particle physics guidance.
-
-**Cross-Agent:** Works with Urbosa on Decision 6–7 (shared.css import, dark mode extension, font unification, responsive breakpoints for admin).
-
-### XSS Vulnerability Fixes (2026-07-18)
-
-#### Changes Made
-- **app.html**: Wrapped 4 user-controlled innerHTML interpolations with `escapeHtml()`:
-  - `task.name` in daily task rendering (line ~2185)
-  - `b.name` in tennis weekly bonus rendering (line ~2216)
-  - `b.name` in regular weekly bonus rendering (line ~2232)
-  - `notifId` in payment modal onclick handler (line ~1384)
-- **login.html**: Added `escapeHtml()` function and fixed 2 profile rendering blocks:
-  - `profile.name` escaped in both owned and managed profile lists
-  - Replaced inline `onclick="openProfile('${profile.id}')"` with `data-profile-id` attributes + `addEventListener()` — eliminates string interpolation in JS execution context entirely
-  - Same pattern for `openAdmin()` onclick handlers
-
-#### Key Patterns
-- `escapeHtml()` already existed in app.html (line 843). login.html needed its own copy.
-- For onclick handlers that interpolate user data, `data-*` attributes + `addEventListener` is safer than escaping — the value never enters a JS execution context.
-- Not all innerHTML assignments are XSS risks — audited each one. Static HTML from hardcoded constants (TASK_HELP, level data, date strings from toISOString/toLocaleDateString) are safe.
-- `readAsDataURL()` output in img src is safe — always produces `data:` prefix with base64.
-
-#### Audit Summary (innerHTML instances reviewed)
-- app.html: 18 innerHTML assignments audited, 4 fixed
-- login.html: 6 innerHTML assignments audited, 2 blocks fixed (4 profile.id + 2 profile.name interpolations)
-
----
-
-## Security Fix Session — 2026-04-30T20:38
-
-### XSS Remediation: innerHTML with User-Controlled Data
-
-#### app.html Fixes (4 sites)
-Wrapped user-controlled values with `escapeHtml()`:
-- `task.name` in daily task rows
-- `b.name` in tennis weekly bonus rows
-- `b.name` in regular weekly bonus rows
-- `notifId` in payment notification modal onclick
-
-Attack vector eliminated: localStorage tampering cannot inject scripts into user UI.
-
-#### login.html Fixes (6 interpolations across 2 profile blocks)
-Added `escapeHtml()` function to login.html (did not previously exist).
-- Escaped `profile.name` in owned profile list
-- Escaped `profile.name` in managed profile list
-- Replaced 4x inline `onclick="openProfile('${profile.id}')"` with `data-profile-id` attributes + `addEventListener()`
-- Replaced 2x inline `onclick="openAdmin(...)"` with data attributes + event handlers
-
-**Escaping Strategy:**
-- For HTML text content: use `escapeHtml()` to replace &, <, >, ", ' with HTML entities
-- For values in JS execution context (onclick): use `data-*` attributes + `addEventListener()` — safer because value never enters JS execution context
-- Static HTML and hardcoded strings: no escaping needed
-
-#### Full innerHTML Audit (24 instances)
-- app.html: 18 innerHTML assignments reviewed → 4 fixed, 14 verified safe
-- login.html: 6 innerHTML assignments reviewed → 2 profile blocks fixed
-- Safe patterns identified: static HTML, numeric values, readAsDataURL() outputs, hardcoded constants
-
-### Coordination with Daruk & Urbosa
-- Daruk fixed critical redirect and authorization vulnerabilities
-- Urbosa fixed innerHTML XSS in admin.html (25 sites, same escapeHtml() strategy)
-- All three agents using consistent escaping approach
-- escapeHtml() function could be extracted to shared.js for team reuse
-
-
-### UX Improvements — Celebration Modals & Responsive (2026-07-18)
-
-#### Changes Made (app.html — 162 insertions, 9 deletions)
-1. **Level-Up Celebration Modal**: Full-screen modal with level badge (colored by level), randomized encouraging message, dismiss button. Level change detected in `render()` by tracking `state._lastLevelName` (transient, not persisted). Fires with 300ms delay to let points update first.
-2. **Streak Milestone Modals**: Celebration at 7, 14, 30-day streaks with themed icons/titles ("🔥 One Week Streak!", "💪 Two Week Streak!", "🏆 Monthly Champion!"). Detection added to `checkStreak()` — compares `prevStreak` before increment. 600ms delay to avoid collision with other toasts.
-3. **Enhanced Confetti**: Replaced 10-particle straight-down transition with 40-50 particle CSS animation system. Features: 20-80vw horizontal spread, rotation (random 0-360°), varied sizes (16-34px), staggered spawn (40ms intervals per particle), `@keyframes confettiFall` with rotation + opacity. `pointer-events: none` preserved. `prefers-reduced-motion` respected.
-4. **Responsive Breakpoints**: Three breakpoints added:
-   - `1024px`: container max-width constraint
-   - `768px`: reduced font sizes, card padding, modal width, task check size
-   - `375px`: compact header, smaller balance hero, tighter cards/modals, smaller badges/buttons/stars
-
-#### Key Patterns
-- `_lastLevelName` is a transient runtime property (prefixed with underscore) — not saved to localStorage. Prevents false level-up trigger on page load.
-- `triggerConfetti(count)` now accepts optional count parameter — existing callers (no args) get 40 particles by default. Celebration modals pass 45-50 for bigger bursts.
-- Streak milestone check uses `[7, 14, 30].includes()` — easy to extend with more milestones.
-- No sound effects added per user directive.
-
-#### Accessibility
-- Celebration modals have `role="dialog"`, `aria-modal="true"`, close button with `aria-label`
-- Confetti respects `prefers-reduced-motion: reduce`
-- All new touch targets meet 44px minimum
-
----
-
-## Learnings
-
-### Font Unification (Sidon UX Audit Response)
-
-**Date:** $(date +%Y-%m-%d)
-
-**Context:** Sidon's UX audit flagged three different font stacks (Nunito, Quicksand, system fonts), shared.css never imported, ~45 hardcoded hex values, and background color mismatches.
-
-**What I Did:**
-1. Imported `css/shared.css` before page-specific `<style>` blocks in all 5 user-facing pages (app.html, index.html, home.html, login.html, get-started.html)
-2. Replaced Quicksand with Nunito in home.html, login.html, get-started.html
-3. Removed duplicate `:root` CSS variable blocks — now inherited from shared.css
-4. Replaced ~12 hardcoded hex values with CSS variables (`--bg`, `--text`)
-5. Standardized background to `var(--bg)` (#f7f7f7) everywhere (app.html was using #f0f2f5)
-
-**Key Decisions:**
-- Left JS data color references in app.html untouched (line 2190, 3264) — these are JavaScript data objects for gamification levels, not CSS
-- Left `<meta name="theme-color" content="#58cc02">` as-is — meta tags can't use CSS variables
-- Kept dark mode overrides in app.html inline styles — they override shared.css vars correctly
-- habitrewards.html does not exist in the repo — skipped
-
-**Pattern Established:** shared.css is the single source of truth for CSS variables. Pages should NOT redeclare `:root` vars unless overriding for dark mode or page-specific theming.
-
----
-
-## Font Unification & CSS Consolidation (2026-05-01)
-
-### Spawn Summary
-Parallel execution with Urbosa (admin) and Impa (audit). Unified font stack and CSS variable source across all pages.
-
-### Tasks Completed
-1. ✅ **Nunito Font Stack** — Applied Google Fonts Nunito (400/600/700/800) to app.html, login.html, home.html, get-started.html, index.html
-2. ✅ **shared.css Import** — All 5 user pages now import shared.css as canonical CSS variable source (before page-level `<style>`)
-3. ✅ **CSS Variable Replacement** — Replaced 12 hardcoded hex values with variables (--primary, --bg, --card-bg, --text, --text-secondary, --border, --radius-box, --radius-btn)
-4. ✅ **Duplicate CSS Removal** — Removed 42 lines of duplicate `:root` blocks and reset styles (no longer needed after shared.css import)
-5. ✅ **Responsive Breakpoints** — Added 3-tier responsive design (375px small phone, 768px mobile, 1024px tablet) with mobile-first reductions for header, balance hero, cards, modals, task rows, buttons, badges, star ratings, celebration modals
-6. ✅ **Decisions Written** — mipha-font-unify.md, mipha-ux-improvements.md logged to inbox
-
-### Cross-Agent Work
-- **Urbosa:** Parallel admin font unification; both agents converged on Nunito + shared.css canonical design
-- **Impa:** Audit validates consolidation strategy (CO4: .btn styles, CO5: CSS custom properties)
-- **Sidon:** UX decisions 1-2-3 (celebrations, confetti, responsive breakpoints) now implemented
-- **Daruk:** Ready for Phase 1 optimization (dead code removal, shared JS extraction)
-
-### Key Decisions
-- Nunito is the single font across entire platform (marketing → login → app → admin)
-- shared.css is the authoritative source for colors and spacing — no duplication
-- Responsive design uses CSS media queries only (no HTML structural changes, no JS changes)
-- Dark mode can now propagate through shared.css (Sidon Decision #7 prerequisite met)
-
-### Known Limitations
-- JS color references in gamification levels (app.html) remain hardcoded — CSS variables don't work in JS data objects
-- `<meta name="theme-color">` remains hardcoded — meta tags don't support CSS variables
-- Dark mode overrides kept in page-level `<style>` blocks — correct pattern for theme-specific customization
-
-### Next Steps (Team)
-- Urbosa: Complete admin font/responsive work (parallel track)
-- Impa: Execute Phase 1 optimization (dead code removal)
-- Daruk: Lead Phase 1 JS extraction (firebase-config.js, sw-init.js, utils.js)
-- Revali: Prioritize Phases 2-3 (deduplication, CSS extraction)
-
-### Impa Optimization Execution — Dead Code + Helpers (app.html)
-
-**Session:** Executed Impa's D1, DL1, DL2 optimization findings for app.html.
-
-#### D1: Dead Code Removal (-16 lines)
-- Deleted `rate()`, `submitSurvey()`, and `currentRating` variable (lines 3209–3224 original)
-- Confirmed zero references anywhere in app.html — the feedback system was fully replaced by `submitFeedback()` + `feedbackModal`
-
-#### DL1: calculatePointsWithBonuses() Helper (-20 lines)
-- Extracted streak multiplier × lucky day × random bonus calculation into `calculatePointsWithBonuses(basePoints)`
-- Returns `{ pts, bonusMsg, randomMult }` — all values the callers need
-- Replaced 2 identical inline blocks: `completeTaskDirectly()` and `confirmTask()`
-- `confirmTask()` destructures `randomMult` for coin rain vs confetti decision
-
-#### DL2: addPoints() Helper (-10 lines)
-- Created `addPoints(amount)` updating both `state.balance` and `state.totalEarned`
-- Replaced 11 inline pairs across: login bonus, spin wheel, feedback, quotes (×2), daily bonus (×3), weekly bonus, tennis weekly, and the 2 task completion flows (via DL1)
-- Per-instance logic (saveState, checkStreak, etc.) left intact at call sites
-
-#### Net Impact
-- 42 insertions, 88 deletions = **-46 net lines**
-- 3 fewer duplication points for future maintenance
-
----
-
-## Cross-Agent Context (2026-05-01 Optimization Cleanup)
-
-### Daruk's Phase 1 Execution (Shared JS)
-- Created `js/firebase-config.js` — extracted identical initialization from login.html, app.html, admin.html (~24 lines saved)
-- Created `js/sw-init.js` — extracted service worker registration from 4 files (~15 lines saved)
-- Created `js/utils.js` — extracted escapeHtml() helper (was implemented slightly differently in each file, now unified)
-- Deleted `functions/` directory — dead Cloud Functions stub (~200KB saved)
-- **Load order:** sw-init.js → Firebase SDK → firebase-config.js → utils.js → page scripts
-
-**Impact on Mipha:** 
-- escapeHtml now loaded from js/utils.js (previously inline in app.html). Must ensure js/utils.js loads before app.html scripts that call it.
-- CSP policy allows 'self' origin for scripts — no policy changes needed.
-
-### Urbosa's Phase 1 Execution (admin.html Dedup)
-- Deleted 2 dead functions (approvePayoutRequest, shareApp) — 13 lines removed
-- Extracted `getProfileSuffix()` — consolidates '_' + PROFILE_ID pattern (10 sites)
-- Extracted `formatDollar()` — consolidates parseFloat().toFixed(2) pattern (7 sites)
-- Optimized 4 loops in displayTasks() — innerHTML += O(n²) → array-join O(n)
-
-**Impact on Mipha:** 
-- getProfileSuffix() and formatDollar() candidates for shared.js (Phase 2) if app.html uses similar patterns.
-- Urbosa now manages same deduplication patterns as Mipha (helper extraction pattern established across team).
-
-### Phase 1 Aggregate (All Agents)
-| Metric | Value |
-|--------|-------|
-| Code removed | 101 lines |
-| Code added | 42 lines |
-| Net reduction | 59 lines |
-| Size savings | ~200KB |
-| Duplication points eliminated | 7 |
-| Performance improvements | 1 (O(n²) → O(n)) |
-| Functions deleted | 5 |
-
-**Shared JS now active:**
-- All pages should load js/firebase-config.js, js/sw-init.js before Firebase SDK calls
-- All pages should load js/utils.js before calling escapeHtml()
-- Phase 2 may move calculatePointsWithBonuses, addPoints, formatDollar, getProfileSuffix to shared.js
-
-**Next consideration:** Track whether Phase 2 deduplication items belong in js/utils.js (shared across app+admin) or remain page-specific.
-
-### P1/P2 User Improvements (Sidon Sweep Implementation)
-
-**1. PWA Install Prompt (P1):**
-- Added `beforeinstallprompt` handler to both app.html and home.html
-- app.html: Shows a blue gradient banner card with Install button, dismissible via ✕ (stores `pwaInstallDismissed` in localStorage to not re-nag)
-- home.html: Shows an "📱 Add to Home Screen" button in the hero section alongside Get Started / Sign In
-- Both pages hide the prompt after install or dismiss, listen for `appinstalled` event
-
-**2. Login Bonus Celebration (P1):**
-- Added `triggerConfetti(20)` call when login bonus is awarded (Tier 1 per skill — 20 particles for micro-celebration)
-- Extended auto-hide timer from 3s → 5s
-- Made card more visually prominent: 48px emoji (was 40), 22px title (was 18), 16px subtitle (was 14), added pulse animation
-
-**3. All Done Celebration Card (P2):**
-- Added `allDoneSection` HTML card with green gradient, 🎉 emoji, "You crushed it today!" message, and dismiss button
-- Detection logic in render(): when all tasks complete and not yet celebrated today (uses sessionStorage key with date to show once per day per session)
-- Fires `triggerConfetti(50)` (Tier 2 per skill — 50 particles for pride moment)
-- Hides automatically if tasks become unchecked (undo)
-
-**4. manifest.json background_color fix (P3):**
-- Changed `background_color` from `#f0f2f5` → `#f7f7f7` to match `--bg` CSS variable
-- `theme_color` (#58cc02) already matches `--primary`, no change needed
-
----
-
-## 2026-05-01T20:37 — Final Wave: PWA + Safety Review
-
-**Session:** 2026-05-01T20-37-00Z  
-**Tasks:**
-1. PWA install prompt (app+home)
-2. Login bonus celebration (confetti+5s+pulse)
-3. All-done card (50-particle confetti)
-4. manifest background_color fix
-5. Balancing task search + safety review
-
-**Decisions:**
-- PWA Install Prompt: Custom banner in app.html (localStorage dismiss), inline button in home.html
-- Login Bonus: 20-particle confetti (Tier 1, micro-celebration)
-- All Done Card: 50-particle confetti (Tier 2, peak moment), sessionStorage fire-once-per-day
-- manifest.json: Updated background_color #f0f2f5 → #f7f7f7 (match --bg), theme_color stays #58cc02
-- Balancing Task: Not found in code (may be in Firestore user data)
-- Safety Review: Tennis/pickleball task flagged as moderate risk for Shari review
-
-**Inbox:**
-- .squad/decisions/inbox/mipha-user-p1.md → merged to decisions.md
-- .squad/decisions/inbox/mipha-remove-balancing.md → merged to decisions.md
-- .squad/decisions/inbox/copilot-directive-2026-05-01T20-37.md → merged to decisions.md
-
-**Recommendation:** Shari reviews tennis/pickleball task appropriateness. Consider skill-level check or disclaimer for high-impact activities.
-
+Mipha completed 15+ sessions spanning P0 bug fixes (IS_LEGACY_PROFILE, updateBalanceDisplay, JSON.parse hardening), modal accessibility (21 spans→buttons, 22 modals with ARIA), Phase 2 consolidation (5 features migrated from index.html→app.html with 149 insertions), XSS remediation (4 app.html + 6 login.html sites), font unification (Nunito + shared.css), responsive breakpoints, UX celebrations (level-up modals, streak milestones, enhanced confetti), PWA install prompt, home page design polish (logo, font, CTA fixes), and Impa optimization execution. Total impact: eliminated 3 divergent codebases, hardened all user-facing security, established accessibility standards, and delivered gamification UI.
