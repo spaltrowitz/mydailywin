@@ -243,7 +243,30 @@
             { id: 116, name: "📖 Read for 10 minutes", value: 50, needsComment: true, commentPrompt: "What are you reading?", freq: 2 },
             { id: 117, name: "🎧 Listen to a podcast", value: 50, needsComment: true, commentPrompt: "Which podcast?", freq: 2 },
             { id: 118, name: "📺 Watch something new on streaming", value: 50, needsComment: true, commentPrompt: "What did you watch?", freq: 1.5 },
-            { id: 119, name: "📱 Delete an unused app", value: 50, needsComment: true, commentPrompt: "Which app did you delete?", freq: 0.5 }
+            { id: 119, name: "📱\u00a0Delete an unused app", value: 50, needsComment: true, commentPrompt: "Which app did you delete?", freq: 0.5 },
+            // Cognitive / Brain Health
+            { id: 130, name: "🧮\u00a0Play Sudoku", value: 50, freq: 1 },
+            { id: 131, name: "🎓\u00a0Learn one new fact", value: 50, needsComment: true, commentPrompt: "What did you learn?", freq: 1.5 },
+            { id: 132, name: "✍️\u00a0Write down a memory", value: 50, needsComment: true, commentPrompt: "What memory did you write about?", freq: 1 },
+            { id: 133, name: "🗺️\u00a0Take a different route", value: 50, needsComment: true, commentPrompt: "Where did you go?", freq: 0.5 },
+            // Social Connection
+            { id: 134, name: "👋\u00a0Say hi to a neighbor", value: 50, freq: 1 },
+            { id: 135, name: "😂\u00a0Share a joke or funny video", value: 50, needsComment: true, commentPrompt: "What was it?", freq: 1 },
+            { id: 136, name: "🖼️\u00a0Share a photo with family", value: 50, freq: 1 },
+            // Physical Wellness
+            { id: 137, name: "💧\u00a0Drink 6 glasses of water", value: 50, freq: 2 },
+            { id: 138, name: "🦵\u00a0Do 5 sit-to-stands", value: 50, freq: 1 },
+            { id: 139, name: "🚶‍♂️\u00a0Walk 10 minutes after a meal", value: 50, freq: 1.5 },
+            // Emotional / Mental Health
+            { id: 140, name: "🙏\u00a0Write 3 things you're grateful for", value: 50, needsComment: true, commentPrompt: "What are you grateful for?", freq: 1.5 },
+            { id: 141, name: "🌅\u00a0Sit quietly for 5 minutes", value: 50, freq: 1 },
+            { id: 142, name: "😊\u00a0Do something that makes you smile", value: 50, needsComment: true, commentPrompt: "What made you smile?", freq: 1 },
+            // Nutrition
+            { id: 143, name: "🥦\u00a0Eat a fruit or vegetable", value: 50, needsComment: true, commentPrompt: "What did you eat?", freq: 2 },
+            { id: 144, name: "🐟\u00a0Eat protein with a meal", value: 50, needsComment: true, commentPrompt: "What protein did you have?", freq: 1 },
+            // Purpose / Contribution
+            { id: 145, name: "🌱\u00a0Water or tend a plant", value: 50, freq: 1 },
+            { id: 146, name: "💡\u00a0Teach someone something", value: 50, needsComment: true, commentPrompt: "What did you teach?", freq: 0.5 }
         ];
         
         // Load profile data and determine which template to use
@@ -302,7 +325,24 @@
             { id: 316, name: "👕 Donate clothing", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What did you donate?" },
             { id: 317, name: "👟 Donate sneakers", value: 250, isWeekly: true, needsComment: true, commentPrompt: "How many pairs?" },
             { id: 318, name: "🕵️ Apply for a Mystery Shop", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Which company?", stuOnly: true },
-            { id: 319, name: "🗑️ Throw away 5 items", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you throw away?" }
+            { id: 319, name: "🗑️ Throw away 5 items", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you throw away?" },
+            // Wellness: Cognitive
+            { id: 320, name: "📚 Finish a book chapter", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What are you reading?" },
+            { id: 321, name: "🎬 Watch a documentary", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you watch?" },
+            // Wellness: Social
+            { id: 322, name: "☕ Have coffee/lunch with someone new", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you meet with?" },
+            { id: 323, name: "💬 Have a 15+ minute conversation", value: 200, isWeekly: true, needsComment: true, commentPrompt: "Who did you talk to?" },
+            // Wellness: Physical
+            { id: 324, name: "🏊 Try a new physical activity", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you try?" },
+            { id: 325, name: "🩺 Schedule or attend a health appointment", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What appointment?" },
+            // Wellness: Emotional
+            { id: 326, name: "📝 Write a letter or card to someone", value: 300, isWeekly: true, needsComment: true, commentPrompt: "Who did you write to?" },
+            { id: 327, name: "🎨 Do something creative", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you create?" },
+            // Wellness: Nutrition
+            { id: 328, name: "🧑‍🍳 Cook a meal from scratch", value: 250, isWeekly: true, needsComment: true, commentPrompt: "What did you cook?" },
+            // Wellness: Purpose
+            { id: 329, name: "🤝 Help someone with something", value: 300, isWeekly: true, needsComment: true, commentPrompt: "What did you help with?" },
+            { id: 330, name: "📦 Organize one area of the house", value: 200, isWeekly: true, needsComment: true, commentPrompt: "What did you organize?" }
         ];
 
         // ========== TASK HELP INSTRUCTIONS ==========
