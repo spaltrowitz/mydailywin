@@ -1397,28 +1397,8 @@
             loadAdmins();
         }
 
-        // ========== INIT ==========
-        // Set app link with profile parameter
-        if (PROFILE_ID) {
-            document.getElementById('appLink').href = 'app.html?profile=' + PROFILE_ID;
-        }
-        
-        // Restore last active tab
-        const savedTab = sessionStorage.getItem('hr_admin_tab');
-        if (savedTab) {
-            showTab(savedTab);
-        }
-        
-        displayStats();
-        displayTasks();
-        displayLevels();
-        displayPayments();
-        displayReports();
-        loadAdmins();
-        cleanupPendingInvites();
-        loadAdminNotifications();
-
-        // ========== EVENT DELEGATION (CSP-compliant, replaces inline handlers) ==========
+        // ========== EVENT DELEGATION (CSP-compliant) ==========
+        // Registered BEFORE init calls so tabs always work even if init throws
         document.addEventListener('click', function(e) {
             const el = e.target.closest('[data-action]');
             if (!el) return;
@@ -1447,3 +1427,28 @@
                 case 'exportSurveyDataCSV': exportSurveyDataCSV(); break;
             }
         });
+
+        // ========== INIT ==========
+        // Set app link with profile parameter
+        if (PROFILE_ID) {
+            document.getElementById('appLink').href = 'app.html?profile=' + PROFILE_ID;
+        }
+        
+        // Restore last active tab
+        const savedTab = sessionStorage.getItem('hr_admin_tab');
+        if (savedTab) {
+            showTab(savedTab);
+        }
+        
+        try {
+            displayStats();
+            displayTasks();
+            displayLevels();
+            displayPayments();
+            displayReports();
+            loadAdmins();
+            cleanupPendingInvites();
+            loadAdminNotifications();
+        } catch (err) {
+            console.error('Init error (tabs still work):', err);
+        }
