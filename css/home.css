@@ -1465,4 +1465,7 @@ body.dark-mode .menu-divider {
     .section-title { font-size: 24px; }
     .steps { grid-template-columns: 1fr; }
     .why-tiles { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+    .features { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .feature-card { padding: 10px 6px; }
+    .feature-card h3 { font-size: 13px; }
 }
