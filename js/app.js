@@ -723,6 +723,15 @@
                 state.lastLoginDate = today;
                 addPoints(25);
                 state.spinUsedToday = false; // Reset spin for new day
+                
+                if (!state.taskLog) state.taskLog = [];
+                state.taskLog.push({
+                    taskName: '🎁 Daily Login Bonus',
+                    type: 'Login',
+                    pts: 25,
+                    date: new Date().toISOString()
+                });
+                
                 saveState();
                 
                 // Show login bonus animation with confetti
@@ -826,6 +835,15 @@
 
                     addPoints(prize.pts);
                     state.spinUsedToday = true;
+                    
+                    if (!state.taskLog) state.taskLog = [];
+                    state.taskLog.push({
+                        taskName: '🎰 Spin Wheel — ' + prize.text,
+                        type: 'Spin',
+                        pts: prize.pts,
+                        date: new Date().toISOString()
+                    });
+                    
                     saveState();
                     render();
                     triggerCoinRain();
@@ -1678,6 +1696,15 @@
             
             const { pts, bonusMsg } = calculatePointsWithBonuses(task.value);
             addPoints(pts);
+            
+            if (!state.taskLog) state.taskLog = [];
+            state.taskLog.push({
+                taskName: task.name,
+                taskId: task.id,
+                type: 'Daily',
+                pts: pts,
+                date: new Date().toISOString()
+            });
             
             checkStreak();
             checkAchievements();

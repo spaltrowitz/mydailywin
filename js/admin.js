@@ -681,12 +681,25 @@
         function displayActivityLog() {
             const state = loadState();
             const daily = (state.dailyBonusComments || []).map(function(c) {
-                return Object.assign({}, c, { type: 'Daily' });
+                return Object.assign({}, c, { type: c.type || 'Bonus' });
             });
             const weekly = (state.weeklyBonusComments || []).map(function(c) {
-                return Object.assign({}, c, { type: 'Weekly' });
+                return Object.assign({}, c, { type: c.type || 'Weekly' });
             });
-            var entries = daily.concat(weekly);
+            const logged = (state.taskLog || []).map(function(c) {
+                return Object.assign({}, c, { type: c.type || 'Daily' });
+            });
+            var entries = daily.concat(weekly).concat(logged);
+            
+            // Deduplicate by date+taskName (taskLog may overlap with bonus comments)
+            var seen = {};
+            entries = entries.filter(function(e) {
+                var key = (e.date || '') + '|' + (e.taskName || '');
+                if (seen[key]) return false;
+                seen[key] = true;
+                return true;
+            });
+            
             entries.sort(function(a, b) {
                 return new Date(b.date) - new Date(a.date);
             });
@@ -705,16 +718,17 @@
                     dateStr = new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                 } catch (e) { dateStr = entry.date || ''; }
 
-                var badgeClass = entry.type === 'Daily' ? 'activity-badge-daily' : 'activity-badge-weekly';
+                var badgeClass = entry.type === 'Daily' ? 'activity-badge-daily' : entry.type === 'Weekly' ? 'activity-badge-weekly' : 'activity-badge-daily';
                 var photoHtml = '';
                 if (entry.photo) {
                     photoHtml = '<img class="activity-photo" src="' + escapeHtml(entry.photo) + '" alt="Task photo" data-action="openPhotoOverlay" data-arg="' + escapeHtml(entry.photo) + '">';
                 }
                 var commentHtml = entry.comment ? '<div class="activity-comment"><em>"' + escapeHtml(entry.comment) + '"</em></div>' : '';
+                var ptsHtml = entry.pts ? '<span style="color: var(--primary); font-weight: 700; font-size: 13px; margin-left: 8px;">+' + entry.pts + ' pts</span>' : '';
 
                 return '<div class="activity-entry">' +
                     '<div class="activity-header">' +
-                        '<span class="activity-task">' + escapeHtml(entry.taskName || 'Task') + '</span>' +
+                        '<span class="activity-task">' + escapeHtml(entry.taskName || 'Task') + ptsHtml + '</span>' +
                         '<span class="activity-badge ' + badgeClass + '">' + entry.type + '</span>' +
                     '</div>' +
                     '<div class="activity-date">' + dateStr + '</div>' +
