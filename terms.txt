@@ -1,0 +1,81 @@
+TERMS OF SERVICE
+MyDailyWin
+Last Updated: May 7, 2026
+
+1. ACCEPTANCE OF TERMS
+By accessing or using the MyDailyWin web application ("MyDailyWin," "we," "us," or "our") at mydailywin.web.app, you agree to these Terms of Service. If you do not agree, please do not use the application.
+
+2. SERVICE DESCRIPTION
+MyDailyWin is a gamified habit and chore tracking application designed for families. Features include:
+• Creating and completing daily tasks
+• Earning points and building streaks
+• Multi-profile support with admin management
+• Requesting and tracking payouts (points converted to real money)
+• Weekly challenges and bonus multipliers
+
+3. USER ACCOUNTS
+• You may use MyDailyWin without signing in. All data will be stored locally in your browser.
+• You may sign in with Google, Apple, or email/password to sync data across devices.
+• If you sign in, you are responsible for maintaining the confidentiality of your account credentials.
+• Parents and guardians are responsible for managing profiles used by minors.
+
+4. POINTS AND PAYOUTS
+• Points earned through task completion have no inherent monetary value until an admin approves a payout request.
+• The conversion rate (100 points = $1.00) is configurable by profile admins and may change at any time.
+• Payout requests are reviewed and processed manually by profile admins via Zelle or other external payment methods.
+• We do not guarantee that any payout request will be approved or fulfilled.
+• We do not process payments directly — all payouts are handled externally between the admin and the user.
+• Points balances, streaks, and task history may be reset or modified by profile admins at any time.
+
+5. MULTI-PROFILE AND ADMIN ACCESS
+• Profile owners can invite admins by email. Admins can view task progress, manage settings, and approve payouts.
+• You are responsible for inviting only trusted individuals as admins.
+• We are not responsible for actions taken by admins you have invited, including payout approvals, point adjustments, or profile changes.
+
+6. USER CONTENT
+• "User Content" includes task names, completion photos, and profile information you provide.
+• You retain ownership of your User Content.
+• By uploading photos, you grant us a non-exclusive license to store and display them within the application.
+• You agree not to upload content that is inappropriate, offensive, or infringes on any third party's rights.
+
+7. FAMILY USE AND MINORS
+• MyDailyWin is designed for family use where parents/guardians manage profiles for children.
+• Parents and guardians are responsible for supervising minors' use of the application.
+• Account creation (sign-in) must be performed by an individual 18 years of age or older.
+• Children's data is managed under the parent/guardian's profile and authentication.
+
+8. ACCEPTABLE USE
+You agree not to:
+• Create accounts for fraudulent purposes
+• Manipulate points, streaks, or task completion records dishonestly
+• Share admin access with untrusted individuals
+• Attempt to gain unauthorized access to other users' profiles or data
+• Use the service for any unlawful purpose
+
+9. INTELLECTUAL PROPERTY
+The MyDailyWin application, including its design, code, and game mechanics, is owned by us.
+
+10. LIMITATION OF LIABILITY
+MYDAILYWIN IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE SERVICE, INCLUDING BUT NOT LIMITED TO:
+• Loss of points, streaks, or task history due to data loss or sync errors
+• Unfulfilled payout requests
+• Actions taken by invited admins
+• Service interruptions or downtime
+• Data loss resulting from browser storage clearing
+
+11. TERMINATION
+• You may stop using MyDailyWin at any time by clearing your browser data or requesting account deletion.
+• We reserve the right to suspend or terminate access for violation of these Terms.
+
+12. THIRD-PARTY SERVICES
+MyDailyWin integrates with third-party services (Firebase, Google, Apple, EmailJS). Your use of these services is subject to their respective terms of service.
+
+13. CHANGES TO TERMS
+We may update these Terms of Service from time to time. Changes will be posted on this page with an updated "Last Updated" date. Your continued use of the service after changes constitutes acceptance of the modified terms.
+
+14. GOVERNING LAW
+These Terms shall be governed by the laws of the State of New York, without regard to conflict of law provisions.
+
+15. CONTACT US
+For questions about these Terms of Service, contact:
+Email: sharipaltrowitz@gmail.com
