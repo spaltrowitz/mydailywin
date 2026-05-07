@@ -1,0 +1,100 @@
+PRIVACY POLICY
+MyDailyWin
+Last Updated: May 7, 2026
+
+1. INTRODUCTION
+MyDailyWin ("we," "us," or "our") respects your privacy. This Privacy Policy explains how we collect, use, disclose, and protect your personal information when you use the MyDailyWin web application at mydailywin.web.app.
+
+2. INFORMATION WE COLLECT
+
+Account Information (when you sign in):
+• Email address (via Google Sign-In, Apple Sign-In, or email/password)
+• Display name and profile photo (from Google or Apple, if provided)
+
+Profile Data:
+• Profile name and configuration
+• Admin email addresses (for multi-admin profiles)
+• Task completion history and streaks
+• Points balance and payout preferences
+• Weekly challenge progress
+
+Payout Information:
+• Payout request amounts and status
+• Payout preference (e.g., Zelle recipient info you provide)
+
+Photos (optional):
+• Task completion photos you choose to upload
+
+Automatically Collected:
+• Browser localStorage data (app state, profile data, theme preference)
+
+3. HOW WE USE YOUR INFORMATION
+We use your personal information solely for the following purposes:
+• Managing your task completion, points, and streak tracking
+• Syncing your app state across devices when you are signed in
+• Processing payout requests (manually administered via Zelle)
+• Sending admin invitation emails to people you invite
+• Sending daily reminder emails (opt-in, currently limited distribution)
+• Storing task completion photos you upload
+• Providing multi-profile admin functionality
+
+4. INFORMATION SHARING AND DISCLOSURE
+We do not sell, rent, or trade your personal information. We may share your information only in the following limited circumstances:
+• Firebase: Your profile data, admin records, notifications, and payout requests are stored in Firebase Firestore. Firebase Auth manages your sign-in credentials.
+• Firebase Cloud Storage: Photos you upload are stored in Firebase Cloud Storage.
+• EmailJS: When an admin invites another person, the invitee's email address is sent to EmailJS to deliver the invitation email. EmailJS does not retain this data beyond delivery.
+• Gmail SMTP: Daily reminder emails are sent via Gmail SMTP through a Firebase Cloud Function. Recipient addresses are configured server-side.
+• Google / Apple: If you use Google or Apple Sign-In, the respective provider processes your authentication. We receive only your email and display name.
+• Legal Requirements: When required by law, regulation, or legal process
+
+Payout requests are processed manually — your payout preference information is visible only to profile admins within the app.
+
+5. DATA SECURITY
+We implement reasonable technical safeguards to protect your information:
+• Firebase Firestore security rules enforce read/write permissions by profile ownership and admin status
+• Authentication is handled by Firebase Auth with industry-standard token management
+• Gmail app password for reminder emails is stored as a Firebase Secret (not in source code)
+• All data is transmitted over HTTPS
+• Content Security Policy (CSP) headers restrict which domains can load scripts and make API calls
+
+6. DATA STORAGE AND RETENTION
+• App state is stored locally first in your browser's localStorage for instant responsiveness
+• When signed in, data is synced bidirectionally to Firebase Firestore (with a 2-second debounce)
+• Photos are stored in Firebase Cloud Storage
+• Local data persists in your browser until you clear your browser data
+• Cloud data is retained as long as your account is active
+• You may request deletion of your account and associated data at any time
+
+7. YOUR RIGHTS AND CHOICES
+You have the following rights:
+• No Account Required: You can use MyDailyWin without signing in — all data stays in your browser's localStorage
+• Access: You may request access to the personal information we have about you
+• Correction: You may request correction of inaccurate information
+• Deletion: You may request deletion of your account and all associated cloud data
+• Opt-Out: Daily reminder emails are opt-in; you may opt out at any time
+• Local Control: You can clear your localStorage at any time through your browser settings
+
+8. COOKIES AND LOCAL STORAGE
+MyDailyWin does not use cookies for tracking. We use browser localStorage to store:
+• Full app state including points, tasks, streaks (hr_state_{profileId})
+• Profile metadata and admin data
+• Payout request history
+• Theme preference (dark/light mode)
+This data is stored locally on your device. When signed in, it is synced to Firebase Firestore.
+
+9. THIRD-PARTY SERVICES
+Our application integrates with the following third-party services, each governed by their own privacy policies:
+• Firebase (Firestore, Auth, Storage, Cloud Functions, Hosting): https://firebase.google.com/support/privacy
+• Google (OAuth sign-in): https://policies.google.com/privacy
+• Apple (Sign-In with Apple): https://www.apple.com/legal/privacy
+• EmailJS (invitation email delivery): https://www.emailjs.com/legal/privacy-policy
+
+10. CHILDREN'S PRIVACY
+MyDailyWin may be used by families where children complete tasks and earn points. However, account creation (sign-in) is intended for parents or guardians who are 18 years of age or older. Children's task completion data is managed under the parent/guardian's profile. We do not directly collect personal information from children under 13.
+
+11. CHANGES TO THIS PRIVACY POLICY
+We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date.
+
+12. CONTACT US
+If you have questions about this Privacy Policy or wish to exercise your privacy rights, contact:
+Email: sharipaltrowitz@gmail.com
