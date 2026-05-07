@@ -799,11 +799,11 @@
 /* Why section: dark green matching hero */
 .why-section {
     text-align: center;
-    background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 50%, #1a5200 100%) !important;
+    background: white !important;
     border-radius: 24px;
     padding: 40px 20px;
     margin-top: 30px;
-    color: white;
+    color: var(--text);
 }
 
 /* Features container: white */
@@ -870,7 +870,8 @@ body.dark-mode .badge-item:nth-child(even) {
     border-color: #c8e6c9;
 }
 body.dark-mode .why-section {
-    background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 50%, #1a5200 100%) !important;
+    background: var(--card-bg) !important;
+    color: var(--text);
 }
 body.dark-mode .why-tile {
     background: white;
@@ -1009,27 +1010,27 @@ body.dark-mode .menu-divider {
 /* Why section */
 .why-section {
     text-align: center;
-    background: linear-gradient(135deg, #3d8a02 0%, #2d6e01 50%, #1a5200 100%);
+    background: white;
     border-radius: 24px;
     padding: 40px 20px;
     margin-top: 30px;
-    color: white;
+    color: var(--text);
 }
 
 .why-section .section-title {
-    color: white;
+    color: var(--text);
 }
 
 .why-description {
     max-width: 650px;
     margin: 0 auto 30px;
     font-size: 18px;
-    color: rgba(255,255,255,0.9);
+    color: var(--text-light);
     line-height: 1.8;
 }
 
 .why-section strong {
-    color: white;
+    color: var(--text);
 }
 
 .why-tiles {
@@ -1059,11 +1060,11 @@ body.dark-mode .menu-divider {
 .why-tile-title { font-weight: 700; }
 .why-tile-desc { font-size: 15px; color: var(--text-light); }
 
-.why-section .step h4 { color: white; }
-.why-section .step p { color: rgba(255,255,255,0.85); }
+.why-section .step h4 { color: var(--text); }
+.why-section .step p { color: var(--text-light); }
 .why-section .step-number {
-    background: linear-gradient(135deg, #ff9600, #f59e0b);
-    box-shadow: 0 4px 12px rgba(255, 150, 0, 0.4);
+    background: linear-gradient(135deg, #3d8a02, #2d6e01);
+    box-shadow: 0 4px 12px rgba(61, 138, 2, 0.3);
 }
 
 /* Mock task section label */

@@ -269,34 +269,40 @@
         }
         /* Help button for tech tasks */
         .task-help-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            background: transparent;
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 15px;
+            min-width: 28px;
+            height: 28px;
+            padding: 0 8px;
+            border-radius: 14px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 3px;
             margin-left: 8px;
             flex-shrink: 0;
             transition: all 0.2s;
             vertical-align: middle;
+            box-shadow: 0 2px 8px rgba(88, 204, 2, 0.3);
         }
         .task-help-btn:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.15);
+            background: var(--primary-dark, #3d8a02);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(88, 204, 2, 0.4);
+        }
+        .task-help-btn:active {
+            transform: scale(0.95);
         }
         body.dark-mode .task-help-btn {
-            background: transparent;
-            border-color: var(--primary);
+            background: var(--primary);
+            box-shadow: 0 2px 8px rgba(88, 204, 2, 0.2);
         }
         body.dark-mode .task-help-btn:hover {
-            background: var(--primary);
+            background: var(--primary-dark, #3d8a02);
         }
 
         /* ========== CELEBRATION MODALS ========== */
