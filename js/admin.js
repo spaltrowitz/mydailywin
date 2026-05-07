@@ -708,7 +708,7 @@
             if (!container) return;
 
             if (recent.length === 0) {
-                container.innerHTML = '<div class="empty-state">No activity yet. Entries will appear when tasks are completed.</div>';
+                container.innerHTML = '<div class="empty-state"><div style="font-size: 36px; margin-bottom: 12px;">📋</div>No activity yet.<br>Entries will appear here as tasks are completed.</div>';
                 return;
             }
 
@@ -718,7 +718,8 @@
                     dateStr = new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                 } catch (e) { dateStr = entry.date || ''; }
 
-                var badgeClass = entry.type === 'Daily' ? 'activity-badge-daily' : entry.type === 'Weekly' ? 'activity-badge-weekly' : 'activity-badge-daily';
+                var badgeMap = { 'Daily': 'activity-badge-daily', 'Weekly': 'activity-badge-weekly', 'Login': 'activity-badge-login', 'Spin': 'activity-badge-spin', 'Bonus': 'activity-badge-bonus' };
+                var badgeClass = badgeMap[entry.type] || 'activity-badge-daily';
                 var photoHtml = '';
                 if (entry.photo) {
                     photoHtml = '<img class="activity-photo" src="' + escapeHtml(entry.photo) + '" alt="Task photo" data-action="openPhotoOverlay" data-arg="' + escapeHtml(entry.photo) + '">';

@@ -940,15 +940,29 @@ footer a {
 /* ===== ACTIVITY LOG ===== */
 .activity-entry {
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
     background: var(--card);
-    transition: box-shadow 0.2s;
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.activity-entry::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #22c55e;
+    border-radius: 4px 0 0 4px;
 }
 
 .activity-entry:hover {
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
 }
 
 .activity-header {
@@ -956,21 +970,26 @@ footer a {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .activity-task {
     font-weight: 700;
-    font-size: 14px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .activity-badge {
     font-size: 11px;
     font-weight: 700;
-    padding: 2px 10px;
+    padding: 3px 10px;
     border-radius: 999px;
     color: white;
     white-space: nowrap;
+    letter-spacing: 0.3px;
 }
 
 .activity-badge-daily {
@@ -981,6 +1000,18 @@ footer a {
     background: #8b5cf6;
 }
 
+.activity-badge-login {
+    background: #f59e0b;
+}
+
+.activity-badge-spin {
+    background: #ec4899;
+}
+
+.activity-badge-bonus {
+    background: #3b82f6;
+}
+
 .activity-date {
     font-size: 12px;
     color: var(--text-light);
@@ -988,10 +1019,13 @@ footer a {
 }
 
 .activity-comment {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text);
     margin-bottom: 8px;
-    line-height: 1.4;
+    line-height: 1.5;
+    background: var(--bg);
+    padding: 10px 14px;
+    border-radius: 10px;
 }
 
 .activity-photo {
@@ -1004,6 +1038,14 @@ footer a {
 
 .activity-photo:hover {
     transform: scale(1.05);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+    font-size: 15px;
+    line-height: 1.6;
 }
 
 /* ===== REDUCED MOTION ===== */
