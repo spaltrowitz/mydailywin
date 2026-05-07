@@ -143,20 +143,36 @@ exports.sendDailyReminder = onSchedule(
         await transporter.sendMail({
           from: '"MyDailyWin" <sharipaltrowitz@gmail.com>',
           to: recipient.email,
-          subject: "🏆 Your daily tasks are ready!",
+          subject: `🏆 ${recipient.name}, your daily tasks are ready`,
           html: `
-            <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px 20px;">
-              <div style="text-align: center; margin-bottom: 25px;">
-                <span style="font-size: 48px;">🏆</span>
-                <h1 style="color: #2d6e01; font-size: 24px; margin: 10px 0 0;">MyDailyWin</h1>
+            <div style="font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; max-width: 480px; margin: 0 auto; background: #ffffff;">
+              <!-- Header -->
+              <div style="background: linear-gradient(135deg, #4a9e06, #2d6e01); padding: 32px 24px; text-align: center; border-radius: 0 0 24px 24px;">
+                <div style="font-size: 40px; margin-bottom: 8px;">🏆</div>
+                <div style="color: white; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">MyDailyWin</div>
               </div>
-              <p style="font-size: 18px; color: #3c3c3c; line-height: 1.6;">Hey ${recipient.name}!</p>
-              <p style="font-size: 18px; color: #595959; font-style: italic; line-height: 1.6;">${todayQuote}</p>
-              <p style="font-size: 18px; color: #3c3c3c; line-height: 1.6;">Your tasks are ready — open the app and keep your streak going!</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${appUrl}" style="display: inline-block; background: #3d8a02; color: white; padding: 16px 32px; border-radius: 30px; font-size: 18px; font-weight: 700; text-decoration: none;">Open MyDailyWin →</a>
+
+              <!-- Body -->
+              <div style="padding: 28px 24px;">
+                <p style="font-size: 20px; color: #1a1a1a; margin: 0 0 16px; font-weight: 700;">Good morning, ${recipient.name}!</p>
+                
+                <!-- Quote Card -->
+                <div style="background: #f0fdf4; border-left: 4px solid #4a9e06; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-bottom: 24px;">
+                  <p style="font-size: 16px; color: #2d6e01; margin: 0; font-style: italic; line-height: 1.5;">"${todayQuote}"</p>
+                </div>
+
+                <p style="font-size: 16px; color: #555; line-height: 1.6; margin: 0 0 28px;">Your tasks are ready. Open the app, check a few off, and keep your streak alive.</p>
+
+                <!-- CTA Button -->
+                <div style="text-align: center; margin-bottom: 28px;">
+                  <a href="${appUrl}" style="display: inline-block; background: #3d8a02; color: white; padding: 16px 40px; border-radius: 50px; font-size: 17px; font-weight: 700; text-decoration: none; letter-spacing: 0.3px;">Open MyDailyWin →</a>
+                </div>
+
+                <!-- Footer -->
+                <div style="border-top: 1px solid #eee; padding-top: 16px; text-align: center;">
+                  <p style="font-size: 13px; color: #999; margin: 0;">Keep that streak going! 🔥</p>
+                </div>
               </div>
-              <p style="font-size: 14px; color: #999; text-align: center;">Keep that streak going! 🔥</p>
             </div>
           `,
         });
