@@ -1,15 +1,19 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const fetch = require("node-fetch");
+const nodemailer = require("nodemailer");
 
 admin.initializeApp();
 
-// EmailJS credentials — stored server-side only
+// EmailJS credentials — for invitation emails
 const EMAILJS_SERVICE_ID = "service_lzv2w8n";
 const EMAILJS_TEMPLATE_ID = "template_ka99fef";
-const EMAILJS_REMINDER_TEMPLATE_ID = "template_reminder";
 const EMAILJS_PUBLIC_KEY = "zj5fBo7DU8vtJg44g";
+
+// Gmail app password for daily reminders
+const GMAIL_APP_PASSWORD = defineSecret("GMAIL_APP_PASSWORD");
 
 /**
  * sendInviteEmail — callable Cloud Function
@@ -99,10 +103,15 @@ exports.sendInviteEmail = onCall(
 
 /**
  * sendDailyReminder — scheduled Cloud Function
- * Fires daily at 8:00 AM ET. Sends a reminder email via EmailJS.
+ * Fires daily at 8:00 AM ET. Sends a reminder email via Gmail SMTP.
  */
 exports.sendDailyReminder = onSchedule(
-  { schedule: "0 8 * * *", timeZone: "America/New_York", region: "us-central1" },
+  {
+    schedule: "0 8 * * *",
+    timeZone: "America/New_York",
+    region: "us-central1",
+    secrets: [GMAIL_APP_PASSWORD],
+  },
   async () => {
     const recipients = [
       { email: "stuartpaltrowitz@gmail.com", name: "Stu", profileId: "stu" }
@@ -119,32 +128,39 @@ exports.sendDailyReminder = onSchedule(
     ];
     const todayQuote = quotes[new Date().getDay() % quotes.length];
 
-    for (const recipient of recipients) {
-      try {
-        const response = await fetch(
-          "https://api.emailjs.com/api/v1.0/email/send",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              service_id: EMAILJS_SERVICE_ID,
-              template_id: EMAILJS_REMINDER_TEMPLATE_ID,
-              user_id: EMAILJS_PUBLIC_KEY,
-              template_params: {
-                to_email: recipient.email,
-                to_name: recipient.name,
-                quote: todayQuote,
-                app_url: `https://my-daily-win.web.app/app.html?profile=${recipient.profileId}`,
-              },
-            }),
-          }
-        );
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "sharipaltrowitz@gmail.com",
+        pass: GMAIL_APP_PASSWORD.value(),
+      },
+    });
 
-        if (!response.ok) {
-          console.error(`Reminder email failed for ${recipient.email}:`, await response.text());
-        } else {
-          console.log(`✅ Daily reminder sent to ${recipient.email}`);
-        }
+    for (const recipient of recipients) {
+      const appUrl = `https://my-daily-win.web.app/app.html?profile=${recipient.profileId}`;
+
+      try {
+        await transporter.sendMail({
+          from: '"MyDailyWin" <sharipaltrowitz@gmail.com>',
+          to: recipient.email,
+          subject: "🏆 Your daily tasks are ready!",
+          html: `
+            <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px 20px;">
+              <div style="text-align: center; margin-bottom: 25px;">
+                <span style="font-size: 48px;">🏆</span>
+                <h1 style="color: #2d6e01; font-size: 24px; margin: 10px 0 0;">MyDailyWin</h1>
+              </div>
+              <p style="font-size: 18px; color: #3c3c3c; line-height: 1.6;">Hey ${recipient.name}!</p>
+              <p style="font-size: 18px; color: #595959; font-style: italic; line-height: 1.6;">${todayQuote}</p>
+              <p style="font-size: 18px; color: #3c3c3c; line-height: 1.6;">Your tasks are ready — open the app and keep your streak going!</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${appUrl}" style="display: inline-block; background: #3d8a02; color: white; padding: 16px 32px; border-radius: 30px; font-size: 18px; font-weight: 700; text-decoration: none;">Open MyDailyWin →</a>
+              </div>
+              <p style="font-size: 14px; color: #999; text-align: center;">Keep that streak going! 🔥</p>
+            </div>
+          `,
+        });
+        console.log(`✅ Daily reminder sent to ${recipient.email}`);
       } catch (error) {
         console.error(`Reminder send error for ${recipient.email}:`, error);
       }
