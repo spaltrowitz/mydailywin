@@ -67,7 +67,9 @@
                     try {
                         const data = JSON.parse(localStorage.getItem(key));
                         existingProfiles.push({ id: profileId, name: data.name || profileId });
-                    } catch (e) {}
+                    } catch (e) {
+                        console.warn('Failed to parse profile data for', profileId, e);
+                    }
                 }
             }
             // Also check for legacy 'stu' profile
@@ -1632,7 +1634,7 @@
                 sessionStorage.setItem(allDoneKey, '1');
                 allDoneSection.style.display = 'block';
                 triggerConfetti(50);
-            } else if (!allDone) {
+            } else if (!allDone || sessionStorage.getItem(allDoneKey)) {
                 allDoneSection.style.display = 'none';
             }
             
