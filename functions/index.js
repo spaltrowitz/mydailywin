@@ -1,4 +1,5 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const admin = require("firebase-admin");
 const fetch = require("node-fetch");
 
@@ -7,6 +8,7 @@ admin.initializeApp();
 // EmailJS credentials — stored server-side only
 const EMAILJS_SERVICE_ID = "service_lzv2w8n";
 const EMAILJS_TEMPLATE_ID = "template_ka99fef";
+const EMAILJS_REMINDER_TEMPLATE_ID = "template_reminder";
 const EMAILJS_PUBLIC_KEY = "zj5fBo7DU8vtJg44g";
 
 /**
@@ -91,6 +93,61 @@ exports.sendInviteEmail = onCall(
         "internal",
         "Failed to send invitation email. Please try again later."
       );
+    }
+  }
+);
+
+/**
+ * sendDailyReminder — scheduled Cloud Function
+ * Fires daily at 8:00 AM ET. Sends a reminder email via EmailJS.
+ */
+exports.sendDailyReminder = onSchedule(
+  { schedule: "0 8 * * *", timeZone: "America/New_York", region: "us-central1" },
+  async () => {
+    const recipients = [
+      { email: "stuartpaltrowitz@gmail.com", name: "Stu", profileId: "stu" }
+    ];
+
+    const quotes = [
+      "Every day is a chance to get better. 💪",
+      "Small daily improvements lead to big results. 🌟",
+      "Your streak is waiting for you! 🔥",
+      "A quick check-in keeps the momentum going. ⭐",
+      "You've got tasks ready — let's earn some points! 🏆",
+      "Consistency beats perfection. Keep it up! 💰",
+      "Your daily win is just a tap away. ✨",
+    ];
+    const todayQuote = quotes[new Date().getDay() % quotes.length];
+
+    for (const recipient of recipients) {
+      try {
+        const response = await fetch(
+          "https://api.emailjs.com/api/v1.0/email/send",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              service_id: EMAILJS_SERVICE_ID,
+              template_id: EMAILJS_REMINDER_TEMPLATE_ID,
+              user_id: EMAILJS_PUBLIC_KEY,
+              template_params: {
+                to_email: recipient.email,
+                to_name: recipient.name,
+                quote: todayQuote,
+                app_url: `https://my-daily-win.web.app/app.html?profile=${recipient.profileId}`,
+              },
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          console.error(`Reminder email failed for ${recipient.email}:`, await response.text());
+        } else {
+          console.log(`✅ Daily reminder sent to ${recipient.email}`);
+        }
+      } catch (error) {
+        console.error(`Reminder send error for ${recipient.email}:`, error);
+      }
     }
   }
 );
