@@ -217,7 +217,7 @@
             { id: 104, name: "🍽️ Eat a healthy meal", value: 50, freq: 2 },
             { id: 106, name: "🧹 Tidy up one room", value: 50, freq: 1 },
             { id: 107, name: "📖 Read for 15 minutes", value: 50, freq: 2 },
-            { id: 108, name: "🎵 Listen to music you enjoy", value: 25, freq: 2 }
+            { id: 108, name: "🎵 Listen to music you enjoy", value: 25, freq: 2 },
             // Wellness: Social
             { id: 134, name: "👋 Say hi to a neighbor", value: 50, freq: 1 },
             { id: 136, name: "🖼️ Share a photo with family", value: 50, freq: 1 },
@@ -2350,8 +2350,8 @@
             
             // Deduct balance immediately to prevent double-cashouts
             state.balance = Math.max(0, state.balance - pts);
-            saveState(state);
-            updateBalanceDisplay();
+            saveState();
+            render();
             
             // Save to Firestore for cross-device sync
             try {
