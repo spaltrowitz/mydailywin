@@ -1602,9 +1602,16 @@
                 dailyBonusSection.style.display = 'none';
             }
 
-            // Survey unlock (if at least one task done)
+            // Survey: only show if tasks done AND not already completed this week
             const tasksDone = state.tasks.filter(t => t.completed).length;
-            document.getElementById('surveyInvite').style.display = tasksDone > 0 ? 'block' : 'none';
+            const weekNum = getWeekNumber();
+            if (state.weeklyFeedbackCompleted === weekNum) {
+                document.getElementById('surveyInvite').style.display = 'none';
+            } else if (tasksDone > 0) {
+                document.getElementById('surveyInvite').style.display = 'block';
+            } else {
+                document.getElementById('surveyInvite').style.display = 'none';
+            }
             
             // Show spin section if all tasks done and not used today
             const spinSection = document.getElementById('spinSection');
