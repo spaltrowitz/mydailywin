@@ -3,7 +3,7 @@
  * Provides offline support and caching for the PWA
  */
 
-const CACHE_NAME = 'mydailywin-v11';
+const CACHE_NAME = 'mydailywin-v12';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache on install
